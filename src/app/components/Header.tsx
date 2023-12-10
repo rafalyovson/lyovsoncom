@@ -10,13 +10,13 @@ const Header = () => {
 
   return (
     <header className="bg-gradient-to-r from-red-600 to-blue-600 text-white flex items-center justify-between h-20 sticky px-4 top-0">
-      <ImageButton handleImageClick={() => setUser("Jess")} />
+      <ImageButton src="/jess.png" handleImageClick={() => setUser("Jess")} />
       <Link href="/">
         <h1 onClick={() => setUser("Both")} className="text-4xl">
           Lyovson.com
         </h1>
       </Link>
-      <ImageButton handleImageClick={() => setUser("Rafa")} />
+      <ImageButton src="/rafa.png" handleImageClick={() => setUser("Rafa")} />
     </header>
   );
 };

@@ -2,8 +2,10 @@ import Image from "next/image";
 
 export const ImageButton = ({
   handleImageClick,
+  src,
 }: {
   handleImageClick: any;
+  src: string;
 }) => {
   return (
     <button
@@ -13,11 +15,11 @@ export const ImageButton = ({
     >
       <div className="relative h-10 w-10">
         <Image
-          src="https://via.placeholder.com/150"
+          src={src}
           alt="Placeholder"
-          width={150}
-          height={150}
-          className="rounded-full"
+          width={200}
+          height={200}
+          className=""
         />
       </div>
     </button>
