@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 const PortfolioCard = ({ num }: { num: number }) => {
-  console.log(num);
   return (
     <motion.div
       layout
