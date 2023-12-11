@@ -1,0 +1,81 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  bio      String?
+  posts    Post[]
+  comments Comment[]
+}
+
+model Post {
+  id          Int              @id @default(autoincrement())
+  title       String
+  content     String
+  featuredImg String? // URL to the featured image
+  published   Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  author      User             @relation(fields: [authorId], references: [id])
+  authorId    Int
+  categories  CategoryOnPost[]
+  tags        TagOnPost[]
+  comments    Comment[]
+}
+
+model Category {
+  id       Int              @id @default(autoincrement())
+  name     String
+  parentId Int?
+  parent   Category?        @relation("CategoryToCategory", fields: [parentId], references: [id])
+  children Category[]       @relation("CategoryToCategory")
+  posts    CategoryOnPost[]
+}
+
+model Tag {
+  id    Int         @id @default(autoincrement())
+  name  String
+  posts TagOnPost[]
+}
+
+model CategoryOnPost {
+  post       Post     @relation(fields: [postId], references: [id])
+  postId     Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId Int
+
+  @@id([postId, categoryId])
+}
+
+model TagOnPost {
+  post   Post @relation(fields: [postId], references: [id])
+  postId Int
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  tagId  Int
+
+  @@id([postId, tagId])
+}
+
+model Comment {
+  id        Int       @id @default(autoincrement())
+  content   String
+  createdAt DateTime  @default(now())
+  post      Post      @relation(fields: [postId], references: [id])
+  postId    Int
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  parent    Comment?  @relation("CommentThread", fields: [parentId], references: [id])
+  parentId  Int?
+  replies   Comment[] @relation("CommentThread")
+}
