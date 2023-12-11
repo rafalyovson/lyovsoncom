@@ -5,6 +5,7 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ThemeSwitch from "./ThemeSwitcher";
 
 const Contact = () => (
   <section className="px-4 py-8 text-gray-800 bg-gray-100 border-b border-gray-300">
@@ -50,6 +51,7 @@ const Contact = () => (
           <FontAwesomeIcon icon={faCodepen} size="2x" />
         </div>
       </a>
+      <ThemeSwitch />
     </div>
   </section>
 );

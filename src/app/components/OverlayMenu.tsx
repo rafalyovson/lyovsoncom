@@ -13,7 +13,7 @@ const OverlayMenu = ({
 }) => {
   return (
     <motion.div
-      className={`fixed top-20 h-full  ${className}`}
+      className={`fixed top-20 h-full overflow-auto  ${className}`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}

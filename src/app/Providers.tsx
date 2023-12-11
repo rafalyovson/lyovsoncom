@@ -1,5 +1,7 @@
 "use client";
 
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { type ThemeProviderProps } from "next-themes/dist/types";
 import { createContext, useEffect, useState } from "react";
 
 // Contexts
@@ -10,6 +12,10 @@ export const UserContext = createContext({
 });
 
 export const WindowWidthContext = createContext({ windowWidth: 0 });
+
+export const ThemeProvider = ({ children, ...props }: ThemeProviderProps) => {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
+};
 
 // Providers
 
@@ -25,10 +31,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <WindowWidthContext.Provider value={{ windowWidth }}>
-      <UserContext.Provider value={{ user, setUser }}>
-        {children}
-      </UserContext.Provider>
-    </WindowWidthContext.Provider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <WindowWidthContext.Provider value={{ windowWidth }}>
+        <UserContext.Provider value={{ user, setUser }}>
+          {children}
+        </UserContext.Provider>
+      </WindowWidthContext.Provider>
+    </ThemeProvider>
   );
 }
