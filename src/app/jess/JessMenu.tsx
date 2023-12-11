@@ -5,13 +5,7 @@ import Image from "next/image";
 import Link from "../components/UserMenuLink";
 import JessSocials from "./JessSocials";
 
-const JessMenu = ({
-  windowWidth,
-  setUser,
-}: {
-  windowWidth: number;
-  setUser: any;
-}) => {
+const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
     <motion.aside
       className={`fixed top-20 h-full overflow-auto z-10 bg-gradient-to-b from-jess to-rafa left-0  flex flex-col items-center gap-5 text-light`}
