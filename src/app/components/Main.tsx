@@ -16,12 +16,13 @@ const Main = ({ children }: { children: ReactNode }) => {
     <>
       <AnimatePresence>
         {user === "Jess" ? (
-          <JessMenu key="jess" windowWidth={windowWidth} />
+          <JessMenu key="jess" setUser={setUser} windowWidth={windowWidth} />
         ) : user === "Rafa" ? (
-          <RafaMenu windowWidth={windowWidth} />
+          <RafaMenu setUser={setUser} windowWidth={windowWidth} />
         ) : null}
       </AnimatePresence>
       <motion.main
+        onClick={() => setUser("Both")}
         className=" bg-light text-dark dark:text-light dark:bg-dark min-h-screen overflow-auto relative"
         layout
         initial={{

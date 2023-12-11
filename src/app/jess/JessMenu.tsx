@@ -2,13 +2,19 @@ import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
-import JessSocials from "./JessSocials"; // Import JessSocials component
+import Link from "../components/UserMenuLink";
+import JessSocials from "./JessSocials";
 
-const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
+const JessMenu = ({
+  windowWidth,
+  setUser,
+}: {
+  windowWidth: number;
+  setUser: any;
+}) => {
   return (
     <motion.aside
-      className={`fixed top-20 h-full overflow-auto z-10 bg-gradient-to-b from-jess to-dark left-0  flex flex-col items-center gap-5 text-light`}
+      className={`fixed top-20 h-full overflow-auto z-10 bg-gradient-to-b from-jess to-rafa left-0  flex flex-col items-center gap-5 text-light`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}
@@ -25,42 +31,38 @@ const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
         Jess Lyovson
       </Link>
       <JessSocials />
-      <ul className="text-2xl list-none">
+      <nav className="text-2xl list-none">
         <Link href="/jess/bio">
-          <li className="flex gap-2 items-center py-4">
-            <div className="w-10 h-10">
-              <FontAwesomeIcon icon={faXTwitter} size="2x" />
-            </div>
-            Bio
-          </li>
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faXTwitter} size="2x" />
+          </div>
+          Bio
         </Link>
         <Link href="/jess/portfolio">
-          <li className="flex gap-2 items-center py-4">
-            <div className="w-10 h-10">
-              <FontAwesomeIcon icon={faXTwitter} size="2x" />
-            </div>
-            Portfolio
-          </li>
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faXTwitter} size="2x" />
+          </div>
+          Portfolio
         </Link>
-        <li className="flex gap-2 items-center py-4">
+        <Link href="/jess/portfolio">
           <div className="w-10 h-10">
             <FontAwesomeIcon icon={faXTwitter} size="2x" />
           </div>
           Contact
-        </li>
-        <li className="flex gap-2 items-center py-4">
+        </Link>
+        <Link href="/jess/portfolio">
           <div className="w-10 h-10">
             <FontAwesomeIcon icon={faXTwitter} size="2x" />
           </div>
           Project 1
-        </li>
-        <li className="flex gap-2 items-center py-4">
+        </Link>
+        <Link href="/jess/portfolio">
           <div className="w-10 h-10">
             <FontAwesomeIcon icon={faXTwitter} size="2x" />
           </div>
           Project 2
-        </li>
-      </ul>
+        </Link>
+      </nav>
     </motion.aside>
   );
 };

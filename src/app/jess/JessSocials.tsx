@@ -1,8 +1,9 @@
 import {
-  faCodepen,
-  faGithub,
+  faInstagram,
   faLinkedin,
+  faRedditAlien,
   faXTwitter,
+  faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -10,7 +11,7 @@ const JessSocials = () => (
   <section className="px-4 py-8 text-gray-800 bg-gray-100 border-b border-gray-300">
     <div className="flex space-x-4">
       <a
-        href="https://www.x.com/lyovson"
+        href="https://twitter.com/HasmikKhachunts"
         target="_blank"
         rel="noopener noreferrer"
         title="X"
@@ -20,33 +21,43 @@ const JessSocials = () => (
         </div>
       </a>
       <a
-        href="https://www.linkedin.com/in/your-name"
+        href="https://www.linkedin.com/in/khachunts"
         target="_blank"
         rel="noopener noreferrer"
-        title="Linkedin"
+        title="LinkedIn"
       >
         <div className="w-10 h-10">
           <FontAwesomeIcon icon={faLinkedin} size="2x" />
         </div>
       </a>
       <a
-        href="https://github.com/your-name"
+        href="https://reddit.com/your-name"
         target="_blank"
         rel="noopener noreferrer"
-        title="GitHub"
+        title="Reddit"
       >
         <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faGithub} size="2x" />
+          <FontAwesomeIcon icon={faRedditAlien} size="2x" />
         </div>
       </a>
       <a
-        href="https://codepen.io/your-name"
+        href="https://youtube.com/your-name"
         target="_blank"
         rel="noopener noreferrer"
-        title="CodePen"
+        title="YouTube"
       >
         <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faCodepen} size="2x" />
+          <FontAwesomeIcon icon={faYoutube} size="2x" />
+        </div>
+      </a>
+      <a
+        href="https://www.instagram.com/khachunts/"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="Instagram"
+      >
+        <div className="w-10 h-10">
+          <FontAwesomeIcon icon={faInstagram} size="2x" />
         </div>
       </a>
     </div>
