@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import JessSocials from "./JessSocials"; // Import JessSocials component
 
 const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
@@ -23,19 +24,24 @@ const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
       <Link className=" text-3xl" href="/jess">
         Jess Lyovson
       </Link>
+      <JessSocials />
       <ul className="text-2xl list-none">
-        <li className="flex gap-2 items-center py-4">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
-          Bio
-        </li>
-        <li className="flex gap-2 items-center py-4">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
-          Portfolio
-        </li>
+        <Link href="/jess/bio">
+          <li className="flex gap-2 items-center py-4">
+            <div className="w-10 h-10">
+              <FontAwesomeIcon icon={faXTwitter} size="2x" />
+            </div>
+            Bio
+          </li>
+        </Link>
+        <Link href="/jess/portfolio">
+          <li className="flex gap-2 items-center py-4">
+            <div className="w-10 h-10">
+              <FontAwesomeIcon icon={faXTwitter} size="2x" />
+            </div>
+            Portfolio
+          </li>
+        </Link>
         <li className="flex gap-2 items-center py-4">
           <div className="w-10 h-10">
             <FontAwesomeIcon icon={faXTwitter} size="2x" />

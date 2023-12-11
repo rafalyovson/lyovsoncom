@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import RafaSocials from "./RafaSocials";
 
 const RafaMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
@@ -23,19 +24,24 @@ const RafaMenu = ({ windowWidth }: { windowWidth: number }) => {
       <Link className=" text-3xl " href="/jess">
         Rafa Lyovson
       </Link>
+      <RafaSocials />
       <ul className="text-2xl list-none ">
-        <li className="flex gap-2 items-center py-4">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
-          Bio
-        </li>
-        <li className="flex gap-2 items-center py-4">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
-          Portfolio
-        </li>
+        <Link href="/rafa/bio">
+          <li className="flex gap-2 items-center py-4">
+            <div className="w-10 h-10">
+              <FontAwesomeIcon icon={faXTwitter} size="2x" />
+            </div>
+            Bio
+          </li>
+        </Link>
+        <Link href="/rafa/portfolio">
+          <li className="flex gap-2 items-center py-4">
+            <div className="w-10 h-10">
+              <FontAwesomeIcon icon={faXTwitter} size="2x" />
+            </div>
+            Portfolio
+          </li>
+        </Link>
         <li className="flex gap-2 items-center py-4">
           <div className="w-10 h-10">
             <FontAwesomeIcon icon={faXTwitter} size="2x" />

@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { ReactNode, useContext } from "react";
 import { UserContext, WindowWidthContext } from "../Providers";
-import JessMenu from "./JessMenu";
-import RafaMenu from "./RafaMenu";
+import JessMenu from "../jess/JessMenu";
+import RafaMenu from "../rafa/RafaMenu";
 
 const Main = ({ children }: { children: ReactNode }) => {
   const { user, setUser } = useContext(UserContext);
@@ -22,7 +22,7 @@ const Main = ({ children }: { children: ReactNode }) => {
         ) : null}
       </AnimatePresence>
       <motion.main
-        className=" bg-light text-dark dark:text-light dark:bg-dark"
+        className=" bg-light text-dark dark:text-light dark:bg-dark min-h-screen overflow-auto relative"
         layout
         initial={{
           backgroundColor:
