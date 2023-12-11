@@ -20,7 +20,7 @@ const Main = ({ children }: { children: ReactNode }) => {
           <OverlayMenu
             key="jess"
             windowWidth={windowWidth}
-            className="bg-gradient-to-b from-red-600 to-red-950 left-0  flex flex-col items-center gap-5 "
+            className="bg-gradient-to-b from-jess to-dark left-0  flex flex-col items-center gap-5 text-light"
           >
             <Image
               className="w-[200px]  rounded-sm  "
@@ -69,7 +69,7 @@ const Main = ({ children }: { children: ReactNode }) => {
           <OverlayMenu
             key="rafa"
             windowWidth={windowWidth}
-            className="bg-gradient-to-b from-blue-600 to-blue-950 right-0 flex flex-col items-center gap-5 "
+            className="bg-gradient-to-b from-rafa to-dark right-0 flex flex-col items-center gap-5 text-light"
           >
             <Image
               className="w-[200px]  rounded-sm my-5  "

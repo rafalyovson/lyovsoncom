@@ -20,7 +20,11 @@ export default async function RootLayout({
 }) {
   return (
     <html lang="en" className=" h-full overflow-hidden relative">
-      <body className={`${inter.className} ${"h-full overflow-auto relative"}`}>
+      <body
+        className={`${
+          inter.className
+        } ${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"}`}
+      >
         <Providers>
           <Header />
           <Main>{children}</Main>
