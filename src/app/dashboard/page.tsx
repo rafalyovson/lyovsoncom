@@ -1,10 +1,10 @@
-import { getServerSession } from "next-auth";
+import { auth } from "@/utils/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { prisma } from "../../utils/db";
 
 const Page = async () => {
-  const session = await getServerSession();
+  const session = await auth();
 
   if (!session || !session.user) {
     redirect("/api/auth/signin");
