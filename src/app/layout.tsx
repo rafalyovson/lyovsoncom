@@ -1,8 +1,9 @@
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
-import Providers from "./Providers";
+import Providers, { SessionProvider } from "./Providers";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Main from "./components/Main";
@@ -19,6 +20,8 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession();
+
   return (
     <html lang="en" className=" h-full overflow-hidden relative">
       <body
@@ -26,11 +29,13 @@ export default async function RootLayout({
           inter.className
         } ${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"}`}
       >
-        <Providers>
-          <Header />
-          <Main>{children}</Main>
-          <Footer />
-        </Providers>
+        <SessionProvider session={session}>
+          <Providers>
+            <Header />
+            <Main>{children}</Main>
+            <Footer />
+          </Providers>
+        </SessionProvider>
         <SpeedInsights />
         <Analytics />
       </body>

@@ -3,7 +3,7 @@
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { type ThemeProviderProps } from "next-themes/dist/types";
 import { createContext, useEffect, useState } from "react";
-
+export { SessionProvider } from "next-auth/react";
 // Contexts
 
 export const UserContext = createContext({
