@@ -25,7 +25,7 @@ model User {
 }
 
 model Post {
-  id          Int              @id @default(autoincrement())
+  id          String           @id @default(cuid())
   title       String
   content     String
   featuredImg String? // URL to the featured image
@@ -39,48 +39,48 @@ model Post {
 }
 
 model Category {
-  id       Int              @id @default(autoincrement())
+  id       String           @id @default(cuid())
   name     String
-  parentId Int?
+  parentId String?
   parent   Category?        @relation("CategoryToCategory", fields: [parentId], references: [id])
   children Category[]       @relation("CategoryToCategory")
   posts    CategoryOnPost[]
 }
 
 model Tag {
-  id    Int         @id @default(autoincrement())
+  id    String      @id @default(cuid())
   name  String
   posts TagOnPost[]
 }
 
 model CategoryOnPost {
   post       Post     @relation(fields: [postId], references: [id])
-  postId     Int
+  postId     String
   category   Category @relation(fields: [categoryId], references: [id])
-  categoryId Int
+  categoryId String
 
   @@id([postId, categoryId])
 }
 
 model TagOnPost {
-  post   Post @relation(fields: [postId], references: [id])
-  postId Int
-  tag    Tag  @relation(fields: [tagId], references: [id])
-  tagId  Int
+  post   Post   @relation(fields: [postId], references: [id])
+  postId String
+  tag    Tag    @relation(fields: [tagId], references: [id])
+  tagId  String
 
   @@id([postId, tagId])
 }
 
 model Comment {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(cuid())
   content   String
   createdAt DateTime  @default(now())
   post      Post      @relation(fields: [postId], references: [id])
-  postId    Int
+  postId    String
   author    User      @relation(fields: [authorId], references: [id])
   authorId  String
   parent    Comment?  @relation("CommentThread", fields: [parentId], references: [id])
-  parentId  Int?
+  parentId  String?
   replies   Comment[] @relation("CommentThread")
 }
 
