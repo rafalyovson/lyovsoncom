@@ -14,7 +14,7 @@ const Page = async () => {
       <h1>Welcome, {session?.user?.name}</h1>
       <Image
         alt={session?.user?.name + " photo"}
-        src={session?.user?.image}
+        src={session?.user?.image ?? ""}
         width={400}
         height={400}
       ></Image>
