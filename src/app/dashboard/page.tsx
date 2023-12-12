@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { prisma } from "../../../utils/db";
+import { prisma } from "../../utils/db";
 
 const Page = async () => {
   const session = await getServerSession();
