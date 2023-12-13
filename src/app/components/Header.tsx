@@ -10,7 +10,7 @@ const Header = () => {
   const { user, setUser } = useContext(UserContext);
 
   return (
-    <header className="border-b border-dark dark:border-light flex items-center justify-between h-20 sticky px-4 top-0 z-10">
+    <header className="bg-light dark:bg-dark border-b border-dark dark:border-light flex items-center justify-between h-20 sticky px-4 top-0 z-10">
       <ImageButton src="/jess.png" handleImageClick={() => setUser("Jess")} />
       <section className="flex gap-4 items-baseline">
         <ThemeSwitch />
