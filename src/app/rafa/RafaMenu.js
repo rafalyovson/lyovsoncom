@@ -15,13 +15,13 @@ const RafaMenu = ({ windowWidth }) => {
       transition={{ duration: 0.5 }}
     >
       <Image
-        className="w-[200px]  rounded-sm my-5  "
+        className="w-[200px] border-4 border-dark dark:border-light mt-8 "
         alt="rafa"
         src="/rafa.png"
-        width={400}
+        width={300}
         height={400}
       />
-      <Link className=" text-3xl " href="/jess">
+      <Link className="text-3xl " href="/jess">
         Rafa Lyovson
       </Link>
       <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-l from-rafa to-beige"></div>

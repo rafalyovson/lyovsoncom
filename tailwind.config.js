@@ -7,17 +7,16 @@ const config = {
   darkMode: "class",
   theme: {
     colors: {
-      rafa: "#243546",
-      jess: "#82335e",
-      beige: "#caa47e",
-      dark: "#030b22",
-      light: "#f0ebe1",
+      rafa: "#006D77",
+      jess: "#FF6B6B",
+      beige: "#A99985",
+      dark: "#303030",
+      light: "#FDFDFD",
     },
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      fontFamily: {
+        inter: ["Inter", "sans-serif"],
+        lusitana: ["Lusitana", "serif"],
       },
     },
   },

@@ -5,10 +5,14 @@ const PortfolioCard = ({ post }) => {
   return (
     <motion.article
       layout
-      className="max-h-[400px] aspect-square border  rounded shadow-dark dark:shadow-light  border-gray-300 bg-white hover:shadow-lg focus:shadow-lg transition-all flex flex-col justify-between p-2 "
+      className="flex flex-col justify-between p-4 border aspect-square"
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-2xl capitalize">{post.title}</h2>
+      <header className="flex flex-col justify-between gap-4 h-[120px] ">
+        <h2 className="text-2xl capitalize">{post.title}</h2>
+        <div className="h-2 w-[100%] mx-auto rounded-lg bg-gradient-to-r from-jess to-rafa"></div>
+      </header>
+
       <div>{post.body}</div>
     </motion.article>
   );

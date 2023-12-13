@@ -1,16 +1,12 @@
 import { auth } from "@/app/lib/auth.js";
-import { config } from "@fortawesome/fontawesome-svg-core";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Inter } from "next/font/google";
 import Providers, { SessionProvider } from "./Providers.js";
 import "./globals.css";
+import { inter, lusitana } from "./ui/Fonts.js";
 import Footer from "./ui/Footer.js";
 import Header from "./ui/Header.js";
 import Main from "./ui/Main.js";
-
-const inter = Inter({ subsets: ["latin"] });
-config.autoAddCss = false;
 
 export const metadata = {
   title: "Create Next App",
@@ -21,11 +17,12 @@ export default async function RootLayout({ children }) {
   const session = await auth();
 
   return (
-    <html lang="en" className=" h-full overflow-hidden relative">
+    <html
+      lang="en"
+      className={`${inter.variable} ${lusitana.variable} relative h-full overflow-hidden `}
+    >
       <body
-        className={`${
-          inter.className
-        } ${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"}`}
+        className={`${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"} font-lusitana`}
       >
         <SessionProvider session={session}>
           <Providers>
