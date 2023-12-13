@@ -14,6 +14,15 @@ const FooterNav = () => {
       >
         Dashboard
       </Link>
+      {session && (
+        <Link
+          className="border border-beige px-4 py-2 grow text-center"
+          href="/dashboard/new-post"
+        >
+          New Post
+        </Link>
+      )}
+
       <button
         className="border border-beige px-4 py-2 grow"
         onClick={() => (session ? signOut() : signIn())}

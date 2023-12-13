@@ -1,7 +1,7 @@
-import { auth } from "@/utils/auth";
+import { auth } from "@/app/lib/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { prisma } from "../../utils/db";
+import { prisma } from "../lib/db";
 
 const Page = async () => {
   const session = await auth();

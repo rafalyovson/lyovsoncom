@@ -1,7 +1,7 @@
-import About from "./components/About";
-import Contact from "./components/Contact";
+import About from "./ui/About";
+import Contact from "./ui/Contact";
 
-import Projects from "./components/Projects";
+import Projects from "./ui/Projects";
 
 export default function Portfolio() {
   return (

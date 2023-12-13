@@ -1,14 +1,14 @@
-import { auth } from "@/utils/auth";
+import { auth } from "@/app/lib/auth";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Providers, { SessionProvider } from "./Providers";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Main from "./components/Main";
 import "./globals.css";
+import Footer from "./ui/Footer";
+import Header from "./ui/Header";
+import Main from "./ui/Main";
 
 const inter = Inter({ subsets: ["latin"] });
 config.autoAddCss = false;
