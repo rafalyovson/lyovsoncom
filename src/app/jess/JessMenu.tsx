@@ -8,7 +8,7 @@ import JessSocials from "./JessSocials";
 const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
     <motion.aside
-      className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4`}
+      className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4 bg-light dark:bg-dark`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}
