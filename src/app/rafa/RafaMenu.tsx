@@ -8,7 +8,7 @@ import RafaSocials from "./RafaSocials";
 const RafaMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
     <motion.aside
-      className={`fixed top-20 h-full overflow-auto z-10   right-0  flex flex-col items-center gap-4 bg-light dark:bg-dark`}
+      className={`fixed top-20 h-full overflow-auto z-10   right-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-l-4 border-dark dark:border-light`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}
@@ -26,7 +26,6 @@ const RafaMenu = ({ windowWidth }: { windowWidth: number }) => {
       </Link>
       <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-l from-rafa to-beige"></div>
       <RafaSocials />
-      <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-l from-rafa to-beige"></div>
       <nav className="text-2xl list-none ">
         <Link href="/rafa/bio">
           <div className="w-10 h-10">

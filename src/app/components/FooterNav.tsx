@@ -1,33 +1,26 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
-
-const AuthButton = () => {
-  const { data: session } = useSession();
-
-  if (session) {
-    console.log(session);
-    return (
-      <>
-        {session?.user?.name} <br />
-        <button onClick={() => signOut()}>Sign Out</button>
-      </>
-    );
-  }
-
-  return (
-    <>
-      Not signed in <br />
-      <button onClick={() => signIn()}>Sign In</button>
-    </>
-  );
-};
+import Link from "next/link";
 
 const FooterNav = () => {
+  const { data: session } = useSession();
+
   return (
-    <aside>
-      <AuthButton />
-    </aside>
+    <nav className="flex gap-4 items-baseline flex-wrap text-center">
+      <Link
+        className="border border-beige px-4 py-2 grow text-center"
+        href="/dashboard"
+      >
+        Dashboard
+      </Link>
+      <button
+        className="border border-beige px-4 py-2 grow"
+        onClick={() => (session ? signOut() : signIn())}
+      >
+        {session ? "Sign Out" : "Sign In"}
+      </button>
+    </nav>
   );
 };
 
