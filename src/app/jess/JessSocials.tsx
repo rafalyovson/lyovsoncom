@@ -8,8 +8,8 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const JessSocials = () => (
-  <section className="px-4 py-8 text-gray-800 bg-gray-100 border-b border-gray-300">
-    <div className="flex space-x-4">
+  <section className="p-4  ">
+    <div className="flex gap-4">
       <a
         href="https://twitter.com/HasmikKhachunts"
         target="_blank"

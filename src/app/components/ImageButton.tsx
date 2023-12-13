@@ -10,16 +10,17 @@ export const ImageButton = ({
   return (
     <button
       onClick={handleImageClick}
-      className="focus:outline-none p-0"
-      title="Left Image"
+      className="focus:outline-none p-0 aspect-video"
+      title="User Image"
     >
       <div className="relative h-10 w-10">
         <Image
+          loading="eager"
           src={src}
           alt="Placeholder"
-          width={200}
-          height={200}
-          className=""
+          height={400}
+          width={300}
+          className=" "
         />
       </div>
     </button>

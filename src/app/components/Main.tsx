@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { ReactNode, useContext } from "react";
+import twtheme from "tailwindcss/defaultTheme";
 import { UserContext, WindowWidthContext } from "../Providers";
 import JessMenu from "../jess/JessMenu";
 import RafaMenu from "../rafa/RafaMenu";
@@ -23,15 +24,15 @@ const Main = ({ children }: { children: ReactNode }) => {
       </AnimatePresence>
       <motion.main
         onClick={() => setUser("Both")}
-        className=" bg-light text-dark dark:text-light dark:bg-dark min-h-screen overflow-auto relative"
+        className="  min-h-screen overflow-auto relative"
         layout
         initial={{
           backgroundColor:
-            theme === "light" ? "rgb(240 235 225)" : "rgb(3 11 34)",
+            theme === "light" ? twtheme.colors.light : twtheme.colors.dark,
         }}
         animate={{
           backgroundColor:
-            theme === "light" ? "rgb(240 235 225)" : "rgb(3 11 34)",
+            theme === "light" ? twtheme.colors.light : twtheme.colors.dark,
           marginRight:
             user === "Rafa" && window.innerWidth > 992 ? "400px" : "0px",
           marginLeft:

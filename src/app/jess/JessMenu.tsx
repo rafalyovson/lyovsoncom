@@ -8,7 +8,7 @@ import JessSocials from "./JessSocials";
 const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
   return (
     <motion.aside
-      className={`fixed top-20 h-full overflow-auto z-10 bg-gradient-to-b from-jess to-rafa left-0  flex flex-col items-center gap-5 text-light`}
+      className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}
@@ -24,7 +24,9 @@ const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
       <Link className=" text-3xl" href="/jess">
         Jess Lyovson
       </Link>
+      <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-r from-jess to-beige"></div>
       <JessSocials />
+      <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-r from-jess to-beige"></div>
       <nav className="text-2xl list-none">
         <Link href="/jess/bio">
           <div className="w-10 h-10">

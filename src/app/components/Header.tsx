@@ -10,18 +10,20 @@ const Header = () => {
   const { user, setUser } = useContext(UserContext);
 
   return (
-    <header className="bg-gradient-to-r from-jess from-[400px] to-[calc(100vw-400px)] to-rafa text-light flex items-center justify-between h-20 sticky px-4 top-0 z-10">
+    <header className="border-b border-dark dark:border-light flex items-center justify-between h-20 sticky px-4 top-0 z-10">
       <ImageButton src="/jess.png" handleImageClick={() => setUser("Jess")} />
-      <section className="flex gap-2 items-center">
+      <section className="flex gap-4 items-baseline">
         <ThemeSwitch />
         <Link href="/">
-          <h1 onClick={() => setUser("Both")} className="text-4xl">
+          <h1 onClick={() => setUser("Both")} className="text-4xl mb-2">
             Lyovson.com
           </h1>
+          <div className="h-2 w-[100%] mx-auto rounded-lg bg-gradient-to-r from-jess to-rafa"></div>
         </Link>
 
         <ThemeSwitch />
       </section>
+
       <ImageButton src="/rafa.png" handleImageClick={() => setUser("Rafa")} />
     </header>
   );
