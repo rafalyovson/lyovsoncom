@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "../ui/UserMenuLink";
 import RafaSocials from "./RafaSocials";
 
-const RafaMenu = ({ windowWidth }: { windowWidth: number }) => {
+const RafaMenu = ({ windowWidth }) => {
   return (
     <motion.aside
       className={`fixed top-20 h-full overflow-auto z-10   right-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-l-4 border-dark dark:border-light`}

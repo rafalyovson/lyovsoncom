@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-const PortfolioCard = ({ post }: { post: any }) => {
+const PortfolioCard = ({ post }) => {
   return (
     <motion.article
       layout

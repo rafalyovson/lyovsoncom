@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "../ui/UserMenuLink";
 import JessSocials from "./JessSocials";
 
-const JessMenu = ({ windowWidth }: { windowWidth: number }) => {
+const JessMenu = ({ windowWidth }) => {
   return (
     <motion.aside
       className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-r-4 border-dark dark:border-light`}

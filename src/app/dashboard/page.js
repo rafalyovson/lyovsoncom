@@ -1,7 +1,7 @@
-import { auth } from "@/app/lib/auth";
+import { auth } from "@/app/lib/auth.js";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { prisma } from "../lib/db";
+import { prisma } from "../lib/db.js";
 
 const Page = async () => {
   const session = await auth();
@@ -18,10 +18,10 @@ const Page = async () => {
 
   return (
     <>
-      <h1>Welcome, {session?.user?.name}</h1>
+      <h1>Welcome, {session.user.name}</h1>
       <Image
-        alt={user!.name + " photo"}
-        src={user!.image ?? ""}
+        alt={user.name + " photo"}
+        src={user.image ?? ""}
         width={400}
         height={400}
       ></Image>

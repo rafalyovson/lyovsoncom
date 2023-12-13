@@ -4,7 +4,7 @@ import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTheme } from "next-themes";
 
-const ThemeSwitch: React.FC = () => {
+const ThemeSwitch = () => {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {

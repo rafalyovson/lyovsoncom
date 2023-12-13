@@ -4,15 +4,7 @@ import Link from "next/link";
 import { useContext } from "react";
 import { UserContext } from "../Providers";
 
-const UserMenuLink = ({
-  children,
-  className,
-  href,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  href: string;
-}) => {
+const UserMenuLink = ({ children, className, href }) => {
   const { setUser } = useContext(UserContext);
 
   return (
