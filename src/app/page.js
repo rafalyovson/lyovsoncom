@@ -1,14 +1,13 @@
 import About from "./ui/About";
 import Contact from "./ui/Contact";
-
-import Projects from "./ui/Projects";
+import Posts from "./ui/Posts";
 
 export default function Portfolio() {
   return (
-    <div className="flex flex-col min-h-screen bg-white text-black">
+    <div className="flex flex-col min-h-screen text-black bg-white">
       <main className="flex-grow">
         <About />
-        <Projects />
+        <Posts />
         <Contact />
       </main>
     </div>

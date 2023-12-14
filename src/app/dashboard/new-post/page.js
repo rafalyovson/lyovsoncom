@@ -1,44 +1,47 @@
-"use client";
+import { newPost } from "@/app/lib/actions";
+import UploadForm from "@/app/lib/upload";
 
-import { useState } from "react";
-
-const Page = () => {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-
-  const create = () => {};
-
+const Page = async () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen py-2">
-      <div className="flex flex-col border-dark border dark:border-light p-10  shadow-md space-y-6 w-96">
+      <div className="flex flex-col p-10 space-y-6 border shadow-md border-dark dark:border-light w-96">
         <h1 className="text-2xl font-bold text-center">New Post</h1>
-        <form action={create} className="flex flex-col space-y-4">
+        <form action={newPost} className="flex flex-col space-y-4">
           <label className="flex flex-col space-y-2">
             <span className="text-lg font-medium">Title:</span>
             <input
+              name="title"
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
               required
-              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark  focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </label>
           <label className="flex flex-col space-y-2">
             <span className="text-lg font-medium">Content:</span>
             <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              name="content"
               required
-              className="p-2 h-32 border border-dark dark:border-light bg-light dark:bg-dark  focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="h-32 p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </label>
+          <label className="flex flex-col space-y-2">
+            <span className="text-lg font-medium">Featured Image:</span>
+            <input
+              name="featuredImage"
+              type="url"
+              required
+              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </label>
+
           <button
             type="submit"
-            className="px-4 py-2 border border-beige text-white  "
+            className="px-4 py-2 text-white border border-beige "
           >
             Submit
           </button>
         </form>
+        <UploadForm />
       </div>
     </main>
   );
