@@ -1,13 +1,17 @@
 "use server";
+
 import { auth } from "@/app/lib/auth";
+import { del } from "@vercel/blob";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-export const newPost = async (formData, id) => {
+export const createPost = async (formData, id) => {
   const session = await auth();
-  const post = await prisma.post.create({
+  await prisma.post.create({
     data: {
       title: formData.get("title"),
+      slug: formData.get("slug"),
       content: formData.get("content"),
-      featuredImg: formData.get("featuredImage"),
+      featuredImg: formData.get("imageUrl"),
       author: {
         connect: {
           email: session.user.email,
@@ -16,4 +20,18 @@ export const newPost = async (formData, id) => {
     },
   });
   redirect("/");
+};
+
+export const deletePost = async (post) => {
+  if (!post) {
+    revalidatePath("/");
+    return;
+  }
+  del(post.featuredImg);
+  await prisma.post.delete({
+    where: {
+      id: post.id,
+    },
+  });
+  revalidatePath("/");
 };

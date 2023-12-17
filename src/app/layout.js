@@ -19,10 +19,10 @@ export default async function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${lusitana.variable} relative h-full overflow-hidden `}
+      className={`${inter.variable} ${lusitana.variable}  relative h-full overflow-hidden`}
     >
       <body
-        className={`${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"} font-lusitana`}
+        className={`${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"} font-inter`}
       >
         <SessionProvider session={session}>
           <Providers>

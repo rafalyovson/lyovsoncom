@@ -34,6 +34,7 @@ model Post {
   createdAt   DateTime         @default(now())
   author      User             @relation(fields: [authorId], references: [id])
   authorId    String
+  slug        String           @unique
   categories  CategoryOnPost[]
   tags        TagOnPost[]
   comments    Comment[]

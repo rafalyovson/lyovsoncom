@@ -1,13 +1,13 @@
 import { prisma } from "../lib/db.js";
-import PortfolioCard from "./PortfolioCard.js";
+import PostCard from "./PostCard.js";
 
 const data = await prisma.post.findMany({});
 const Posts = () => (
-  <section className="">
-    <h2 className="mb-4 text-2xl text-center">Posts</h2>
-    <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+  <section className="p-8 bg-gray-100 rounded-lg shadow-lg">
+    <h2 className="mb-4 text-3xl text-center text-blue-600">Posts</h2>
+    <div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {data.map((post, index) => (
-        <PortfolioCard key={index} post={post} />
+        <PostCard key={index} post={post} />
       ))}
     </div>
   </section>

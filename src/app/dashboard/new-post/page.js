@@ -1,16 +1,25 @@
-import { newPost } from "@/app/lib/actions";
-import UploadForm from "@/app/lib/upload";
+import { createPost } from "@/app/lib/actions";
+import UploadForm from "@/app/ui/UploadForm";
 
 const Page = async () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen py-2">
       <div className="flex flex-col p-10 space-y-6 border shadow-md border-dark dark:border-light w-96">
         <h1 className="text-2xl font-bold text-center">New Post</h1>
-        <form action={newPost} className="flex flex-col space-y-4">
+        <form action={createPost} className="flex flex-col space-y-4">
           <label className="flex flex-col space-y-2">
             <span className="text-lg font-medium">Title:</span>
             <input
               name="title"
+              type="text"
+              required
+              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </label>
+          <label className="flex flex-col space-y-2">
+            <span className="text-lg font-medium">Slug:</span>
+            <input
+              name="slug"
               type="text"
               required
               className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
@@ -24,15 +33,17 @@ const Page = async () => {
               className="h-32 p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </label>
-          <label className="flex flex-col space-y-2">
-            <span className="text-lg font-medium">Featured Image:</span>
-            <input
-              name="featuredImage"
-              type="url"
-              required
-              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
+          <span className="text-lg font-medium">Featured Image:</span>
+          <UploadForm />
+
+          {/* <label htmlFor="imageAlt" className="flex flex-col space-y-2">
+            Alt Text
           </label>
+          <input
+            name="imageAlt"
+            type="text"
+            className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+          /> */}
 
           <button
             type="submit"
@@ -41,7 +52,6 @@ const Page = async () => {
             Submit
           </button>
         </form>
-        <UploadForm />
       </div>
     </main>
   );
