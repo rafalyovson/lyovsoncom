@@ -1,6 +1,6 @@
 import About from "./ui/About";
 import Contact from "./ui/Contact";
-import Posts from "./ui/Posts";
+import Posts from "./ui/PostGrid";
 
 export default function Portfolio() {
   return (

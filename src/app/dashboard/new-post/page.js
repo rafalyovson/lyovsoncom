@@ -1,5 +1,6 @@
+import UploadForm from "@/app/dashboard/ui/UploadForm";
 import { createPost } from "@/app/lib/actions";
-import UploadForm from "@/app/ui/UploadForm";
+import TitleForm from "../ui/TitleForm";
 
 const Page = async () => {
   return (
@@ -7,24 +8,7 @@ const Page = async () => {
       <div className="flex flex-col p-10 space-y-6 border shadow-md border-dark dark:border-light w-96">
         <h1 className="text-2xl font-bold text-center">New Post</h1>
         <form action={createPost} className="flex flex-col space-y-4">
-          <label className="flex flex-col space-y-2">
-            <span className="text-lg font-medium">Title:</span>
-            <input
-              name="title"
-              type="text"
-              required
-              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </label>
-          <label className="flex flex-col space-y-2">
-            <span className="text-lg font-medium">Slug:</span>
-            <input
-              name="slug"
-              type="text"
-              required
-              className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </label>
+          <TitleForm />
           <label className="flex flex-col space-y-2">
             <span className="text-lg font-medium">Content:</span>
             <textarea

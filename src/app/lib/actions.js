@@ -8,7 +8,7 @@ import { prisma } from "./db";
 
 export const createPost = async (formData, id) => {
   const session = await auth();
-  await prisma.post.create({
+  const post = await prisma.post.create({
     data: {
       title: formData.get("title"),
       slug: formData.get("slug"),
@@ -21,7 +21,22 @@ export const createPost = async (formData, id) => {
       },
     },
   });
-  redirect("/");
+  redirect(`/posts/${post.slug}`);
+};
+
+export const updaatePost = async (formData, id) => {
+  const post = await prisma.post.update({
+    where: {
+      id,
+    },
+    data: {
+      title: formData.get("title"),
+      slug: formData.get("slug"),
+      content: formData.get("content"),
+      featuredImg: formData.get("imageUrl"),
+    },
+  });
+  redirect(`/posts/${post.slug}`);
 };
 
 export const deletePost = async (post) => {
