@@ -4,6 +4,8 @@ import { auth } from "@/app/lib/auth";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { prisma } from "./db";
+
 export const createPost = async (formData, id) => {
   const session = await auth();
   await prisma.post.create({
