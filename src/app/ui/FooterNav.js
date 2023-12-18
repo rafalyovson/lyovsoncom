@@ -7,24 +7,24 @@ const FooterNav = () => {
   const { data: session } = useSession();
 
   return (
-    <nav className="flex gap-4 items-baseline flex-wrap text-center">
+    <nav className="flex flex-wrap items-baseline gap-4 text-center">
       <Link
-        className="border border-beige px-4 py-2 grow text-center"
+        className="px-4 py-2 text-center border border-beige grow"
         href="/dashboard"
       >
         Dashboard
       </Link>
       {session && (
         <Link
-          className="border border-beige px-4 py-2 grow text-center"
-          href="/dashboard/new-post"
+          className="px-4 py-2 text-center border border-beige grow"
+          href="/dashboard/create-post"
         >
-          New Post
+          Create Post
         </Link>
       )}
 
       <button
-        className="border border-beige px-4 py-2 grow"
+        className="px-4 py-2 border border-beige grow"
         onClick={() => (session ? signOut() : signIn())}
       >
         {session ? "Sign Out" : "Sign In"}

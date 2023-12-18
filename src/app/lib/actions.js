@@ -24,10 +24,10 @@ export const createPost = async (formData, id) => {
   redirect(`/posts/${post.slug}`);
 };
 
-export const updaatePost = async (formData, id) => {
+export const updatePost = async (id, formData) => {
   const post = await prisma.post.update({
     where: {
-      id,
+      id: id,
     },
     data: {
       title: formData.get("title"),

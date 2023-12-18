@@ -23,7 +23,7 @@ const PostCard = ({ post }) => {
         />
         <div className="absolute inset-0 opacity-50 bg-gradient-to-t from-black to-transparent"></div>
         <header className="absolute bottom-0 w-full p-4 bg-transparent text-light ">
-          <h2 className="text-2xl font-bold capitalize">{post.title}</h2>
+          <h2 className="text-lg font-bold capitalize">{post.title}</h2>
         </header>
       </Link>
     </motion.article>

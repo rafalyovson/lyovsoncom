@@ -4,7 +4,7 @@ import useFileUpload from "@/app/lib/useFileUpload";
 import Image from "next/image";
 import { Suspense, useRef } from "react";
 
-export default function UploadForm() {
+export default function UploadForm({ value }) {
   const inputFileRef = useRef(null);
   const { blob, loading, error, uploadFile } = useFileUpload();
 
@@ -13,6 +13,18 @@ export default function UploadForm() {
     const file = inputFileRef.current.files[0];
     uploadFile(file);
   };
+
+  if (value) {
+    return (
+      <input
+        name="imageUrl"
+        type="url"
+        required
+        className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+        value={value}
+      />
+    );
+  }
 
   // rest of the component
 

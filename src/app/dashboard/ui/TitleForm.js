@@ -3,9 +3,10 @@
 import { slugify } from "@/app/lib/utils";
 import { useState } from "react";
 
-const TitleForm = () => {
+const TitleForm = ({ value }) => {
+  console.log(value);
   const [slug, setSlug] = useState("");
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(value || "");
   return (
     <>
       <label className="flex flex-col space-y-2">
