@@ -14,7 +14,7 @@ const About = () => (
         href="https://x.com/hasmikkhachunts"
       >
         {" "}
-        @hasmikkhacnuts
+        @hasmikkhachunts
       </a>{" "}
       and{" "}
       <a
