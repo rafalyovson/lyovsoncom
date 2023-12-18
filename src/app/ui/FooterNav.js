@@ -2,33 +2,25 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import Button from "./Button";
 
 const FooterNav = () => {
   const { data: session } = useSession();
 
   return (
     <nav className="flex flex-wrap items-baseline gap-4 text-center">
-      <Link
-        className="px-4 py-2 text-center border border-beige grow"
-        href="/dashboard"
-      >
-        Dashboard
-      </Link>
+      <Button>
+        <Link href="/dashboard">Dashboard</Link>
+      </Button>
       {session && (
-        <Link
-          className="px-4 py-2 text-center border border-beige grow"
-          href="/dashboard/create-post"
-        >
-          Create Post
-        </Link>
+        <Button>
+          <Link href="/dashboard/create-post">Create Post</Link>{" "}
+        </Button>
       )}
 
-      <button
-        className="px-4 py-2 border border-beige grow"
-        onClick={() => (session ? signOut() : signIn())}
-      >
+      <Button className="" onClick={() => (session ? signOut() : signIn())}>
         {session ? "Sign Out" : "Sign In"}
-      </button>
+      </Button>
     </nav>
   );
 };

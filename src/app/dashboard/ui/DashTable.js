@@ -38,21 +38,15 @@ const DashTable = ({ posts }) => {
             <td className="px-6 py-4 whitespace-nowrap dark:text-light">
               {new Date(post.createdAt).toLocaleDateString()}
             </td>
-            <td className="px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
+            <td className="flex gap-4 px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
               <Button
                 onClick={() =>
                   router.push(`/dashboard/update-post/${post.slug}`)
                 }
-                className="px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-700"
               >
                 Edit
               </Button>
-              <Button
-                onClick={() => deletePost(post)}
-                className="px-4 py-2 ml-2 font-bold text-white bg-red-500 rounded hover:bg-red-700"
-              >
-                Delete
-              </Button>
+              <Button onClick={() => deletePost(post)}>Delete</Button>
             </td>
           </tr>
         ))}

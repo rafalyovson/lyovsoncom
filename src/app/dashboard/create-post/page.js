@@ -31,7 +31,7 @@ const Page = async () => {
 
           <button
             type="submit"
-            className="px-4 py-2 text-white border border-beige "
+            className="px-4 py-2 border text-dark dark:text-white border-beige "
           >
             Submit
           </button>

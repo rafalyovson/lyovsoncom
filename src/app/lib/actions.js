@@ -6,6 +6,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "./db";
 
+export const deleteImage = async (url) => {
+  del(url);
+};
+
 export const createPost = async (formData, id) => {
   const session = await auth();
   const post = await prisma.post.create({
@@ -44,7 +48,7 @@ export const deletePost = async (post) => {
     revalidatePath("/");
     return;
   }
-  del(post.featuredImg);
+  deleteImage(post.featuredImg);
   await prisma.post.delete({
     where: {
       id: post.id,

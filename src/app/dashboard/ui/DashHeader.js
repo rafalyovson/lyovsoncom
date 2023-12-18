@@ -7,7 +7,7 @@ const DashHeader = ({ user }) => {
         Welcome, {user.name}
       </h1>
       <Image
-        className="rounded-full border-4 border-indigo-500 dark:border-light max-h-[150px] max-w-[150px]"
+        className="rounded-full max-h-[150px] max-w-[150px]"
         alt={user.name + " photo"}
         src={user.image ?? ""}
         width={400}

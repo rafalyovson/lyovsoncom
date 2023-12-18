@@ -1,6 +1,7 @@
 import UploadForm from "@/app/dashboard/ui/UploadForm";
 import { updatePost } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/db";
+import Button from "@/app/ui/Button";
 import TitleForm from "../../ui/TitleForm";
 
 const Page = async ({ params }) => {
@@ -42,12 +43,9 @@ const Page = async ({ params }) => {
             className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
           /> */}
 
-          <button
-            type="submit"
-            className="px-4 py-2 text-white border border-beige "
-          >
+          <Button type="submit" className="">
             Submit
-          </button>
+          </Button>
         </form>
       </div>
     </main>

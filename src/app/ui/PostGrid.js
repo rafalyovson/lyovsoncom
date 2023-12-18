@@ -3,7 +3,7 @@ import PostCard from "./PostCard.js";
 
 const data = await prisma.post.findMany({});
 
-const Posts = () => {
+const PostGrid = () => {
   if (!data)
     return (
       <p className="text-xl text-center text-gray-600 dark:text-gray-300">
@@ -16,12 +16,12 @@ const Posts = () => {
         Posts
       </h2>
       <div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        {data.map((post, index) => (
-          <PostCard key={index} post={post} />
-        ))}
+        {data
+          .map((post, index) => <PostCard key={index} post={post} />)
+          .reverse()}
       </div>
     </section>
   );
 };
 
-export default Posts;
+export default PostGrid;
