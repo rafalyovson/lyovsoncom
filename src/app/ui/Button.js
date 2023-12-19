@@ -7,7 +7,7 @@ const Button = ({ children, className, ...props }) => {
     <motion.button
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
-      className={`px-4 py-2 font-bold rounded text-white bg-dark hover:bg-beige dark:text-light dark:hover:bg-beige dark:bg-dark transition-all duration-300 ease-in-out shadow-md ${className}`}
+      className={`px-4 py-2 font-bold rounded text-light dark:text-dark dark:bg-light bg-dark hover:bg-beige  dark:hover:bg-beige transition-all duration-300 ease-in-out shadow-md ${className}`}
       {...props}
     >
       {children}

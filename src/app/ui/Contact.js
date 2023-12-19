@@ -5,6 +5,7 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Button from "./Button";
 import ThemeSwitch from "./ThemeSwitcher";
 
 const Contact = () => (
@@ -13,50 +14,54 @@ const Contact = () => (
       Contact
     </h2>
     <div className="flex justify-center space-x-4">
-      <a
-        href="https://www.x.com/lyovson"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="X"
-        className="hover:text-indigo-500 dark:hover:text-indigo-300"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faXTwitter} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://www.linkedin.com/in/your-name"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Linkedin"
-        className="hover:text-indigo-500 dark:hover:text-indigo-300"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faLinkedin} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://github.com/your-name"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="GitHub"
-        className="hover:text-indigo-500 dark:hover:text-indigo-300"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faGithub} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://codepen.io/your-name"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="CodePen"
-        className="hover:text-indigo-500 dark:hover:text-indigo-300"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faCodepen} size="2x" />
-        </div>
-      </a>
+      <Button>
+        <a
+          href="https://www.x.com/lyovson"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="X"
+        >
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faXTwitter} size="2x" />
+          </div>
+        </a>
+      </Button>
+      <Button>
+        <a
+          href="https://www.linkedin.com/in/your-name"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Linkedin"
+        >
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faLinkedin} size="2x" />
+          </div>
+        </a>
+      </Button>
+      <Button>
+        <a
+          href="https://github.com/your-name"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="GitHub"
+        >
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faGithub} size="2x" />
+          </div>
+        </a>
+      </Button>
+      <Button>
+        <a
+          href="https://codepen.io/your-name"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="CodePen"
+        >
+          <div className="w-10 h-10">
+            <FontAwesomeIcon icon={faCodepen} size="2x" />
+          </div>
+        </a>
+      </Button>
       <ThemeSwitch />
     </div>
   </section>

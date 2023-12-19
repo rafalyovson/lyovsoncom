@@ -24,17 +24,15 @@ const Main = ({ children }) => {
       </AnimatePresence>
       <motion.main
         onClick={() => setUser("Both")}
-        className="relative min-h-screen overflow-auto font-heading"
+        className="relative min-h-screen overflow-auto font-heading "
         layout
         initial={{
           backgroundColor: theme === "light" ? colors.light : colors.dark,
         }}
         animate={{
-          backgroundColor: theme === "light" ? colors.light : colors.dark,
-          marginRight:
-            user === "Rafa" && window.innerWidth > 992 ? "400px" : "0px",
-          marginLeft:
-            user === "Jess" && window.innerWidth > 992 ? "400px" : "0px",
+          backgroundColor: theme === "dark" ? colors.dark : colors.light,
+          marginRight: user === "Rafa" && windowWidth > 992 ? "400px" : "0px",
+          marginLeft: user === "Jess" && windowWidth > 992 ? "400px" : "0px",
         }}
         transition={{ duration: 0.5 }}
       >

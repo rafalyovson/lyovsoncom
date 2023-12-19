@@ -11,7 +11,7 @@ const ThemeSwitch = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  const switchClasses = `flex items-center justify-center w-6 h-6 text-dark dark:text-light bg-light border border-dark dark:border-light dark:bg-dark rounded-full transition-all duration-500 transform ${
+  const switchClasses = `flex items-center justify-center w-12 h-12 dark:text-dark text-light dark:bg-light  bg-dark rounded-full transition-all duration-500 transform ${
     theme === "light" ? "rotate-180" : ""
   }`;
 

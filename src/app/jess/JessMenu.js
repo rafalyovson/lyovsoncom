@@ -21,40 +21,30 @@ const JessMenu = ({ windowWidth }) => {
         width={300}
         height={400}
       />
-      <Link className="text-3xl " href="/jess">
+      <Link className="hover:underline" className="text-3xl " href="/jess">
         Jess Lyovson
       </Link>
       <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-r from-jess to-beige"></div>
       <JessSocials />
       <nav className="text-2xl list-none">
-        <Link href="/jess/bio">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
+        <Link className="hover:underline" href="/jess/bio">
+          <FontAwesomeIcon icon={faXTwitter} />
           Bio
         </Link>
-        <Link href="/jess/portfolio">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
+        <Link className="hover:underline" href="/jess/portfolio">
+          <FontAwesomeIcon icon={faXTwitter} />
           Portfolio
         </Link>
-        <Link href="/jess/portfolio">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
+        <Link className="hover:underline" href="/jess/portfolio">
+          <FontAwesomeIcon icon={faXTwitter} />
           Contact
         </Link>
-        <Link href="/jess/portfolio">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
+        <Link className="hover:underline" href="/jess/portfolio">
+          <FontAwesomeIcon icon={faXTwitter} />
           Project 1
         </Link>
-        <Link href="/jess/portfolio">
-          <div className="w-10 h-10">
-            <FontAwesomeIcon icon={faXTwitter} size="2x" />
-          </div>
+        <Link className="hover:underline" href="/jess/portfolio">
+          <FontAwesomeIcon icon={faXTwitter} />
           Project 2
         </Link>
       </nav>

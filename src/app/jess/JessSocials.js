@@ -3,64 +3,55 @@ import {
   faLinkedin,
   faRedditAlien,
   faXTwitter,
-  faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Button from "../ui/Button";
 
 const JessSocials = () => (
-  <section className="p-4  ">
-    <div className="flex gap-4">
-      <a
-        href="https://twitter.com/HasmikKhachunts"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="X"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faXTwitter} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://www.linkedin.com/in/khachunts"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="LinkedIn"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faLinkedin} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://reddit.com/your-name"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Reddit"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faRedditAlien} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://youtube.com/your-name"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="YouTube"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faYoutube} size="2x" />
-        </div>
-      </a>
-      <a
-        href="https://www.instagram.com/khachunts/"
-        target="_blank"
-        rel="noopener noreferrer"
-        title="Instagram"
-      >
-        <div className="w-10 h-10">
-          <FontAwesomeIcon icon={faInstagram} size="2x" />
-        </div>
-      </a>
-    </div>
+  <section className="p-4 ">
+    <nav className="flex gap-4">
+      <Button>
+        <a
+          href="https://www.instagram.com/khachunts/"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Instagram"
+        >
+          <FontAwesomeIcon icon={faInstagram} />
+        </a>
+      </Button>
+      <Button>
+        <a
+          href="https://www.linkedin.com/in/khachunts"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="LinkedIn"
+        >
+          <FontAwesomeIcon icon={faLinkedin} />
+        </a>
+      </Button>
+      <Button>
+        <a
+          href="https://twitter.com/HasmikKhachunts"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="X"
+        >
+          <FontAwesomeIcon icon={faXTwitter} />
+        </a>
+      </Button>
+
+      <Button>
+        <a
+          href="https://reddit.com/your-name"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Reddit"
+        >
+          <FontAwesomeIcon icon={faRedditAlien} />
+        </a>
+      </Button>
+    </nav>
   </section>
 );
 
