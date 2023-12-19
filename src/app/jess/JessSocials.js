@@ -43,7 +43,7 @@ const JessSocials = () => (
 
       <Button>
         <a
-          href="https://reddit.com/your-name"
+          href="https://www.reddit.com/user/hasmikkhachunts"
           target="_blank"
           rel="noopener noreferrer"
           title="Reddit"
