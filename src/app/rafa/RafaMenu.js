@@ -21,7 +21,7 @@ const RafaMenu = ({ windowWidth }) => {
         width={300}
         height={400}
       />
-      <Link className="hover:underline" className="text-3xl " href="/jess">
+      <Link className="hover:underline" href="/jess">
         Rafa Lyovson
       </Link>
       <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-l from-rafa to-beige"></div>
