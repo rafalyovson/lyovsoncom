@@ -17,7 +17,7 @@ const TitleForm = ({ value }) => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
         />
       </label>
       <label className="flex flex-col space-y-2">
@@ -28,7 +28,7 @@ const TitleForm = ({ value }) => {
           value={slugify(title)}
           onChange={(e) => setSlug(slugify(e.target.value))}
           required
-          className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
         />
       </label>
     </>

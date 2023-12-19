@@ -9,7 +9,7 @@ const FooterNav = () => {
   const { data: session } = useSession();
 
   return (
-    <nav className="flex flex-wrap items-center justify-center gap-4 text-center">
+    <nav className="flex flex-col flex-wrap items-center justify-center gap-4 text-center md:flex-row">
       <Button>
         <Link href="/dashboard">Dashboard</Link>
       </Button>

@@ -2,10 +2,11 @@ import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Button from "../ui/Button";
 import Link from "../ui/UserMenuLink";
 import RafaSocials from "./RafaSocials";
 
-const RafaMenu = ({ windowWidth }) => {
+const RafaMenu = ({ windowWidth, setUser }) => {
   return (
     <motion.aside
       className={`fixed top-20 h-full overflow-auto z-10   right-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-l-4 border-dark dark:border-light`}
@@ -48,6 +49,13 @@ const RafaMenu = ({ windowWidth }) => {
           Project 2
         </Link>
       </nav>
+      <Button
+        onClick={() => {
+          setUser("Both");
+        }}
+      >
+        X
+      </Button>
     </motion.aside>
   );
 };

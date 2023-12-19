@@ -17,9 +17,9 @@ const Main = ({ children }) => {
     <>
       <AnimatePresence>
         {user === "Jess" ? (
-          <JessMenu key="jess" windowWidth={windowWidth} />
+          <JessMenu setUser={setUser} key="jess" windowWidth={windowWidth} />
         ) : user === "Rafa" ? (
-          <RafaMenu key="rafa" windowWidth={windowWidth} />
+          <RafaMenu setUser={setUser} key="rafa" windowWidth={windowWidth} />
         ) : null}
       </AnimatePresence>
       <motion.main

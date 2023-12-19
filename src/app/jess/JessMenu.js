@@ -2,10 +2,11 @@ import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Button from "../ui/Button";
 import Link from "../ui/UserMenuLink";
 import JessSocials from "./JessSocials";
 
-const JessMenu = ({ windowWidth }) => {
+const JessMenu = ({ windowWidth, setUser }) => {
   return (
     <motion.aside
       className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-r-4 border-dark dark:border-light`}
@@ -26,7 +27,7 @@ const JessMenu = ({ windowWidth }) => {
       </Link>
       <div className="h-2 w-[80%] mx-auto rounded-lg bg-gradient-to-r from-jess to-beige"></div>
       <JessSocials />
-      <nav className="text-2xl list-none">
+      <nav className="text-2xl list-none ">
         <Link className="hover:underline" href="/jess/bio">
           <FontAwesomeIcon icon={faXTwitter} />
           Bio
@@ -48,6 +49,13 @@ const JessMenu = ({ windowWidth }) => {
           Project 2
         </Link>
       </nav>
+      <Button
+        onClick={() => {
+          setUser("Both");
+        }}
+      >
+        X
+      </Button>
     </motion.aside>
   );
 };

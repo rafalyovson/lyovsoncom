@@ -1,9 +1,12 @@
 // UploadForm.js
 "use client";
-import { deleteImage } from "@/app/lib/actions";
 import useFileUpload from "@/app/lib/useFileUpload";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { Suspense, useRef, useState } from "react";
+import { deleteImage } from "../../lib/actions";
+import Button from "../../ui/Button";
 
 export default function UploadForm({ value }) {
   const inputFileRef = useRef(null);
@@ -35,15 +38,13 @@ export default function UploadForm({ value }) {
               setNewImage(null);
             }}
           >
-            <span className="text-4xl text-white">X</span>
+            <Button>X</Button>
           </div>
           <Image src={newImage} alt={newImage} width="400" height="300" />
         </div>
       </>
     );
   }
-
-  // rest of the component
 
   return (
     <>
@@ -53,13 +54,17 @@ export default function UploadForm({ value }) {
       ) : (
         <>
           {!blob && (
-            <input
-              onChange={handleFileUpload}
-              name="file"
-              ref={inputFileRef}
-              type="file"
-              required
-            />
+            <label className="p-2 text-center border cursor-pointer border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400 ">
+              <FontAwesomeIcon icon={faUpload} /> Upload Image
+              <input
+                onChange={handleFileUpload}
+                name="file"
+                ref={inputFileRef}
+                type="file"
+                required
+                style={{ display: "none" }}
+              />
+            </label>
           )}
 
           {blob && (
@@ -68,7 +73,7 @@ export default function UploadForm({ value }) {
                 name="imageUrl"
                 type="url"
                 required
-                className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
                 value={blob.url}
               />
 
