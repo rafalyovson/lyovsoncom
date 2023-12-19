@@ -34,15 +34,6 @@ const Page = async ({ params }) => {
           <span className="text-lg font-medium">Featured Image:</span>
           <UploadForm value={post.featuredImg} />
 
-          {/* <label htmlFor="imageAlt" className="flex flex-col space-y-2">
-            Alt Text
-          </label>
-          <input
-            name="imageAlt"
-            type="text"
-            className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-          /> */}
-
           <Button type="submit" className="">
             Submit
           </Button>
