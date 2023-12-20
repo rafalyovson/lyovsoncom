@@ -1,10 +1,10 @@
+import JessSocials from "@/app/(tower)/jess/JessSocials";
+import Link from "@/app/(tower)/ui/UserMenuLink";
+import Button from "@/app/ui/Button";
 import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Button from "../ui/Button";
-import Link from "../ui/UserMenuLink";
-import JessSocials from "./JessSocials";
 
 const JessMenu = ({ windowWidth, setUser }) => {
   return (

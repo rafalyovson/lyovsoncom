@@ -1,5 +1,5 @@
-import About from "./ui/About";
-import Posts from "./ui/PostGrid";
+import About from "@/app/(tower)/ui/About";
+import Posts from "@/app/(tower)/ui/PostGrid";
 
 export default function Portfolio() {
   return (

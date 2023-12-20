@@ -1,4 +1,4 @@
-import UploadForm from "@/app/dashboard/ui/UploadForm";
+import UploadForm from "@/app/dungeon/ui/UploadForm";
 import { createPost } from "@/app/lib/actions";
 import Button from "@/app/ui/Button";
 import ContentForm from "../ui/ContentForm";

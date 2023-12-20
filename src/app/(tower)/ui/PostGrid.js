@@ -1,5 +1,5 @@
-import { prisma } from "../lib/db.js";
-import PostCard from "./PostCard.js";
+import PostCard from "@/app/(tower)/ui/PostCard";
+import { prisma } from "@/app/lib/db";
 
 const data = await prisma.post.findMany({});
 

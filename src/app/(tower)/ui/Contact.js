@@ -1,3 +1,5 @@
+import Button from "@/app/ui/Button";
+import ThemeSwitch from "@/app/ui/ThemeSwitcher";
 import {
   faCodepen,
   faGithub,
@@ -5,8 +7,6 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "./Button";
-import ThemeSwitch from "./ThemeSwitcher";
 
 const Contact = () => (
   <section className="px-4 py-8 text-gray-800 border-b border-gray-300 rounded-lg shadow-lg bg-gray-50 dark:bg-dark">

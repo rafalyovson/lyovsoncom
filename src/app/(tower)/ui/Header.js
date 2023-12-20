@@ -1,9 +1,9 @@
 "use client";
 
+import { UserContext } from "@/app/(tower)/lib/userProvider";
+import { ImageButton } from "@/app/(tower)/ui/ImageButton";
 import Link from "next/link";
 import { useContext } from "react";
-import { UserContext } from "../Providers";
-import { ImageButton } from "./ImageButton";
 
 const Header = () => {
   const { user, setUser } = useContext(UserContext);

@@ -1,18 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import Card from "@/app/ui/Card";
 import Image from "next/image";
 import Link from "next/link";
-// import { deletePost } from "../lib/actions";
 
 const PostCard = ({ post }) => {
   return (
-    <motion.article
-      layout
-      className="relative flex flex-col justify-between overflow-hidden border-2 rounded-lg shadow-2xl bg-light border-dark aspect-square grow "
-      transition={{ duration: 0.5 }}
-      // onClick={() => deletePost(post)}
-    >
+    <Card>
       <Link href={`/posts/${post.slug}`}>
         <Image
           className="absolute object-cover w-full h-full"
@@ -26,7 +20,7 @@ const PostCard = ({ post }) => {
           <h2 className="text-lg font-bold capitalize">{post.title}</h2>
         </header>
       </Link>
-    </motion.article>
+    </Card>
   );
 };
 

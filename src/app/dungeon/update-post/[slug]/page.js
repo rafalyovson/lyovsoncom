@@ -1,4 +1,4 @@
-import UploadForm from "@/app/dashboard/ui/UploadForm";
+import UploadForm from "@/app/dungeon/ui/UploadForm";
 import { updatePost } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/db";
 import Button from "@/app/ui/Button";

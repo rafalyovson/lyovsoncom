@@ -1,3 +1,4 @@
+import Button from "@/app/ui/Button";
 import {
   faCodepen,
   faGithub,
@@ -5,7 +6,6 @@ import {
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "../ui/Button";
 
 const RafaSocials = () => (
   <section className="p-4 ">

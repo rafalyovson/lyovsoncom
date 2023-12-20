@@ -5,11 +5,6 @@ import { createContext, useEffect, useState } from "react";
 export { SessionProvider } from "next-auth/react";
 // Contexts
 
-export const UserContext = createContext({
-  user: "Both",
-  setUser: (user) => {},
-});
-
 export const WindowWidthContext = createContext({ windowWidth: 0 });
 
 export const ThemeProvider = ({ children, ...props }) => {
@@ -19,7 +14,6 @@ export const ThemeProvider = ({ children, ...props }) => {
 // Providers
 
 export default function Providers({ children }) {
-  const [user, setUser] = useState(() => "Both");
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0
   );
@@ -32,9 +26,7 @@ export default function Providers({ children }) {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <WindowWidthContext.Provider value={{ windowWidth }}>
-        <UserContext.Provider value={{ user, setUser }}>
-          {children}
-        </UserContext.Provider>
+        {children}
       </WindowWidthContext.Provider>
     </ThemeProvider>
   );
