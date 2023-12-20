@@ -36,5 +36,5 @@ export default function useFileUpload() {
     }
   };
 
-  return { blob, loading, error, uploadFile };
+  return { blob, loading, error, setBlob, uploadFile };
 }

@@ -12,13 +12,11 @@ const Page = async ({ params }) => {
   });
 
   return (
-    <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg bg-light">
-      <h1 className="mb-4 text-5xl font-bold text-center text-dark">
-        {post.title}
-      </h1>
+    <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg ">
+      <h1 className="mb-4 text-5xl font-bold text-center ">{post.title}</h1>
       <aside className="flex items-center justify-between gap-4 mb-4">
-        <p className="text-lg font-medium text-dark">{post.author.name}</p>
-        <p className="text-sm text-dark">
+        <p className="text-lg font-medium ">{post.author.name}</p>
+        <p className="text-sm ">
           {new Date(post.createdAt).toLocaleDateString()}
         </p>
       </aside>
@@ -31,7 +29,7 @@ const Page = async ({ params }) => {
           className="object-cover rounded-lg shadow-lg"
         />
       </div>
-      <div className="container mt-4 text-lg leading-relaxed text-dark">
+      <div className="container mt-4 text-lg leading-relaxed ">
         {post.content}
       </div>
     </article>

@@ -8,7 +8,7 @@ const Page = async () => {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen py-2">
       <div className="flex flex-col p-10 space-y-6 border shadow-md border-dark dark:border-light w-96">
-        <h1 className="text-2xl font-bold text-center">New Post</h1>
+        <h1 className="text-2xl font-bold text-center">Create Post</h1>
         <form action={createPost} className="flex flex-col space-y-4">
           <TitleForm />
           <ContentForm />

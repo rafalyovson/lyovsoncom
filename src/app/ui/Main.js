@@ -24,7 +24,7 @@ const Main = ({ children }) => {
       </AnimatePresence>
       <motion.main
         onClick={() => setUser("Both")}
-        className="relative min-h-screen overflow-auto font-heading "
+        className="relative min-h-screen my-8 overflow-auto font-heading"
         layout
         initial={{
           backgroundColor: theme === "light" ? colors.light : colors.dark,
