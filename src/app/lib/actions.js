@@ -45,7 +45,7 @@ export const updatePost = async (id, formData) => {
 
 export const deletePost = async (post) => {
   if (!post) {
-    revalidatePath("/");
+    revalidatePath("/dungeon");
     return;
   }
   deleteImage(post.featuredImg);
@@ -54,5 +54,5 @@ export const deletePost = async (post) => {
       id: post.id,
     },
   });
-  revalidatePath("/");
+  revalidatePath("/dungeon");
 };

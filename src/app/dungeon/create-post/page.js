@@ -1,8 +1,8 @@
-import UploadForm from "@/app/dungeon/ui/UploadForm";
+import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
 import { createPost } from "@/app/lib/actions";
 import Button from "@/app/ui/Button";
-import ContentForm from "../ui/ContentForm";
-import TitleForm from "../ui/TitleForm";
+import ContentForm from "../ui/postForm/ContentForm";
+import TitleForm from "../ui/postForm/TitleForm";
 
 const Page = async () => {
   return (

@@ -1,9 +1,9 @@
 "use client";
 // ImageDisplay.js
 
+import { deleteImage } from "@/app/lib/actions";
+import Button from "@/app/ui/Button";
 import Image from "next/image";
-import { deleteImage } from "../../lib/actions";
-import Button from "../../ui/Button";
 
 export default function ImageDisplay({ src, onDelete }) {
   return (

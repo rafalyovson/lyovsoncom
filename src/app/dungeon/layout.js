@@ -1,8 +1,9 @@
+import Header from "@/app/dungeon/ui/Header.js";
+import { auth } from "@/app/lib/auth.js";
+import { prisma } from "@/app/lib/db.js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { redirect } from "next/navigation";
-import { auth } from "../lib/auth.js";
-import { prisma } from "../lib/db.js";
 
 export default async function Layout({ children }) {
   const session = await auth();
@@ -25,8 +26,9 @@ export default async function Layout({ children }) {
 
   return (
     <>
-      {children}
+      <Header user={user} />
 
+      {children}
       <SpeedInsights />
       <Analytics />
     </>

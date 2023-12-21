@@ -1,9 +1,9 @@
-import UploadForm from "@/app/dungeon/ui/UploadForm";
+import ContentForm from "@/app/dungeon/ui/postForm/ContentForm";
+import TitleForm from "@/app/dungeon/ui/postForm/TitleForm";
+import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
 import { updatePost } from "@/app/lib/actions";
 import { prisma } from "@/app/lib/db";
 import Button from "@/app/ui/Button";
-import ContentForm from "../../ui/ContentForm";
-import TitleForm from "../../ui/TitleForm";
 
 const Page = async ({ params }) => {
   const post = await prisma.post.findUnique({

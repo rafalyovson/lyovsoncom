@@ -1,7 +1,6 @@
-import DashHeader from "@/app/dungeon/ui/DashHeader.js";
-import { auth } from "../lib/auth.js";
-import { prisma } from "../lib/db.js";
-import DashTable from "./ui/DashTable.js";
+import PostTable from "@/app/dungeon/ui/postTable/PostTable.js";
+import { auth } from "@/app/lib/auth.js";
+import { prisma } from "@/app/lib/db.js";
 
 const Page = async () => {
   const session = await auth();
@@ -20,8 +19,7 @@ const Page = async () => {
 
   return (
     <main>
-      <DashHeader user={user} />
-      <DashTable posts={posts} />
+      <PostTable posts={posts} />
     </main>
   );
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/app/ui/Button";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTheme } from "next-themes";
@@ -11,18 +12,17 @@ const ThemeSwitch = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  const switchClasses = `flex items-center justify-center w-12 h-12 dark:text-dark text-light dark:bg-light  bg-dark rounded-full transition-all duration-500 transform ${
-    theme === "light" ? "rotate-180" : ""
-  }`;
+  const switchClasses = `flex items-center justify-center rounded-full size-12 `;
 
   return (
-    <button
+    <Button
+      aria-label="Toggle Theme"
       className={switchClasses}
       onClick={toggleTheme}
       title="Toggle Theme"
     >
       <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
-    </button>
+    </Button>
   );
 };
 

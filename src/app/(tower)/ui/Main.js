@@ -2,8 +2,8 @@
 
 import JessMenu from "@/app/(tower)/jess/JessMenu";
 import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
+import { WindowWidthContext } from "@/app/(tower)/lib/WindowWidthProvider";
 import RafaMenu from "@/app/(tower)/rafa/RafaMenu";
-import { WindowWidthContext } from "@/app/Providers";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useContext } from "react";

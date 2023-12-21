@@ -2,6 +2,12 @@
 
 import Button from "@/app/ui/Button";
 import ThemeSwitch from "@/app/ui/ThemeSwitcher";
+import {
+  faDungeon,
+  faRightFromBracket,
+  faRightToBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -10,17 +16,35 @@ const FooterNav = () => {
 
   return (
     <nav className="flex flex-col flex-wrap items-center justify-center gap-4 text-center md:flex-row">
-      <Button>
-        <Link href="/dungeon">Dungeon</Link>
-      </Button>
       {session && (
-        <Button>
-          <Link href="/dungeon/create-post">Create Post</Link>{" "}
+        <>
+          <Button
+            aria-label="go to the dungeon"
+            className="flex items-center justify-center rounded-full size-12"
+          >
+            <Link href="/dungeon">
+              <FontAwesomeIcon icon={faDungeon} />
+            </Link>
+          </Button>
+          <Button
+            className="flex items-center justify-center rounded-full size-12"
+            onClick={() => signOut()}
+            aria-label="sign out"
+          >
+            <FontAwesomeIcon icon={faRightFromBracket} />
+          </Button>
+        </>
+      )}
+      {!session && (
+        <Button
+          className="flex items-center justify-center rounded-full size-12"
+          onClick={() => signIn()}
+          aria-label="sign in"
+        >
+          <FontAwesomeIcon icon={faRightToBracket} />
         </Button>
       )}
-      <Button className="" onClick={() => (session ? signOut() : signIn())}>
-        {session ? "Sign Out" : "Sign In"}
-      </Button>
+
       <ThemeSwitch />
     </nav>
   );

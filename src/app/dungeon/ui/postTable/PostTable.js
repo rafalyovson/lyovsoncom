@@ -1,6 +1,10 @@
 "use client";
 import { deletePost } from "@/app/lib/actions";
 import Button from "@/app/ui/Button";
+import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 const TableHeader = ({ text }) => (
@@ -18,28 +22,43 @@ const TableRow = ({ post, router }) => (
     key={post.id}
     className="transition-colors duration-200 hover:bg-dark/10 dark:hover:bg-light/10"
   >
-    <TableCell>{post.title}</TableCell>
+    <TableCell>
+      <Image alt={post.title} width="100" height="100" src={post.featuredImg} />
+    </TableCell>
+    <TableCell>
+      <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+    </TableCell>
     <TableCell>{post.author.name}</TableCell>
+
     <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
     <TableCell>
       <div className="flex gap-4 px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
         <Button
-          onClick={() => router.push(`/dashboard/update-post/${post.slug}`)}
+          aria-label="update the post"
+          className="flex items-center justify-center rounded-full size-12"
+          onClick={() => router.push(`/dungeon/update-post/${post.slug}`)}
         >
-          Edit
+          <FontAwesomeIcon icon={faPenToSquare} className="rounded-full" />
         </Button>
-        <Button onClick={() => deletePost(post)}>Delete</Button>
+        <Button
+          aria-label="delete the post"
+          className="flex items-center justify-center rounded-full size-12"
+          onClick={() => deletePost(post)}
+        >
+          <FontAwesomeIcon icon={faTrash} className="rounded-full" />
+        </Button>
       </div>
     </TableCell>
   </tr>
 );
 
-const DashTable = ({ posts }) => {
+const PostTable = ({ posts }) => {
   const router = useRouter();
   return (
     <table className="min-w-full overflow-hidden divide-y rounded-lg dow-lg divide-dark/50 dark:divide-light">
       <thead className="bg-light dark:bg-dark">
         <tr>
+          <TableHeader text="Image" />
           <TableHeader text="Title" />
           <TableHeader text="Author" />
           <TableHeader text="Date" />
@@ -55,4 +74,4 @@ const DashTable = ({ posts }) => {
   );
 };
 
-export default DashTable;
+export default PostTable;
