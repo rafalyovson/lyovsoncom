@@ -1,11 +1,11 @@
 "use client";
 
-import { UserContext } from "@/app/(tower)/lib/userProvider";
+import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
 import Link from "next/link";
 import { useContext } from "react";
 
 const UserMenuLink = ({ children, className, href }) => {
-  const { setUser } = useContext(UserContext);
+  const { setUser } = useContext(UserModeContext);
 
   return (
     <Link className={className} href={href} onClick={() => setUser("both")}>

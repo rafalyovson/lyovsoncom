@@ -1,12 +1,12 @@
 "use client";
-import { UserContext } from "@/app/(tower)/lib/userProvider";
+import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
 import FooterNav from "@/app/(tower)/ui/FooterNav";
 import { WindowWidthContext } from "@/app/Providers";
 import { motion } from "framer-motion";
 import { useContext } from "react";
 
 const Footer = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserModeContext);
   const { windowWidth } = useContext(WindowWidthContext);
   return (
     <motion.footer

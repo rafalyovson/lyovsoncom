@@ -1,7 +1,7 @@
 "use client";
 
 import JessMenu from "@/app/(tower)/jess/JessMenu";
-import { UserContext } from "@/app/(tower)/lib/userProvider";
+import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
 import RafaMenu from "@/app/(tower)/rafa/RafaMenu";
 import { WindowWidthContext } from "@/app/Providers";
 import { AnimatePresence, motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { useContext } from "react";
 import { colors } from "tailwindcss/defaultTheme";
 
 const Main = ({ children }) => {
-  const { user, setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserModeContext);
   const { windowWidth } = useContext(WindowWidthContext);
   const { theme } = useTheme();
 
