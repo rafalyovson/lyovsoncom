@@ -1,7 +1,12 @@
 import RafaSocials from "@/app/(tower)/rafa/RafaSocials";
 import Link from "@/app/(tower)/ui/UserMenuLink";
 import Button from "@/app/ui/Button";
-import { faXTwitter } from "@fortawesome/free-brands-svg-icons";
+import {
+  faAddressCard,
+  faBriefcase,
+  faListCheck,
+  faUserNinja,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -29,23 +34,23 @@ const RafaMenu = ({ windowWidth, setUser }) => {
       <RafaSocials />
       <nav className="text-2xl list-none ">
         <Link className="hover:underline" href="/rafa/bio">
-          <FontAwesomeIcon icon={faXTwitter} />
+          <FontAwesomeIcon icon={faUserNinja} />
           Bio
         </Link>
         <Link className="hover:underline" href="/rafa/portfolio">
-          <FontAwesomeIcon icon={faXTwitter} />
+          <FontAwesomeIcon icon={faBriefcase} />
           Portfolio
         </Link>
         <Link className="hover:underline" href="/rafa/portfolio">
-          <FontAwesomeIcon icon={faXTwitter} />
+          <FontAwesomeIcon icon={faAddressCard} />
           Contact
         </Link>
         <Link className="hover:underline" href="/rafa/portfolio">
-          <FontAwesomeIcon icon={faXTwitter} />
+          <FontAwesomeIcon icon={faListCheck} />
           Project 1
         </Link>
         <Link className="hover:underline" href="/rafa/portfolio">
-          <FontAwesomeIcon icon={faXTwitter} />
+          <FontAwesomeIcon icon={faListCheck} />
           Project 2
         </Link>
       </nav>
