@@ -1,10 +1,14 @@
-import Editor from "@/app/dungeon/playground/Editor";
+import { Suspense } from "react";
+import EditorComponent from "./Editor";
 
 const page = () => {
   return (
-    <div>
-      <Editor />
-    </div>
+    <>
+      <h1>Editor JS</h1>
+      <Suspense fallback={<div>Loading...</div>}>
+        <EditorComponent />
+      </Suspense>
+    </>
   );
 };
 

@@ -16,9 +16,7 @@ const PostGrid = () => {
         Posts
       </h2>
       <div className="grid grid-cols-1 gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        {data
-          .map((post, index) => <PostCard key={index} post={post} />)
-          .reverse()}
+        {data.map((post) => <PostCard key={post.id} post={post} />).reverse()}
       </div>
     </section>
   );

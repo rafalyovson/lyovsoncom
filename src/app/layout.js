@@ -1,5 +1,5 @@
 import { auth } from "@/app/lib/auth.js";
-import Providers, { SessionProvider } from "./Providers.js";
+import { SessionProvider, ThemeProvider } from "./ThemeProvider.js";
 import "./globals.css";
 import { inter, lusitana } from "./ui/Fonts.js";
 
@@ -14,13 +14,15 @@ export default async function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${lusitana.variable}  relative h-full overflow-hidden`}
+      className={`  relative h-full overflow-hidden ${inter.variable} ${lusitana.variable}`}
     >
       <body
         className={`${"h-full overflow-auto relative bg-light text-dark dark:text-light dark:bg-dark"} font-inter`}
       >
         <SessionProvider session={session}>
-          <Providers>{children}</Providers>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            {children}
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
