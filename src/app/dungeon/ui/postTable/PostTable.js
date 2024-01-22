@@ -1,5 +1,5 @@
 "use client";
-import { deletePost } from "@/app/lib/actions";
+import { deletePost } from "@/app/dungeon/lib/postActions";
 import Button from "@/app/ui/Button";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

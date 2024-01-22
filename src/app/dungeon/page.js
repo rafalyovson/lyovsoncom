@@ -1,6 +1,6 @@
 import PostTable from "@/app/dungeon/ui/postTable/PostTable.js";
 import { auth } from "@/app/lib/auth.js";
-import { prisma } from "@/app/lib/db.js";
+import { prisma } from "@/app/lib/prisma.js";
 
 const Page = async () => {
   const session = await auth();

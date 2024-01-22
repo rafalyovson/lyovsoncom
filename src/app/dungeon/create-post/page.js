@@ -1,5 +1,5 @@
+import { createPost } from "@/app/dungeon/lib/postActions";
 import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
-import { createPost } from "@/app/lib/actions";
 import Button from "@/app/ui/Button";
 import ContentForm from "../ui/postForm/ContentForm";
 import TitleForm from "../ui/postForm/TitleForm";

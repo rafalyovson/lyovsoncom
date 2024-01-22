@@ -1,7 +1,7 @@
 "use client";
 // ImageDisplay.js
 
-import { deleteImage } from "@/app/lib/actions";
+import { deleteImage } from "@/app/dungeon/lib/postActions";
 import Button from "@/app/ui/Button";
 import Image from "next/image";
 

@@ -4,7 +4,7 @@ import { auth } from "@/app/lib/auth";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { prisma } from "./db";
+import { prisma } from "../../lib/prisma";
 
 export const deleteImage = async (url) => {
   del(url);
@@ -55,4 +55,24 @@ export const deletePost = async (post) => {
     },
   });
   revalidatePath("/dungeon");
+};
+
+export const getPost = async (slug) => {
+  try {
+    return await prisma.post.findUnique({
+      where: { slug },
+    });
+  } catch (error) {
+    console.error(`Error fetching post with slug ${slug}:`, error);
+    throw error;
+  }
+};
+
+export const getAllPosts = async () => {
+  try {
+    return await prisma.post.findMany();
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    throw error;
+  }
 };

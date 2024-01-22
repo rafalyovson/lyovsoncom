@@ -1,7 +1,7 @@
 "use client";
-import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
-import { WindowWidthContext } from "@/app/(tower)/lib/WindowWidthProvider";
-import FooterNav from "@/app/(tower)/ui/FooterNav";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { WindowWidthContext } from "@/app/(castle)/lib/WindowWidthProvider";
+import FooterNav from "@/app/(castle)/ui/FooterNav";
 import { motion } from "framer-motion";
 import { useContext } from "react";
 

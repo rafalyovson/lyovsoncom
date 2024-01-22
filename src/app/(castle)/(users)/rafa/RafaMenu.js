@@ -1,5 +1,5 @@
-import RafaSocials from "@/app/(tower)/rafa/RafaSocials";
-import Link from "@/app/(tower)/ui/UserMenuLink";
+import RafaSocials from "@/app/(castle)/(users)/rafa/RafaSocials";
+import Link from "@/app/(castle)/ui/UserMenuLink";
 import Button from "@/app/ui/Button";
 import {
   faAddressCard,

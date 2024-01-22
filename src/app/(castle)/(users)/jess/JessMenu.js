@@ -1,5 +1,5 @@
-import JessSocials from "@/app/(tower)/jess/JessSocials";
-import Link from "@/app/(tower)/ui/UserMenuLink";
+import JessSocials from "@/app/(castle)/(users)/jess/JessSocials";
+import Link from "@/app/(castle)/ui/UserMenuLink";
 import Button from "@/app/ui/Button";
 import {
   faAddressCard,

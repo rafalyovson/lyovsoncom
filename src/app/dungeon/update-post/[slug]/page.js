@@ -1,8 +1,8 @@
+import { updatePost } from "@/app/dungeon/lib/postActions";
 import ContentForm from "@/app/dungeon/ui/postForm/ContentForm";
 import TitleForm from "@/app/dungeon/ui/postForm/TitleForm";
 import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
-import { updatePost } from "@/app/lib/actions";
-import { prisma } from "@/app/lib/db";
+import { prisma } from "@/app/lib/prisma";
 import Button from "@/app/ui/Button";
 
 const Page = async ({ params }) => {

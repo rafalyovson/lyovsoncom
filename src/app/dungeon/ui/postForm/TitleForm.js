@@ -1,6 +1,6 @@
 "use client";
 
-import { slugify } from "@/app/lib/utils";
+import { slugify } from "@/app/dungeon/lib/utils";
 import { useState } from "react";
 
 const TitleForm = ({ value }) => {

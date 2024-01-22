@@ -1,9 +1,9 @@
 "use client";
 // UploadForm.js
+import { deleteImage } from "@/app/dungeon/lib/postActions";
+import useFileUpload from "@/app/dungeon/lib/useFileUpload";
 import ImageDisplay from "@/app/dungeon/ui/postForm/imageForm/ImageDisplay";
 import ImageUploadForm from "@/app/dungeon/ui/postForm/imageForm/ImageUploadForm";
-import { deleteImage } from "@/app/lib/actions";
-import useFileUpload from "@/app/lib/useFileUpload";
 import { Suspense, useState } from "react";
 
 export default function UploadForm({ value }) {

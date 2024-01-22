@@ -1,7 +1,7 @@
 "use client";
 
-import { UserModeContext } from "@/app/(tower)/lib/UserModeProvider.js";
-import { ImageButton } from "@/app/(tower)/ui/ImageButton";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { ImageButton } from "@/app/(castle)/ui/ImageButton";
 import Link from "next/link";
 import { useContext } from "react";
 

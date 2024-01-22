@@ -1,6 +1,6 @@
 import Header from "@/app/dungeon/ui/Header.js";
 import { auth } from "@/app/lib/auth.js";
-import { prisma } from "@/app/lib/db.js";
+import { prisma } from "@/app/lib/prisma.js";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { redirect } from "next/navigation";
