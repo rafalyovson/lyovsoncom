@@ -1,6 +1,6 @@
 {
   "name": "lyovson.com",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -37,7 +37,8 @@
     "novel": "^0.1.22",
     "openai": "^4.24.7",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "sharp": "^0.33.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
