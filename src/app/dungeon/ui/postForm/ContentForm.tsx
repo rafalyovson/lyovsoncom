@@ -1,4 +1,4 @@
-export const ContentForm = ({ value }) => {
+export const ContentForm = ({ value }: { value?: string }) => {
   return (
     <>
       <label className="flex flex-col space-y-2">

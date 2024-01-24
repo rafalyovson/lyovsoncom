@@ -1,11 +1,15 @@
-import Header from "@/app/dungeon/ui/Header.js";
-import { auth } from "@/app/lib/auth.js";
-import { prisma } from "@/app/lib/prisma.js";
+import Header from "@/app/dungeon/ui/Header";
+import { auth } from "@/app/lib/auth";
+import { prisma } from "@/app/lib/prisma";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { redirect } from "next/navigation";
 
-export default async function Layout({ children }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const session = await auth();
 
   if (!session || !session.user) {
@@ -18,11 +22,11 @@ export default async function Layout({ children }) {
     },
   });
 
-  const posts = await prisma.post.findMany({
-    include: {
-      author: true,
-    },
-  });
+  // const posts = await prisma.post.findMany({
+  //   include: {
+  //     author: true,
+  //   },
+  // });
 
   return (
     <>

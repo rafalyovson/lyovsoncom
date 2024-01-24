@@ -1,4 +1,4 @@
-import { prisma } from "@/app/lib/prisma.js";
+import { prisma } from "@/app/lib/prisma";
 import Image from "next/image";
 
 const PostHeader = ({ post }: any) => (

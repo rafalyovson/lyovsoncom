@@ -6,9 +6,9 @@ import ImageDisplay from "@/app/dungeon/ui/postForm/imageForm/ImageDisplay";
 import ImageUploadForm from "@/app/dungeon/ui/postForm/imageForm/ImageUploadForm";
 import { Suspense, useState } from "react";
 
-export default function UploadForm({ value }) {
+export default function UploadForm({ value }: { value?: string }) {
   const { blob, loading, error, setBlob, uploadFile } = useFileUpload();
-  const [newImage, setNewImage] = useState(value || null);
+  const [newImage, setNewImage] = useState(value || "");
 
   if (newImage) {
     return (
@@ -16,6 +16,7 @@ export default function UploadForm({ value }) {
         <input
           name="imageUrl"
           type="url"
+          title="Image URL"
           required
           className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={value}
@@ -24,8 +25,8 @@ export default function UploadForm({ value }) {
           src={newImage}
           onDelete={() => {
             deleteImage(newImage);
-            setNewImage(null);
-            setBlob(null);
+            setNewImage("");
+            setBlob({ url: "" });
           }}
         />
       </>
@@ -46,6 +47,7 @@ export default function UploadForm({ value }) {
                 name="imageUrl"
                 type="url"
                 required
+                title="Image URL"
                 className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
                 value={blob.url}
               />
@@ -53,8 +55,8 @@ export default function UploadForm({ value }) {
                 src={blob.url}
                 onDelete={() => {
                   deleteImage(blob.url);
-                  setBlob(null);
-                  setNewImage(null);
+                  setBlob({ url: "" });
+                  setNewImage("");
                 }}
               />
             </Suspense>

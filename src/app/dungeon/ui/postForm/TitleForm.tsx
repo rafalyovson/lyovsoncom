@@ -3,9 +3,9 @@
 import { slugify } from "@/app/dungeon/lib/utils";
 import { useState } from "react";
 
-const TitleForm = ({ value }) => {
+const TitleForm = ({ value }: { value?: string }) => {
   console.log(value);
-  const [slug, setSlug] = useState("");
+  const [_, setSlug] = useState("");
   const [title, setTitle] = useState(value || "");
   return (
     <>

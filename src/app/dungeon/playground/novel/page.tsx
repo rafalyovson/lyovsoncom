@@ -7,7 +7,7 @@ export default function App() {
       completionApi="/api/ai"
       className="dark:bg-dark dark:text-light"
       onDebouncedUpdate={(data) => {
-        console.log(data.getHTML());
+        data && console.log(data.getHTML());
       }}
     />
   );

@@ -2,13 +2,13 @@
 import { useState } from "react";
 
 export default function useFileUpload() {
-  const [blob, setBlob] = useState(null);
+  const [blob, setBlob] = useState({ url: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const uploadFile = async (file) => {
+  const uploadFile = async (file: File) => {
     if (!file || file.type.indexOf("image/") !== 0) {
-      setError("Please select a valid image file");
+      setError("Please select a valid image file" as any);
       return;
     }
 
@@ -29,7 +29,7 @@ export default function useFileUpload() {
 
       setBlob(newBlob);
       navigator.clipboard.writeText(newBlob.url);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);

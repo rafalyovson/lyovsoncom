@@ -5,12 +5,16 @@ import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
 
-export default function ImageUploadForm({ onFileSelected }) {
-  const inputFileRef = useRef(null);
+export default function ImageUploadForm({
+  onFileSelected,
+}: {
+  onFileSelected: any;
+}) {
+  const inputFileRef = useRef<HTMLInputElement>(null);
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: any) => {
     e?.preventDefault();
-    const file = inputFileRef.current.files[0];
+    const file = inputFileRef.current?.files?.[0]; // Add null check for files
     onFileSelected(file);
   };
 

@@ -5,7 +5,13 @@ import { deleteImage } from "@/app/dungeon/lib/postActions";
 import Button from "@/app/ui/Button";
 import Image from "next/image";
 
-export default function ImageDisplay({ src, onDelete }) {
+export default function ImageDisplay({
+  src,
+  onDelete,
+}: {
+  src: string;
+  onDelete: () => void;
+}) {
   return (
     <div className="relative cursor-pointer">
       <div

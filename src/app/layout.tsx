@@ -1,4 +1,4 @@
-import { auth } from "@/app/lib/auth.js";
+import { auth } from "@/app/lib/auth";
 import { SessionProvider, ThemeProvider } from "./ThemeProvider";
 import "./globals.css";
 import { inter, lusitana } from "./ui/Fonts";
