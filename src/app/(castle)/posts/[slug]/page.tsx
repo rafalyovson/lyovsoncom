@@ -1,7 +1,7 @@
 import { prisma } from "@/app/lib/prisma.js";
 import Image from "next/image";
 
-const PostHeader = ({ post }) => (
+const PostHeader = ({ post }: any) => (
   <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
     <section className="flex flex-col gap-2 lg:w-1/2">
       <h1 className="text-4xl font-bold text-center lg:text-left">
@@ -32,7 +32,7 @@ const PostHeader = ({ post }) => (
   </header>
 );
 
-const Page = async ({ params }) => {
+const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
   const post = await prisma.post.findUnique({
     where: { slug },

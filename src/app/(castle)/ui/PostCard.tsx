@@ -4,7 +4,7 @@ import Card from "@/app/ui/Card";
 import Image from "next/image";
 import Link from "next/link";
 
-const PostCard = ({ post }) => {
+const PostCard = ({ post }: { post: any }) => {
   return (
     <Card>
       <Link href={`/posts/${post.slug}`}>

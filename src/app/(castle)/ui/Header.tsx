@@ -1,12 +1,12 @@
 "use client";
 
-import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider";
 import { ImageButton } from "@/app/(castle)/ui/ImageButton";
 import Link from "next/link";
 import { useContext } from "react";
 
 const Header = () => {
-  const { user, setUser } = useContext(UserModeContext);
+  const { setUser } = useContext(UserModeContext);
 
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between h-20 px-4 border-b-4 bg-light dark:bg-dark border-dark dark:border-light">

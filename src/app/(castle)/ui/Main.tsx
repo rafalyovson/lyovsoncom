@@ -2,36 +2,38 @@
 
 import JessMenu from "@/app/(castle)/(users)/jess/JessMenu";
 import RafaMenu from "@/app/(castle)/(users)/rafa/RafaMenu";
-import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider";
 import { WindowWidthContext } from "@/app/(castle)/lib/WindowWidthProvider";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTheme } from "next-themes";
 import { useContext } from "react";
-import { colors } from "tailwindcss/defaultTheme";
 
-const Main = ({ children }) => {
+const Main = ({ children }: { children: React.ReactNode }) => {
   const { user, setUser } = useContext(UserModeContext);
   const { windowWidth } = useContext(WindowWidthContext);
-  const { theme } = useTheme();
+
+  const renderUserMenu = () => {
+    switch (user) {
+      case "Jess":
+        return (
+          <JessMenu setUser={setUser} key="jess" windowWidth={windowWidth} />
+        );
+      case "Rafa":
+        return (
+          <RafaMenu setUser={setUser} key="rafa" windowWidth={windowWidth} />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
-      <AnimatePresence>
-        {user === "Jess" ? (
-          <JessMenu setUser={setUser} key="jess" windowWidth={windowWidth} />
-        ) : user === "Rafa" ? (
-          <RafaMenu setUser={setUser} key="rafa" windowWidth={windowWidth} />
-        ) : null}
-      </AnimatePresence>
+      <AnimatePresence>{renderUserMenu()}</AnimatePresence>
       <motion.main
         onClick={() => setUser("Both")}
         className="relative min-h-screen my-8 overflow-auto font-heading"
         layout
-        initial={{
-          backgroundColor: theme === "light" ? colors.light : colors.dark,
-        }}
         animate={{
-          backgroundColor: theme === "dark" ? colors.dark : colors.light,
           marginRight: user === "Rafa" && windowWidth > 992 ? "400px" : "0px",
           marginLeft: user === "Jess" && windowWidth > 992 ? "400px" : "0px",
         }}

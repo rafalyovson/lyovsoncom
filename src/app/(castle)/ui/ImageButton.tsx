@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-export const ImageButton = ({ handleImageClick, src }) => {
+export const ImageButton = ({
+  handleImageClick,
+  src,
+}: {
+  handleImageClick: () => void;
+  src: string;
+}) => {
   return (
     <button
       onClick={handleImageClick}

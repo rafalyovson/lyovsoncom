@@ -2,7 +2,15 @@
 
 import { motion } from "framer-motion";
 
-const Card = ({ children, className, ...props }) => {
+const Card = ({
+  children,
+  className,
+  ...props
+}: {
+  children: React.ReactNode;
+  className?: string;
+  props?: any;
+}) => {
   return (
     <motion.div
       layout

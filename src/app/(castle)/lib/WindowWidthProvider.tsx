@@ -8,7 +8,11 @@ export const WindowWidthContext = createContext({ windowWidth: 0 });
 
 // Providers
 
-export default function WindowWidthProvider({ children }) {
+export default function WindowWidthProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [windowWidth, setWindowWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 0
   );

@@ -1,10 +1,16 @@
 "use client";
 
-import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider";
 import Link from "next/link";
-import { useContext } from "react";
+import { ReactNode, useContext } from "react";
 
-const UserMenuLink = ({ children, className, href }) => {
+interface UserMenuLinkProps {
+  children: ReactNode;
+  className: string;
+  href: string;
+}
+
+const UserMenuLink = ({ children, className, href }: UserMenuLinkProps) => {
   const { setUser } = useContext(UserModeContext);
 
   return (

@@ -1,12 +1,12 @@
 "use client";
-import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider.js";
+import { UserModeContext } from "@/app/(castle)/lib/UserModeProvider";
 import { WindowWidthContext } from "@/app/(castle)/lib/WindowWidthProvider";
 import FooterNav from "@/app/(castle)/ui/FooterNav";
 import { motion } from "framer-motion";
 import { useContext } from "react";
 
 const Footer = () => {
-  const { user, setUser } = useContext(UserModeContext);
+  const { user } = useContext(UserModeContext);
   const { windowWidth } = useContext(WindowWidthContext);
   return (
     <motion.footer
