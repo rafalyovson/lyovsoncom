@@ -26,7 +26,7 @@ export default function ImageUploadForm({
         ref={inputFileRef}
         type="file"
         required
-        style={{ display: "none" }}
+        className="hidden"
       />
     </label>
   );

@@ -1,6 +1,6 @@
 "use client";
-import { deleteImage } from "@/app/dungeon/lib/postActions";
-import useFileUpload from "@/app/dungeon/lib/useFileUpload";
+import { deleteImage } from "@/app/dungeon/lib/imageActions";
+import useImageUpload from "@/app/dungeon/lib/useImageUpload";
 import ImageDisplay from "@/app/dungeon/ui/postForm/imageForm/ImageDisplay";
 import ImageUploadForm from "@/app/dungeon/ui/postForm/imageForm/ImageUploadForm";
 import { Suspense, useState } from "react";
@@ -41,7 +41,7 @@ const DeleteImage = ({
 };
 
 export default function UploadForm({ value }: { value?: string }) {
-  const { blob, loading, error, setBlob, uploadFile } = useFileUpload();
+  const { blob, loading, error, setBlob, uploadFile } = useImageUpload();
   const [newImage, setNewImage] = useState(value || "");
 
   if (newImage) {

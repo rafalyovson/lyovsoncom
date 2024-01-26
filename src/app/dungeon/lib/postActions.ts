@@ -2,13 +2,17 @@
 
 import { auth } from "@/app/lib/auth";
 import { Post } from "@prisma/client";
-import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/prisma";
+import { deleteImage } from "./imageActions";
 
-export const deleteImage = async (url: string): Promise<void> => {
-  del(url);
+export const getPost = async (slug: string): Promise<Post | null> => {
+  return prisma.post.findUnique({ where: { slug } });
+};
+
+export const getAllPosts = async (): Promise<Post[]> => {
+  return prisma.post.findMany();
 };
 
 export const createPost = async (formData: FormData): Promise<void> => {
@@ -53,12 +57,4 @@ export const deletePost = async (post: Post): Promise<void> => {
   await deleteImage(post.featuredImg || "");
   await prisma.post.delete({ where: { id: post.id } });
   revalidatePath("/dungeon");
-};
-
-export const getPost = async (slug: string): Promise<Post | null> => {
-  return prisma.post.findUnique({ where: { slug } });
-};
-
-export const getAllPosts = async (): Promise<Post[]> => {
-  return prisma.post.findMany();
 };

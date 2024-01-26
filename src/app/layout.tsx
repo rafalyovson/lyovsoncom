@@ -1,4 +1,6 @@
 import { auth } from "@/app/lib/auth";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SessionProvider, ThemeProvider } from "./ThemeProvider";
 import "./globals.css";
 import { inter, lusitana } from "./ui/Fonts";
@@ -28,6 +30,8 @@ export default async function RootLayout({
             {children}
           </ThemeProvider>
         </SessionProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
