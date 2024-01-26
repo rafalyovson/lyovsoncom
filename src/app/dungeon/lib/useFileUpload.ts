@@ -1,8 +1,9 @@
-// useFileUpload.js
+"use client";
+import type { PutBlobResult } from "@vercel/blob";
 import { useState } from "react";
 
 export default function useFileUpload() {
-  const [blob, setBlob] = useState({ url: "" });
+  const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 

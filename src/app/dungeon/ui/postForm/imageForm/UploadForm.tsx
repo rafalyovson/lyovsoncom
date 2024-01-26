@@ -1,10 +1,44 @@
 "use client";
-// UploadForm.js
 import { deleteImage } from "@/app/dungeon/lib/postActions";
 import useFileUpload from "@/app/dungeon/lib/useFileUpload";
 import ImageDisplay from "@/app/dungeon/ui/postForm/imageForm/ImageDisplay";
 import ImageUploadForm from "@/app/dungeon/ui/postForm/imageForm/ImageUploadForm";
 import { Suspense, useState } from "react";
+
+const ImageInput = ({
+  value,
+  className,
+}: {
+  value: string;
+  className: string;
+}) => (
+  <input
+    name="imageUrl"
+    type="url"
+    title="Image URL"
+    required
+    className={className}
+    value={value}
+  />
+);
+
+const DeleteImage = ({
+  src,
+  setBlob,
+  setNewImage,
+}: {
+  src: string;
+  setBlob: Function;
+  setNewImage: Function;
+}) => {
+  const handleDelete = () => {
+    deleteImage(src);
+    setBlob({ url: "" });
+    setNewImage("");
+  };
+
+  return <ImageDisplay src={src} onDelete={handleDelete} />;
+};
 
 export default function UploadForm({ value }: { value?: string }) {
   const { blob, loading, error, setBlob, uploadFile } = useFileUpload();
@@ -13,21 +47,14 @@ export default function UploadForm({ value }: { value?: string }) {
   if (newImage) {
     return (
       <>
-        <input
-          name="imageUrl"
-          type="url"
-          title="Image URL"
-          required
+        <ImageInput
+          value={value || ""}
           className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={value}
         />
-        <ImageDisplay
+        <DeleteImage
           src={newImage}
-          onDelete={() => {
-            deleteImage(newImage);
-            setNewImage("");
-            setBlob({ url: "" });
-          }}
+          setBlob={setBlob}
+          setNewImage={setNewImage}
         />
       </>
     );
@@ -43,21 +70,14 @@ export default function UploadForm({ value }: { value?: string }) {
           {!blob && <ImageUploadForm onFileSelected={uploadFile} />}
           {blob && (
             <Suspense fallback={<div>Loading...</div>}>
-              <input
-                name="imageUrl"
-                type="url"
-                required
-                title="Image URL"
-                className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
+              <ImageInput
                 value={blob.url}
+                className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
               />
-              <ImageDisplay
+              <DeleteImage
                 src={blob.url}
-                onDelete={() => {
-                  deleteImage(blob.url);
-                  setBlob({ url: "" });
-                  setNewImage("");
-                }}
+                setBlob={setBlob}
+                setNewImage={setNewImage}
               />
             </Suspense>
           )}

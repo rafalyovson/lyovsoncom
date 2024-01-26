@@ -1,6 +1,5 @@
 "use client";
 
-// ImageUploadForm.js
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef } from "react";
