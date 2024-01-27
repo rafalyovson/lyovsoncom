@@ -23,9 +23,9 @@ const ImageForm2 = ({ url }: { url?: string }) => {
       }
     );
 
-    const { url } = await response.json();
-    setImage(url);
-    return url;
+    const { newImageUrl } = await response.json();
+    setImage(newImageUrl);
+    return newImageUrl;
   };
 
   if (image) {
@@ -37,7 +37,7 @@ const ImageForm2 = ({ url }: { url?: string }) => {
           title="Image URL"
           required
           className="p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400"
-          value={url}
+          value={image}
         />
 
         <div className="relative cursor-pointer">
