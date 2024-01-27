@@ -64,6 +64,7 @@ const ImageForm2 = ({ url }: { url?: string }) => {
         <input
           onChange={handleFileUpload}
           // formAction={}
+          // formEncType="multipart/form-data"
           name="file"
           ref={inputFileRef}
           type="file"
