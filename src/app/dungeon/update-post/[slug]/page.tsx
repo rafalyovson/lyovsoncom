@@ -1,7 +1,7 @@
 import { updatePost } from "@/app/dungeon/lib/postActions";
 import ContentForm from "@/app/dungeon/ui/postForm/ContentForm";
+import ImageForm2 from "@/app/dungeon/ui/postForm/ImageForm";
 import TitleForm from "@/app/dungeon/ui/postForm/TitleForm";
-import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
 import { prisma } from "@/app/lib/prisma";
 import Button from "@/app/ui/Button";
 
@@ -24,13 +24,12 @@ const Page = async ({ params }: { params: { slug: string } }) => {
         <form action={updatePostWithId} className="flex flex-col space-y-4">
           <TitleForm value={post.title} />
           <ContentForm value={post.content} />
-          <UploadForm value={post.featuredImg} />
+          <ImageForm2 url={post.featuredImg} />
           <Button type="submit">Submit</Button>
         </form>
       </div>
     </main>
   );
-  // @ts-ignore
 };
 
 export default Page;

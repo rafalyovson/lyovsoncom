@@ -1,5 +1,5 @@
 import { createPost } from "@/app/dungeon/lib/postActions";
-import UploadForm from "@/app/dungeon/ui/postForm/imageForm/UploadForm";
+import ImageForm2 from "@/app/dungeon/ui/postForm/ImageForm";
 import Button from "@/app/ui/Button";
 import ContentForm from "../ui/postForm/ContentForm";
 import TitleForm from "../ui/postForm/TitleForm";
@@ -12,7 +12,8 @@ const Page = async () => {
         <form action={createPost} className="flex flex-col space-y-4">
           <TitleForm />
           <ContentForm />
-          <UploadForm />
+          <ImageForm2 url="" />
+
           <Button type="submit">Submit</Button>
         </form>
       </div>

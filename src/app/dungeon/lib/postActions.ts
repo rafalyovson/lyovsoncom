@@ -5,7 +5,7 @@ import { Post } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/prisma";
-import { deleteImage } from "./imageActions";
+import { deleteImage } from "./imageDelete";
 
 export const getPost = async (slug: string): Promise<Post | null> => {
   return prisma.post.findUnique({ where: { slug } });
