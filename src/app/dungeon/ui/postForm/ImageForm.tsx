@@ -23,14 +23,15 @@ const ImageForm2 = ({ url }: { url?: string }) => {
       }
     );
 
-    const { newImageUrl } = await response.json();
-    setImage(newImageUrl);
-    return newImageUrl;
+    const { url } = await response.json();
+    setImage(url);
+    return url;
   };
 
   if (image) {
     return (
       <>
+        <h2>Image: {image}</h2>
         <input
           name="imageUrl"
           type="url"
@@ -59,6 +60,7 @@ const ImageForm2 = ({ url }: { url?: string }) => {
 
   return (
     <>
+      <h2>Image: {image}</h2>
       <label className="p-2 text-center border cursor-pointer border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-blue-400 ">
         <FontAwesomeIcon icon={faUpload} /> Upload Image
         <input
