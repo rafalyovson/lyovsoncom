@@ -6,14 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 
 const TableHeader = ({ text }: { text: string }) => (
   <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-dark dark:text-light">
     {text}
   </th>
 );
-
-import { ReactNode } from "react";
 
 const TableCell = ({ children }: { children: ReactNode }) => (
   <td className="px-6 py-4 whitespace-nowrap dark:text-light">{children}</td>
@@ -25,7 +24,12 @@ const TableRow = ({ post, router }: { post: any; router: any }) => (
     className="transition-colors duration-200 hover:bg-dark/10 dark:hover:bg-light/10"
   >
     <TableCell>
-      <Image alt={post.title} width="100" height="100" src={post.featuredImg} />
+      <Image
+        alt={post.title}
+        width="100"
+        height="100"
+        src={post.featuredImg || ""}
+      />
     </TableCell>
     <TableCell>
       <Link href={`/posts/${post.slug}`}>{post.title}</Link>

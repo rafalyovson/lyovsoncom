@@ -3,6 +3,7 @@ import Button from "@/app/ui/Button";
 import ThemeSwitch from "@/app/ui/ThemeSwitcher";
 import {
   faArrowRightFromBracket,
+  faDungeon,
   faPlus,
   faTowerObservation,
 } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +31,15 @@ const Menu = () => {
       >
         <Link href="/">
           <FontAwesomeIcon icon={faTowerObservation} className="rounded-full" />
+        </Link>
+      </Button>
+
+      <Button
+        aria-label="return to the tower"
+        className="flex items-center justify-center rounded-full size-12"
+      >
+        <Link href="/dungeon">
+          <FontAwesomeIcon icon={faDungeon} className="rounded-full" />
         </Link>
       </Button>
 

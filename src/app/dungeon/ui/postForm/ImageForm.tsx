@@ -70,7 +70,7 @@ const ImageForm2 = ({ url }: { url?: string }) => {
           name="file"
           ref={inputFileRef}
           type="file"
-          required
+          // required
           className="hidden"
         />
       </label>

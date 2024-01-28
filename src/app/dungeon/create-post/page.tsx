@@ -13,7 +13,6 @@ const Page = async () => {
           <TitleForm />
           <ContentForm />
           <ImageForm2 url="" />
-
           <Button type="submit">Submit</Button>
         </form>
       </div>
