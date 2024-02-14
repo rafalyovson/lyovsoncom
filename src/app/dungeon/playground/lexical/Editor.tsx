@@ -17,11 +17,9 @@ import { useState } from "react";
 import { Toolbar } from "./Toolbar";
 
 export const Editor = () => {
-  const [editorState, setEditorState] = useState();
-  function onChange(editorState) {
-    // Call toJSON on the EditorState object, which produces a serialization safe string
+  const [_, setEditorState] = useState<string | undefined>();
+  function onChange(editorState: any) {
     const editorStateJSON = editorState.toJSON();
-    // However, we still have a JavaScript object, so we need to convert it to an actual string with JSON.stringify
     setEditorState(JSON.stringify(editorStateJSON));
     console.log(editorStateJSON);
   }
