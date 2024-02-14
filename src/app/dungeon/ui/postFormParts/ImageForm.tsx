@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-const ImageForm2 = ({ url }: { url?: string }) => {
+const ImageForm = ({ url }: { url?: string }) => {
   const [image, setImage] = useState(url);
 
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -65,12 +65,10 @@ const ImageForm2 = ({ url }: { url?: string }) => {
         <FontAwesomeIcon icon={faUpload} /> Upload Image
         <input
           onChange={handleFileUpload}
-          // formAction={}
-          // formEncType="multipart/form-data"
           name="file"
           ref={inputFileRef}
           type="file"
-          // required
+          required
           className="hidden"
         />
       </label>
@@ -78,4 +76,4 @@ const ImageForm2 = ({ url }: { url?: string }) => {
   );
 };
 
-export default ImageForm2;
+export default ImageForm;
