@@ -1,4 +1,5 @@
 "use client";
+import Youtube from "@tiptap/extension-youtube";
 import { Editor } from "novel";
 import { useState } from "react";
 
@@ -12,11 +13,8 @@ export default function App() {
         onDebouncedUpdate={(content) => {
           content && setData(content.getJSON());
         }}
+        extensions={[Youtube]}
       />
-      <h2>damn</h2>
-      {data.content.map((block: any) => {
-        return <div key={block.text}>{block.text}</div>;
-      })}
     </>
   );
 }

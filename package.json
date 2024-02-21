@@ -14,7 +14,7 @@
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.16",
     "@auth/prisma-adapter": "^1.0.10",
-    "@editorjs/editorjs": "^2.28.2",
+    "@editorjs/editorjs": "^2.29.0",
     "@editorjs/header": "^2.8.1",
     "@editorjs/image": "^2.9.0",
     "@editorjs/list": "^1.9.0",
@@ -26,6 +26,7 @@
     "@lexical/react": "^0.13.1",
     "@lexical/utils": "^0.13.1",
     "@prisma/client": "^5.7.0",
+    "@tiptap/extension-youtube": "^2.2.3",
     "@vercel/analytics": "^1.1.1",
     "@vercel/blob": "^0.16.1",
     "@vercel/postgres": "^0.5.1",
