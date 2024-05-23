@@ -32,7 +32,7 @@ const JessSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://twitter.com/HasmikKhachunts"
+          href="https://x.com/jesslyovson"
           target="_blank"
           rel="noopener noreferrer"
           title="X"
