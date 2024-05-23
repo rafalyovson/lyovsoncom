@@ -1,9 +1,7 @@
-import { Editor } from "@/app/dungeon/playground/lexical/Editor";
-
 export default function App() {
   return (
     <main>
-      <Editor />
+      <h1>Playground</h1>
     </main>
   );
 }
