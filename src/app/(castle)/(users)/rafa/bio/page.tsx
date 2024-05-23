@@ -1,6 +1,6 @@
 const page = () => {
   return (
-    <article className="mx-auto prose prose-invert lg:prose-xl">
+    <article className="p-8 mx-auto prose prose-invert lg:prose-xl">
       <h1>Rafa Lyovson</h1>
       <em>
         Bio, edited by
@@ -29,9 +29,9 @@ const page = () => {
       </p>
       <p>{`
         During my university days and before my army stint, I worked as an
-        assistant to Serge Gabyan, a music
+        assistant to Serj Gabyan, a music
         video and aspiring movie director. Post-army, mid-2014 saw me joining Ginosi, a company renting apartments in the US. It was here I met my future wife, Hasmik Khachunts—now Jess Lyovson. We tied the knot within a year and soon
-        after started a marketing business with old pals like Serge and
+        after started a marketing business with old pals like Serj and
        Alen Simonyan.
         Our venture was RoadCorp Inc. in the US, and Bismark Marketing in
         Armenia, working with top-tier artists and businesses.
@@ -39,10 +39,7 @@ const page = () => {
       <p>{`
         The political scene in Armenia was a rollercoaster, with major protests
         in 2015, 2016, and especially 2018. Jess and I were right in the thick
-        of it. In 2016, we joined 
-          Nikol Pashinyan's Civil Contract Party
-    
-        on Alen's suggestion. Our party pulled off the 2018 Velvet Revolution,
+        of it. In 2016, we joined Nikol Pashinyan's Civil Contract Party on Alen's suggestion. Our party pulled off the 2018 Velvet Revolution,
         toppling the government. While our comrades transitioned into government
         roles, Jess and I managed the party's daily affairs and prepped for
         elections, putting our business activities on hold. By the end of 2018,
@@ -58,9 +55,9 @@ const page = () => {
       <p>{`
         In 2021, my friend Eduard Avetisyan, a Bitcoin maximalist and owner of Bitcoin Armenia, roped me into
         his exchange as a consultant/operator until late 2022. Post-exchange, I
-        re-teamed with Serge to help with post-production on his movie OTTK,
+        re-teamed with Serj to help with post-production on his movie OTTK,
         earning an executive producer credit. We launched "Hooligun Studios,"
-        Serge's third studio, which ran for about six months until the end of
+        Serj's third studio, which ran for about six months until the end of
         2023.
      `}</p>
       <p>{`
