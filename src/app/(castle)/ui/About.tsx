@@ -1,6 +1,6 @@
 const About = () => (
-  <section className="p-4 px-4 py-8 text-xl ">
-    <h2 className="mb-4 text-2xl font-bold">Welcome Friend,</h2>
+  <section className=" p-8 text-2xl outline max-w-[600px] ">
+    <h2 className="mb-4 text-5xl font-bold font-lusitana">Welcome Friend</h2>
     <p>
       One day very soon this will be the official website of Jess and Rafa
       Lyovsons containing articles, ideas, projects and means of communication.
@@ -10,10 +10,10 @@ const About = () => (
         target="_blank"
         rel="noopener"
         className="underline text-jess hover:text-jess-dark"
-        href="https://x.com/hasmikkhachunts"
+        href="https://x.com/jesslyovson"
       >
         {" "}
-        @hasmikkhachunts
+        @jesslyovson
       </a>{" "}
       and{" "}
       <a

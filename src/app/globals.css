@@ -1,31 +1,23 @@
+@import "@fortawesome/fontawesome-svg-core/styles.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* The following import prevents a Font Awesome icon server-side rendering bug,
-where the icons flash from a very large icon down to a properly sized one: */
-@import "@fortawesome/fontawesome-svg-core/styles.css";
-
 
 /* .lx-paragraph {
     @apply text-red-500;
 } */
 
 .toolbar {
-    height: auto !important;
-    background-color: rgb(241 245 249/ var(--tw-bg-opacity)) !important;
-    border: 1px solid rgb(15 23 42/ var(--tw-bg-opacity));
-   
+  height: auto !important;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity)) !important;
+  border: 1px solid rgb(15 23 42 / var(--tw-bg-opacity));
 }
 
 .editor-container {
-    background-color: rgb(241 245 249/ var(--tw-bg-opacity)) !important;
-    border: 1px solid rgb(15 23 42/ var(--tw-bg-opacity));
-
-
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity)) !important;
+  border: 1px solid rgb(15 23 42 / var(--tw-bg-opacity));
 }
-
-
 
 /* .toolbar {
     @apply bg-transparent !important;
