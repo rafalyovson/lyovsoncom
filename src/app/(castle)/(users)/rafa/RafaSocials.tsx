@@ -22,7 +22,7 @@ const RafaSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://www.linkedin.com/in/your-name"
+          href="https://www.linkedin.com/in/lyovson"
           target="_blank"
           rel="noopener noreferrer"
           title="Linkedin"
@@ -32,7 +32,7 @@ const RafaSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://github.com/your-name"
+          href="https://github.com/lyovson"
           target="_blank"
           rel="noopener noreferrer"
           title="GitHub"
@@ -42,7 +42,7 @@ const RafaSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://codepen.io/your-name"
+          href="https://codepen.io/lyovson"
           target="_blank"
           rel="noopener noreferrer"
           title="CodePen"
