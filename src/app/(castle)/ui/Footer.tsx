@@ -19,7 +19,7 @@ const Footer = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="flex flex-col items-center justify-center mb-2">
-        <p className="text-2xl">© 2023 Lyovson</p>
+        <p className="text-2xl">© 2024 Lyovson</p>
         <div className="h-2 w-[100%] mx-auto rounded-lg bg-gradient-to-r from-jess to-rafa"></div>
       </div>
 
