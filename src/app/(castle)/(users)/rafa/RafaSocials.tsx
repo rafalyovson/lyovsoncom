@@ -22,7 +22,7 @@ const RafaSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://www.linkedin.com/in/lyovson"
+          href="https://www.linkedin.com/in/rafa-lyovson"
           target="_blank"
           rel="noopener noreferrer"
           title="Linkedin"
