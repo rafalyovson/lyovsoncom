@@ -1,5 +1,12 @@
+import Editor from "./Editor";
+import "./styles.css";
+
 const page = () => {
-  return <div>page</div>;
+  return (
+    <div>
+      <Editor />
+    </div>
+  );
 };
 
 export default page;
