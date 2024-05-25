@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/app/ui/Button";
+import Button from "@/components/Button";
 import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTheme } from "next-themes";

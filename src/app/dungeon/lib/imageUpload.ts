@@ -4,8 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function uploadImage(formData: FormData) {
-  const imageFile = formData.get("image") as File;
+  const imageFile = formData.get("file") as File;
   const blob = await put(imageFile.name, imageFile, {
+    contentType: imageFile.type,
     access: "public",
   });
   console.log("blob");

@@ -2,8 +2,8 @@ import { auth } from "@/data/auth";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SessionProvider, ThemeProvider } from "./ThemeProvider";
+import { inter, lusitana } from "./assets/Fonts";
 import "./globals.css";
-import { inter, lusitana } from "./ui/Fonts";
 
 export const metadata = {
   title: "Lyovson.com",

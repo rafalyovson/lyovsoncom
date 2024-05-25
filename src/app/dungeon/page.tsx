@@ -1,13 +1,12 @@
 import PostTable from "@/app/dungeon/ui/postTable/PostTable";
-import { db } from "@/data/db";
-import { Post, posts } from "@/data/schema";
+import { getAllPosts, PostWithUser } from "@/lib/getAllPosts";
 
 const Page = async () => {
-  const allPosts: Post[] = await db.select().from(posts);
+  const allPostsWithUsers: PostWithUser[] = await getAllPosts();
 
   return (
     <main>
-      <PostTable posts={allPosts} />
+      <PostTable allPostsWithUsers={allPostsWithUsers} />
     </main>
   );
 };

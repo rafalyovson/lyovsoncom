@@ -1,8 +1,17 @@
 "use server";
 
 import { db } from "@/data/db";
-import { Post, posts } from "@/data/schema";
+import { Post, User, posts, users } from "@/data/schema";
+import { eq } from "drizzle-orm";
 
-export async function getAllPosts(): Promise<Post[]> {
-  return await db.select().from(posts);
+export type PostWithUser = { post: Post; user: User | null };
+
+export async function getAllPosts(): Promise<PostWithUser[]> {
+  const allPosts = await db
+    .select()
+    .from(posts)
+    .leftJoin(users, eq(posts.authorId, users.id));
+
+  console.log(allPosts);
+  return allPosts;
 }

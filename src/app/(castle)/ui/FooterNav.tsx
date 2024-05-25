@@ -1,7 +1,7 @@
 "use client";
 
-import Button from "@/app/ui/Button";
-import ThemeSwitch from "@/app/ui/ThemeSwitcher";
+import Button from "@/components/Button";
+import ThemeSwitch from "@/components/ThemeSwitcher";
 import {
   faDungeon,
   faRightFromBracket,

@@ -1,4 +1,4 @@
-import Button from "@/app/ui/Button";
+import Button from "@/components/Button";
 import {
   faInstagram,
   faLinkedin,

@@ -7,14 +7,16 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { deleteImage } from "./imageDelete";
+import { uploadImage } from "./imageUpload";
 
 export const createPost = async (formData: FormData): Promise<void> => {
   const currentUser = await getCurrentUser();
+  const { url } = await uploadImage(formData);
   const data = {
     title: formData.get("title") as string,
     slug: formData.get("slug") as string,
     content: formData.get("content") as string,
-    featuredImg: formData.get("imageUrl") as string,
+    featuredImg: url,
     authorId: currentUser.id,
   };
   const newPost = await db.insert(posts).values(data);

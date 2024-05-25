@@ -5,6 +5,9 @@ import Image from "next/image";
 
 const PostHeader = async ({ post }: { post: Post }) => {
   const author = await getUserById(post.authorId);
+  if (!author) {
+    throw new Error(`User with id "${post.authorId}" not found.`);
+  }
   return (
     <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
       <section className="flex flex-col gap-2 lg:w-1/2">
@@ -26,7 +29,7 @@ const PostHeader = async ({ post }: { post: Post }) => {
       </section>
       <section className="flex justify-center lg:w-1/2">
         <Image
-          src={post.featuredImg!}
+          src={post.featuredImg || ""}
           alt={post.title}
           width="600"
           height="600"

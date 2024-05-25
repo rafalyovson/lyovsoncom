@@ -1,7 +1,5 @@
-export default function Playground() {
-  return (
-    <main>
-      <h1>Playground</h1>
-    </main>
-  );
-}
+const page = () => {
+  return <div>page</div>;
+};
+
+export default page;

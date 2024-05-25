@@ -1,6 +1,6 @@
 const About = () => (
-  <section className=" p-8 text-2xl outline max-w-[600px] ">
-    <h2 className="mb-4 text-5xl font-bold font-lusitana">Welcome Friend</h2>
+  <article className=" p-8 m-8 text-2xl border prose dark:prose-invert  max-w-[600px] ">
+    <h2 className="mb-4 text-5xl font-bold font-lusitana">Welcome, Friend!</h2>
     <p>
       One day very soon this will be the official website of Jess and Rafa
       Lyovsons containing articles, ideas, projects and means of communication.
@@ -27,7 +27,7 @@ const About = () => (
       </a>{" "}
       respectively.
     </p>
-  </section>
+  </article>
 );
 
 export default About;

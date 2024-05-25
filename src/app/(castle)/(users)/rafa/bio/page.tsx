@@ -1,10 +1,12 @@
 const page = () => {
   return (
-    <article className="p-8 mx-auto prose prose-invert lg:prose-xl">
-      <h1>Rafa Lyovson</h1>
+    <article className="p-8 mx-auto prose dark:prose-invert lg:prose-xl">
+      <h1 className=" font-lusitana">Rafa Lyovson</h1>
       <em>
-        Bio, edited by
-        <a href="https://openai.com/chatgpt/"> ChatGPT</a>
+        Bio, edited by{"  "}
+        <a rel="noopener" target="_blank" href="https://openai.com/chatgpt/">
+          ChatGPT
+        </a>
       </em>
       <p>
         {`

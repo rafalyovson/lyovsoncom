@@ -1,67 +1,69 @@
-import { Post } from "@/data/schema";
-import { getUserById } from "@/lib/getUserById";
+"use client";
+
+import { deletePost } from "@/app/dungeon/lib/postActions";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { PostWithUser } from "@/lib/getAllPosts";
 import Image from "next/image";
-import Link from "next/link";
-import { ReactNode } from "react";
 
-const TableHeader = ({ text }: { text: string }) => (
-  <th className="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase text-dark dark:text-light">
-    {text}
-  </th>
-);
-
-const TableCell = ({ children }: { children: ReactNode }) => (
-  <td className="px-6 py-4 whitespace-nowrap dark:text-light">{children}</td>
-);
-
-const TableRow = async ({ post }: { post: Post }) => {
-  const author = await getUserById(post.authorId);
+const PostTable = ({
+  allPostsWithUsers,
+}: {
+  allPostsWithUsers: PostWithUser[];
+}) => {
   return (
-    <tr
-      key={post.id}
-      className="transition-colors duration-200 hover:bg-dark/10 dark:hover:bg-light/10"
-    >
-      <TableCell>
-        <Image
-          alt={post.title}
-          width="100"
-          height="100"
-          src={post.featuredImg || ""}
-        />
-      </TableCell>
-      <TableCell>
-        <Link href={`/posts/${post.slug}`}>{post.title}</Link>
-      </TableCell>
-      <TableCell>{author.name}</TableCell>
-
-      <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
-      <TableCell>
-        <div className="flex gap-4 px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
-          <Link href={`/dungeon/update-post/${post.slug}`}>Update</Link>
-        </div>
-      </TableCell>
-    </tr>
-  );
-};
-
-const PostTable = ({ posts }: { posts: any }) => {
-  return (
-    <table className="min-w-full overflow-hidden divide-y rounded-lg dow-lg divide-dark/50 dark:divide-light">
-      <thead className="bg-light dark:bg-dark">
-        <tr>
-          <TableHeader text="Image" />
-          <TableHeader text="Title" />
-          <TableHeader text="Author" />
-          <TableHeader text="Date" />
-          <TableHeader text="Actions" />
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-dark bg-light dark:bg-dark dark:divide-light">
-        {posts.map((post: any) => (
-          <TableRow key={post.id} post={post} />
-        ))}
-      </tbody>
-    </table>
+    <Table className="min-h-screen">
+      <TableCaption>All Articles</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-[200px]">Image</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead>Author</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody className="border-b">
+        {allPostsWithUsers.map((postwithuser: PostWithUser) => {
+          const { post, user } = postwithuser;
+          return (
+            <TableRow key={post.id}>
+              <TableCell>
+                <Image
+                  src={post.featuredImg || ""}
+                  alt={post.title}
+                  width={400}
+                  height={300}
+                  className="w-[150px] aspect-square object-cover"
+                />
+              </TableCell>
+              <TableCell>{post.title}</TableCell>
+              <TableCell>{user?.name}</TableCell>
+              <TableCell>{post.published}</TableCell>
+              <TableCell className=" flex flex-col gap-2 justify-center w-[200px]">
+                <Button>Edit</Button>
+                <Button
+                  onClick={() => {
+                    deletePost(post);
+                  }}
+                  variant={"destructive"}
+                >
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
+    </Table>
   );
 };
 

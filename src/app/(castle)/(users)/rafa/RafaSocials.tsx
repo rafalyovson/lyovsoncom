@@ -1,8 +1,8 @@
-import Button from "@/app/ui/Button";
+import Button from "@/components/Button";
 import {
   faCodepen,
   faGithub,
-  faLinkedin,
+  faRedditAlien,
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,12 +22,12 @@ const RafaSocials = () => (
       </Button>
       <Button>
         <a
-          href="https://www.linkedin.com/in/rafa-lyovson"
+          href="https://www.reddit.com/user/Lyovson/"
           target="_blank"
           rel="noopener noreferrer"
-          title="Linkedin"
+          title="Reddit"
         >
-          <FontAwesomeIcon icon={faLinkedin} />
+          <FontAwesomeIcon icon={faRedditAlien} />
         </a>
       </Button>
       <Button>

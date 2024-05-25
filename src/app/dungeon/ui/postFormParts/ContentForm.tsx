@@ -1,16 +1,12 @@
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
 export const ContentForm = ({ value }: { value?: string }) => {
   return (
-    <>
-      <label className="flex flex-col space-y-2">
-        <span className="text-lg font-medium">Content:</span>
-        <textarea
-          name="content"
-          required
-          className="h-32 p-2 border border-dark dark:border-light bg-light dark:bg-dark focus:outline-none focus:ring-2 focus:ring-beige"
-          defaultValue={value}
-        />
-      </label>
-    </>
+    <section className="flex flex-col gap-4">
+      <Label htmlFor="content">Content:</Label>
+      <Textarea name="content" required defaultValue={value} />
+    </section>
   );
 };
 
