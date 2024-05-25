@@ -1,6 +1,6 @@
 "use client";
-import Button from "@/components/Button";
 import ThemeSwitch from "@/components/ThemeSwitcher";
+import { Button } from "@/components/ui/button";
 import {
   faArrowRightFromBracket,
   faDungeon,

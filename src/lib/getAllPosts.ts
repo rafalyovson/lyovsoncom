@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 export type PostWithUser = { post: Post; user: User | null };
 
 export async function getAllPosts(): Promise<PostWithUser[]> {
+  console.log("running!!!!");
   const allPosts = await db
     .select()
     .from(posts)

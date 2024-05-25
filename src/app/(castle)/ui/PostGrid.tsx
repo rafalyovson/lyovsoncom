@@ -1,11 +1,10 @@
 import PostCard from "@/app/(castle)/ui/PostCard";
 import { PostWithUser, getAllPosts } from "@/lib/getAllPosts";
 
-const allPostsWithUsers: PostWithUser[] = await getAllPosts();
+const PostGrid = async () => {
+  const allPostsWithUsers: PostWithUser[] = await getAllPosts();
 
-const PostGrid = () => {
-  if (!allPostsWithUsers)
-    return <p className="text-xl text-center">Loading...</p>;
+  console.log(allPostsWithUsers);
 
   return (
     <section className="p-8 ">

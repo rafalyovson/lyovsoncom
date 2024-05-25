@@ -1,5 +1,5 @@
-import Button from "@/app/ui/Button";
-import ThemeSwitch from "@/app/ui/ThemeSwitcher";
+import ThemeSwitch from "@/components/ThemeSwitcher";
+import { Button } from "@/components/ui/button";
 import {
   faCodepen,
   faGithub,

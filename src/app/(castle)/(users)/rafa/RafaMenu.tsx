@@ -1,6 +1,6 @@
 import RafaSocials from "@/app/(castle)/(users)/rafa/RafaSocials";
 import Link from "@/app/(castle)/ui/UserMenuLink";
-import Button from "@/components/Button";
+import { Button } from "@/components/ui/button";
 import {
   faAddressCard,
   faBriefcase,

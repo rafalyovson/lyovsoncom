@@ -8,21 +8,16 @@ export const ImageButton = ({
   src: string;
 }) => {
   return (
-    <button
-      onClick={handleImageClick}
-      className="p-0 focus:outline-none aspect-video"
-      title="User Image"
-    >
-      <div className="relative w-10 h-10">
-        <Image
-          loading="eager"
-          src={src}
-          alt="Placeholder"
-          height={400}
-          width={300}
-          className=""
-        />
-      </div>
-    </button>
+    <div className="relative w-10 h-10 curson-pointer">
+      <Image
+        onClick={handleImageClick}
+        loading="eager"
+        src={src}
+        alt="Placeholder"
+        height={400}
+        width={300}
+        className=" rounded-lg shadow-lg"
+      />
+    </div>
   );
 };
