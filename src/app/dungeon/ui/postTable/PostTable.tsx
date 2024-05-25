@@ -1,11 +1,7 @@
-"use client";
-import { deletePost } from "@/app/dungeon/lib/postActions";
-import Button from "@/app/ui/Button";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Post } from "@/data/schema";
+import { getUserById } from "@/lib/getUserById";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
 const TableHeader = ({ text }: { text: string }) => (
@@ -18,48 +14,37 @@ const TableCell = ({ children }: { children: ReactNode }) => (
   <td className="px-6 py-4 whitespace-nowrap dark:text-light">{children}</td>
 );
 
-const TableRow = ({ post, router }: { post: any; router: any }) => (
-  <tr
-    key={post.id}
-    className="transition-colors duration-200 hover:bg-dark/10 dark:hover:bg-light/10"
-  >
-    <TableCell>
-      <Image
-        alt={post.title}
-        width="100"
-        height="100"
-        src={post.featuredImg || ""}
-      />
-    </TableCell>
-    <TableCell>
-      <Link href={`/posts/${post.slug}`}>{post.title}</Link>
-    </TableCell>
-    <TableCell>{post.author.name}</TableCell>
+const TableRow = async ({ post }: { post: Post }) => {
+  const author = await getUserById(post.authorId);
+  return (
+    <tr
+      key={post.id}
+      className="transition-colors duration-200 hover:bg-dark/10 dark:hover:bg-light/10"
+    >
+      <TableCell>
+        <Image
+          alt={post.title}
+          width="100"
+          height="100"
+          src={post.featuredImg || ""}
+        />
+      </TableCell>
+      <TableCell>
+        <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+      </TableCell>
+      <TableCell>{author.name}</TableCell>
 
-    <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
-    <TableCell>
-      <div className="flex gap-4 px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
-        <Button
-          aria-label="update the post"
-          className="flex items-center justify-center rounded-full size-12"
-          onClick={() => router.push(`/dungeon/update-post/${post.slug}`)}
-        >
-          <FontAwesomeIcon icon={faPenToSquare} className="rounded-full" />
-        </Button>
-        <Button
-          aria-label="delete the post"
-          className="flex items-center justify-center rounded-full size-12"
-          onClick={() => deletePost(post)}
-        >
-          <FontAwesomeIcon icon={faTrash} className="rounded-full" />
-        </Button>
-      </div>
-    </TableCell>
-  </tr>
-);
+      <TableCell>{new Date(post.createdAt).toLocaleDateString()}</TableCell>
+      <TableCell>
+        <div className="flex gap-4 px-6 py-4 text-sm text-right whitespace-nowrap dark:text-light">
+          <Link href={`/dungeon/update-post/${post.slug}`}>Update</Link>
+        </div>
+      </TableCell>
+    </tr>
+  );
+};
 
 const PostTable = ({ posts }: { posts: any }) => {
-  const router = useRouter();
   return (
     <table className="min-w-full overflow-hidden divide-y rounded-lg dow-lg divide-dark/50 dark:divide-light">
       <thead className="bg-light dark:bg-dark">
@@ -73,7 +58,7 @@ const PostTable = ({ posts }: { posts: any }) => {
       </thead>
       <tbody className="divide-y divide-dark bg-light dark:bg-dark dark:divide-light">
         {posts.map((post: any) => (
-          <TableRow key={post.id} post={post} router={router} />
+          <TableRow key={post.id} post={post} />
         ))}
       </tbody>
     </table>

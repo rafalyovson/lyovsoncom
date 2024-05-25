@@ -1,7 +1,8 @@
 import Menu from "@/app/dungeon/ui/Menu";
+import { User } from "@/data/schema";
 import Image from "next/image";
 
-const Header = ({ user }: { user: { name: string; image: string } }) => {
+const Header = ({ user }: { user: User }) => {
   return (
     <header className="sticky top-0 z-10 flex flex-wrap items-center justify-center gap-4 p-4 border-b-4 md:justify-between bg-light dark:bg-dark border-dark dark:border-light">
       <section className="flex gap-4">

@@ -1,3 +1,1 @@
-export { GET, POST } from "@/app/lib/auth";
-// export const runtime = "nodejs";
-// export const apiVersion = 1;
+export { GET, POST } from "@/data/auth";

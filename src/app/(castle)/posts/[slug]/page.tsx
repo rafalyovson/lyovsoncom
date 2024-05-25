@@ -1,46 +1,46 @@
-import { prisma } from "@/app/lib/prisma";
+import { Post } from "@/data/schema";
+import { getPostBySlug } from "@/lib/getPostBySlug";
+import { getUserById } from "@/lib/getUserById";
 import Image from "next/image";
 
-const PostHeader = ({ post }: any) => (
-  <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
-    <section className="flex flex-col gap-2 lg:w-1/2">
-      <h1 className="text-4xl font-bold text-center lg:text-left">
-        {post.title}
-      </h1>
-      <aside className="flex items-center justify-center gap-4 lg:justify-start">
-        <p className="">
-          <span className="text-sm ">by </span>
-          <span className="underline">{post.author.name}</span>
-        </p>
-        <p className="">
-          <span className="text-sm ">on </span>
-          <span className="underline">
-            {new Date(post.createdAt).toLocaleDateString()}
-          </span>
-        </p>
-      </aside>
-    </section>
-    <section className="flex justify-center lg:w-1/2">
-      <Image
-        src={post.featuredImg}
-        alt={post.title}
-        width="600"
-        height="600"
-        className="rounded-lg shadow-lg "
-      />
-    </section>
-  </header>
-);
+const PostHeader = async ({ post }: { post: Post }) => {
+  const author = await getUserById(post.authorId);
+  return (
+    <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
+      <section className="flex flex-col gap-2 lg:w-1/2">
+        <h1 className="text-4xl font-bold text-center lg:text-left">
+          {post.title}
+        </h1>
+        <aside className="flex items-center justify-center gap-4 lg:justify-start">
+          <p className="">
+            <span className="text-sm ">by </span>
+            <span className="underline">{author.name}</span>
+          </p>
+          <p className="">
+            <span className="text-sm ">on </span>
+            <span className="underline">
+              {new Date(post.createdAt).toLocaleDateString()}
+            </span>
+          </p>
+        </aside>
+      </section>
+      <section className="flex justify-center lg:w-1/2">
+        <Image
+          src={post.featuredImg!}
+          alt={post.title}
+          width="600"
+          height="600"
+          className="rounded-lg shadow-lg "
+        />
+      </section>
+    </header>
+  );
+};
 
 const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
-  const post = await prisma.post.findUnique({
-    where: { slug },
-    include: { author: true },
-  });
-
+  const post = await getPostBySlug(slug);
   if (!post) {
-    // Handle the error appropriately. This could be a redirect, a custom error message, etc.
     throw new Error(`Post with slug "${slug}" not found.`);
   }
 

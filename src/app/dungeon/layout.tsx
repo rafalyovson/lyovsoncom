@@ -1,30 +1,17 @@
-import Footer from "@/app/dungeon/ui/Footer";
-import Header from "@/app/dungeon/ui/Header";
-import { auth } from "@/app/lib/auth";
-import { prisma } from "@/app/lib/prisma";
-
-import { redirect } from "next/navigation";
+import { getCurrentUser } from "../../lib/getCurrentUser";
+import Footer from "./ui/Footer";
+import Header from "./ui/Header";
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    redirect("/api/auth/signin");
-  }
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session.user?.email ?? "",
-    },
-  });
+  const currentUser = await getCurrentUser();
 
   return (
     <>
-      <Header user={user} />
+      <Header user={currentUser} />
       {children}
       <Footer />
     </>

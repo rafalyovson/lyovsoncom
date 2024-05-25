@@ -1,17 +1,13 @@
 import PostTable from "@/app/dungeon/ui/postTable/PostTable";
-
-import { prisma } from "@/app/lib/prisma";
+import { db } from "@/data/db";
+import { Post, posts } from "@/data/schema";
 
 const Page = async () => {
-  const posts = await prisma.post.findMany({
-    include: {
-      author: true,
-    },
-  });
+  const allPosts: Post[] = await db.select().from(posts);
 
   return (
     <main>
-      <PostTable posts={posts} />
+      <PostTable posts={allPosts} />
     </main>
   );
 };

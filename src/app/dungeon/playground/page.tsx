@@ -1,4 +1,4 @@
-export default function App() {
+export default function Playground() {
   return (
     <main>
       <h1>Playground</h1>
