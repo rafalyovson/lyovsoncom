@@ -19,7 +19,14 @@
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@lexical/code": "^0.15.0",
+    "@lexical/link": "^0.15.0",
+    "@lexical/list": "^0.15.0",
+    "@lexical/markdown": "^0.15.0",
     "@lexical/react": "^0.15.0",
+    "@lexical/rich-text": "^0.15.0",
+    "@lexical/selection": "^0.15.0",
+    "@lexical/table": "^0.15.0",
     "@lexical/utils": "^0.15.0",
     "@next/env": "^14.2.3",
     "@radix-ui/react-label": "^2.0.2",
@@ -29,6 +36,9 @@
     "@vercel/blob": "^0.16.2",
     "@vercel/postgres": "^0.8.0",
     "@vercel/speed-insights": "^1.0.11",
+    "LexicalAutoLinkPlugin": "link:@lexical/react/LexicalAutoLinkPlugin",
+    "LexicalComposerContext": "link:@lexical/react/LexicalComposerContext",
+    "LexicalMarkdownShortcutPlugin": "link:@lexical/react/LexicalMarkdownShortcutPlugin",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.30.10",
@@ -54,5 +64,6 @@
     "eslint-config-next": "^14.2.3",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
-  }
+  },
+  "packageManager": "pnpm@9.1.2+sha256.19c17528f9ca20bd442e4ca42f00f1b9808a9cb419383cd04ba32ef19322aba7"
 }
