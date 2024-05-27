@@ -1,5 +1,7 @@
 "use client";
 
+import { faAdd } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   $isCodeNode,
   getCodeLanguages,
@@ -25,8 +27,9 @@ import {
 } from "lexical";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-
+import useModal from "../../hooks/useModal";
 import { BlockOptionsDropdownList } from "./BlockOptionsDropdownList";
+import { EmbedMenu } from "./EmbedMenu";
 import { FloatingLinkEditor } from "./FloatingLinkEditor";
 import { getSelectedNode } from "./GetSelectedNode";
 
@@ -64,6 +67,7 @@ export default function ToolbarPlugin() {
   const [selectedElementKey, setSelectedElementKey] = useState("");
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] =
     useState(false);
+  const [showEmbedMenu, setShowEmbedMenu] = useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
   const [_, setIsRTL] = useState(false);
   const [isLink, setIsLink] = useState(false);
@@ -72,6 +76,7 @@ export default function ToolbarPlugin() {
   const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isCode, setIsCode] = useState(false);
+  const [modal, _showModal] = useModal();
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -152,7 +157,10 @@ export default function ToolbarPlugin() {
     );
   }, [editor, updateToolbar]);
 
-  const codeLanguges = useMemo(() => getCodeLanguages(), []);
+  const codeLanguages = useMemo(
+    () => (typeof window !== "undefined" ? getCodeLanguages() : []),
+    []
+  );
   const onCodeLanguageSelect = useCallback(
     (e: any) => {
       editor.update(() => {
@@ -176,7 +184,7 @@ export default function ToolbarPlugin() {
   }, [editor, isLink]);
 
   return (
-    <div className="toolbar" ref={toolbarRef}>
+    <div className="toolbar overflow-x-scroll" ref={toolbarRef}>
       <button
         disabled={!canUndo}
         onClick={() => {
@@ -233,7 +241,7 @@ export default function ToolbarPlugin() {
             title="Select an option"
           >
             <option hidden={true} value="" />
-            {codeLanguges.map((option) => (
+            {codeLanguages.map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
@@ -338,6 +346,24 @@ export default function ToolbarPlugin() {
           </button>{" "}
         </>
       )}
+      <div className="divider" />
+      <button
+        className="toolbar-item block-controls"
+        onClick={() => setShowEmbedMenu(!showEmbedMenu)}
+        aria-label="Embed Menu"
+      >
+        <FontAwesomeIcon className="  text-slate-500 mt-1" icon={faAdd} />
+      </button>
+      {showEmbedMenu &&
+        createPortal(
+          <EmbedMenu
+            editor={editor}
+            toolbarRef={toolbarRef}
+            setShowEmbedMenu={setShowEmbedMenu}
+          />,
+          document.body
+        )}
+      {modal}
     </div>
   );
 }

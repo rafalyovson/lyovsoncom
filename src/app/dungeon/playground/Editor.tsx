@@ -15,18 +15,18 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { FigmaNode } from "./nodes/FigmaNode";
+import { TweetNode } from "./nodes/TweetNode";
+import { YouTubeNode } from "./nodes/YouTubeNode";
+import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
+import FigmaPlugin from "./plugins/FigmaPlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import TreeViewPlugin from "./plugins/TreeViewPlugin";
+import TwitterPlugin from "./plugins/TwitterPlugin";
+import YouTubePlugin from "./plugins/YouTubePlugin";
 import ExampleTheme from "./themes/ExampleTheme";
-
-// import { CustomParagraphNode } from "./nodes/CustomParagraphNode";
-
-function Placeholder() {
-  return <div className="editor-placeholder">Enter some rich text...</div>;
-}
 
 const editorConfig = {
   namespace: "Playground",
@@ -49,13 +49,9 @@ const editorConfig = {
     TableRowNode,
     AutoLinkNode,
     LinkNode,
-    // CustomParagraphNode,
-    // {
-    //   replace: ParagraphNode,
-    //   with: (node) => {
-    //     return new CustomParagraphNode();
-    //   },
-    // },
+    YouTubeNode,
+    TweetNode,
+    FigmaNode,
   ],
 };
 
@@ -67,16 +63,22 @@ export default function Editor() {
         <div className="editor-inner">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
-            placeholder={<Placeholder />}
+            placeholder={
+              <div className="editor-placeholder">Enter some rich text...</div>
+            }
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-          <TreeViewPlugin />
+          {/* <TreeViewPlugin /> */}
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
           <ListPlugin />
           <LinkPlugin />
           <AutoLinkPlugin />
+          <AutoEmbedPlugin />
+          <TwitterPlugin />
+          <YouTubePlugin />
+          <FigmaPlugin />
           <ListMaxIndentLevelPlugin maxDepth={7} />
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>

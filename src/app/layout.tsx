@@ -28,6 +28,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
+            <aside id="portal"></aside>
           </ThemeProvider>
         </SessionProvider>
         <SpeedInsights />

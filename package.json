@@ -6,7 +6,7 @@
   "module": "esnext",
   "target": "esnext",
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -36,6 +36,7 @@
     "@vercel/blob": "^0.16.2",
     "@vercel/postgres": "^0.8.0",
     "@vercel/speed-insights": "^1.0.11",
+    "LexicalAutoEmbedPlugin": "link:@lexical/react/LexicalAutoEmbedPlugin",
     "LexicalAutoLinkPlugin": "link:@lexical/react/LexicalAutoLinkPlugin",
     "LexicalComposerContext": "link:@lexical/react/LexicalComposerContext",
     "LexicalMarkdownShortcutPlugin": "link:@lexical/react/LexicalMarkdownShortcutPlugin",
@@ -64,5 +65,6 @@
     "eslint-config-next": "^14.2.3",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3"
-  }
+  },
+  "packageManager": "pnpm@9.1.2+sha256.19c17528f9ca20bd442e4ca42f00f1b9808a9cb419383cd04ba32ef19322aba7"
 }
