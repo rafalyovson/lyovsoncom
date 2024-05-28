@@ -10,8 +10,7 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
 import { useCallback, useEffect, useRef, useState } from "react";
-
-import { getSelectedNode } from "./GetSelectedNode";
+import { getSelectedNode } from "../../utils/getSelectedNode";
 
 const LowPriority = 1;
 

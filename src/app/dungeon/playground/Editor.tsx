@@ -58,9 +58,9 @@ const editorConfig = {
 export default function Editor() {
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="editor-container">
+      <div className=" border w-full max-w-[600px] mx-auto">
         <ToolbarPlugin />
-        <div className="editor-inner">
+        <div className="">
           <RichTextPlugin
             contentEditable={<ContentEditable className="editor-input" />}
             placeholder={

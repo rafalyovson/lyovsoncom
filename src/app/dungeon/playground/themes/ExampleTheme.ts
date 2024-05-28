@@ -30,6 +30,8 @@ const exampleTheme = {
     strikethrough: "editor-text-strikethrough",
     underlineStrikethrough: "editor-text-underlineStrikethrough",
     code: "editor-text-code",
+    subscript: "editor-text-subscript",
+    superscript: "editor-text-superscript",
   },
   code: "editor-code",
   codeHighlight: {

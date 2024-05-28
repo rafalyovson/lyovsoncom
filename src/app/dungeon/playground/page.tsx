@@ -3,7 +3,7 @@ import "./styles.css";
 
 const page = () => {
   return (
-    <div>
+    <div className="">
       <Editor />
     </div>
   );
