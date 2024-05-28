@@ -20,7 +20,7 @@ const JessMenu = ({
 }) => {
   return (
     <motion.aside
-      className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4 bg-light dark:bg-dark lg:border-r-4 border-dark dark:border-light`}
+      className={`fixed top-20 h-full overflow-auto z-10  left-0  flex flex-col items-center gap-4 bg-background`}
       initial={{ width: "0%", opacity: 0 }}
       animate={{ width: windowWidth > 992 ? "400px" : "100%", opacity: 1 }}
       exit={{ width: "0%", opacity: 0 }}

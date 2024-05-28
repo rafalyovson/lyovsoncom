@@ -9,7 +9,7 @@ const Header = () => {
   const { setUser } = useContext(UserModeContext);
 
   return (
-    <header className="sticky top-0 z-10 flex items-center justify-between h-20 px-4 border-b-4 bg-light dark:bg-dark border-dark dark:border-light">
+    <header className="sticky top-0 z-10 flex items-center justify-between h-20 px-4 border-b-4 bg-background ">
       <ImageButton src="/jess.png" handleImageClick={() => setUser("Jess")} />
       <section className="flex items-baseline gap-4">
         <Link href="/">

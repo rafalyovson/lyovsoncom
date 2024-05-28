@@ -10,7 +10,7 @@ const Footer = () => {
   const { windowWidth } = useContext(WindowWidthContext);
   return (
     <motion.footer
-      className="flex justify-around p-8 border-t-4 bg-light dark:bg-dark border-dark dark:border-light"
+      className="flex justify-around p-8 border-t-4 bg-background"
       layout
       animate={{
         marginRight: user === "Rafa" && windowWidth > 992 ? "400px" : "0px",
