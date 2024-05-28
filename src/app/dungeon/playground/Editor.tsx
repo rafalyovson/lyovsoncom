@@ -15,6 +15,7 @@ import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPl
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { useState } from "react";
 import { FigmaNode } from "./nodes/FigmaNode";
 import { TweetNode } from "./nodes/TweetNode";
 import { YouTubeNode } from "./nodes/YouTubeNode";
@@ -22,6 +23,7 @@ import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
 import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
 import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
 import FigmaPlugin from "./plugins/FigmaPlugin";
+import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
 import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import TwitterPlugin from "./plugins/TwitterPlugin";
@@ -56,13 +58,37 @@ const editorConfig = {
 };
 
 export default function Editor() {
+  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+  const [floatingAnchorElem, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
+
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <div className=" border w-full max-w-[600px] mx-auto">
-        <ToolbarPlugin />
+        <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+        {floatingAnchorElem && (
+          <FloatingLinkEditorPlugin
+            // anchorElem={floatingAnchorElem}
+            isLinkEditMode={isLinkEditMode}
+            setIsLinkEditMode={setIsLinkEditMode}
+          />
+        )}
+
         <div className="">
           <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" />}
+            contentEditable={
+              <div className="editor-scroller">
+                <div className="editor" ref={onRef}>
+                  <ContentEditable className="editor-input" />
+                </div>
+              </div>
+            }
             placeholder={
               <div className="editor-placeholder">Enter some rich text...</div>
             }

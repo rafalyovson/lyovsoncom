@@ -20,10 +20,21 @@ import {
   $isRangeSelection,
 } from "lexical";
 
+import {
+  Code,
+  Heading1,
+  Heading2,
+  List,
+  ListOrdered,
+  Quote,
+  Text,
+} from "lucide-react";
+
 const blockOptions = [
   {
     value: "paragraph",
-    label: "Normal",
+    label: "Paragraph",
+    icon: Text,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
@@ -36,6 +47,7 @@ const blockOptions = [
   {
     value: "h1",
     label: "Large Heading",
+    icon: Heading1,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
@@ -48,6 +60,7 @@ const blockOptions = [
   {
     value: "h2",
     label: "Small Heading",
+    icon: Heading2,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
@@ -60,6 +73,7 @@ const blockOptions = [
   {
     value: "ul",
     label: "Bullet List",
+    icon: List,
     format: (editor: any) => {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND);
     },
@@ -70,6 +84,7 @@ const blockOptions = [
   {
     value: "ol",
     label: "Numbered List",
+    icon: ListOrdered,
     format: (editor: any) => {
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND);
     },
@@ -80,6 +95,7 @@ const blockOptions = [
   {
     value: "quote",
     label: "Quote",
+    icon: Quote,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
@@ -92,6 +108,7 @@ const blockOptions = [
   {
     value: "code",
     label: "Code Block",
+    icon: Code,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
@@ -125,9 +142,8 @@ export function BlockMenu({
     <>
       <MenubarMenu>
         <MenubarTrigger>
-          {blockType
-            ? blockOptions.find((option) => option.value === blockType)?.label
-            : "Select block type..."}
+          <Text className="mr-2 h-4 w-4" />
+          <span>{"Paragraph"}</span>
         </MenubarTrigger>
         <MenubarContent>
           {blockOptions.map((option) => (
@@ -135,7 +151,7 @@ export function BlockMenu({
               key={option.value}
               onClick={() => handleSelect(option.value)}
             >
-              <span className={`icon ${option.value}`} />
+              <option.icon className="mr-2 h-4 w-4" />
               <span>{option.label}</span>
             </MenubarItem>
           ))}

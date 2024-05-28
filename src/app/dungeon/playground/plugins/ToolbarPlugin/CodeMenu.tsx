@@ -6,17 +6,33 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import { $isCodeNode, getCodeLanguages } from "@lexical/code";
+import { $isCodeNode } from "@lexical/code";
 import { $getNodeByKey } from "lexical";
+import { Code } from "lucide-react";
 
 export function CodeMenu({
   editor,
   selectedElementKey,
+  codeLanguage,
 }: {
   editor: any;
   selectedElementKey: any;
+  codeLanguage: string;
 }) {
-  const codeLanguages = getCodeLanguages();
+  // const codeLanguages = getCodeLanguages();
+  const usefulCodeLanguages = [
+    "javascript",
+    "typescript",
+    "python",
+    "json",
+    "html",
+    "css",
+    "markdown",
+    "bash",
+    "c",
+    "rust",
+  ].sort();
+
   const onCodeLanguageSelect = (e: any) => {
     editor.update(() => {
       if (selectedElementKey !== null) {
@@ -30,12 +46,19 @@ export function CodeMenu({
 
   return (
     <MenubarMenu>
-      <MenubarTrigger>Choose</MenubarTrigger>
-
+      <MenubarTrigger className="font-mono">
+        <Code className="mr-2 h-4 w-4" />
+        <span>{codeLanguage.toUpperCase()}</span>
+      </MenubarTrigger>
       <MenubarContent>
-        {codeLanguages.map((language) => (
-          <MenubarItem key={language} onClick={(e) => onCodeLanguageSelect(e)}>
-            <span>{language}</span>
+        {usefulCodeLanguages.map((language) => (
+          <MenubarItem
+            className="font-mono"
+            key={language}
+            onClick={() => onCodeLanguageSelect(language)}
+          >
+            <Code className="mr-2 h-4 w-4" />
+            <span>{language.toUpperCase()}</span>
           </MenubarItem>
         ))}
       </MenubarContent>

@@ -6,18 +6,7 @@ import {
   MenubarMenu,
   MenubarSeparator,
 } from "@/components/ui/menubar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  $isCodeNode,
-  getCodeLanguages,
-  getDefaultCodeLanguage,
-} from "@lexical/code";
+import { $isCodeNode, getDefaultCodeLanguage } from "@lexical/code";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { $isListNode, ListNode } from "@lexical/list";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -29,7 +18,6 @@ import {
   mergeRegister,
 } from "@lexical/utils";
 import {
-  $getNodeByKey,
   $getSelection,
   $isElementNode,
   $isRangeSelection,
@@ -38,6 +26,7 @@ import {
   ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
+  KEY_MODIFIER_COMMAND,
   REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
@@ -58,21 +47,26 @@ import {
   Underline,
   Undo,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import { getSelectedNode } from "../../utils/getSelectedNode";
+import { sanitizeUrl } from "../../utils/url";
 import { BlockMenu } from "./BlockMenu";
+import { CodeMenu } from "./CodeMenu";
 import { EmbedMenu } from "./EmbedMenu";
-import { FloatingLinkEditor } from "./FloatingLinkEditor";
 
 const LowPriority = 1;
+const NormalPriority = 2;
 
-export default function ToolbarPlugin() {
+export default function ToolbarPlugin({
+  setIsLinkEditMode,
+}: {
+  setIsLinkEditMode: Dispatch<boolean>;
+}): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
   const [blockType, setBlockType] = useState("paragraph");
   const [selectedElementKey, setSelectedElementKey] = useState("");
-  const [showCodeMenu, setShowCodeMenu] = useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
   const [_, setIsRTL] = useState(false);
   const [isLink, setIsLink] = useState(false);
@@ -128,8 +122,10 @@ export default function ToolbarPlugin() {
       const parent = node.getParent();
 
       if ($isLinkNode(parent) || $isLinkNode(node)) {
+        setIsLinkEditMode(true);
         setIsLink(true);
       } else {
+        setIsLinkEditMode(false);
         setIsLink(false);
       }
 
@@ -153,7 +149,7 @@ export default function ToolbarPlugin() {
           : parent?.getFormatType() || "left"
       );
     }
-  }, [editor]);
+  }, [editor, setIsLinkEditMode]);
 
   useEffect(() => {
     return mergeRegister(
@@ -189,31 +185,46 @@ export default function ToolbarPlugin() {
     );
   }, [editor, updateToolbar]);
 
-  const codeLanguages = getCodeLanguages();
-  const onCodeLanguageSelect = (e: any) => {
-    editor.update(() => {
-      if (selectedElementKey !== null) {
-        const node = $getNodeByKey(selectedElementKey);
-        if ($isCodeNode(node)) {
-          node.setLanguage(e);
-        }
-      }
-    });
-  };
+  useEffect(() => {
+    return editor.registerCommand(
+      KEY_MODIFIER_COMMAND,
+      (payload) => {
+        const event: KeyboardEvent = payload;
+        const { code, ctrlKey, metaKey } = event;
 
-  const insertLink = () => {
+        if (code === "KeyK" && (ctrlKey || metaKey)) {
+          event.preventDefault();
+          let url: string | null;
+          if (!isLink) {
+            setIsLinkEditMode(true);
+            url = sanitizeUrl("https://");
+          } else {
+            setIsLinkEditMode(false);
+            url = null;
+          }
+          return editor.dispatchCommand(TOGGLE_LINK_COMMAND, url);
+        }
+        return false;
+      },
+      NormalPriority
+    );
+  }, [editor, isLink, setIsLinkEditMode]);
+
+  const insertLink = useCallback(() => {
     if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
+      setIsLinkEditMode(true);
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
     } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, "");
+      setIsLinkEditMode(false);
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
-  };
+  }, [editor, isLink, setIsLinkEditMode]);
 
   return (
     <Menubar>
       <MenubarMenu>
         <Button
-          variant={canUndo ? "secondary" : "ghost"}
+          variant={"ghost"}
           disabled={!canUndo}
           onClick={() => {
             editor.dispatchCommand(UNDO_COMMAND, undefined);
@@ -223,7 +234,7 @@ export default function ToolbarPlugin() {
           <Undo />
         </Button>
         <Button
-          variant={canRedo ? "secondary" : "ghost"}
+          variant={"ghost"}
           disabled={!canRedo}
           onClick={() => {
             editor.dispatchCommand(REDO_COMMAND, undefined);
@@ -237,32 +248,11 @@ export default function ToolbarPlugin() {
         <MenubarSeparator />
         {blockType === "code" ? (
           <>
-            <div>
-              {!showCodeMenu ? (
-                <button
-                  onClick={() => setShowCodeMenu(!showCodeMenu)}
-                  aria-label="Embed Menu"
-                >
-                  <span className="text"> {codeLanguage}</span>
-                </button>
-              ) : (
-                <Select
-                  onValueChange={onCodeLanguageSelect}
-                  defaultValue={codeLanguage}
-                >
-                  <SelectTrigger className="w-[120px] text-white">
-                    <SelectValue placeholder="Language" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {codeLanguages.map((language) => (
-                      <SelectItem key={language} value={language}>
-                        {language}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
+            <CodeMenu
+              codeLanguage={codeLanguage}
+              editor={editor}
+              selectedElementKey={selectedElementKey}
+            />
             <MenubarSeparator />
           </>
         ) : (
@@ -339,7 +329,6 @@ export default function ToolbarPlugin() {
             >
               <Link />
             </Button>
-            {isLink && <FloatingLinkEditor editor={editor} />}
             <MenubarSeparator />
             <Button
               variant={elementFormat === "left" ? "secondary" : "ghost"}

@@ -118,7 +118,7 @@
 }
 
 .editor-text-code {
-  background-color: rgb(240, 242, 245);
+  /* background-color: rgb(240, 242, 245); */
   padding: 1px 0.25rem;
   font-family: Menlo, Consolas, Monaco, monospace;
   font-size: 94%;
@@ -146,7 +146,9 @@
 }
 
 .editor-code {
-  background-color: rgb(240, 242, 245);
+  /* background-color: rgb(240, 242, 245); */
+
+  @apply border font-mono;
   font-family: Menlo, Consolas, Monaco, monospace;
   display: block;
   padding: 8px 8px 8px 52px;
@@ -164,12 +166,13 @@
 .editor-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: #eee;
+  /* background-color: #eee; */
   left: 0;
   top: 0;
-  border-right: 1px solid #ccc;
+  /* border-right: 1px solid #ccc; */
+  @apply border-r;
   padding: 8px;
-  color: #777;
+  /* color: #777; */
   white-space: pre-wrap;
   text-align: right;
   min-width: 25px;
@@ -182,7 +185,8 @@
   font-size: 10px;
   text-transform: uppercase;
   position: absolute;
-  color: rgba(0, 0, 0, 0.5);
+
+  /* color: rgba(0, 0, 0, 0.5); */
 }
 
 .editor-tokenComment {
@@ -600,90 +604,9 @@ i.chevron-down {
   background-size: contain;
 }
 
-.link-editor {
-  position: absolute;
-  z-index: 100;
-  top: -10000px;
-  left: -10000px;
-  margin-top: -6px;
-  max-width: 300px;
-  width: 100%;
-  opacity: 0;
-  background-color: #fff;
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-  border-radius: 8px;
-  transition: opacity 0.5s;
-}
+/* Start Link Editor */
 
-.link-editor .link-input {
-  display: block;
-  width: calc(100% - 24px);
-  box-sizing: border-box;
-  margin: 8px 12px;
-  padding: 8px 12px;
-  border-radius: 15px;
-  background-color: #eee;
-  font-size: 15px;
-  color: rgb(5, 5, 5);
-  border: 0;
-  outline: 0;
-  position: relative;
-  font-family: inherit;
-}
-
-.link-editor div.link-edit {
-  background-image: url(images/icons/pencil-fill.svg);
-  background-size: 16px;
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 35px;
-  vertical-align: -0.25em;
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  cursor: pointer;
-}
-
-.link-editor .link-input a {
-  color: rgb(33, 111, 219);
-  text-decoration: none;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-right: 30px;
-  text-overflow: ellipsis;
-}
-
-.link-editor .link-input a:hover {
-  text-decoration: underline;
-}
-
-.link-editor .button {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 0 2px;
-}
-
-.link-editor .button.hovered {
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-  background-color: #eee;
-}
-
-.link-editor .button i,
-.actions i {
-  background-size: contain;
-  display: inline-block;
-  height: 20px;
-  width: 20px;
-  vertical-align: -0.25em;
-}
+/* End Link Editor */
 
 i.undo {
   background-image: url(images/icons/arrow-counterclockwise.svg);

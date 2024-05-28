@@ -5,7 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import "./index.css";
 
 import {
   $createLinkNode,
@@ -32,6 +31,8 @@ import * as React from "react";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
 import { sanitizeUrl } from "../../utils/url";
@@ -96,7 +97,8 @@ function FloatingLinkEditor({
       const domRect: DOMRect | undefined =
         nativeSelection.focusNode?.parentElement?.getBoundingClientRect();
       if (domRect) {
-        domRect.y += 40;
+        domRect.y -= 400;
+        domRect.x -= 300;
         setFloatingElemPositionForLinkEditor(domRect, editorElem, anchorElem);
       }
       setLastSelection(selection);
@@ -214,14 +216,20 @@ function FloatingLinkEditor({
     }
   };
 
+  // if (!isLinkEditMode && !isLink) {
+  //   return <div>no!</div>;
+  // }
+
   return (
-    <div ref={editorRef} className="link-editor">
+    <aside
+      ref={editorRef}
+      className="max-w-[600px] w-full z-10 border rounded-sm  p-4 bg-background"
+    >
       {!isLink ? null : isLinkEditMode ? (
-        <>
-          <input
+        <section className="flex gap-4 justify-between">
+          <Input
             title="Enter URL and press Enter"
             ref={inputRef}
-            className="link-input"
             value={editedLinkUrl}
             onChange={(event) => {
               setEditedLinkUrl(event.target.value);
@@ -230,57 +238,65 @@ function FloatingLinkEditor({
               monitorInputInteraction(event);
             }}
           />
-          <div>
-            <div
-              className="link-cancel"
-              role="button"
+
+          <section className="flex gap-2">
+            <Button
+              variant={"secondary"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
                 setIsLinkEditMode(false);
               }}
-            />
+            >
+              Cancel
+            </Button>
 
-            <div
-              className="link-confirm"
-              role="button"
+            <Button
+              variant={"secondary"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={handleLinkSubmission}
-            />
-          </div>
-        </>
+            >
+              Done
+            </Button>
+          </section>
+        </section>
       ) : (
-        <div className="link-view">
+        <section className="flex gap-4 justify-between">
           <a
+            className="underline cursor-pointer text-sm h-10 px-3 py-2"
             href={sanitizeUrl(linkUrl)}
             target="_blank"
             rel="noopener noreferrer"
           >
             {linkUrl}
           </a>
-          <div
-            className="link-edit"
-            role="button"
-            tabIndex={0}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => {
-              setEditedLinkUrl(linkUrl);
-              setIsLinkEditMode(true);
-            }}
-          />
-          <div
-            className="link-trash"
-            role="button"
-            tabIndex={0}
-            onMouseDown={(event) => event.preventDefault()}
-            onClick={() => {
-              editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-            }}
-          />
-        </div>
+          <section className="flex gap-2">
+            <Button
+              variant={"secondary"}
+              tabIndex={0}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                setEditedLinkUrl(linkUrl);
+                setIsLinkEditMode(true);
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              variant={"secondary"}
+              tabIndex={0}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => {
+                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+              }}
+            >
+              Clear
+            </Button>
+          </section>
+        </section>
       )}
-    </div>
+    </aside>
   );
 }
 

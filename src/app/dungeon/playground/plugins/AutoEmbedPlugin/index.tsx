@@ -1,5 +1,7 @@
 import type { LexicalEditor } from "lexical";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   AutoEmbedOption,
   EmbedConfig,
@@ -10,9 +12,7 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-
 import useModal from "../../hooks/useModal";
-import Button from "../../ui/Button";
 import { DialogActions } from "../../ui/Dialog";
 import { INSERT_FIGMA_COMMAND } from "../FigmaPlugin";
 import { INSERT_TWEET_COMMAND } from "../TwitterPlugin";
@@ -254,11 +254,10 @@ export function AutoEmbedDialog({
   };
 
   return (
-    <div style={{ width: "600px" }}>
-      <div className="Input__wrapper">
-        <input
+    <div className="w-screen max-w-[600px]">
+      <div>
+        <Input
           type="text"
-          className="Input__input"
           placeholder={embedConfig.exampleUrl}
           value={text}
           data-test-id={`${embedConfig.type}-embed-modal-url`}
@@ -271,6 +270,7 @@ export function AutoEmbedDialog({
       </div>
       <DialogActions>
         <Button
+          variant={"default"}
           disabled={!embedResult}
           onClick={onClick}
           data-test-id={`${embedConfig.type}-embed-modal-submit-btn`}
@@ -324,16 +324,7 @@ export default function AutoEmbedPlugin(): JSX.Element {
         ) =>
           anchorElementRef.current
             ? ReactDOM.createPortal(
-                <div
-                  className="typeahead-popover auto-embed-menu"
-                  style={{
-                    marginLeft: `${Math.max(
-                      parseFloat(anchorElementRef.current.style.width) - 200,
-                      0
-                    )}px`,
-                    width: 200,
-                  }}
-                >
+                <div>
                   <AutoEmbedMenu
                     options={options}
                     selectedItemIndex={selectedIndex}

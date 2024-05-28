@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { mergeRegister } from "@lexical/utils";
 import {
@@ -130,10 +132,9 @@ export function FloatingLinkEditor({ editor }: { editor: any }) {
   return (
     <div ref={editorRef} className="link-editor">
       {isEditMode ? (
-        <input
+        <Input
           title="Enter URL and press Enter"
           ref={inputRef}
-          className="link-input"
           value={linkUrl}
           onChange={(event) => {
             setLinkUrl(event.target.value);
@@ -155,13 +156,12 @@ export function FloatingLinkEditor({ editor }: { editor: any }) {
         />
       ) : (
         <>
-          <div className="link-input">
+          <div className="flex gap-2 justify-between">
             <a href={linkUrl} target="_blank" rel="noopener noreferrer">
               {linkUrl}
             </a>
-            <div
-              className="link-edit"
-              role="button"
+            <Button
+              variant={"destructive"}
               tabIndex={0}
               title="Edit Link"
               onMouseDown={(event) => event.preventDefault()}
