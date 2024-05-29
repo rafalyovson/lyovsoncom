@@ -1,8 +1,11 @@
+import { inter, lusitana } from "@/assets/Fonts";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import Main from "@/components/Main";
 import { auth } from "@/data/auth";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SessionProvider, ThemeProvider } from "./ThemeProvider";
-import { inter, lusitana } from "./assets/Fonts";
 import "./globals.css";
 
 export const metadata = {
@@ -22,13 +25,12 @@ export default async function RootLayout({
       lang="en"
       className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
     >
-      <body
-        className={`${"h-full overflow-auto relative "} font-inter bg-light text-dark dark:bg-dark dark:text-light`}
-      >
+      <body className={`${"h-full overflow-auto relative "} font-inter`}>
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-            <aside id="portal"></aside>
+            <Header />
+            <Main>{children}</Main>
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
         <SpeedInsights />
