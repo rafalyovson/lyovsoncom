@@ -1,6 +1,6 @@
-import ContentForm from "@/app/dungeon/ui/postForm/ContentForm";
-import ImageForm from "@/app/dungeon/ui/postForm/ImageForm";
-import TitleForm from "@/app/dungeon/ui/postForm/TitleForm";
+import ContentForm from "@/app/dungeon/ui/PostForm/ContentForm";
+import ImageForm from "@/app/dungeon/ui/PostForm/ImageForm";
+import TitleForm from "@/app/dungeon/ui/PostForm/TitleForm";
 import { Button } from "@/components/ui/button";
 import { Post } from "@/data/schema";
 
