@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Post } from "@/data/schema";
 import Link from "next/link";
 
-const PostForm = ({
+export const PostForm = ({
   post,
   action,
 }: {

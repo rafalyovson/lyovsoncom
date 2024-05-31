@@ -1,5 +1,5 @@
 import { createPost } from "@/app/dungeon/lib/postActions";
-import PostForm from "@/app/dungeon/ui/PostForm";
+import { PostForm } from "@/app/dungeon/ui/PostForm";
 
 const Page = async () => {
   return (

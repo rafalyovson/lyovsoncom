@@ -1,5 +1,5 @@
 import { updatePost } from "@/app/dungeon/lib/postActions";
-import PostForm from "@/app/dungeon/ui/PostForm";
+import { PostForm } from "@/app/dungeon/ui/PostForm";
 
 import { getPostBySlug } from "@/lib/getPostBySlug";
 
