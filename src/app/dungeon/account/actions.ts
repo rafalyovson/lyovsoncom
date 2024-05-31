@@ -40,7 +40,7 @@ export type FormState = {
   fields?: Record<string, string>;
 };
 export const onFormAction = async (
-  prevState: FormState,
+  _prevState: FormState,
   formData: FormData
 ) => {
   const data = Object.fromEntries(formData);
