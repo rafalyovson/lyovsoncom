@@ -17,7 +17,7 @@ const Nav = () => {
       {!session && (
         <>
           <Button
-            className="flex items-center justify-center rounded-full size-12"
+            variant={"secondary"}
             onClick={() => signIn()}
             aria-label="sign in"
           >

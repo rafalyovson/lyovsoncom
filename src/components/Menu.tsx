@@ -16,46 +16,34 @@ import Link from "next/link";
 const Menu = () => {
   return (
     <nav className="flex flex-row items-center justify-center gap-4 text-center ">
-      <Button
-        aria-label="create a new post"
-        className="flex items-center justify-center rounded-full size-12"
-      >
+      <Button variant={"secondary"} aria-label="create a new post">
         <Link href="/dungeon/create-post">
           <FontAwesomeIcon icon={faPlus} className="rounded-full" />
         </Link>
       </Button>
 
       <Button
+        variant={"secondary"}
         aria-label="return to the entrance of the dungeon"
-        className="flex items-center justify-center rounded-full size-12"
       >
         <Link href="/dungeon">
           <FontAwesomeIcon icon={faDungeon} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button
-        aria-label="visit the playground"
-        className="flex items-center justify-center rounded-full size-12"
-      >
+      <Button variant={"secondary"} aria-label="visit the playground">
         <Link href="/dungeon/playground">
           <FontAwesomeIcon icon={faGamepad} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button
-        aria-label="return to the tower"
-        className="flex items-center justify-center rounded-full size-12"
-      >
+      <Button variant={"secondary"} aria-label="return to the tower">
         <Link href="/">
           <FontAwesomeIcon icon={faTowerObservation} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button
-        aria-label="read all the posts"
-        className="flex items-center justify-center rounded-full size-12"
-      >
+      <Button variant={"secondary"} aria-label="read all the posts">
         <Link href="/posts">
           <FontAwesomeIcon icon={faFileText} className="rounded-full" />
         </Link>
@@ -64,8 +52,8 @@ const Menu = () => {
       <ThemeSwitch />
 
       <Button
+        variant={"secondary"}
         aria-label="sign out"
-        className="flex items-center justify-center rounded-full size-12"
         onClick={() => signOut()}
       >
         <FontAwesomeIcon icon={faArrowRightFromBracket} />

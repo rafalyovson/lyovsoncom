@@ -19,11 +19,11 @@ const Menu = ({ user }: { user: any }) => {
   const { id, name, bio, socials, menu } = user;
   return (
     <SheetContent
-      className="flex flex-col gap-4 "
+      className="flex flex-col gap-4 w-full lg:w-[250px]"
       side={id === "jess" ? "left" : "right"}
     >
       <SheetHeader>
-        <Card>
+        <Card className="w-[200px] mx-auto">
           <CardHeader>
             <Image
               alt={id}
@@ -42,28 +42,35 @@ const Menu = ({ user }: { user: any }) => {
           <CardFooter>
             <section className="flex gap-2">
               {socials.map((social: any) => (
-                <a
-                  className=""
-                  title={`Visit ${name}'s ${social.name} page.`}
+                <Button
+                  className="p-0  "
+                  variant={"ghost"}
                   key={social.name}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener"
+                  asChild
                 >
-                  <FontAwesomeIcon icon={social.icon} className="w-8 h-8 " />
-                </a>
+                  <a
+                    title={`Visit ${name}'s ${social.name} page.`}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <FontAwesomeIcon icon={social.icon} className="w-8 h-8 " />
+                  </a>
+                </Button>
               ))}
             </section>
           </CardFooter>
         </Card>
       </SheetHeader>
 
-      <section className="flex flex-col gap-2 items-start">
+      <section className="flex flex-col gap-2">
         {menu.map((menuItem: any) => (
           <Button variant={"link"} key={menuItem.name} asChild>
-            <Link className="hover:underline flex gap-2" href={menuItem.url}>
-              <FontAwesomeIcon icon={menuItem.icon} className="w-8 h-8 " />
-              <span>{menuItem.name}</span>
+            <Link
+              className="hover:underline flex gap-2 text-lg"
+              href={menuItem.url}
+            >
+              {menuItem.name}
             </Link>
           </Button>
         ))}

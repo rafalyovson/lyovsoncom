@@ -4,7 +4,7 @@ import { SocialNetwork, socialNetworks, users } from "@/data/schema";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import CreateSocial from "./CreateSocial";
+import CreateSocialForm from "./CreateSocialForm";
 import SocialTable from "./SocialTable";
 
 const page = async () => {
@@ -28,12 +28,21 @@ const page = async () => {
     .where(eq(socialNetworks.userId, user.id!));
 
   return (
-    <div>
-      <h1>{user.name}</h1>
-      <Image src={user.image || ""} alt={user.name!} width={300} height={300} />
-      <SocialTable socials={socials} />
-      <CreateSocial />
-    </div>
+    <main className="flex gap-8 items-center">
+      <header>
+        <h1>{user.name}</h1>
+        <Image
+          src={user.image || ""}
+          alt={user.name!}
+          width={300}
+          height={300}
+        />
+      </header>
+      <aside>
+        <SocialTable socials={socials} />
+        <CreateSocialForm />
+      </aside>
+    </main>
   );
 };
 

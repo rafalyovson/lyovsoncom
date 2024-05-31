@@ -12,14 +12,12 @@ const ThemeSwitch = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
-  const switchClasses = `flex items-center justify-center rounded-full size-12 `;
-
   return (
     <Button
       aria-label="Toggle Theme"
-      className={switchClasses}
       onClick={toggleTheme}
       title="Toggle Theme"
+      variant={"secondary"}
     >
       <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
     </Button>

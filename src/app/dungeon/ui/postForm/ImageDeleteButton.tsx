@@ -1,10 +1,16 @@
 "use client";
 import { deleteImage } from "@/app/dungeon/lib/imageDelete";
 import { Button } from "@/components/ui/button";
-const ImageDeleteButton = ({ img }: { img: string }) => {
+const ImageDeleteButton = ({ image }: { image: string }) => {
   return (
-    <Button onClick={() => deleteImage(img)} variant={"destructive"}>
-      Test
+    <Button
+      onClick={(e) => {
+        e.preventDefault();
+        deleteImage(image);
+      }}
+      variant={"destructive"}
+    >
+      X
     </Button>
   );
 };

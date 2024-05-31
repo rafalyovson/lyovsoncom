@@ -26,7 +26,7 @@ const Header = () => {
         <section>
           <Button asChild variant={"link"}>
             <Link href="/">
-              <h1 className="mb-2 text-4xl ">Lyovson.com</h1>
+              <h1 className="mb-2 text-2xl lg:text-4xl ">Lyovson.com</h1>
             </Link>
           </Button>
         </section>

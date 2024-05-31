@@ -5,8 +5,8 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import { useState } from "react";
 
-const ImageForm = () => {
-  const [imagePreview, setImagePreview] = useState("");
+const ImageForm = ({ image }: { image: string }) => {
+  const [imagePreview, setImagePreview] = useState(image);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
