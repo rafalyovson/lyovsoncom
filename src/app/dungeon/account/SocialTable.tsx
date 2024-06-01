@@ -9,24 +9,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { SocialNetwork } from "@/data/schema";
 import { Trash2 } from "lucide-react";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
-import { deleteSocial } from "./actions";
+import { useState } from "react";
 import CreateSocialForm from "./CreateSocialForm";
+import DeleteSocial from "./DeleteSocial";
 
 const SocialTable = (socials: any) => {
   const [isCreatingSocial, setIsCreatingSocial] = useState(false);
   const [isDeletingSocial, setIsDeletingSocial] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [sn, setSn] = useState("");
+
   return (
     <Card className="flex-grow">
       <CardHeader className="px-7">
@@ -45,29 +38,20 @@ const SocialTable = (socials: any) => {
               </a>
             </Button>
 
-            <Button variant="ghost" onClick={() => setIsDeletingSocial(true)}>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setSn(social.id);
+                setIsDeletingSocial(true);
+              }}
+            >
               <Trash2 className="w-4 h-4" />
             </Button>
-            <Dialog open={isDeletingSocial} onOpenChange={setIsDeletingSocial}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are You Sure?</DialogTitle>
-                </DialogHeader>
-                <Button
-                  disabled={isPending}
-                  variant={"destructive"}
-                  onClick={() => {
-                    startTransition(() => deleteSocial(social.id));
-                    return toast.success("Social Network deleted");
-                  }}
-                >
-                  Delete
-                </Button>
-                <DialogClose asChild>
-                  <Button variant={"secondary"}>Cancel</Button>
-                </DialogClose>
-              </DialogContent>
-            </Dialog>
+            <DeleteSocial
+              id={sn}
+              isOpen={isDeletingSocial}
+              setIsOpen={setIsDeletingSocial}
+            />
           </section>
         ))}
       </CardContent>

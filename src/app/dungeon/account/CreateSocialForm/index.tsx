@@ -45,7 +45,9 @@ const CreateSocialForm = ({
           <SocialForm setIsOpen={setIsOpen} />
           <DialogFooter>
             <DialogClose asChild>
-              <Button variant="outline">Done</Button>
+              <Button className="w-full" variant="outline">
+                Done
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

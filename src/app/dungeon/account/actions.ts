@@ -27,7 +27,6 @@ export const createSocial = async (
 
   const session = await auth();
   if (!session || !session.user) {
-    revalidatePath("/login");
     return { message: "Not authenticated" };
   }
   const { id } = session.user!;
@@ -61,4 +60,17 @@ export const createSocial = async (
 export const deleteSocial = async (id: string) => {
   await db.delete(socialNetworks).where(eq(socialNetworks.id, id));
   revalidatePath("/account");
+};
+
+export const deleteSocial2 = async (
+  _prevState: { message?: string },
+  formData: FormData
+) => {
+  console.log("formData", formData);
+  const id = formData.get("id") as string;
+
+  await db.delete(socialNetworks).where(eq(socialNetworks.id, id));
+  revalidatePath("/dungeon/account");
+
+  return { message: "Social Network deleted!" };
 };
