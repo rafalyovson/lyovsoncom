@@ -16,8 +16,8 @@ import { Dispatch, useActionState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { createSocial } from "../actions";
-import { newSocialSchema } from "../createSocialScema";
+import { createSocial } from "../../actions";
+import { newSocialSchema } from "../../createSocialScema";
 
 export const SocialForm = ({ setIsOpen }: { setIsOpen: Dispatch<boolean> }) => {
   const [state, formAction, isPending] = useActionState(createSocial, {

@@ -1,3 +1,4 @@
+import Header from "./ui/Header";
 import Sidebar from "./ui/Sidebar";
 
 export default async function Layout({
@@ -6,9 +7,12 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <section className="flex min-h-screen">
+    <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />
-      <main className="flex-grow">{children}</main>
-    </section>
+      <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+        <Header />
+        <main>{children}</main>
+      </div>
+    </div>
   );
 }

@@ -18,7 +18,7 @@ import {
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Dispatch, useActionState } from "react";
 import { toast } from "sonner";
-import { deleteSocial2 } from "../actions";
+import { deleteSocial2 } from "../../actions";
 
 export const DeleteSocial = ({
   id,
