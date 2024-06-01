@@ -1,26 +1,19 @@
-import { auth } from "@/data/auth";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { db } from "@/data/db";
-import { SocialNetwork, socialNetworks, users } from "@/data/schema";
+import { SocialNetwork, socialNetworks } from "@/data/schema";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import CreateSocialForm from "./CreateSocialForm";
 import SocialTable from "./SocialTable";
 
 const page = async () => {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    redirect("/login");
-  }
-
-  const { user: sessionUser } = session;
-
-  const allUsers = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, sessionUser.id!));
-  const user = allUsers[0];
+  const user = await getCurrentUser();
 
   const socials: SocialNetwork[] = await db
     .select()
@@ -28,19 +21,25 @@ const page = async () => {
     .where(eq(socialNetworks.userId, user.id!));
 
   return (
-    <main className="flex gap-8 items-center">
+    <main className="flex gap-8 items-center flex-wrap p-8">
       <header>
-        <h1>{user.name}</h1>
-        <Image
-          src={user.image || ""}
-          alt={user.name!}
-          width={300}
-          height={300}
-        />
+        <Card>
+          <CardHeader>
+            <CardTitle>{user.name}</CardTitle>
+            <CardDescription>{user.email}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Image
+              src={user.image || ""}
+              alt={user.name!}
+              width={300}
+              height={300}
+            />
+          </CardContent>
+        </Card>
       </header>
       <aside>
         <SocialTable socials={socials} />
-        <CreateSocialForm />
       </aside>
     </main>
   );

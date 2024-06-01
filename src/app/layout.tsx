@@ -4,6 +4,7 @@ import {
   ThemeProvider,
   TooltipProvider,
 } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/data/auth";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -34,9 +35,13 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <TooltipProvider>{children}</TooltipProvider>
+            <TooltipProvider>
+              {children}
+              <Toaster visibleToasts={1} position="top-right" />
+            </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
+
         <SpeedInsights />
         <Analytics />
       </body>

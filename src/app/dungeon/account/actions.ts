@@ -10,36 +10,13 @@ import { newSocialSchema } from "./createSocialScema";
 
 // Create a new social network
 
-export const createSocial = async (data: FormData) => {
-  const session = await auth();
-  if (!session) {
-    revalidatePath("/login");
-    return;
-  }
-
-  const { id } = session.user!;
-  const payload: NewSocialNetwork = {
-    name: data.get("name") as string,
-    url: data.get("url") as string,
-    userId: id!,
-  };
-  const isValid = newSocialSchema.safeParse(payload);
-  console.log("isValid", isValid.error);
-  if (!isValid.success) {
-    revalidatePath("/account");
-  } else {
-    await db.insert(socialNetworks).values(payload);
-    revalidatePath("/account");
-  }
-};
-
 export type FormState = {
   message: string;
   social?: z.infer<typeof newSocialSchema>;
   issues?: string[];
   fields?: Record<string, string>;
 };
-export const onFormAction = async (
+export const createSocial = async (
   _prevState: FormState,
   formData: FormData
 ) => {
@@ -69,22 +46,19 @@ export const onFormAction = async (
       fields,
       issues: parsed.error.issues.map((issue) => issue.message),
     };
+  } else {
+    await db.insert(socialNetworks).values(payload);
+    revalidatePath("/account");
+    return {
+      message: "Social Network added!",
+      social: parsed.data,
+    };
   }
-
-  await db.insert(socialNetworks).values(payload);
-  revalidatePath("/account");
-
-  return {
-    message: "Social Network added!",
-    social: parsed.data,
-  };
 };
 
 // Delete a social network
 
 export const deleteSocial = async (id: string) => {
-  console.log("deleting");
-
   await db.delete(socialNetworks).where(eq(socialNetworks.id, id));
   revalidatePath("/account");
 };
