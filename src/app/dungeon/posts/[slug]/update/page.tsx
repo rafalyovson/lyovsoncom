@@ -1,9 +1,12 @@
 import { updatePost } from "@/app/dungeon/lib/postActions";
 import { PostForm } from "@/app/dungeon/ui/PostForm";
-
 import { getPostBySlug } from "@/lib/getPostBySlug";
+import { redirect } from "next/navigation";
 
-const Page = async ({ params }: { params: { slug: string } }) => {
+const Page = async ({ params }: { params: { slug: string | undefined } }) => {
+  if (!params.slug) {
+    redirect("/dungeon");
+  }
   const oldPost = await getPostBySlug(params.slug);
 
   if (!oldPost) {

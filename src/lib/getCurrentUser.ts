@@ -17,3 +17,5 @@ export const getCurrentUser = async (): Promise<User> => {
     .where(eq(users.email, session?.user?.email!));
   return allUsers[0];
 };
+
+export const currentUser = getCurrentUser();

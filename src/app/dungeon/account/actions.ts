@@ -10,14 +10,14 @@ import { newSocialSchema } from "./createSocialScema";
 
 // Create a new social network
 
-export type FormState = {
+export type SocialType = {
   message: string;
   social?: z.infer<typeof newSocialSchema>;
   issues?: string[];
   fields?: Record<string, string>;
 };
 export const createSocial = async (
-  _prevState: FormState,
+  _prevState: SocialType,
   formData: FormData
 ) => {
   const data = Object.fromEntries(formData);

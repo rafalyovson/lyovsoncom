@@ -84,7 +84,7 @@ const index = () => {
             className="overflow-hidden rounded-full"
           >
             <Image
-              src="/placeholder-user.jpg"
+              src="/rafa.jpg"
               width={36}
               height={36}
               alt="Avatar"
