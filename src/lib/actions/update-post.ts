@@ -4,6 +4,7 @@ import { auth } from "@/data/auth";
 import { db } from "@/data/db";
 import { posts } from "@/data/schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const updatePost = async (prevState: any, formData: FormData) => {
   const session = await auth();
@@ -26,9 +27,13 @@ export const updatePost = async (prevState: any, formData: FormData) => {
   if (prevState.slug !== data.slug) {
     await db.delete(posts).where(eq(posts.slug, prevState.slug));
     await db.insert(posts).values(data);
+    revalidatePath("/posts/${data.slug}");
+    revalidatePath("/dungeon/posts/${data.slug}");
     return { message: "Post updated!", url: `/posts/${data.slug}` };
   }
 
   await db.update(posts).set(data).where(eq(posts.slug, data.slug));
+  revalidatePath(`/posts/${data.slug}`);
+  revalidatePath(`/dungeon/posts/${data.slug}`);
   return { message: "Post updated!", url: `/posts/${data.slug}` };
 };
