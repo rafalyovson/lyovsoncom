@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -13,13 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
 import { posts } from "@/data/schema";
+import { createPost } from "@/lib/actions/create-post";
 import { slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
-import { useState } from "react";
+import Image from "next/image";
+import { redirect } from "next/navigation";
+import { useActionState, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 import { ImageUpload } from "./image-upload";
 
@@ -28,7 +32,8 @@ const PostSchema = createInsertSchema(posts, {
   authorId: z.string().uuid().optional(),
   featuredImg: z.string().url().optional(),
 });
-export function InputForm() {
+
+export function PostForm() {
   const form = useForm<z.infer<typeof PostSchema>>({
     mode: "all",
     resolver: zodResolver(PostSchema),
@@ -42,26 +47,21 @@ export function InputForm() {
     },
   });
 
+  const [state, formAction, isPending] = useActionState(createPost, {
+    message: "",
+    url: "",
+  });
+
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
-  function onSubmit(data: z.infer<typeof PostSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  if (state.message !== "") {
+    toast.success("Post Created!");
+    redirect(state.url);
   }
-
   return (
     <>
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full space-y-6"
-        >
+        <form className="w-full space-y-6" action={formAction}>
           <FormField
             control={form.control}
             name="title"
@@ -82,6 +82,7 @@ export function InputForm() {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="slug"
@@ -99,25 +100,6 @@ export function InputForm() {
 
           <FormField
             control={form.control}
-            name="published"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Published</FormLabel>
-                  <FormDescription>Check to publish the post.</FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="featuredImg"
             render={({ field: { onChange, value, ...field } }) => (
               <FormItem>
@@ -125,11 +107,24 @@ export function InputForm() {
                 <FormControl>
                   <>
                     <Input
+                      className="hidden"
                       {...field}
                       onChange={(e) => onChange(e)}
                       value={value || ""}
-                      disabled
                     />
+                    {form.getValues("featuredImg") && (
+                      <Card>
+                        <CardContent className="pt-6">
+                          <Image
+                            src={form.getValues("featuredImg")!}
+                            alt={"image"}
+                            width={400}
+                            height={400}
+                            className="mx-auto"
+                          />
+                        </CardContent>
+                      </Card>
+                    )}
                     <Button
                       className="w-full"
                       onClick={(e) => {
@@ -150,6 +145,22 @@ export function InputForm() {
 
           <FormField
             control={form.control}
+            name="published"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Published</FormLabel>
+                  <FormDescription>Check to publish the post.</FormDescription>
+                </div>
+                <FormControl>
+                  <Switch name="published" />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="content"
             render={({ field }) => (
               <FormItem>
@@ -163,7 +174,7 @@ export function InputForm() {
             )}
           />
 
-          <Button className="w-full" type="submit">
+          <Button className="w-full" type="submit" disabled={isPending}>
             Submit
           </Button>
         </form>

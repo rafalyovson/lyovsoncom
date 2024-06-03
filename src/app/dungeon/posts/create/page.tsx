@@ -1,4 +1,4 @@
-import { InputForm } from "@/app/dungeon/ui/post-form";
+import { PostForm } from "@/app/dungeon/ui/post-form";
 
 const Page = async () => {
   return (
@@ -6,7 +6,7 @@ const Page = async () => {
       <div className="flex flex-col p-10 space-y-6 border   ">
         <h1 className="text-2xl font-bold text-center">Create Post</h1>
         {/* <PostForm action={createPost} /> */}
-        <InputForm />
+        <PostForm />
       </div>
     </main>
   );

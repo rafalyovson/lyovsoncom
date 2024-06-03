@@ -1,6 +1,7 @@
 "use client";
 
 import { deletePost } from "@/app/dungeon/lib/postActions";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -69,7 +70,11 @@ export const PostTable = ({
                     {post.createdAt.toLocaleDateString()}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell w-[100px]">
-                    {post.published}
+                    {post.published ? (
+                      <Badge variant={"default"}>Published</Badge>
+                    ) : (
+                      <Badge variant={"secondary"}>Draft</Badge>
+                    )}
                   </TableCell>
                   <TableCell className=" flex flex-col gap-2 w-[100px]  items-end">
                     <Button asChild variant={"secondary"}>
