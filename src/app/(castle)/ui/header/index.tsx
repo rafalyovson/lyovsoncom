@@ -1,14 +1,12 @@
-"use client";
-
 import Link from "next/link";
 
-import Menu from "@/app/(castle)/ui/Menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { users } from "@/data/users";
+import { Menu } from "./user-menu";
 
-const Header = () => {
+export const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-10 flex items-center justify-between h-24 px-4 border-b-4 bg-background ">
@@ -45,5 +43,3 @@ const Header = () => {
     </>
   );
 };
-
-export default Header;

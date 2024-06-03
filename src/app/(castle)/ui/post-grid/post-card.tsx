@@ -12,7 +12,7 @@ import { PostWithUser } from "@/lib/getAllPosts";
 import Image from "next/image";
 import Link from "next/link";
 
-const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
+export const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
   console.log(postWithUser);
   const { post, user } = postWithUser;
   return (
@@ -35,5 +35,3 @@ const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
     </Card>
   );
 };
-
-export default PostCard;

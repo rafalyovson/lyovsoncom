@@ -1,5 +1,5 @@
-import Header from "./ui/Header";
-import Sidebar from "./ui/Sidebar";
+import { Header } from "./ui/header";
+import { Sidebar } from "./ui/sidebar";
 
 export default async function Layout({
   children,

@@ -13,7 +13,7 @@ const ImageForm = ({
 }) => {
   return (
     <form action={formAction}>
-      <section className="flex flex-col gap-4">
+      <section className="  w-full space-y-6">
         <section className="flex flex-col gap-2">
           <Label>Name</Label>
           <Input
@@ -29,7 +29,7 @@ const ImageForm = ({
           <Label>Choose File</Label>
           <Input type="file" id="image" name="image" required />
         </section>
-        <Button type="submit" variant={"default"} disabled={isPending}>
+        <Button className="w-full" type="submit" disabled={isPending}>
           Upload
         </Button>
       </section>

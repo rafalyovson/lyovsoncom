@@ -15,3 +15,15 @@ export async function getAllPosts(): Promise<PostWithUser[]> {
   console.log(allPosts);
   return allPosts;
 }
+
+export const getPostsByUser = async (
+  email: string
+): Promise<PostWithUser[]> => {
+  const allPosts = await db
+    .select()
+    .from(posts)
+    .where(eq(users.email, email))
+    .leftJoin(users, eq(posts.authorId, users.id));
+
+  return allPosts;
+};

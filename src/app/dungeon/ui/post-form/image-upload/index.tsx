@@ -33,7 +33,7 @@ export const ImageUpload = ({
 
   const [state, formAction, isPending] = useActionState(uploadImage, {
     url: "",
-    oldImage: oldImage || " a ",
+    oldImage: oldImage || "  ",
   });
 
   if (state.url !== "") {
@@ -64,7 +64,7 @@ export const ImageUpload = ({
   }
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerContent className="px-8">
+      <DrawerContent className="p-8 ">
         <DrawerHeader className="text-left">
           <DrawerTitle>Add a Social</DrawerTitle>
           <DrawerDescription>

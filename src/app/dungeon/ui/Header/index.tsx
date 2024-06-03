@@ -1,9 +1,10 @@
+"use client";
+
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,14 @@ import { DungeonLinks } from "@/data/dungeon-links";
 import { Link2, PanelLeft, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const index = () => {
+export const Header = () => {
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/");
+
+  console.log(pathname);
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -51,21 +58,22 @@ const index = () => {
       </Sheet>
       <Breadcrumb className="hidden md:flex">
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">Dashboard</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink asChild>
-              <Link href="#">Orders</Link>
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage>Recent Orders</BreadcrumbPage>
-          </BreadcrumbItem>
+          {pathSegments.map((segment, index) => {
+            return (
+              <>
+                <BreadcrumbItem key={index}>
+                  <BreadcrumbLink asChild>
+                    <Link
+                      href={`/${pathSegments.slice(0, index + 1).join("/")}`}
+                    >
+                      {segment}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            );
+          })}
         </BreadcrumbList>
       </Breadcrumb>
       <div className="relative ml-auto flex-1 md:grow-0">
@@ -104,5 +112,3 @@ const index = () => {
     </header>
   );
 };
-
-export default index;

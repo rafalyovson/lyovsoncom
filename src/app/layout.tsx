@@ -27,7 +27,9 @@ export default async function RootLayout({
       lang="en"
       className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
     >
-      <body className={`${"h-full overflow-auto relative "} font-inter`}>
+      <body
+        className={`${"h-full overflow-auto relative "} font-inter min-w-[375px]`}
+      >
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"

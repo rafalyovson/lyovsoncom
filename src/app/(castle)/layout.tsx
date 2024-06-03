@@ -1,6 +1,6 @@
-import Footer from "./ui/Footer";
-import Header from "./ui/Header";
-import Main from "./ui/Main";
+import { Footer } from "./ui/footer";
+import { Header } from "./ui/header";
+import { Main } from "./ui/main";
 
 export default async function Layout({
   children,

@@ -1,11 +1,7 @@
-import PostCard from "@/app/(castle)/ui/PostCard";
-import { PostWithUser, getAllPosts } from "@/lib/getAllPosts";
+import { PostWithUser } from "@/lib/getAllPosts";
+import { PostCard } from "./post-card";
 
-const PostGrid = async () => {
-  const allPostsWithUsers: PostWithUser[] = await getAllPosts();
-
-  const posts = allPostsWithUsers.filter((post) => post.post.published);
-
+export const PostGrid = async ({ posts }: { posts: PostWithUser[] }) => {
   return (
     <section className="p-8 ">
       <h2 className="mb-4 text-3xl text-center ">Posts</h2>
@@ -19,5 +15,3 @@ const PostGrid = async () => {
     </section>
   );
 };
-
-export default PostGrid;

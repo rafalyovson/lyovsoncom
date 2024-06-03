@@ -1,4 +1,4 @@
-import { PostTable } from "@/app/dungeon/ui/PostTable";
+import { PostTable } from "@/app/dungeon/ui/post-table";
 import { getAllPosts, PostWithUser } from "@/lib/getAllPosts";
 
 const Posts = async () => {

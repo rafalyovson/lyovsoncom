@@ -55,7 +55,7 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
   });
 
   if (state.message !== "") {
-    toast.success("Post Created!");
+    toast.success("Done!");
     redirect(state.url);
   }
 

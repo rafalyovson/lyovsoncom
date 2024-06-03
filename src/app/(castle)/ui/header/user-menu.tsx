@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 
-const Menu = ({ user }: { user: any }) => {
+export const Menu = ({ user }: { user: any }) => {
   const { id, name, bio, socials, menu } = user;
   return (
     <SheetContent
@@ -78,5 +78,3 @@ const Menu = ({ user }: { user: any }) => {
     </SheetContent>
   );
 };
-
-export default Menu;

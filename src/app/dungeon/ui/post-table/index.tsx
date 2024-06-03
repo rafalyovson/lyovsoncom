@@ -102,5 +102,3 @@ export const PostTable = ({
     </Card>
   );
 };
-
-export default PostTable;
