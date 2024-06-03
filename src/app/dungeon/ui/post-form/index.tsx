@@ -33,6 +33,14 @@ const PostSchema = createInsertSchema(posts, {
 });
 
 export function PostForm({ post, action }: { post?: Post; action: any }) {
+  const [state, formAction, isPending] = useActionState(action, {
+    message: "",
+    url: "",
+    slug: post?.slug || "",
+  });
+
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+
   const form = useForm<z.infer<typeof PostSchema>>({
     mode: "all",
     resolver: zodResolver(PostSchema),
@@ -46,18 +54,11 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
     },
   });
 
-  const [state, formAction, isPending] = useActionState(action, {
-    message: "",
-    url: "",
-    slug: post?.slug || "",
-  });
-
-  const [imageModalOpen, setImageModalOpen] = useState(false);
-
   if (state.message !== "") {
     toast.success("Post Created!");
     redirect(state.url);
   }
+
   return (
     <>
       <Form {...form}>
