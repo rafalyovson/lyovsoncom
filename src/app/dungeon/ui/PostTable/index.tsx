@@ -64,7 +64,9 @@ export const PostTable = ({
                       height={200}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">{post.title}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+                  </TableCell>
                   <TableCell>{user?.name}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {post.createdAt.toLocaleDateString()}
@@ -78,7 +80,7 @@ export const PostTable = ({
                   </TableCell>
                   <TableCell className=" flex flex-col gap-2 w-[100px]  items-end">
                     <Button asChild variant={"secondary"}>
-                      <Link href={`/dungeon/update-post/${post.slug}`}>
+                      <Link href={`/dungeon/posts/update/${post.slug}`}>
                         <Edit />
                       </Link>
                     </Button>

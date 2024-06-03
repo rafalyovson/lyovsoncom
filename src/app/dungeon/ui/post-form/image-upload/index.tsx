@@ -22,15 +22,18 @@ export const ImageUpload = ({
   form,
   isOpen,
   setIsOpen,
+  oldImage,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<boolean>;
   form: any;
+  oldImage?: string;
 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const [state, formAction, isPending] = useActionState(uploadImage, {
     url: "",
+    oldImage: oldImage || " a ",
   });
 
   if (state.url !== "") {

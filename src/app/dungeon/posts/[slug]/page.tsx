@@ -2,6 +2,7 @@ import { Post } from "@/data/schema";
 import { getPostBySlug } from "@/lib/getPostBySlug";
 import { getUserById } from "@/lib/getUserById";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
 const PostHeader = async ({ post }: { post: Post }) => {
   const author = await getUserById(post.authorId);
@@ -44,7 +45,7 @@ const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
   const post = await getPostBySlug(slug);
   if (!post) {
-    throw new Error(`Post with slug "${slug}" not found.`);
+    redirect("/dungeon/posts");
   }
 
   return (

@@ -14,8 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { posts } from "@/data/schema";
-import { createPost } from "@/lib/actions/create-post";
+import { Post, posts } from "@/data/schema";
 import { slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
@@ -33,23 +32,24 @@ const PostSchema = createInsertSchema(posts, {
   featuredImg: z.string().url().optional(),
 });
 
-export function PostForm() {
+export function PostForm({ post, action }: { post?: Post; action: any }) {
   const form = useForm<z.infer<typeof PostSchema>>({
     mode: "all",
     resolver: zodResolver(PostSchema),
     defaultValues: {
-      title: "",
-      slug: "",
-      content: "",
-      featuredImg: "",
-      published: false,
-      authorId: "",
+      title: post?.title || "",
+      slug: post?.slug || "",
+      content: post?.content || "",
+      featuredImg: post?.featuredImg || "",
+      published: post?.published || false,
+      authorId: post?.authorId || "",
     },
   });
 
-  const [state, formAction, isPending] = useActionState(createPost, {
+  const [state, formAction, isPending] = useActionState(action, {
     message: "",
     url: "",
+    slug: post?.slug || "",
   });
 
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -146,14 +146,14 @@ export function PostForm() {
           <FormField
             control={form.control}
             name="published"
-            render={({ field }) => (
+            render={() => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">Published</FormLabel>
                   <FormDescription>Check to publish the post.</FormDescription>
                 </div>
                 <FormControl>
-                  <Switch name="published" />
+                  <Switch name="published" defaultChecked={post?.published} />
                 </FormControl>
               </FormItem>
             )}
@@ -184,6 +184,7 @@ export function PostForm() {
         isOpen={imageModalOpen}
         form={form}
         setIsOpen={setImageModalOpen}
+        oldImage={post?.featuredImg || ""}
       />
     </>
   );

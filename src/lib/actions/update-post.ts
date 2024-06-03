@@ -3,9 +3,9 @@
 import { db } from "@/data/db";
 import { posts } from "@/data/schema";
 import { getCurrentUser } from "@/lib/getCurrentUser";
-import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
-export const createPost = async (_prevState: any, formData: FormData) => {
+export const updatePost = async (prevState: any, formData: FormData) => {
   console.log("formData", formData);
   const { id } = await getCurrentUser();
   const data = {
@@ -16,9 +16,15 @@ export const createPost = async (_prevState: any, formData: FormData) => {
     authorId: id,
     published: formData.get("published") ? true : false,
   };
+
   console.log("data", data);
-  await db.insert(posts).values(data);
-  revalidatePath("/posts");
-  revalidatePath("/dungeon");
-  return { message: "Post created!", url: `/posts/${data.slug}` };
+
+  if (prevState.slug !== data.slug) {
+    await db.delete(posts).where(eq(posts.slug, prevState.slug));
+    await db.insert(posts).values(data);
+    return { message: "Post updated!", url: `/posts/${data.slug}` };
+  }
+
+  await db.update(posts).set(data).where(eq(posts.slug, data.slug));
+  return { message: "Post updated!", url: `/posts/${data.slug}` };
 };
