@@ -28,12 +28,8 @@ const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
         </CardHeader>
 
         <CardContent>
-          <CardTitle>
-            <h2 className="text-lg font-bold capitalize">{post.title}</h2>
-          </CardTitle>
-          <CardDescription>
-            <p>{user?.name}</p>
-          </CardDescription>
+          <CardTitle>{post.title}</CardTitle>
+          <CardDescription>{user?.name}</CardDescription>
         </CardContent>
       </Link>
     </Card>

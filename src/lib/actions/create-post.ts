@@ -3,7 +3,6 @@
 import { auth } from "@/data/auth";
 import { db } from "@/data/db";
 import { posts } from "@/data/schema";
-import { revalidatePath } from "next/cache";
 
 export const createPost = async (_prevState: any, formData: FormData) => {
   const session = await auth();
@@ -22,7 +21,6 @@ export const createPost = async (_prevState: any, formData: FormData) => {
   };
 
   await db.insert(posts).values(data);
-  revalidatePath("/posts");
-  revalidatePath("/dungeon");
+
   return { message: "Post created!", url: `/posts/${data.slug}` };
 };
