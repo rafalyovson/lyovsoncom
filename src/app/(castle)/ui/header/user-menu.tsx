@@ -19,11 +19,11 @@ export const Menu = ({ user }: { user: any }) => {
   const { id, name, bio, socials, menu } = user;
   return (
     <SheetContent
-      className="flex flex-col gap-4 w-full lg:w-[250px]"
+      className="flex flex-col gap-4 w-full lg:w-[300px]"
       side={id === "jess" ? "left" : "right"}
     >
       <SheetHeader>
-        <Card className="w-[200px] mx-auto">
+        <Card className="w-[250px] mx-auto">
           <CardHeader>
             <Image
               alt={id}
@@ -40,10 +40,11 @@ export const Menu = ({ user }: { user: any }) => {
             <SheetDescription>{bio}</SheetDescription>
           </CardContent>
           <CardFooter>
-            <section className="flex gap-2">
+            <section className="flex gap-2 justify-between w-full">
               {socials.map((social: any) => (
                 <Button
-                  className="p-0  "
+                  className=" "
+                  size={"icon"}
                   variant={"ghost"}
                   key={social.name}
                   asChild

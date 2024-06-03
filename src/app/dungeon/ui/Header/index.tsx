@@ -64,7 +64,7 @@ export const Header = () => {
                 <BreadcrumbItem key={index}>
                   <BreadcrumbLink asChild>
                     <Link
-                      href={`/${pathSegments.slice(0, index + 1).join("/")}`}
+                      href={`${pathSegments.slice(0, index + 1).join("/")}`}
                     >
                       {segment}
                     </Link>

@@ -79,12 +79,13 @@ export const PostTable = ({
                     )}
                   </TableCell>
                   <TableCell className=" flex flex-col gap-2 w-[100px]  items-end">
-                    <Button asChild variant={"secondary"}>
+                    <Button asChild variant={"secondary"} size="icon">
                       <Link href={`/dungeon/posts/update/${post.slug}`}>
                         <Edit />
                       </Link>
                     </Button>
                     <Button
+                      size={"icon"}
                       onClick={() => {
                         deletePost(post);
                       }}

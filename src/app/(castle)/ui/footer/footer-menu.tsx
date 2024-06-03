@@ -22,13 +22,18 @@ export const FooterMenu = () => {
     <nav className=" flex ">
       {session && (
         <section className="flex flex-row items-center  gap-4 text-center flex-wrap">
-          <Button variant={"secondary"} aria-label="create a new post">
+          <Button
+            size="icon"
+            variant={"secondary"}
+            aria-label="create a new post"
+          >
             <Link href="/dungeon/posts/create">
               <FontAwesomeIcon icon={faPlus} className="rounded-full" />
             </Link>
           </Button>
 
           <Button
+            size="icon"
             variant={"secondary"}
             aria-label="return to the entrance of the dungeon"
           >
@@ -37,13 +42,21 @@ export const FooterMenu = () => {
             </Link>
           </Button>
 
-          <Button variant={"secondary"} aria-label="visit the playground">
+          <Button
+            size="icon"
+            variant={"secondary"}
+            aria-label="visit the playground"
+          >
             <Link href="/dungeon/playground">
               <FontAwesomeIcon icon={faGamepad} className="rounded-full" />
             </Link>
           </Button>
 
-          <Button variant={"secondary"} aria-label="return to the tower">
+          <Button
+            size="icon"
+            variant={"secondary"}
+            aria-label="return to the tower"
+          >
             <Link href="/">
               <FontAwesomeIcon
                 icon={faTowerObservation}
@@ -52,7 +65,11 @@ export const FooterMenu = () => {
             </Link>
           </Button>
 
-          <Button variant={"secondary"} aria-label="read all the posts">
+          <Button
+            size="icon"
+            variant={"secondary"}
+            aria-label="read all the posts"
+          >
             <Link href="/posts">
               <FontAwesomeIcon icon={faFileText} className="rounded-full" />
             </Link>
@@ -61,6 +78,7 @@ export const FooterMenu = () => {
           <ThemeSwitch />
 
           <Button
+            size="icon"
             variant={"secondary"}
             aria-label="sign out"
             onClick={() => signOut()}
@@ -72,6 +90,7 @@ export const FooterMenu = () => {
       {!session && (
         <section className="flex flex-row items-center justify-center gap-4 text-center flex-wrap">
           <Button
+            size="icon"
             variant={"secondary"}
             onClick={() => signIn()}
             aria-label="sign in"
