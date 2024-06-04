@@ -32,6 +32,7 @@ import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
@@ -62,6 +63,7 @@ function FloatingLinkEditor({
 
   const $updateLinkEditor = useCallback(() => {
     const selection = $getSelection();
+
     if ($isRangeSelection(selection)) {
       const node = getSelectedNode(selection);
       const linkParent = $findMatchingParent(node, $isLinkNode);
@@ -97,8 +99,8 @@ function FloatingLinkEditor({
       const domRect: DOMRect | undefined =
         nativeSelection.focusNode?.parentElement?.getBoundingClientRect();
       if (domRect) {
-        domRect.y -= 400;
-        domRect.x -= 300;
+        domRect.y;
+        domRect.x;
         setFloatingElemPositionForLinkEditor(domRect, editorElem, anchorElem);
       }
       setLastSelection(selection);
@@ -221,82 +223,87 @@ function FloatingLinkEditor({
   // }
 
   return (
-    <aside
-      ref={editorRef}
-      className="max-w-[600px] w-full z-10 border rounded-sm  p-4 bg-background"
-    >
-      {!isLink ? null : isLinkEditMode ? (
-        <section className="flex gap-4 justify-between">
-          <Input
-            title="Enter URL and press Enter"
-            ref={inputRef}
-            value={editedLinkUrl}
-            onChange={(event) => {
-              setEditedLinkUrl(event.target.value);
-            }}
-            onKeyDown={(event) => {
-              monitorInputInteraction(event);
-            }}
-          />
+    <>
+      <Dialog open={isLinkEditMode} onOpenChange={setIsLinkEditMode}>
+        <DialogContent>Test</DialogContent>
+      </Dialog>
+      <aside
+        ref={editorRef}
+        className="max-w-[600px] w-full z-10 border rounded-sm  p-4 bg-background"
+      >
+        {!isLink ? null : isLinkEditMode ? (
+          <section className="flex gap-4 justify-between">
+            <Input
+              title="Enter URL and press Enter"
+              ref={inputRef}
+              value={editedLinkUrl}
+              onChange={(event) => {
+                setEditedLinkUrl(event.target.value);
+              }}
+              onKeyDown={(event) => {
+                monitorInputInteraction(event);
+              }}
+            />
 
-          <section className="flex gap-2">
-            <Button
-              variant={"secondary"}
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                setIsLinkEditMode(false);
-              }}
-            >
-              Cancel
-            </Button>
+            <section className="flex gap-2">
+              <Button
+                variant={"secondary"}
+                tabIndex={0}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setIsLinkEditMode(false);
+                }}
+              >
+                Cancel
+              </Button>
 
-            <Button
-              variant={"secondary"}
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={handleLinkSubmission}
-            >
-              Done
-            </Button>
+              <Button
+                variant={"secondary"}
+                tabIndex={0}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={handleLinkSubmission}
+              >
+                Done
+              </Button>
+            </section>
           </section>
-        </section>
-      ) : (
-        <section className="flex gap-4 justify-between">
-          <a
-            className="underline cursor-pointer text-sm h-10 px-3 py-2"
-            href={sanitizeUrl(linkUrl)}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {linkUrl}
-          </a>
-          <section className="flex gap-2">
-            <Button
-              variant={"secondary"}
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                setEditedLinkUrl(linkUrl);
-                setIsLinkEditMode(true);
-              }}
+        ) : (
+          <section className="flex gap-4 justify-between">
+            <a
+              className="underline cursor-pointer text-sm h-10 px-3 py-2"
+              href={sanitizeUrl(linkUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Edit
-            </Button>
-            <Button
-              variant={"secondary"}
-              tabIndex={0}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => {
-                editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-              }}
-            >
-              Clear
-            </Button>
+              {linkUrl}
+            </a>
+            <section className="flex gap-2">
+              <Button
+                variant={"secondary"}
+                tabIndex={0}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  setEditedLinkUrl(linkUrl);
+                  setIsLinkEditMode(true);
+                }}
+              >
+                Edit
+              </Button>
+              <Button
+                variant={"secondary"}
+                tabIndex={0}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => {
+                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                }}
+              >
+                Clear
+              </Button>
+            </section>
           </section>
-        </section>
-      )}
-    </aside>
+        )}
+      </aside>
+    </>
   );
 }
 

@@ -3,9 +3,9 @@ import "./styles.css";
 
 const page = () => {
   return (
-    <div className="">
+    <article>
       <Editor />
-    </div>
+    </article>
   );
 };
 

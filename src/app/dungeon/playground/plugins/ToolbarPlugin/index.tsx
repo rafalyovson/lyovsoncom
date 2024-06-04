@@ -1,11 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Menubar,
-  MenubarMenu,
-  MenubarSeparator,
-} from "@/components/ui/menubar";
+import { Menubar } from "@/components/ui/menubar";
 import { $isCodeNode, getDefaultCodeLanguage } from "@lexical/code";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { $isListNode, ListNode } from "@lexical/list";
@@ -221,9 +217,10 @@ export default function ToolbarPlugin({
   }, [editor, isLink, setIsLinkEditMode]);
 
   return (
-    <Menubar>
-      <MenubarMenu>
+    <Menubar className="overflow-x-scroll flex gap-2 h-full py-4">
+      <section className="flex gap-2">
         <Button
+          size={"icon"}
           variant={"ghost"}
           disabled={!canUndo}
           onClick={() => {
@@ -234,6 +231,7 @@ export default function ToolbarPlugin({
           <Undo />
         </Button>
         <Button
+          size={"icon"}
           variant={"ghost"}
           disabled={!canRedo}
           onClick={() => {
@@ -243,21 +241,23 @@ export default function ToolbarPlugin({
         >
           <Redo />
         </Button>
-        <MenubarSeparator />
-        <BlockMenu editor={editor} blockType={blockType} />
-        <MenubarSeparator />
-        {blockType === "code" ? (
-          <>
-            <CodeMenu
-              codeLanguage={codeLanguage}
-              editor={editor}
-              selectedElementKey={selectedElementKey}
-            />
-            <MenubarSeparator />
-          </>
-        ) : (
-          <>
+      </section>
+
+      <BlockMenu editor={editor} blockType={blockType} />
+
+      {blockType === "code" ? (
+        <>
+          <CodeMenu
+            codeLanguage={codeLanguage}
+            editor={editor}
+            selectedElementKey={selectedElementKey}
+          />
+        </>
+      ) : (
+        <>
+          <section className="flex gap-2">
             <Button
+              size={"icon"}
               variant={isBold ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
@@ -268,6 +268,7 @@ export default function ToolbarPlugin({
               <Bold />
             </Button>
             <Button
+              size={"icon"}
               variant={isItalic ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
@@ -278,6 +279,7 @@ export default function ToolbarPlugin({
               <Italic />
             </Button>
             <Button
+              size={"icon"}
               variant={isUnderline ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
@@ -287,6 +289,7 @@ export default function ToolbarPlugin({
               <Underline />
             </Button>
             <Button
+              size={"icon"}
               variant={isStrikethrough ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
@@ -295,16 +298,9 @@ export default function ToolbarPlugin({
             >
               <Strikethrough />
             </Button>
+
             <Button
-              variant={isCode ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-              }}
-              aria-label="Insert Code"
-            >
-              <Code />
-            </Button>
-            <Button
+              size={"icon"}
               variant={isSubscript ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
@@ -314,6 +310,7 @@ export default function ToolbarPlugin({
               <Subscript />
             </Button>
             <Button
+              size={"icon"}
               variant={isSuperscript ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
@@ -322,15 +319,31 @@ export default function ToolbarPlugin({
             >
               <Superscript />
             </Button>
+          </section>
+          <section className="flex gap-2">
             <Button
+              size={"icon"}
               variant={isLink ? "secondary" : "ghost"}
               onClick={insertLink}
               aria-label="Insert Link"
             >
               <Link />
             </Button>
-            <MenubarSeparator />
+
             <Button
+              size={"icon"}
+              variant={isCode ? "secondary" : "ghost"}
+              onClick={() => {
+                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+              }}
+              aria-label="Insert Code"
+            >
+              <Code />
+            </Button>
+          </section>
+          <section className="flex gap-2">
+            <Button
+              size={"icon"}
               variant={elementFormat === "left" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
@@ -340,6 +353,7 @@ export default function ToolbarPlugin({
               <AlignLeft />
             </Button>
             <Button
+              size={"icon"}
               variant={elementFormat === "center" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
@@ -349,6 +363,7 @@ export default function ToolbarPlugin({
               <AlignCenter />
             </Button>
             <Button
+              size={"icon"}
               variant={elementFormat === "right" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
@@ -358,6 +373,7 @@ export default function ToolbarPlugin({
               <AlignRight />
             </Button>
             <Button
+              size={"icon"}
               variant={elementFormat === "justify" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
@@ -366,11 +382,10 @@ export default function ToolbarPlugin({
             >
               <AlignJustify />
             </Button>
-            <MenubarSeparator />
-            <EmbedMenu editor={editor} />
-          </>
-        )}
-      </MenubarMenu>
+          </section>
+          <EmbedMenu editor={editor} />
+        </>
+      )}
     </Menubar>
   );
 }

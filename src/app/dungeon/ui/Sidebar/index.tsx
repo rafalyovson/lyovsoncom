@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -14,14 +15,18 @@ export const Sidebar = () => {
         {DungeonLinks.map((link) => {
           return (
             <Tooltip key={link.name}>
-              <TooltipTrigger asChild>
-                <Link
-                  href={link.url}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              <TooltipTrigger>
+                <Button
+                  asChild
+                  variant={"outline"}
+                  size="icon"
+                  className="h-8 w-8 "
                 >
-                  <Link2 className="h-5 w-5" />
-                  <span className="sr-only">{link.name}</span>
-                </Link>
+                  <Link href={link.url} className="">
+                    <Link2 className="h-5 w-5" />
+                    <span className="sr-only">{link.name}</span>
+                  </Link>
+                </Button>
               </TooltipTrigger>
               <TooltipContent side="right">{link.name}</TooltipContent>
             </Tooltip>

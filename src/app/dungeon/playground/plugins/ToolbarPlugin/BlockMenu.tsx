@@ -142,8 +142,14 @@ export function BlockMenu({
     <>
       <MenubarMenu>
         <MenubarTrigger>
-          <Text className="mr-2 h-4 w-4" />
-          <span>{"Paragraph"}</span>
+          {blockOptions.map((option) =>
+            option.value === blockType ? (
+              <section className="flex gap-1 items-center" key={option.value}>
+                <option.icon className="mr-2 h-4 w-4" />
+                <span>{option.label}</span>
+              </section>
+            ) : null
+          )}
         </MenubarTrigger>
         <MenubarContent>
           {blockOptions.map((option) => (
