@@ -4,7 +4,7 @@ import { getPostsByUser } from "@/lib/getAllPosts";
 import { eq } from "drizzle-orm";
 import { PostGrid } from "../../ui/post-grid";
 
-export async function Page() {
+const Page = async () => {
   const allUsers = await db
     .select()
     .from(users)
@@ -20,5 +20,5 @@ export async function Page() {
       <PostGrid posts={posts} />
     </>
   );
-}
+};
 export default Page;

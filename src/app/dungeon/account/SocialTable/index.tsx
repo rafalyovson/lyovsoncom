@@ -12,10 +12,10 @@ import {
 import { SocialNetwork } from "@/data/schema";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-import CreateSocialForm from "./CreateSocialForm";
-import DeleteSocial from "./DeleteSocial";
+import { CreateSocialForm } from "./CreateSocialForm";
+import { DeleteSocial } from "./DeleteSocial";
 
-const SocialTable = (socials: any) => {
+export const SocialTable = (socials: any) => {
   const [isCreatingSocial, setIsCreatingSocial] = useState(false);
   const [isDeletingSocial, setIsDeletingSocial] = useState(false);
   const [sn, setSn] = useState("");
@@ -71,5 +71,3 @@ const SocialTable = (socials: any) => {
     </Card>
   );
 };
-
-export default SocialTable;

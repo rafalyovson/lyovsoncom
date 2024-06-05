@@ -6,23 +6,27 @@
  *
  */
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$insertNodeToNearestRoot} from '@lexical/utils';
-import {COMMAND_PRIORITY_EDITOR, createCommand, LexicalCommand} from 'lexical';
-import {useEffect} from 'react';
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $insertNodeToNearestRoot } from "@lexical/utils";
+import {
+  COMMAND_PRIORITY_EDITOR,
+  createCommand,
+  LexicalCommand,
+} from "lexical";
+import { useEffect } from "react";
 
-import {$createTweetNode, TweetNode} from '../../nodes/TweetNode';
+import { $createTweetNode, TweetNode } from "./x-node";
 
 export const INSERT_TWEET_COMMAND: LexicalCommand<string> = createCommand(
-  'INSERT_TWEET_COMMAND',
+  "INSERT_TWEET_COMMAND"
 );
 
-export default function TwitterPlugin(): JSX.Element | null {
+export const TwitterPlugin = (): JSX.Element | null => {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     if (!editor.hasNodes([TweetNode])) {
-      throw new Error('TwitterPlugin: TweetNode not registered on editor');
+      throw new Error("TwitterPlugin: TweetNode not registered on editor");
     }
 
     return editor.registerCommand<string>(
@@ -33,9 +37,9 @@ export default function TwitterPlugin(): JSX.Element | null {
 
         return true;
       },
-      COMMAND_PRIORITY_EDITOR,
+      COMMAND_PRIORITY_EDITOR
     );
   }, [editor]);
 
   return null;
-}
+};

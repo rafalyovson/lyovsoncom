@@ -8,7 +8,7 @@
 const VERTICAL_GAP = 0;
 const HORIZONTAL_OFFSET = 0;
 
-export function setFloatingElemPositionForLinkEditor(
+export function setFloatingElemPosition(
   targetRect: DOMRect | null,
   floatingElem: HTMLElement,
   anchorElem: HTMLElement,

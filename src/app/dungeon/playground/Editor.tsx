@@ -16,30 +16,25 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { useState } from "react";
-import { FigmaNode } from "./nodes/FigmaNode";
-import { TweetNode } from "./nodes/TweetNode";
-import { YouTubeNode } from "./nodes/YouTubeNode";
-import AutoEmbedPlugin from "./plugins/AutoEmbedPlugin";
-import AutoLinkPlugin from "./plugins/AutoLinkPlugin";
-import CodeHighlightPlugin from "./plugins/CodeHighlightPlugin";
-import FigmaPlugin from "./plugins/FigmaPlugin";
-import FloatingLinkEditorPlugin from "./plugins/FloatingLinkEditorPlugin";
-import FloatingTextFormatToolbarPlugin from "./plugins/FloatingTextFormatToolbarPlugin";
-import ListMaxIndentLevelPlugin from "./plugins/ListMaxIndentLevelPlugin";
-import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import TwitterPlugin from "./plugins/TwitterPlugin";
-import YouTubePlugin from "./plugins/YouTubePlugin";
-import ExampleTheme from "./themes/ExampleTheme";
+
+import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
+import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
+import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
+import { FigmaNode, FigmaPlugin } from "./plugins/figma-plugin";
+import { FloatingLinkEditorPlugin } from "./plugins/flaoting-link-editor-plugin";
+import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
+import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
+import { ToolbarPlugin } from "./plugins/toolbar-plugin";
+import { TweetNode, TwitterPlugin } from "./plugins/x-plugin";
+import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
+import { defaultTheme } from "./themes/default-theme";
 
 const editorConfig = {
   namespace: "Playground",
-  // The editor theme
-  theme: ExampleTheme,
-  // Handling of errors during update
+  theme: defaultTheme,
   onError(error: Error) {
     throw error;
   },
-  // Any custom nodes go here
   nodes: [
     HeadingNode,
     ListNode,
@@ -58,7 +53,7 @@ const editorConfig = {
   ],
 };
 
-export default function Editor() {
+export const Editor = () => {
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -119,4 +114,4 @@ export default function Editor() {
       </div>
     </LexicalComposer>
   );
-}
+};

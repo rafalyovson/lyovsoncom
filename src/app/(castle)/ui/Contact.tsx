@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const Contact = () => (
+export const Contact = () => (
   <section className="px-4 py-8 text-gray-800 border-b border-gray-300 rounded-lg shadow-lg bg-gray-50 dark:bg-dark">
     <h2 className="mb-4 text-2xl text-center text-gray-700 dark:text-light">
       Contact
@@ -66,5 +66,3 @@ const Contact = () => (
     </div>
   </section>
 );
-
-export default Contact;

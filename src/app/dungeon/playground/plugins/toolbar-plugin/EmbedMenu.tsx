@@ -7,7 +7,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
-import { EmbedConfigs } from "../AutoEmbedPlugin";
+import { EmbedConfigs } from "../auto-embed-plugin";
 
 export function EmbedMenu({ editor }: { editor: any }) {
   return (

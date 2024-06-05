@@ -1,11 +1,8 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
+import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
+import {
+  DecoratorBlockNode,
+  SerializedDecoratorBlockNode,
+} from "@lexical/react/LexicalDecoratorBlockNode";
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -17,12 +14,6 @@ import type {
   NodeKey,
   Spread,
 } from "lexical";
-
-import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
-import {
-  DecoratorBlockNode,
-  SerializedDecoratorBlockNode,
-} from "@lexical/react/LexicalDecoratorBlockNode";
 
 type YouTubeComponentProps = Readonly<{
   className: Readonly<{

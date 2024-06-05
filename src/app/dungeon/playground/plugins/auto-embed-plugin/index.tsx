@@ -12,11 +12,11 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-import useModal from "../../hooks/useModal";
+import { useModal } from "../../hooks/useModal";
 import { DialogActions } from "../../ui/Dialog";
-import { INSERT_FIGMA_COMMAND } from "../FigmaPlugin";
-import { INSERT_TWEET_COMMAND } from "../TwitterPlugin";
-import { INSERT_YOUTUBE_COMMAND } from "../YouTubePlugin";
+import { INSERT_FIGMA_COMMAND } from "../figma-plugin/figma-plugin";
+import { INSERT_TWEET_COMMAND } from "../x-plugin/x-plugin";
+import { INSERT_YOUTUBE_COMMAND } from "../youtube-plugin/youtube-plugin";
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -145,7 +145,7 @@ export const EmbedConfigs = [
   FigmaEmbedConfig,
 ];
 
-function AutoEmbedMenuItem({
+const AutoEmbedMenuItem = ({
   index,
   isSelected,
   onClick,
@@ -157,7 +157,7 @@ function AutoEmbedMenuItem({
   onClick: () => void;
   onMouseEnter: () => void;
   option: AutoEmbedOption;
-}) {
+}) => {
   let className = "item";
   if (isSelected) {
     className += " selected";
@@ -177,9 +177,9 @@ function AutoEmbedMenuItem({
       <span className="text">{option.title}</span>
     </li>
   );
-}
+};
 
-function AutoEmbedMenu({
+const AutoEmbedMenu = ({
   options,
   selectedItemIndex,
   onOptionClick,
@@ -189,7 +189,7 @@ function AutoEmbedMenu({
   onOptionClick: (option: AutoEmbedOption, index: number) => void;
   onOptionMouseEnter: (index: number) => void;
   options: Array<AutoEmbedOption>;
-}) {
+}) => {
   return (
     <div className="typeahead-popover">
       <ul>
@@ -206,7 +206,7 @@ function AutoEmbedMenu({
       </ul>
     </div>
   );
-}
+};
 
 const debounce = (callback: (text: string) => void, delay: number) => {
   let timeoutId: number;
@@ -218,13 +218,13 @@ const debounce = (callback: (text: string) => void, delay: number) => {
   };
 };
 
-export function AutoEmbedDialog({
+export const AutoEmbedDialog = ({
   embedConfig,
   onClose,
 }: {
   embedConfig: PlaygroundEmbedConfig;
   onClose: () => void;
-}): JSX.Element {
+}): JSX.Element => {
   const [text, setText] = useState("");
   const [editor] = useLexicalComposerContext();
   const [embedResult, setEmbedResult] = useState<EmbedMatchResult | null>(null);
@@ -280,9 +280,9 @@ export function AutoEmbedDialog({
       </DialogActions>
     </div>
   );
-}
+};
 
-export default function AutoEmbedPlugin(): JSX.Element {
+export const AutoEmbedPlugin = (): JSX.Element => {
   const [modal, showModal] = useModal();
 
   const openEmbedModal = (embedConfig: PlaygroundEmbedConfig) => {
@@ -344,4 +344,4 @@ export default function AutoEmbedPlugin(): JSX.Element {
       />
     </>
   );
-}
+};

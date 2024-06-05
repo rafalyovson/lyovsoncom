@@ -1,4 +1,4 @@
-const exampleTheme = {
+export const defaultTheme = {
   ltr: "ltr",
   rtl: "rtl",
   placeholder: "editor-placeholder",
@@ -67,5 +67,3 @@ const exampleTheme = {
     variable: "editor-tokenVariable",
   },
 };
-
-export default exampleTheme;

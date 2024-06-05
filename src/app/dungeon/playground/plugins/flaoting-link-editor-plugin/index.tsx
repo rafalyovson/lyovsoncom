@@ -6,6 +6,9 @@
  *
  */
 
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import {
   $createLinkNode,
   $isAutoLinkNode,
@@ -30,15 +33,11 @@ import {
 import * as React from "react";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { getSelectedNode } from "../../utils/getSelectedNode";
-import { setFloatingElemPositionForLinkEditor } from "../../utils/setFloatingElemPositionForLinkEditor";
 import { sanitizeUrl } from "../../utils/url";
+import { setFloatingElemPosition } from "./set-floating-elem-position";
 
-function FloatingLinkEditor({
+const FloatingLinkEditor = ({
   editor,
   isLink,
   setIsLink,
@@ -52,7 +51,7 @@ function FloatingLinkEditor({
   anchorElem: HTMLElement;
   isLinkEditMode: boolean;
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element {
+}): JSX.Element => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [linkUrl, setLinkUrl] = useState("");
@@ -101,12 +100,12 @@ function FloatingLinkEditor({
       if (domRect) {
         domRect.y;
         domRect.x;
-        setFloatingElemPositionForLinkEditor(domRect, editorElem, anchorElem);
+        setFloatingElemPosition(domRect, editorElem, anchorElem);
       }
       setLastSelection(selection);
     } else if (!activeElement || activeElement.className !== "link-input") {
       if (rootElement !== null) {
-        setFloatingElemPositionForLinkEditor(null, editorElem, anchorElem);
+        setFloatingElemPosition(null, editorElem, anchorElem);
       }
       setLastSelection(null);
       setIsLinkEditMode(false);
@@ -305,14 +304,14 @@ function FloatingLinkEditor({
       </aside>
     </>
   );
-}
+};
 
-function useFloatingLinkEditorToolbar(
+const useFloatingLinkEditorToolbar = (
   editor: LexicalEditor,
   anchorElem: HTMLElement,
   isLinkEditMode: boolean,
   setIsLinkEditMode: Dispatch<boolean>
-): JSX.Element | null {
+): JSX.Element | null => {
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLink, setIsLink] = useState(false);
 
@@ -395,9 +394,9 @@ function useFloatingLinkEditorToolbar(
     />,
     anchorElem
   );
-}
+};
 
-export default function FloatingLinkEditorPlugin({
+export const FloatingLinkEditorPlugin = ({
   anchorElem = document.body,
   isLinkEditMode,
   setIsLinkEditMode,
@@ -405,7 +404,7 @@ export default function FloatingLinkEditorPlugin({
   anchorElem?: HTMLElement;
   isLinkEditMode: boolean;
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element | null {
+}): JSX.Element | null => {
   const [editor] = useLexicalComposerContext();
   return useFloatingLinkEditorToolbar(
     editor,
@@ -413,4 +412,4 @@ export default function FloatingLinkEditorPlugin({
     isLinkEditMode,
     setIsLinkEditMode
   );
-}
+};

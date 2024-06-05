@@ -1,4 +1,4 @@
-const page = () => {
+const Page = () => {
   return (
     <>
       <title>Rafa Lyovsons&apos;s Bio | Lyovson.com</title>
@@ -178,4 +178,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -15,11 +15,7 @@ export const metadata = {
   description: "The official website of Mr and Mrs Lyovsons.",
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
   return (
@@ -49,4 +45,6 @@ export default async function RootLayout({
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

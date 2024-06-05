@@ -1,11 +1,7 @@
 import { Header } from "./ui/header";
 import { Sidebar } from "./ui/sidebar";
 
-export default async function Layout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Sidebar />
@@ -15,4 +11,6 @@ export default async function Layout({
       </div>
     </div>
   );
-}
+};
+
+export default Layout;

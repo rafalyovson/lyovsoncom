@@ -111,5 +111,3 @@ export const DeleteSocial = ({
     </Drawer>
   );
 };
-
-export default DeleteSocial;

@@ -23,7 +23,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Dispatch } from "react";
 import { SocialForm } from "./SocialForm";
 
-const CreateSocialForm = ({
+export const CreateSocialForm = ({
   isOpen,
   setIsOpen,
 }: {
@@ -75,4 +75,3 @@ const CreateSocialForm = ({
     </Drawer>
   );
 };
-export default CreateSocialForm;

@@ -53,11 +53,11 @@ import { EmbedMenu } from "./EmbedMenu";
 const LowPriority = 1;
 const NormalPriority = 2;
 
-export default function ToolbarPlugin({
+export const ToolbarPlugin = ({
   setIsLinkEditMode,
 }: {
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element {
+}): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -388,4 +388,4 @@ export default function ToolbarPlugin({
       )}
     </Menubar>
   );
-}
+};

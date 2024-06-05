@@ -1,9 +1,11 @@
-import About from "@/app/(castle)/ui/About";
+import { About } from "@/app/(castle)/ui/About";
 
-export default function Portfolio() {
+const Page = () => {
   return (
     <>
       <About />
     </>
   );
-}
+};
+
+export default Page;

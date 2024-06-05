@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-const About = () => (
+export const About = () => (
   <Card className="w-full max-w-[600px] mx-auto p-4">
     <CardHeader>
       <h2 className="mb-4 text-5xl font-bold font-lusitana">
@@ -37,5 +37,3 @@ const About = () => (
     </CardContent>
   </Card>
 );
-
-export default About;

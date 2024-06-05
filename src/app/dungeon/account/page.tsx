@@ -10,9 +10,9 @@ import { SocialNetwork, socialNetworks } from "@/data/schema";
 import { getCurrentUser } from "@/lib/getCurrentUser";
 import { eq } from "drizzle-orm";
 import Image from "next/image";
-import SocialTable from "./SocialTable";
+import { SocialTable } from "./SocialTable";
 
-const page = async () => {
+const Page = async () => {
   const user = await getCurrentUser();
 
   const socials: SocialNetwork[] = await db
@@ -45,4 +45,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default Page;

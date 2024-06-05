@@ -35,10 +35,10 @@ import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getDOMRangeRect } from "../../utils/getDOMRangeRect";
 import { getSelectedNode } from "../../utils/getSelectedNode";
-import { setFloatingElemPosition } from "../../utils/setFloatingElemPosition";
 import "./index.css";
+import { setFloatingElemPosition } from "./set-floating-elem-position";
 
-function TextFormatFloatingToolbar({
+const TextFormatFloatingToolbar = ({
   editor,
   anchorElem,
   isLink,
@@ -62,7 +62,7 @@ function TextFormatFloatingToolbar({
   isSuperscript: boolean;
   isUnderline: boolean;
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element {
+}): JSX.Element => {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
   const insertLink = useCallback(() => {
@@ -274,13 +274,13 @@ function TextFormatFloatingToolbar({
       )}
     </div>
   );
-}
+};
 
-function useFloatingTextFormatToolbar(
+const useFloatingTextFormatToolbar = (
   editor: LexicalEditor,
   anchorElem: HTMLElement,
   setIsLinkEditMode: Dispatch<boolean>
-): JSX.Element | null {
+): JSX.Element | null => {
   const [isText, setIsText] = useState(false);
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -391,15 +391,15 @@ function useFloatingTextFormatToolbar(
     />,
     anchorElem
   );
-}
+};
 
-export default function FloatingTextFormatToolbarPlugin({
+export const FloatingTextFormatToolbarPlugin = ({
   anchorElem = document.body,
   setIsLinkEditMode,
 }: {
   anchorElem?: HTMLElement;
   setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element | null {
+}): JSX.Element | null => {
   const [editor] = useLexicalComposerContext();
   return useFloatingTextFormatToolbar(editor, anchorElem, setIsLinkEditMode);
-}
+};
