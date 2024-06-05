@@ -118,10 +118,10 @@ export const ToolbarPlugin = ({
       const parent = node.getParent();
 
       if ($isLinkNode(parent) || $isLinkNode(node)) {
-        setIsLinkEditMode(true);
+        // setIsLinkEditMode(true);
         setIsLink(true);
       } else {
-        setIsLinkEditMode(false);
+        // setIsLinkEditMode(false);
         setIsLink(false);
       }
 
@@ -145,7 +145,7 @@ export const ToolbarPlugin = ({
           : parent?.getFormatType() || "left"
       );
     }
-  }, [editor, setIsLinkEditMode]);
+  }, [editor]);
 
   useEffect(() => {
     return mergeRegister(

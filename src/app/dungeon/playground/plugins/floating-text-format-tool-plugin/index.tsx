@@ -1,11 +1,3 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import { Button } from "@/components/ui/button";
 import { $isCodeHighlightNode } from "@lexical/code";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
@@ -86,7 +78,6 @@ const TextFormatFloatingToolbar = ({
         const elementUnderMouse = document.elementFromPoint(x, y);
 
         if (!popupCharStylesEditorRef.current.contains(elementUnderMouse)) {
-          // Mouse is not over the target element => not a normal click, but probably a drag
           popupCharStylesEditorRef.current.style.pointerEvents = "none";
         }
       }
@@ -132,7 +123,6 @@ const TextFormatFloatingToolbar = ({
       rootElement.contains(nativeSelection.anchorNode)
     ) {
       const rangeRect = getDOMRangeRect(nativeSelection, rootElement);
-
       setFloatingElemPosition(
         rangeRect,
         popupCharStylesEditorElem,
@@ -187,9 +177,9 @@ const TextFormatFloatingToolbar = ({
   }, [editor, $updateTextFormatFloatingToolbar]);
 
   return (
-    <div
+    <aside
+      className="flex justify-between gap-2 p-4 absolute top-0 left-0 z-10 opacity-0 border-radius-md border bg-background w-full max-w-96"
       ref={popupCharStylesEditorRef}
-      className="flex p-4 absolute top-0 left-0 z-10 opacity-0 border-radius-md border bg-background"
     >
       {editor.isEditable() && (
         <>
@@ -272,7 +262,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
         </>
       )}
-    </div>
+    </aside>
   );
 };
 
@@ -293,7 +283,6 @@ const useFloatingTextFormatToolbar = (
 
   const updatePopup = useCallback(() => {
     editor.getEditorState().read(() => {
-      // Should not to pop up the floating toolbar when using IME input
       if (editor.isComposing()) {
         return;
       }

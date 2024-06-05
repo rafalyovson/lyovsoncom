@@ -66,6 +66,7 @@ export const Editor = () => {
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
+      <h1>{isLinkEditMode ? "edit mode" : " non-edit-mode"}</h1>
       <div className=" border w-full max-w-[600px] mx-auto">
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (

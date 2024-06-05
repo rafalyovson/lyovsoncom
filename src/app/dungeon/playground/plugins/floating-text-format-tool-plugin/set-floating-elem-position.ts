@@ -1,21 +1,14 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
 const VERTICAL_GAP = 10;
 const HORIZONTAL_OFFSET = 5;
 
-export function setFloatingElemPosition(
+export const setFloatingElemPosition = (
   targetRect: DOMRect | null,
   floatingElem: HTMLElement,
   anchorElem: HTMLElement,
   isLink: boolean = false,
   verticalGap: number = VERTICAL_GAP,
   horizontalOffset: number = HORIZONTAL_OFFSET
-): void {
+): void => {
   const scrollerElem = anchorElem.parentElement;
 
   if (targetRect === null || !scrollerElem) {
@@ -32,7 +25,6 @@ export function setFloatingElemPosition(
   let left = targetRect.left - horizontalOffset;
 
   if (top < editorScrollerRect.top) {
-    // adjusted height for link element if the element is at top
     top +=
       floatingElemRect.height +
       targetRect.height +
@@ -47,5 +39,5 @@ export function setFloatingElemPosition(
   left -= anchorElementRect.left;
 
   floatingElem.style.opacity = "1";
-  floatingElem.style.transform = `translate(${left}px, ${top}px)`;
-}
+  floatingElem.style.transform = `translate(${left + 600}px, ${top + 100}px)`;
+};

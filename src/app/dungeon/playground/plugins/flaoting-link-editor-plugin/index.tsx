@@ -1,13 +1,4 @@
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   $createLinkNode,
@@ -30,6 +21,7 @@ import {
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
 } from "lexical";
+import { CircleCheckBig, CircleOff, Pen, Trash2 } from "lucide-react";
 import * as React from "react";
 import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -54,6 +46,7 @@ const FloatingLinkEditor = ({
 }): JSX.Element => {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
   const [linkUrl, setLinkUrl] = useState("");
   const [editedLinkUrl, setEditedLinkUrl] = useState("https://");
   const [lastSelection, setLastSelection] = useState<BaseSelection | null>(
@@ -217,21 +210,18 @@ const FloatingLinkEditor = ({
     }
   };
 
-  // if (!isLinkEditMode && !isLink) {
-  //   return <div>no!</div>;
-  // }
+  if (!isLink) {
+    return <> </>;
+  }
 
   return (
     <>
-      <Dialog open={isLinkEditMode} onOpenChange={setIsLinkEditMode}>
-        <DialogContent>Test</DialogContent>
-      </Dialog>
       <aside
+        className="flex justify-between gap-2 p-4 absolute top-0 left-0 z-10 opacity-0 border-radius-md border bg-background w-full max-w-96"
         ref={editorRef}
-        className="max-w-[600px] w-full z-10 border rounded-sm  p-4 bg-background"
       >
-        {!isLink ? null : isLinkEditMode ? (
-          <section className="flex gap-4 justify-between">
+        {isLinkEditMode ? (
+          <section className="flex gap-4 justify-between flex-grow">
             <Input
               title="Enter URL and press Enter"
               ref={inputRef}
@@ -244,7 +234,7 @@ const FloatingLinkEditor = ({
               }}
             />
 
-            <section className="flex gap-2">
+            <section className="flex gap-2 justify-between flex-grow">
               <Button
                 variant={"secondary"}
                 tabIndex={0}
@@ -253,21 +243,24 @@ const FloatingLinkEditor = ({
                   setIsLinkEditMode(false);
                 }}
               >
-                Cancel
+                <CircleOff className="h-4 w-4" />
               </Button>
 
               <Button
                 variant={"secondary"}
                 tabIndex={0}
                 onMouseDown={(event) => event.preventDefault()}
-                onClick={handleLinkSubmission}
+                onClick={() => {
+                  handleLinkSubmission();
+                  setIsLinkEditMode(false);
+                }}
               >
-                Done
+                <CircleCheckBig className="h-4 w-4" />
               </Button>
             </section>
           </section>
         ) : (
-          <section className="flex gap-4 justify-between">
+          <section className="flex gap-4 justify-between flex-grow">
             <a
               className="underline cursor-pointer text-sm h-10 px-3 py-2"
               href={sanitizeUrl(linkUrl)}
@@ -282,21 +275,21 @@ const FloatingLinkEditor = ({
                 tabIndex={0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {
-                  setEditedLinkUrl(linkUrl);
-                  setIsLinkEditMode(true);
+                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
                 }}
               >
-                Edit
+                <Trash2 className="h-4 w-4" />
               </Button>
               <Button
                 variant={"secondary"}
                 tabIndex={0}
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => {
-                  editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+                  setEditedLinkUrl(linkUrl);
+                  setIsLinkEditMode(true);
                 }}
               >
-                Clear
+                <Pen className="h-4 w-4" />
               </Button>
             </section>
           </section>
