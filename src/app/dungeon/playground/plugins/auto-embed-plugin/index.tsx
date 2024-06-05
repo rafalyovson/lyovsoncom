@@ -12,7 +12,7 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { useModal } from "../../hooks/useModal";
+import { useModal } from "../../hooks/use-modal";
 import { DialogActions } from "../../ui/Dialog";
 import { INSERT_FIGMA_COMMAND } from "../figma-plugin/figma-plugin";
 import { INSERT_TWEET_COMMAND } from "../x-plugin/x-plugin";

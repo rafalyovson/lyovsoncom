@@ -16,13 +16,14 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { useState } from "react";
-
 import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
+import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
 import { FigmaNode, FigmaPlugin } from "./plugins/figma-plugin";
 import { FloatingLinkEditorPlugin } from "./plugins/flaoting-link-editor-plugin";
 import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
+import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
 import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
 import { ToolbarPlugin } from "./plugins/toolbar-plugin";
 import { TweetNode, TwitterPlugin } from "./plugins/x-plugin";
@@ -50,6 +51,8 @@ const editorConfig = {
     YouTubeNode,
     TweetNode,
     FigmaNode,
+
+    ImageNode,
   ],
 };
 
@@ -66,7 +69,6 @@ export const Editor = () => {
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <h1>{isLinkEditMode ? "edit mode" : " non-edit-mode"}</h1>
       <div className=" border w-full max-w-[600px] mx-auto">
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (
@@ -98,11 +100,11 @@ export const Editor = () => {
             ErrorBoundary={LexicalErrorBoundary}
           />
           <HistoryPlugin />
-
-          {/* <TreeViewPlugin /> */}
+          <ImagesPlugin />
           <AutoFocusPlugin />
           <CodeHighlightPlugin />
           <ListPlugin />
+          <ComponentPickerPlugin />
           <LinkPlugin />
           <AutoLinkPlugin />
           <AutoEmbedPlugin />

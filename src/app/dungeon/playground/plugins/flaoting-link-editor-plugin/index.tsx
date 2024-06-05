@@ -91,8 +91,7 @@ const FloatingLinkEditor = ({
       const domRect: DOMRect | undefined =
         nativeSelection.focusNode?.parentElement?.getBoundingClientRect();
       if (domRect) {
-        domRect.y;
-        domRect.x;
+        domRect.y += 40;
         setFloatingElemPosition(domRect, editorElem, anchorElem);
       }
       setLastSelection(selection);
