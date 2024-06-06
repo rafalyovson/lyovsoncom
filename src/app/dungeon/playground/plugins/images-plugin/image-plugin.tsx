@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $wrapNodeInElement, mergeRegister } from "@lexical/utils";
 import {
@@ -12,7 +13,6 @@ import {
   LexicalEditor,
 } from "lexical";
 import { useEffect, useRef, useState } from "react";
-import Button from "../../ui/Button";
 import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
 import { FileInput } from "../../ui/file-input";
 import TextInput from "../../ui/text-input";

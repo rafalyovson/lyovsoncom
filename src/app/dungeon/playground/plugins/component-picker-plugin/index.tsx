@@ -88,7 +88,7 @@ const ComponentPickerMenuItem = ({
       onClick={onClick}
     >
       {option.icon}
-      <span>{option.title}</span>
+      <span className="text">{option.title}</span>
     </li>
   );
 };
