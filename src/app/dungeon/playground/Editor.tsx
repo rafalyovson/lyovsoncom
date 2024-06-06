@@ -20,7 +20,6 @@ import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
 import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
-import { FloatingLinkEditorPlugin } from "./plugins/flaoting-link-editor-plugin";
 import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
 import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
 import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
@@ -70,12 +69,13 @@ export const Editor = () => {
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (
           <>
-            <FloatingLinkEditorPlugin
+            {/* <FloatingLinkEditorPlugin
               anchorElem={floatingAnchorElem}
               isLinkEditMode={isLinkEditMode}
               setIsLinkEditMode={setIsLinkEditMode}
-            />
+            /> */}
             <FloatingTextFormatToolbarPlugin
+              isLinkEditMode={isLinkEditMode}
               anchorElem={floatingAnchorElem}
               setIsLinkEditMode={setIsLinkEditMode}
             />

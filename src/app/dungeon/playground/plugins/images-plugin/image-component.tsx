@@ -15,7 +15,6 @@ import {
   CLICK_COMMAND,
   COMMAND_PRIORITY_LOW,
   createCommand,
-  DRAGSTART_COMMAND,
   KEY_BACKSPACE_COMMAND,
   KEY_DELETE_COMMAND,
   KEY_ENTER_COMMAND,
@@ -89,7 +88,6 @@ const BrokenImage = (): JSX.Element => {
         opacity: 0.2,
         width: 200,
       }}
-      draggable="false"
       width={400}
       height={400}
       alt="broken image"
@@ -229,19 +227,7 @@ export const ImageComponent = ({
         onClick,
         COMMAND_PRIORITY_LOW
       ),
-      editor.registerCommand(
-        DRAGSTART_COMMAND,
-        (event) => {
-          if (event.target === imageRef.current) {
-            // TODO This is just a temporary workaround for FF to behave like other browsers.
-            // Ideally, this handles drag & drop too (and all browsers).
-            event.preventDefault();
-            return true;
-          }
-          return false;
-        },
-        COMMAND_PRIORITY_LOW
-      ),
+
       editor.registerCommand(
         KEY_DELETE_COMMAND,
         $onDelete,
