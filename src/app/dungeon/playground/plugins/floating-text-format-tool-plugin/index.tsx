@@ -113,7 +113,7 @@ const TextFormatFloatingToolbar = ({
   setIsLinkEditMode,
 }: TextFormatFloatingToolbarProps): JSX.Element => {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
-
+  console.log(dispatch);
   const insertLink = useCallback(() => {
     if (!state.isLink) {
       setIsLinkEditMode(true);

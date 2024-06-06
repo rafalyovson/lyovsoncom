@@ -5,7 +5,7 @@ export const setFloatingElemPosition = (
   targetRect: DOMRect | null,
   floatingElem: HTMLElement,
   anchorElem: HTMLElement,
-  isLink: boolean = false,
+  _isLink: boolean = false,
   verticalGap: number = VERTICAL_GAP,
   horizontalOffset: number = HORIZONTAL_OFFSET
 ): void => {
