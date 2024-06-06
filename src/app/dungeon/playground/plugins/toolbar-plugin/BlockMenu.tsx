@@ -12,6 +12,7 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
   REMOVE_LIST_COMMAND,
 } from "@lexical/list";
+import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
 import { $wrapNodes } from "@lexical/selection";
 import {
@@ -19,16 +20,19 @@ import {
   $getSelection,
   $isRangeSelection,
 } from "lexical";
-
 import {
   Code,
   Heading1,
   Heading2,
+  Image,
   List,
   ListOrdered,
   Quote,
   Text,
 } from "lucide-react";
+import { useModal } from "../../hooks/use-modal";
+import { EmbedConfigs } from "../auto-embed-plugin";
+import { InsertImageDialog } from "../images-plugin";
 
 const blockOptions = [
   {
@@ -127,6 +131,8 @@ export function BlockMenu({
   editor: any;
   blockType: string;
 }) {
+  const [modal, showModal] = useModal();
+
   const handleSelect = (value: string) => {
     const option = blockOptions.find((option) => option.value === value);
     if (option) {
@@ -161,8 +167,33 @@ export function BlockMenu({
               <span>{option.label}</span>
             </MenubarItem>
           ))}
+          {EmbedConfigs.map((embedConfig) => (
+            <MenubarItem
+              key={embedConfig.type}
+              onClick={() => {
+                editor.dispatchCommand(INSERT_EMBED_COMMAND, embedConfig.type);
+              }}
+            >
+              <span>
+                <Image className="mr-2 h-4 w-4" />
+              </span>
+              <span>{embedConfig.contentName}</span>
+            </MenubarItem>
+          ))}
+          <MenubarItem
+            onClick={() => {
+              showModal("Insert Image", (onClose) => (
+                <InsertImageDialog activeEditor={editor} onClose={onClose} />
+              ));
+            }}
+            className="item"
+          >
+            <Image className="mr-2 h-4 w-4" />
+            <span className="text">Image</span>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
+      {modal}
     </>
   );
 }

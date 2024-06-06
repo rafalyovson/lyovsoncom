@@ -19,7 +19,6 @@ import {
   $isRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
-  ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   KEY_MODIFIER_COMMAND,
@@ -43,15 +42,69 @@ import {
   Underline,
   Undo,
 } from "lucide-react";
-import { Dispatch, useCallback, useEffect, useState } from "react";
+import { Dispatch, useCallback, useEffect, useReducer } from "react";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { sanitizeUrl } from "../../utils/url";
 import { BlockMenu } from "./BlockMenu";
 import { CodeMenu } from "./CodeMenu";
-import { EmbedMenu } from "./EmbedMenu";
 
 const LowPriority = 1;
 const NormalPriority = 2;
+
+const initialState = {
+  canUndo: false,
+  canRedo: false,
+  blockType: "paragraph",
+  selectedElementKey: "",
+  codeLanguage: "",
+  isRTL: false,
+  isLink: false,
+  isBold: false,
+  isItalic: false,
+  isUnderline: false,
+  isStrikethrough: false,
+  isCode: false,
+  isSubscript: false,
+  isSuperscript: false,
+  elementFormat: "left",
+};
+
+const reducer = (state: any, action: any) => {
+  switch (action.type) {
+    case "SET_CAN_UNDO":
+      return { ...state, canUndo: action.payload };
+    case "SET_CAN_REDO":
+      return { ...state, canRedo: action.payload };
+    case "SET_BLOCK_TYPE":
+      return { ...state, blockType: action.payload };
+    case "SET_SELECTED_ELEMENT_KEY":
+      return { ...state, selectedElementKey: action.payload };
+    case "SET_CODE_LANGUAGE":
+      return { ...state, codeLanguage: action.payload };
+    case "SET_IS_RTL":
+      return { ...state, isRTL: action.payload };
+    case "SET_IS_LINK":
+      return { ...state, isLink: action.payload };
+    case "SET_IS_BOLD":
+      return { ...state, isBold: action.payload };
+    case "SET_IS_ITALIC":
+      return { ...state, isItalic: action.payload };
+    case "SET_IS_UNDERLINE":
+      return { ...state, isUnderline: action.payload };
+    case "SET_IS_STRIKETHROUGH":
+      return { ...state, isStrikethrough: action.payload };
+    case "SET_IS_CODE":
+      return { ...state, isCode: action.payload };
+    case "SET_IS_SUBSCRIPT":
+      return { ...state, isSubscript: action.payload };
+    case "SET_IS_SUPERSCRIPT":
+      return { ...state, isSuperscript: action.payload };
+    case "SET_ELEMENT_FORMAT":
+      return { ...state, elementFormat: action.payload };
+    default:
+      return state;
+  }
+};
 
 export const ToolbarPlugin = ({
   setIsLinkEditMode,
@@ -59,21 +112,7 @@ export const ToolbarPlugin = ({
   setIsLinkEditMode: Dispatch<boolean>;
 }): JSX.Element => {
   const [editor] = useLexicalComposerContext();
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
-  const [blockType, setBlockType] = useState("paragraph");
-  const [selectedElementKey, setSelectedElementKey] = useState("");
-  const [codeLanguage, setCodeLanguage] = useState("");
-  const [_, setIsRTL] = useState(false);
-  const [isLink, setIsLink] = useState(false);
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
-  const [isCode, setIsCode] = useState(false);
-  const [isSubscript, setIsSubscript] = useState(false);
-  const [isSuperscript, setIsSuperscript] = useState(false);
-  const [elementFormat, setElementFormat] = useState<ElementFormatType>("left");
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -87,63 +126,77 @@ export const ToolbarPlugin = ({
       const elementKey = element.getKey();
       const elementDOM = editor.getElementByKey(elementKey);
       if (elementDOM !== null) {
-        setSelectedElementKey(elementKey);
+        dispatch({ type: "SET_SELECTED_ELEMENT_KEY", payload: elementKey });
         if ($isListNode(element)) {
           const parentList = $getNearestNodeOfType(anchorNode, ListNode);
           const type = parentList ? parentList.getTag() : element.getTag();
-          setBlockType(type);
+          dispatch({ type: "SET_BLOCK_TYPE", payload: type });
         } else {
           const type = $isHeadingNode(element)
             ? element.getTag()
             : element.getType();
-          setBlockType(type);
+          dispatch({ type: "SET_BLOCK_TYPE", payload: type });
           if ($isCodeNode(element)) {
-            setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
+            dispatch({
+              type: "SET_CODE_LANGUAGE",
+              payload: element.getLanguage() || getDefaultCodeLanguage(),
+            });
           }
         }
       }
       // Update text format
-      setIsBold(selection.hasFormat("bold"));
-      setIsItalic(selection.hasFormat("italic"));
-      setIsUnderline(selection.hasFormat("underline"));
-      setIsStrikethrough(selection.hasFormat("strikethrough"));
-      setIsCode(selection.hasFormat("code"));
-      setIsSubscript(selection.hasFormat("subscript"));
-      setIsSuperscript(selection.hasFormat("superscript"));
+      dispatch({ type: "SET_IS_BOLD", payload: selection.hasFormat("bold") });
+      dispatch({
+        type: "SET_IS_ITALIC",
+        payload: selection.hasFormat("italic"),
+      });
+      dispatch({
+        type: "SET_IS_UNDERLINE",
+        payload: selection.hasFormat("underline"),
+      });
+      dispatch({
+        type: "SET_IS_STRIKETHROUGH",
+        payload: selection.hasFormat("strikethrough"),
+      });
+      dispatch({ type: "SET_IS_CODE", payload: selection.hasFormat("code") });
+      dispatch({
+        type: "SET_IS_SUBSCRIPT",
+        payload: selection.hasFormat("subscript"),
+      });
+      dispatch({
+        type: "SET_IS_SUPERSCRIPT",
+        payload: selection.hasFormat("superscript"),
+      });
 
-      setIsRTL($isParentElementRTL(selection));
+      dispatch({ type: "SET_IS_RTL", payload: $isParentElementRTL(selection) });
 
       // Update links
       const node = getSelectedNode(selection);
       const parent = node.getParent();
 
       if ($isLinkNode(parent) || $isLinkNode(node)) {
-        // setIsLinkEditMode(true);
-        setIsLink(true);
+        dispatch({ type: "SET_IS_LINK", payload: true });
       } else {
-        // setIsLinkEditMode(false);
-        setIsLink(false);
+        dispatch({ type: "SET_IS_LINK", payload: false });
       }
 
       // Element Format
-
       let matchingParent;
       if ($isLinkNode(parent)) {
-        // If node is a link, we need to fetch the parent paragraph node to set format
         matchingParent = $findMatchingParent(
           node,
           (parentNode) => $isElementNode(parentNode) && !parentNode.isInline()
         );
       }
 
-      // If matchingParent is a valid node, pass it's format type
-      setElementFormat(
-        $isElementNode(matchingParent)
+      dispatch({
+        type: "SET_ELEMENT_FORMAT",
+        payload: $isElementNode(matchingParent)
           ? matchingParent.getFormatType()
           : $isElementNode(node)
           ? node.getFormatType()
-          : parent?.getFormatType() || "left"
-      );
+          : parent?.getFormatType() || "left",
+      });
     }
   }, [editor]);
 
@@ -165,7 +218,7 @@ export const ToolbarPlugin = ({
       editor.registerCommand(
         CAN_UNDO_COMMAND,
         (payload) => {
-          setCanUndo(payload);
+          dispatch({ type: "SET_CAN_UNDO", payload });
           return false;
         },
         LowPriority
@@ -173,7 +226,7 @@ export const ToolbarPlugin = ({
       editor.registerCommand(
         CAN_REDO_COMMAND,
         (payload) => {
-          setCanRedo(payload);
+          dispatch({ type: "SET_CAN_REDO", payload });
           return false;
         },
         LowPriority
@@ -191,7 +244,7 @@ export const ToolbarPlugin = ({
         if (code === "KeyK" && (ctrlKey || metaKey)) {
           event.preventDefault();
           let url: string | null;
-          if (!isLink) {
+          if (!state.isLink) {
             setIsLinkEditMode(true);
             url = sanitizeUrl("https://");
           } else {
@@ -204,25 +257,25 @@ export const ToolbarPlugin = ({
       },
       NormalPriority
     );
-  }, [editor, isLink, setIsLinkEditMode]);
+  }, [editor, state.isLink, setIsLinkEditMode]);
 
   const insertLink = useCallback(() => {
-    if (!isLink) {
+    if (!state.isLink) {
       setIsLinkEditMode(true);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
     } else {
       setIsLinkEditMode(false);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
-  }, [editor, isLink, setIsLinkEditMode]);
+  }, [editor, state.isLink, setIsLinkEditMode]);
 
   return (
-    <Menubar className="overflow-x-scroll flex gap-2 h-full py-4">
+    <Menubar className="overflow-x-scroll flex gap-2 py-8 rounded-none rounded-t-md">
       <section className="flex gap-2">
         <Button
           size={"icon"}
           variant={"ghost"}
-          disabled={!canUndo}
+          disabled={!state.canUndo}
           onClick={() => {
             editor.dispatchCommand(UNDO_COMMAND, undefined);
           }}
@@ -233,7 +286,7 @@ export const ToolbarPlugin = ({
         <Button
           size={"icon"}
           variant={"ghost"}
-          disabled={!canRedo}
+          disabled={!state.canRedo}
           onClick={() => {
             editor.dispatchCommand(REDO_COMMAND, undefined);
           }}
@@ -243,22 +296,20 @@ export const ToolbarPlugin = ({
         </Button>
       </section>
 
-      <BlockMenu editor={editor} blockType={blockType} />
+      <BlockMenu editor={editor} blockType={state.blockType} />
 
-      {blockType === "code" ? (
-        <>
-          <CodeMenu
-            codeLanguage={codeLanguage}
-            editor={editor}
-            selectedElementKey={selectedElementKey}
-          />
-        </>
+      {state.blockType === "code" ? (
+        <CodeMenu
+          codeLanguage={state.codeLanguage}
+          editor={editor}
+          selectedElementKey={state.selectedElementKey}
+        />
       ) : (
         <>
           <section className="flex gap-2">
             <Button
               size={"icon"}
-              variant={isBold ? "secondary" : "ghost"}
+              variant={state.isBold ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
               }}
@@ -269,18 +320,18 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={isItalic ? "secondary" : "ghost"}
+              variant={state.isItalic ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
               }}
               aria-label="Format Italics"
-              data-highlighted={isBold}
+              data-highlighted={state.isBold}
             >
               <Italic />
             </Button>
             <Button
               size={"icon"}
-              variant={isUnderline ? "secondary" : "ghost"}
+              variant={state.isUnderline ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
               }}
@@ -290,7 +341,7 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={isStrikethrough ? "secondary" : "ghost"}
+              variant={state.isStrikethrough ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
               }}
@@ -301,7 +352,7 @@ export const ToolbarPlugin = ({
 
             <Button
               size={"icon"}
-              variant={isSubscript ? "secondary" : "ghost"}
+              variant={state.isSubscript ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
               }}
@@ -311,7 +362,7 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={isSuperscript ? "secondary" : "ghost"}
+              variant={state.isSuperscript ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
               }}
@@ -323,7 +374,7 @@ export const ToolbarPlugin = ({
           <section className="flex gap-2">
             <Button
               size={"icon"}
-              variant={isLink ? "secondary" : "ghost"}
+              variant={state.isLink ? "secondary" : "ghost"}
               onClick={insertLink}
               aria-label="Insert Link"
             >
@@ -332,7 +383,7 @@ export const ToolbarPlugin = ({
 
             <Button
               size={"icon"}
-              variant={isCode ? "secondary" : "ghost"}
+              variant={state.isCode ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
               }}
@@ -344,7 +395,7 @@ export const ToolbarPlugin = ({
           <section className="flex gap-2">
             <Button
               size={"icon"}
-              variant={elementFormat === "left" ? "secondary" : "ghost"}
+              variant={state.elementFormat === "left" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
               }}
@@ -354,7 +405,7 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={elementFormat === "center" ? "secondary" : "ghost"}
+              variant={state.elementFormat === "center" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
               }}
@@ -364,7 +415,7 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={elementFormat === "right" ? "secondary" : "ghost"}
+              variant={state.elementFormat === "right" ? "secondary" : "ghost"}
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
               }}
@@ -374,7 +425,9 @@ export const ToolbarPlugin = ({
             </Button>
             <Button
               size={"icon"}
-              variant={elementFormat === "justify" ? "secondary" : "ghost"}
+              variant={
+                state.elementFormat === "justify" ? "secondary" : "ghost"
+              }
               onClick={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
               }}
@@ -383,7 +436,6 @@ export const ToolbarPlugin = ({
               <AlignJustify />
             </Button>
           </section>
-          <EmbedMenu editor={editor} />
         </>
       )}
     </Menubar>

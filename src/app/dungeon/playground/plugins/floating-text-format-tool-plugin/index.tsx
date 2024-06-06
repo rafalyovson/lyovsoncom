@@ -23,49 +23,106 @@ import {
   Superscript,
   Underline,
 } from "lucide-react";
-import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, useCallback, useEffect, useReducer, useRef } from "react";
 import { createPortal } from "react-dom";
 import { getDOMRangeRect } from "../../utils/getDOMRangeRect";
 import { getSelectedNode } from "../../utils/getSelectedNode";
-import "./index.css";
 import { setFloatingElemPosition } from "./set-floating-elem-position";
+
+// Define the state type
+type ToolbarState = {
+  isText: boolean;
+  isLink: boolean;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderline: boolean;
+  isStrikethrough: boolean;
+  isSubscript: boolean;
+  isSuperscript: boolean;
+  isCode: boolean;
+};
+
+// Define the action type
+type ToolbarAction =
+  | { type: "SET_IS_TEXT"; payload: boolean }
+  | { type: "SET_IS_LINK"; payload: boolean }
+  | { type: "SET_IS_BOLD"; payload: boolean }
+  | { type: "SET_IS_ITALIC"; payload: boolean }
+  | { type: "SET_IS_UNDERLINE"; payload: boolean }
+  | { type: "SET_IS_STRIKETHROUGH"; payload: boolean }
+  | { type: "SET_IS_SUBSCRIPT"; payload: boolean }
+  | { type: "SET_IS_SUPERSCRIPT"; payload: boolean }
+  | { type: "SET_IS_CODE"; payload: boolean };
+
+// Initial state for the reducer
+const initialState: ToolbarState = {
+  isText: false,
+  isLink: false,
+  isBold: false,
+  isItalic: false,
+  isUnderline: false,
+  isStrikethrough: false,
+  isSubscript: false,
+  isSuperscript: false,
+  isCode: false,
+};
+
+// Reducer function to manage the toolbar state
+const toolbarReducer = (
+  state: ToolbarState,
+  action: ToolbarAction
+): ToolbarState => {
+  switch (action.type) {
+    case "SET_IS_TEXT":
+      return { ...state, isText: action.payload };
+    case "SET_IS_LINK":
+      return { ...state, isLink: action.payload };
+    case "SET_IS_BOLD":
+      return { ...state, isBold: action.payload };
+    case "SET_IS_ITALIC":
+      return { ...state, isItalic: action.payload };
+    case "SET_IS_UNDERLINE":
+      return { ...state, isUnderline: action.payload };
+    case "SET_IS_STRIKETHROUGH":
+      return { ...state, isStrikethrough: action.payload };
+    case "SET_IS_SUBSCRIPT":
+      return { ...state, isSubscript: action.payload };
+    case "SET_IS_SUPERSCRIPT":
+      return { ...state, isSuperscript: action.payload };
+    case "SET_IS_CODE":
+      return { ...state, isCode: action.payload };
+    default:
+      return state;
+  }
+};
+
+// Define props for TextFormatFloatingToolbar component
+type TextFormatFloatingToolbarProps = {
+  editor: LexicalEditor;
+  anchorElem: HTMLElement;
+  state: ToolbarState;
+  dispatch: Dispatch<ToolbarAction>;
+  setIsLinkEditMode: Dispatch<boolean>;
+};
 
 const TextFormatFloatingToolbar = ({
   editor,
   anchorElem,
-  isLink,
-  isBold,
-  isItalic,
-  isUnderline,
-  isCode,
-  isStrikethrough,
-  isSubscript,
-  isSuperscript,
+  state,
+  dispatch,
   setIsLinkEditMode,
-}: {
-  editor: LexicalEditor;
-  anchorElem: HTMLElement;
-  isBold: boolean;
-  isCode: boolean;
-  isItalic: boolean;
-  isLink: boolean;
-  isStrikethrough: boolean;
-  isSubscript: boolean;
-  isSuperscript: boolean;
-  isUnderline: boolean;
-  setIsLinkEditMode: Dispatch<boolean>;
-}): JSX.Element => {
+}: TextFormatFloatingToolbarProps): JSX.Element => {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
   const insertLink = useCallback(() => {
-    if (!isLink) {
+    if (!state.isLink) {
       setIsLinkEditMode(true);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
     } else {
       setIsLinkEditMode(false);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
-  }, [editor, isLink, setIsLinkEditMode]);
+  }, [editor, state.isLink, setIsLinkEditMode]);
 
   function mouseMoveListener(e: MouseEvent) {
     if (
@@ -83,7 +140,8 @@ const TextFormatFloatingToolbar = ({
       }
     }
   }
-  function mouseUpListener(_e: MouseEvent) {
+
+  function mouseUpListener() {
     if (popupCharStylesEditorRef?.current) {
       if (popupCharStylesEditorRef.current.style.pointerEvents !== "auto") {
         popupCharStylesEditorRef.current.style.pointerEvents = "auto";
@@ -106,7 +164,6 @@ const TextFormatFloatingToolbar = ({
 
   const $updateTextFormatFloatingToolbar = useCallback(() => {
     const selection = $getSelection();
-
     const popupCharStylesEditorElem = popupCharStylesEditorRef.current;
     const nativeSelection = window.getSelection();
 
@@ -127,10 +184,10 @@ const TextFormatFloatingToolbar = ({
         rangeRect,
         popupCharStylesEditorElem,
         anchorElem,
-        isLink
+        state.isLink
       );
     }
-  }, [editor, anchorElem, isLink]);
+  }, [editor, anchorElem, state.isLink]);
 
   useEffect(() => {
     const scrollerElem = anchorElem.parentElement;
@@ -185,7 +242,7 @@ const TextFormatFloatingToolbar = ({
         <>
           <Button
             size="icon"
-            variant={isBold ? "secondary" : "ghost"}
+            variant={state.isBold ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
             }}
@@ -195,7 +252,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isItalic ? "secondary" : "ghost"}
+            variant={state.isItalic ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
             }}
@@ -205,7 +262,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isUnderline ? "secondary" : "ghost"}
+            variant={state.isUnderline ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
             }}
@@ -215,7 +272,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isStrikethrough ? "secondary" : "ghost"}
+            variant={state.isStrikethrough ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
             }}
@@ -225,7 +282,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isSubscript ? "secondary" : "ghost"}
+            variant={state.isSubscript ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
             }}
@@ -235,7 +292,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isSuperscript ? "secondary" : "ghost"}
+            variant={state.isSuperscript ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
             }}
@@ -246,7 +303,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isCode ? "secondary" : "ghost"}
+            variant={state.isCode ? "secondary" : "ghost"}
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
             }}
@@ -255,7 +312,7 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={isLink ? "secondary" : "ghost"}
+            variant={state.isLink ? "secondary" : "ghost"}
             onClick={insertLink}
           >
             <Link className="h-4 w-4" />
@@ -271,15 +328,7 @@ const useFloatingTextFormatToolbar = (
   anchorElem: HTMLElement,
   setIsLinkEditMode: Dispatch<boolean>
 ): JSX.Element | null => {
-  const [isText, setIsText] = useState(false);
-  const [isLink, setIsLink] = useState(false);
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
-  const [isSubscript, setIsSubscript] = useState(false);
-  const [isSuperscript, setIsSuperscript] = useState(false);
-  const [isCode, setIsCode] = useState(false);
+  const [state, dispatch] = useReducer(toolbarReducer, initialState);
 
   const updatePopup = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -296,7 +345,7 @@ const useFloatingTextFormatToolbar = (
           rootElement === null ||
           !rootElement.contains(nativeSelection.anchorNode))
       ) {
-        setIsText(false);
+        dispatch({ type: "SET_IS_TEXT", payload: false });
         return;
       }
 
@@ -307,34 +356,52 @@ const useFloatingTextFormatToolbar = (
       const node = getSelectedNode(selection);
 
       // Update text format
-      setIsBold(selection.hasFormat("bold"));
-      setIsItalic(selection.hasFormat("italic"));
-      setIsUnderline(selection.hasFormat("underline"));
-      setIsStrikethrough(selection.hasFormat("strikethrough"));
-      setIsSubscript(selection.hasFormat("subscript"));
-      setIsSuperscript(selection.hasFormat("superscript"));
-      setIsCode(selection.hasFormat("code"));
+      dispatch({ type: "SET_IS_BOLD", payload: selection.hasFormat("bold") });
+      dispatch({
+        type: "SET_IS_ITALIC",
+        payload: selection.hasFormat("italic"),
+      });
+      dispatch({
+        type: "SET_IS_UNDERLINE",
+        payload: selection.hasFormat("underline"),
+      });
+      dispatch({
+        type: "SET_IS_STRIKETHROUGH",
+        payload: selection.hasFormat("strikethrough"),
+      });
+      dispatch({
+        type: "SET_IS_SUBSCRIPT",
+        payload: selection.hasFormat("subscript"),
+      });
+      dispatch({
+        type: "SET_IS_SUPERSCRIPT",
+        payload: selection.hasFormat("superscript"),
+      });
+      dispatch({ type: "SET_IS_CODE", payload: selection.hasFormat("code") });
 
       // Update links
       const parent = node.getParent();
       if ($isLinkNode(parent) || $isLinkNode(node)) {
-        setIsLink(true);
+        dispatch({ type: "SET_IS_LINK", payload: true });
       } else {
-        setIsLink(false);
+        dispatch({ type: "SET_IS_LINK", payload: false });
       }
 
       if (
         !$isCodeHighlightNode(selection.anchor.getNode()) &&
         selection.getTextContent() !== ""
       ) {
-        setIsText($isTextNode(node) || $isParagraphNode(node));
+        dispatch({
+          type: "SET_IS_TEXT",
+          payload: $isTextNode(node) || $isParagraphNode(node),
+        });
       } else {
-        setIsText(false);
+        dispatch({ type: "SET_IS_TEXT", payload: false });
       }
 
       const rawTextContent = selection.getTextContent().replace(/\n/g, "");
       if (!selection.isCollapsed() && rawTextContent === "") {
-        setIsText(false);
+        dispatch({ type: "SET_IS_TEXT", payload: false });
         return;
       }
     });
@@ -354,13 +421,13 @@ const useFloatingTextFormatToolbar = (
       }),
       editor.registerRootListener(() => {
         if (editor.getRootElement() === null) {
-          setIsText(false);
+          dispatch({ type: "SET_IS_TEXT", payload: false });
         }
       })
     );
   }, [editor, updatePopup]);
 
-  if (!isText) {
+  if (!state.isText) {
     return null;
   }
 
@@ -368,14 +435,8 @@ const useFloatingTextFormatToolbar = (
     <TextFormatFloatingToolbar
       editor={editor}
       anchorElem={anchorElem}
-      isLink={isLink}
-      isBold={isBold}
-      isItalic={isItalic}
-      isStrikethrough={isStrikethrough}
-      isSubscript={isSubscript}
-      isSuperscript={isSuperscript}
-      isUnderline={isUnderline}
-      isCode={isCode}
+      state={state}
+      dispatch={dispatch}
       setIsLinkEditMode={setIsLinkEditMode}
     />,
     anchorElem

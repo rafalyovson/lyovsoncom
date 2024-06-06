@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { $createCodeNode } from "@lexical/code";
 import {
   INSERT_CHECK_LIST_COMMAND,
@@ -15,7 +14,6 @@ import {
 } from "@lexical/react/LexicalTypeaheadMenuPlugin";
 import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
-import { INSERT_TABLE_COMMAND } from "@lexical/table";
 import {
   $createParagraphNode,
   $getSelection,
@@ -60,7 +58,7 @@ class ComponentPickerOption extends MenuOption {
   }
 }
 
-function ComponentPickerMenuItem({
+const ComponentPickerMenuItem = ({
   index,
   isSelected,
   onClick,
@@ -72,61 +70,28 @@ function ComponentPickerMenuItem({
   onClick: () => void;
   onMouseEnter: () => void;
   option: ComponentPickerOption;
-}) {
+}) => {
   let className = "item";
   if (isSelected) {
     className += " selected";
   }
   return (
-    <Button asChild variant={"outline"} className="">
-      <li
-        key={option.key}
-        tabIndex={-1}
-        className={className}
-        ref={option.setRefElement}
-        role="option"
-        aria-selected={isSelected}
-        id={"typeahead-item-" + index}
-        onMouseEnter={onMouseEnter}
-        onClick={onClick}
-      >
-        {option.icon}
-        <span>{option.title}</span>
-      </li>
-    </Button>
+    <li
+      className={`${className} `}
+      key={option.key}
+      tabIndex={-1}
+      ref={option.setRefElement}
+      role="option"
+      aria-selected={isSelected}
+      id={"typeahead-item-" + index}
+      onMouseEnter={onMouseEnter}
+      onClick={onClick}
+    >
+      {option.icon}
+      <span>{option.title}</span>
+    </li>
   );
-}
-
-function getDynamicOptions(editor: LexicalEditor, queryString: string) {
-  const options: Array<ComponentPickerOption> = [];
-
-  if (queryString == null) {
-    return options;
-  }
-
-  const tableMatch = queryString.match(/^([1-9]\d?)(?:x([1-9]\d?)?)?$/);
-
-  if (tableMatch !== null) {
-    const rows = tableMatch[1];
-    const colOptions = tableMatch[2]
-      ? [tableMatch[2]]
-      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(String);
-
-    options.push(
-      ...colOptions.map(
-        (columns) =>
-          new ComponentPickerOption(`${rows}x${columns} Table`, {
-            icon: <i className="icon table" />,
-            keywords: ["table"],
-            onSelect: () =>
-              editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
-          })
-      )
-    );
-  }
-
-  return options;
-}
+};
 
 type ShowModal = ReturnType<typeof useModal>[1];
 
@@ -263,7 +228,6 @@ export const ComponentPickerPlugin = (): JSX.Element => {
     const regex = new RegExp(queryString, "i");
 
     return [
-      ...getDynamicOptions(editor, queryString),
       ...baseOptions.filter(
         (option) =>
           regex.test(option.title) ||
@@ -303,7 +267,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
                 <div className="typeahead-popover component-picker-menu">
-                  <ul className="flex flex-col gap-2 ">
+                  <ul>
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
                         index={i}

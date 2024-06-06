@@ -24,6 +24,15 @@
           "iframe[allow]"
         ]
       }
+    ],
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "user-select",
+          "scrollbar-width"
+        ]
+      }
     ]
   }
 }

@@ -20,7 +20,6 @@ import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
 import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
-import { FigmaNode, FigmaPlugin } from "./plugins/figma-plugin";
 import { FloatingLinkEditorPlugin } from "./plugins/flaoting-link-editor-plugin";
 import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
 import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
@@ -50,8 +49,6 @@ const editorConfig = {
     LinkNode,
     YouTubeNode,
     TweetNode,
-    FigmaNode,
-
     ImageNode,
   ],
 };
@@ -69,7 +66,7 @@ export const Editor = () => {
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className=" border w-full max-w-[600px] mx-auto">
+      <div className=" border w-full max-w-[600px] mx-auto rounded-md">
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (
           <>
@@ -85,35 +82,30 @@ export const Editor = () => {
           </>
         )}
 
-        <div className="">
+        <div className=" rounded-b-md">
           <RichTextPlugin
             contentEditable={
-              <div className="editor-scroller">
-                <div className="editor" ref={onRef}>
-                  <ContentEditable className="editor-input" />
-                </div>
+              <div className="outline-none " ref={onRef}>
+                <ContentEditable className="min-h-[600px] p-4 border outline-ring " />
               </div>
             }
-            placeholder={
-              <div className="editor-placeholder">Enter some rich text...</div>
-            }
+            placeholder={<></>}
             ErrorBoundary={LexicalErrorBoundary}
           />
-          <HistoryPlugin />
-          <ImagesPlugin />
-          <AutoFocusPlugin />
-          <CodeHighlightPlugin />
-          <ListPlugin />
-          <ComponentPickerPlugin />
-          <LinkPlugin />
-          <AutoLinkPlugin />
-          <AutoEmbedPlugin />
-          <TwitterPlugin />
-          <YouTubePlugin />
-          <FigmaPlugin />
-          <ListMaxIndentLevelPlugin maxDepth={7} />
-          <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         </div>
+        <HistoryPlugin />
+        <ImagesPlugin />
+        <AutoFocusPlugin />
+        <CodeHighlightPlugin />
+        <ListPlugin />
+        <ComponentPickerPlugin />
+        <LinkPlugin />
+        <AutoLinkPlugin />
+        <AutoEmbedPlugin />
+        <TwitterPlugin />
+        <YouTubePlugin />
+        <ListMaxIndentLevelPlugin maxDepth={7} />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </div>
     </LexicalComposer>
   );

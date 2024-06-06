@@ -12,7 +12,6 @@ export async function getAllPosts(): Promise<PostWithUser[]> {
     .from(posts)
     .leftJoin(users, eq(posts.authorId, users.id));
 
-  console.log(allPosts);
   return allPosts;
 }
 
