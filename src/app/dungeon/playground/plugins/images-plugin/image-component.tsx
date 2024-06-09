@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { Card, CardDescription, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
 import { mergeRegister } from "@lexical/utils";
@@ -63,7 +63,7 @@ const LazyImage = ({
   useSuspenseImage(src);
   return (
     <Card>
-      <CardHeader>
+      <CardContent className="pt-6">
         <img
           className={`${className} max-w-96 max-h-96 mx-auto object-cover`}
           src={src}
@@ -74,7 +74,7 @@ const LazyImage = ({
           height={400}
         />
         <CardDescription className="text-center">{altText}</CardDescription>
-      </CardHeader>
+      </CardContent>
     </Card>
   );
 };

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 "use client";
 
 import {
@@ -24,13 +25,15 @@ import {
   Code,
   Heading1,
   Heading2,
+  Heading3,
   Image,
   List,
   ListOrdered,
   Quote,
   Text,
 } from "lucide-react";
-import { useModal } from "../../hooks/use-modal";
+import { useState } from "react";
+import { useDialog } from "../../hooks/use-dialog";
 import { EmbedConfigs } from "../auto-embed-plugin";
 import { InsertImageDialog } from "../images-plugin";
 
@@ -63,13 +66,26 @@ const blockOptions = [
   },
   {
     value: "h2",
-    label: "Small Heading",
+    label: "Medium Heading",
     icon: Heading2,
     format: (editor: any) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
           $wrapNodes(selection, () => $createHeadingNode("h2"));
+        }
+      });
+    },
+  },
+  {
+    value: "h3",
+    label: "Small Heading",
+    icon: Heading3,
+    format: (editor: any) => {
+      editor.update(() => {
+        const selection = $getSelection();
+        if ($isRangeSelection(selection)) {
+          $wrapNodes(selection, () => $createHeadingNode("h3"));
         }
       });
     },
@@ -131,7 +147,8 @@ export function BlockMenu({
   editor: any;
   blockType: string;
 }) {
-  const [modal, showModal] = useModal();
+  const [dialog, showDialog] = useDialog();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSelect = (value: string) => {
     const option = blockOptions.find((option) => option.value === value);
@@ -180,11 +197,23 @@ export function BlockMenu({
               <span>{embedConfig.contentName}</span>
             </MenubarItem>
           ))}
+
           <MenubarItem
             onClick={() => {
-              showModal("Insert Image", (onClose) => (
-                <InsertImageDialog activeEditor={editor} onClose={onClose} />
-              ));
+              setIsOpen(true);
+              showDialog({
+                isOpen: true,
+                setIsOpen: setIsOpen,
+                title: "Insert Image",
+                desc: "Add an image to your post.",
+                getContent: () => (
+                  <InsertImageDialog
+                    activeEditor={editor}
+                    onClose={() => setIsOpen(false)}
+                  />
+                ),
+                isModal: true,
+              });
             }}
             className="item"
           >
@@ -193,7 +222,8 @@ export function BlockMenu({
           </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
-      {modal}
+
+      {isOpen && dialog}
     </>
   );
 }

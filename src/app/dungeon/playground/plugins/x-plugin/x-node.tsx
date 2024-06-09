@@ -18,6 +18,8 @@ import type {
   Spread,
 } from "lexical";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import {
   DecoratorBlockNode,
@@ -70,7 +72,7 @@ function TweetComponent({
   const createTweet = useCallback(async () => {
     try {
       // @ts-expect-error Twitter is attached to the window.
-      await window.twttr.widgets.createTweet(tweetID, containerRef.current);
+      await window.twttr.widgets.createTweet(tweetID, containerRef.current, {});
 
       setIsTweetLoading(false);
       isTwitterScriptLoading = false;
@@ -114,8 +116,13 @@ function TweetComponent({
       format={format}
       nodeKey={nodeKey}
     >
-      {isTweetLoading ? loadingComponent : null}
-      <div className="inline-block w-[550px] " ref={containerRef} />
+      {isTweetLoading && loadingComponent}
+
+      <Card>
+        <CardContent className="pt-6">
+          <div className=" " ref={containerRef} />
+        </CardContent>
+      </Card>
     </BlockWithAlignableContents>
   );
 }
@@ -201,7 +208,13 @@ export class TweetNode extends DecoratorBlockNode {
       <TweetComponent
         className={className}
         format={this.__format}
-        loadingComponent="Loading..."
+        loadingComponent={
+          <Card>
+            <CardContent className="pt-6">
+              <Skeleton className="mx-auto w-full  aspect-video" />
+            </CardContent>
+          </Card>
+        }
         nodeKey={this.getKey()}
         tweetID={this.__id}
       />

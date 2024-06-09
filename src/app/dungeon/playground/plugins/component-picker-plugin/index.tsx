@@ -22,9 +22,9 @@ import {
   LexicalEditor,
   TextNode,
 } from "lexical";
-import { useCallback, useMemo, useState } from "react";
+import { Dispatch, useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { useModal } from "../../hooks/use-modal";
+import { useDialog } from "../../hooks/use-dialog";
 import { EmbedConfigs } from "../auto-embed-plugin";
 import { InsertImageDialog } from "../images-plugin";
 
@@ -93,9 +93,15 @@ const ComponentPickerMenuItem = ({
   );
 };
 
-type ShowModal = ReturnType<typeof useModal>[1];
+type ShowDialog = ReturnType<typeof useDialog>[1];
 
-function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
+function getBaseOptions(
+  editor: LexicalEditor,
+  showDialog: ShowDialog,
+  isOpen: boolean,
+  setIsOpen: Dispatch<boolean>
+) {
+  console.log(isOpen);
   return [
     new ComponentPickerOption("Paragraph", {
       icon: <i className="icon paragraph" />,
@@ -192,10 +198,22 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
     new ComponentPickerOption("Image", {
       icon: <i className="icon image" />,
       keywords: ["image", "photo", "picture", "file"],
-      onSelect: () =>
-        showModal("Insert Image", (onClose) => (
-          <InsertImageDialog activeEditor={editor} onClose={onClose} />
-        )),
+      onSelect: () => {
+        setIsOpen(true);
+        showDialog({
+          isOpen: true,
+          setIsOpen: setIsOpen,
+          title: "Insert Image",
+          desc: "Add an image to your post.",
+          getContent: () => (
+            <InsertImageDialog
+              activeEditor={editor}
+              onClose={() => setIsOpen(false)}
+            />
+          ),
+          isModal: true,
+        });
+      },
     }),
     ...(["left", "center", "right", "justify"] as const).map(
       (alignment) =>
@@ -211,7 +229,9 @@ function getBaseOptions(editor: LexicalEditor, showModal: ShowModal) {
 
 export const ComponentPickerPlugin = (): JSX.Element => {
   const [editor] = useLexicalComposerContext();
-  const [modal, showModal] = useModal();
+
+  const [dialog, showDialog] = useDialog();
+  const [isOpen, setIsOpen] = useState(false);
   const [queryString, setQueryString] = useState<string | null>(null);
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch("/", {
@@ -219,7 +239,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
   });
 
   const options = useMemo(() => {
-    const baseOptions = getBaseOptions(editor, showModal);
+    const baseOptions = getBaseOptions(editor, showDialog, isOpen, setIsOpen);
 
     if (!queryString) {
       return baseOptions;
@@ -234,7 +254,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
           option.keywords.some((keyword) => regex.test(keyword))
       ),
     ];
-  }, [editor, queryString, showModal]);
+  }, [editor, queryString, showDialog, isOpen]);
 
   const onSelectOption = useCallback(
     (
@@ -254,7 +274,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
 
   return (
     <>
-      {modal}
+      {isOpen && dialog}
       <LexicalTypeaheadMenuPlugin<ComponentPickerOption>
         onQueryChange={setQueryString}
         onSelectOption={onSelectOption}
