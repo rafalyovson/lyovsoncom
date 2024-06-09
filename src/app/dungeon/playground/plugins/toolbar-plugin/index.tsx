@@ -270,7 +270,7 @@ export const ToolbarPlugin = ({
   }, [editor, state.isLink, setIsLinkEditMode]);
 
   return (
-    <Menubar className="overflow-x-scroll flex gap-2 py-8 rounded-none rounded-t-md">
+    <Menubar className="overflow-x-scroll flex gap-2 py-4 rounded-none  rounded-t-md h-14 overflow-y-hidden">
       <section className="flex gap-2">
         <Button
           size={"icon"}
@@ -281,7 +281,7 @@ export const ToolbarPlugin = ({
           }}
           aria-label="Undo"
         >
-          <Undo />
+          <Undo className="h-4 w-4" />
         </Button>
         <Button
           size={"icon"}
@@ -292,7 +292,7 @@ export const ToolbarPlugin = ({
           }}
           aria-label="Redo"
         >
-          <Redo />
+          <Redo className="h-4 w-4" />
         </Button>
       </section>
 
@@ -316,7 +316,7 @@ export const ToolbarPlugin = ({
               aria-label="Format Bold"
               data-highlighted={false}
             >
-              <Bold />
+              <Bold className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -327,7 +327,7 @@ export const ToolbarPlugin = ({
               aria-label="Format Italics"
               data-highlighted={state.isBold}
             >
-              <Italic />
+              <Italic className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -337,7 +337,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Format Underline"
             >
-              <Underline />
+              <Underline className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -347,7 +347,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Format Strikethrough"
             >
-              <Strikethrough />
+              <Strikethrough className="h-4 w-4" />
             </Button>
 
             <Button
@@ -358,7 +358,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Format Subscript"
             >
-              <Subscript />
+              <Subscript className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -368,7 +368,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Format Superscript"
             >
-              <Superscript />
+              <Superscript className="h-4 w-4" />
             </Button>
           </section>
           <section className="flex gap-2">
@@ -378,7 +378,7 @@ export const ToolbarPlugin = ({
               onClick={insertLink}
               aria-label="Insert Link"
             >
-              <Link />
+              <Link className="h-4 w-4" />
             </Button>
 
             <Button
@@ -389,7 +389,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Insert Code"
             >
-              <Code />
+              <Code className="h-4 w-4" />
             </Button>
           </section>
           <section className="flex gap-2">
@@ -401,7 +401,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Left Align"
             >
-              <AlignLeft />
+              <AlignLeft className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -411,7 +411,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Center Align"
             >
-              <AlignCenter />
+              <AlignCenter className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -421,7 +421,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Right Align"
             >
-              <AlignRight />
+              <AlignRight className="h-4 w-4" />
             </Button>
             <Button
               size={"icon"}
@@ -433,7 +433,7 @@ export const ToolbarPlugin = ({
               }}
               aria-label="Justify Align"
             >
-              <AlignJustify />
+              <AlignJustify className="h-4 w-4" />
             </Button>
           </section>
         </>

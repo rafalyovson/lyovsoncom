@@ -355,7 +355,7 @@ const TextFormatFloatingToolbar = ({
       ref={editorRef}
     >
       {editor.isEditable() && (
-        <section className="flex justify-between gap-2 p-4 border-b">
+        <section className="flex justify-between gap-2 p-2 border-b">
           <Button
             size="icon"
             variant={state.isBold ? "secondary" : "ghost"}
@@ -436,7 +436,7 @@ const TextFormatFloatingToolbar = ({
         </section>
       )}
       {!state.isLink ? null : isLinkEditMode ? (
-        <section className="flex gap-4 justify-between flex-grow p-4">
+        <section className="flex gap-4 justify-between flex-grow p-2">
           <Input
             className="link-input"
             title="Enter URL and press Enter"
@@ -453,7 +453,7 @@ const TextFormatFloatingToolbar = ({
           <section className="flex gap-2 justify-between flex-grow">
             <Button
               size="icon"
-              variant={"secondary"}
+              variant={"ghost"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -465,7 +465,7 @@ const TextFormatFloatingToolbar = ({
 
             <Button
               size="icon"
-              variant={"secondary"}
+              variant={"ghost"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -478,7 +478,7 @@ const TextFormatFloatingToolbar = ({
           </section>
         </section>
       ) : (
-        <section className="flex gap-4 justify-between flex-grow p-4 border-b">
+        <section className="flex gap-4 justify-between flex-grow p-2 border-b">
           <a
             className="underline cursor-pointer text-sm h-10 px-3 py-2"
             href={sanitizeUrl(linkUrl)}
@@ -490,7 +490,7 @@ const TextFormatFloatingToolbar = ({
           <section className="flex gap-2">
             <Button
               size="icon"
-              variant={"secondary"}
+              variant={"ghost"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -501,7 +501,7 @@ const TextFormatFloatingToolbar = ({
             </Button>
             <Button
               size="icon"
-              variant={"secondary"}
+              variant={"ghost"}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {

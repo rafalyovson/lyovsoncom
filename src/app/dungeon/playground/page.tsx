@@ -1,14 +1,13 @@
-import { Input } from "@/components/ui/input";
 import { Editor } from "./Editor";
 import "./styles.css";
 
 const page = () => {
   return (
     <article className="flex gap-2">
-      <section>
+      {/* <section>
         <Input />
         <Input />
-      </section>
+      </section> */}
       <Editor />
     </article>
   );
