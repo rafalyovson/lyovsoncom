@@ -1,7 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Menubar } from "@/components/ui/menubar";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
 import { $isCodeNode, getDefaultCodeLanguage } from "@lexical/code";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import { $isListNode, ListNode } from "@lexical/list";
@@ -19,6 +25,7 @@ import {
   $isRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
+  ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   KEY_MODIFIER_COMMAND,
@@ -45,16 +52,33 @@ import {
 import { Dispatch, useCallback, useEffect, useReducer } from "react";
 import { getSelectedNode } from "../../utils/getSelectedNode";
 import { sanitizeUrl } from "../../utils/url";
-import { BlockMenu } from "./BlockMenu";
-import { CodeMenu } from "./CodeMenu";
+import { BlockMenu } from "./block-menu";
+import { CodeMenu } from "./code-menu";
 
 const LowPriority = 1;
 const NormalPriority = 2;
 
-const initialState = {
+const initialState: {
+  blockType: string;
+  elementFormat: ElementFormatType;
+  canUndo: boolean;
+  canRedo: boolean;
+  selectedElementKey: string;
+  codeLanguage: string;
+  isRTL: boolean;
+  isLink: boolean;
+  isBold: boolean;
+  isItalic: boolean;
+  isUnderline: boolean;
+  isStrikethrough: boolean;
+  isCode: boolean;
+  isSubscript: boolean;
+  isSuperscript: boolean;
+} = {
+  blockType: "h1",
+  elementFormat: "left",
   canUndo: false,
   canRedo: false,
-  blockType: "paragraph",
   selectedElementKey: "",
   codeLanguage: "",
   isRTL: false,
@@ -66,7 +90,6 @@ const initialState = {
   isCode: false,
   isSubscript: false,
   isSuperscript: false,
-  elementFormat: "left",
 };
 
 const reducer = (state: any, action: any) => {
@@ -113,6 +136,10 @@ export const ToolbarPlugin = ({
 }): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  if (state.elementFormat === "") {
+    dispatch({ type: "SET_ELEMENT_FORMAT", payload: "left" });
+  }
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -259,15 +286,111 @@ export const ToolbarPlugin = ({
     );
   }, [editor, state.isLink, setIsLinkEditMode]);
 
-  const insertLink = useCallback(() => {
-    if (!state.isLink) {
-      setIsLinkEditMode(true);
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
-    } else {
-      setIsLinkEditMode(false);
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-    }
-  }, [editor, state.isLink, setIsLinkEditMode]);
+  // const insertLink = useCallback(() => {
+  //   if (!state.isLink) {
+  //     setIsLinkEditMode(true);
+  //     editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
+  //   } else {
+  //     setIsLinkEditMode(false);
+  //     editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+  //   }
+  // }, [editor, state.isLink, setIsLinkEditMode]);
+
+  const alignButtons = [
+    {
+      type: "left",
+      icon: AlignLeft,
+      label: "Left Align",
+    },
+    {
+      type: "center",
+      icon: AlignCenter,
+      label: "Center Align",
+    },
+    {
+      type: "right",
+      icon: AlignRight,
+      label: "Right Align",
+    },
+    {
+      type: "justify",
+      icon: AlignJustify,
+      label: "Justify Align",
+    },
+  ];
+
+  const formatButtons = [
+    {
+      type: "bold",
+      icon: Bold,
+      label: "Bold",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+      },
+    },
+    {
+      type: "italic",
+      icon: Italic,
+      label: "Italic",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+      },
+    },
+    {
+      type: "underline",
+      icon: Underline,
+      label: "Underline",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+      },
+    },
+    {
+      type: "strikethrough",
+      icon: Strikethrough,
+      label: "Strikethrough",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+      },
+    },
+    {
+      type: "subscript",
+      icon: Subscript,
+      label: "Subscript",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
+      },
+    },
+    {
+      type: "superscript",
+      icon: Superscript,
+      label: "Superscript",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
+      },
+    },
+    {
+      type: "code",
+      icon: Code,
+      label: "Code",
+      action: () => {
+        editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+      },
+    },
+    {
+      type: "link",
+      icon: Link,
+      label: "Link",
+      action: () => {
+        if (!state.isLink) {
+          setIsLinkEditMode(true);
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
+        } else {
+          setIsLinkEditMode(false);
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+        }
+      },
+    },
+  ];
 
   return (
     <Menubar className="overflow-x-scroll flex gap-2 py-4 rounded-none  rounded-t-md h-14 overflow-y-hidden">
@@ -306,135 +429,50 @@ export const ToolbarPlugin = ({
         />
       ) : (
         <>
+          <MenubarMenu>
+            <MenubarTrigger className="p-0">
+              {alignButtons.map((button) => {
+                return button.type === state.elementFormat ? (
+                  <Button
+                    key={button.type}
+                    size={"icon"}
+                    variant={"ghost"}
+                    aria-label={button.label}
+                  >
+                    <button.icon className="h-4 w-4" />
+                  </Button>
+                ) : null;
+              })}
+            </MenubarTrigger>
+            <MenubarContent className="flex flex-col gap-2 ">
+              {alignButtons.map((button) => (
+                <MenubarItem
+                  key={button.type}
+                  onClick={() => {
+                    editor.dispatchCommand(
+                      FORMAT_ELEMENT_COMMAND,
+                      button.type as ElementFormatType
+                    );
+                  }}
+                >
+                  <button.icon className="mr-2 h-4 w-4" />
+                  <span>{button.label}</span>
+                </MenubarItem>
+              ))}
+            </MenubarContent>
+          </MenubarMenu>
           <section className="flex gap-2">
-            <Button
-              size={"icon"}
-              variant={state.isBold ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
-              }}
-              aria-label="Format Bold"
-              data-highlighted={false}
-            >
-              <Bold className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.isItalic ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
-              }}
-              aria-label="Format Italics"
-              data-highlighted={state.isBold}
-            >
-              <Italic className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.isUnderline ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
-              }}
-              aria-label="Format Underline"
-            >
-              <Underline className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.isStrikethrough ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
-              }}
-              aria-label="Format Strikethrough"
-            >
-              <Strikethrough className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size={"icon"}
-              variant={state.isSubscript ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
-              }}
-              aria-label="Format Subscript"
-            >
-              <Subscript className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.isSuperscript ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
-              }}
-              aria-label="Format Superscript"
-            >
-              <Superscript className="h-4 w-4" />
-            </Button>
-          </section>
-          <section className="flex gap-2">
-            <Button
-              size={"icon"}
-              variant={state.isLink ? "secondary" : "ghost"}
-              onClick={insertLink}
-              aria-label="Insert Link"
-            >
-              <Link className="h-4 w-4" />
-            </Button>
-
-            <Button
-              size={"icon"}
-              variant={state.isCode ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
-              }}
-              aria-label="Insert Code"
-            >
-              <Code className="h-4 w-4" />
-            </Button>
-          </section>
-          <section className="flex gap-2">
-            <Button
-              size={"icon"}
-              variant={state.elementFormat === "left" ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "left");
-              }}
-              aria-label="Left Align"
-            >
-              <AlignLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.elementFormat === "center" ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "center");
-              }}
-              aria-label="Center Align"
-            >
-              <AlignCenter className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={state.elementFormat === "right" ? "secondary" : "ghost"}
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "right");
-              }}
-              aria-label="Right Align"
-            >
-              <AlignRight className="h-4 w-4" />
-            </Button>
-            <Button
-              size={"icon"}
-              variant={
-                state.elementFormat === "justify" ? "secondary" : "ghost"
-              }
-              onClick={() => {
-                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, "justify");
-              }}
-              aria-label="Justify Align"
-            >
-              <AlignJustify className="h-4 w-4" />
-            </Button>
+            {formatButtons.map((button) => (
+              <Button
+                key={button.type}
+                size={"icon"}
+                variant={state[button.type] ? "secondary" : "ghost"}
+                onClick={button.action}
+                aria-label={button.label}
+              >
+                <button.icon className="h-4 w-4" />
+              </Button>
+            ))}
           </section>
         </>
       )}

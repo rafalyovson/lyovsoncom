@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   MenubarContent,
   MenubarItem,
@@ -164,13 +165,12 @@ export function BlockMenu({
   return (
     <>
       <MenubarMenu>
-        <MenubarTrigger>
+        <MenubarTrigger className="p-0">
           {blockOptions.map((option) =>
             option.value === blockType ? (
-              <section className="flex gap-1 items-center" key={option.value}>
-                <option.icon className="mr-2 h-4 w-4" />
-                <span>{option.label}</span>
-              </section>
+              <Button key={option.value} size={"icon"} variant={"ghost"}>
+                <option.icon className=" h-4 w-4" />
+              </Button>
             ) : null
           )}
         </MenubarTrigger>

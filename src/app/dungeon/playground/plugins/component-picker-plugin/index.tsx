@@ -1,12 +1,11 @@
+import { Button } from "@/components/ui/button";
 import { $createCodeNode } from "@lexical/code";
 import {
-  INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
 } from "@lexical/list";
 import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { INSERT_HORIZONTAL_RULE_COMMAND } from "@lexical/react/LexicalHorizontalRuleNode";
 import {
   LexicalTypeaheadMenuPlugin,
   MenuOption,
@@ -22,6 +21,16 @@ import {
   LexicalEditor,
   TextNode,
 } from "lexical";
+import {
+  AlignCenter,
+  Code,
+  Heading,
+  Image,
+  List,
+  ListOrdered,
+  Quote,
+  Text,
+} from "lucide-react";
 import { Dispatch, useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { useDialog } from "../../hooks/use-dialog";
@@ -76,20 +85,23 @@ const ComponentPickerMenuItem = ({
     className += " selected";
   }
   return (
-    <li
-      className={`${className} `}
-      key={option.key}
-      tabIndex={-1}
-      ref={option.setRefElement}
-      role="option"
-      aria-selected={isSelected}
-      id={"typeahead-item-" + index}
-      onMouseEnter={onMouseEnter}
-      onClick={onClick}
-    >
-      {option.icon}
-      <span className="text">{option.title}</span>
-    </li>
+    <section key={option.key}>
+      <Button
+        className="text-sm w-full flex gap-1 justify-start"
+        variant={"ghost"}
+        size={"sm"}
+        tabIndex={-1}
+        ref={option.setRefElement}
+        role="option"
+        aria-selected={isSelected}
+        id={"typeahead-item-" + index}
+        onMouseEnter={onMouseEnter}
+        onClick={onClick}
+      >
+        {option.icon}
+        <span>{option.title}</span>
+      </Button>
+    </section>
   );
 };
 
@@ -98,13 +110,11 @@ type ShowDialog = ReturnType<typeof useDialog>[1];
 function getBaseOptions(
   editor: LexicalEditor,
   showDialog: ShowDialog,
-  isOpen: boolean,
   setIsOpen: Dispatch<boolean>
 ) {
-  console.log(isOpen);
   return [
     new ComponentPickerOption("Paragraph", {
-      icon: <i className="icon paragraph" />,
+      icon: <Text className="h-4 w-4" />,
       keywords: ["normal", "paragraph", "p", "text"],
       onSelect: () =>
         editor.update(() => {
@@ -117,7 +127,7 @@ function getBaseOptions(
     ...([1, 2, 3] as const).map(
       (n) =>
         new ComponentPickerOption(`Heading ${n}`, {
-          icon: <i className={`icon h${n}`} />,
+          icon: <Heading className="h-4 w-4" />,
           keywords: ["heading", "header", `h${n}`],
           onSelect: () =>
             editor.update(() => {
@@ -130,25 +140,19 @@ function getBaseOptions(
     ),
 
     new ComponentPickerOption("Numbered List", {
-      icon: <i className="icon number" />,
+      icon: <ListOrdered className="h-4 w-4" />,
       keywords: ["numbered list", "ordered list", "ol"],
       onSelect: () =>
         editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
     }),
     new ComponentPickerOption("Bulleted List", {
-      icon: <i className="icon bullet" />,
+      icon: <List className="h-4 w-4" />,
       keywords: ["bulleted list", "unordered list", "ul"],
       onSelect: () =>
         editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
     }),
-    new ComponentPickerOption("Check List", {
-      icon: <i className="icon check" />,
-      keywords: ["check list", "todo list"],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
-    }),
     new ComponentPickerOption("Quote", {
-      icon: <i className="icon quote" />,
+      icon: <Quote className="h-4 w-4" />,
       keywords: ["block quote"],
       onSelect: () =>
         editor.update(() => {
@@ -159,7 +163,7 @@ function getBaseOptions(
         }),
     }),
     new ComponentPickerOption("Code", {
-      icon: <i className="icon code" />,
+      icon: <Code className="h-4 w-4" />,
       keywords: ["javascript", "python", "js", "codeblock"],
       onSelect: () =>
         editor.update(() => {
@@ -178,17 +182,11 @@ function getBaseOptions(
           }
         }),
     }),
-    new ComponentPickerOption("Divider", {
-      icon: <i className="icon horizontal-rule" />,
-      keywords: ["horizontal rule", "divider", "hr"],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
-    }),
 
     ...EmbedConfigs.map(
       (embedConfig) =>
-        new ComponentPickerOption(`Embed ${embedConfig.contentName}`, {
-          icon: embedConfig.icon,
+        new ComponentPickerOption(`${embedConfig.contentName}`, {
+          icon: <Image className="h-4 w-4" />,
           keywords: [...embedConfig.keywords, "embed"],
           onSelect: () =>
             editor.dispatchCommand(INSERT_EMBED_COMMAND, embedConfig.type),
@@ -196,7 +194,7 @@ function getBaseOptions(
     ),
 
     new ComponentPickerOption("Image", {
-      icon: <i className="icon image" />,
+      icon: <Image className="h-4 w-4" />,
       keywords: ["image", "photo", "picture", "file"],
       onSelect: () => {
         setIsOpen(true);
@@ -218,7 +216,7 @@ function getBaseOptions(
     ...(["left", "center", "right", "justify"] as const).map(
       (alignment) =>
         new ComponentPickerOption(`Align ${alignment}`, {
-          icon: <i className={`icon ${alignment}-align`} />,
+          icon: <AlignCenter className="h-4 w-4" />,
           keywords: ["align", "justify", alignment],
           onSelect: () =>
             editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
@@ -239,7 +237,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
   });
 
   const options = useMemo(() => {
-    const baseOptions = getBaseOptions(editor, showDialog, isOpen, setIsOpen);
+    const baseOptions = getBaseOptions(editor, showDialog, setIsOpen);
 
     if (!queryString) {
       return baseOptions;
@@ -254,7 +252,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
           option.keywords.some((keyword) => regex.test(keyword))
       ),
     ];
-  }, [editor, queryString, showDialog, isOpen]);
+  }, [editor, queryString, showDialog]);
 
   const onSelectOption = useCallback(
     (
@@ -286,8 +284,8 @@ export const ComponentPickerPlugin = (): JSX.Element => {
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <div className="typeahead-popover component-picker-menu">
-                  <ul>
+                <div>
+                  <nav className="w-48 bg-background rounded-md flex flex-col overflow-y-scroll max-h-96 ">
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
                         index={i}
@@ -303,7 +301,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
                         option={option}
                       />
                     ))}
-                  </ul>
+                  </nav>
                 </div>,
                 anchorElementRef.current
               )

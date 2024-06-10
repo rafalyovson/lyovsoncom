@@ -85,13 +85,13 @@
     "next": "15.0.0-rc.0",
     "next-auth": "5.0.0-beta.19",
     "next-themes": "^0.2.1",
-    "react": "19.0.0-rc-eb259b5d3b-20240605",
+    "react": "19.0.0-rc-cc1ec60d0d-20240607",
     "react-day-picker": "^8.10.1",
-    "react-dom": "19.0.0-rc-eb259b5d3b-20240605",
+    "react-dom": "19.0.0-rc-cc1ec60d0d-20240607",
     "react-hook-form": "^7.51.5",
     "react-resizable-panels": "^2.0.19",
     "sharp": "^0.33.4",
-    "sonner": "^1.4.41",
+    "sonner": "^1.5.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.1",
@@ -107,5 +107,6 @@
     "eslint-config-next": "^14.2.3",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4"
-  }
+  },
+  "packageManager": "pnpm@9.2.0+sha256.94fab213df221c55b6956b14a2264c21c6203cca9f0b3b95ff2fe9b84b120390"
 }

@@ -86,7 +86,7 @@ export const Editor = () => {
           <RichTextPlugin
             contentEditable={
               <div className="outline-none " ref={onRef}>
-                <ContentEditable className="min-h-[600px] p-4 border outline-ring " />
+                <ContentEditable className="p-4 border outline-ring prose dark:prose-invert h-96 overflow-y-scroll" />
               </div>
             }
             placeholder={<></>}
