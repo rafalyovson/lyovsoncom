@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { Button } from "@/components/ui/button";
 import { $createCodeNode } from "@lexical/code";
 import {
@@ -85,23 +86,20 @@ const ComponentPickerMenuItem = ({
     className += " selected";
   }
   return (
-    <section key={option.key}>
-      <Button
-        className="text-sm w-full flex gap-1 justify-start"
-        variant={"ghost"}
-        size={"sm"}
-        tabIndex={-1}
-        ref={option.setRefElement}
-        role="option"
-        aria-selected={isSelected}
-        id={"typeahead-item-" + index}
-        onMouseEnter={onMouseEnter}
-        onClick={onClick}
-      >
-        {option.icon}
-        <span>{option.title}</span>
-      </Button>
-    </section>
+    <Button
+      className="text-sm w-full flex gap-1 justify-start hover:bg-muted"
+      variant={"ghost"}
+      tabIndex={-1}
+      ref={option.setRefElement}
+      role="option"
+      aria-selected={isSelected}
+      id={"typeahead-item-" + index}
+      onMouseEnter={onMouseEnter}
+      onClick={onClick}
+    >
+      {option.icon}
+      <span>{option.title}</span>
+    </Button>
   );
 };
 
@@ -284,8 +282,8 @@ export const ComponentPickerPlugin = (): JSX.Element => {
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <div>
-                  <nav className="w-48 bg-background rounded-md flex flex-col overflow-y-scroll max-h-96 ">
+                <div className="fixed">
+                  <nav className="flex flex-col w-48 bg-background p-4 rounded-md h-72 overflow-y-scroll">
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
                         index={i}
