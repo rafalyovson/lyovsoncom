@@ -280,46 +280,40 @@
   outline: 2px solid rgb(60, 132, 244);
   user-select: none;
 } */
-
-.default-theme__textUnderline {
-  @apply underline;
-}
-.default-theme__textStrikethrough {
-  @apply line-through;
-}
+/* Token styles */
 .default-theme__tokenComment {
   @apply text-gray-400 italic;
 }
 .default-theme__tokenPunctuation {
-  @apply text-gray-600;
+  @apply text-gray-400;
 }
 .default-theme__tokenProperty {
-  @apply text-purple-600;
+  @apply text-purple-400;
 }
 .default-theme__tokenSelector {
-  @apply text-green-600;
+  @apply text-green-400;
 }
 .default-theme__tokenOperator {
-  @apply text-red-600;
+  @apply text-red-400;
 }
 .default-theme__tokenAttr {
-  @apply text-blue-600;
+  @apply text-blue-400;
 }
 .default-theme__tokenVariable {
-  @apply text-yellow-600;
+  @apply text-yellow-400;
 }
 .default-theme__tokenFunction {
-  @apply text-pink-600;
+  @apply text-pink-400;
 }
 .default-theme__tokenKeyword {
-  @apply text-indigo-600;
+  @apply text-indigo-400;
 }
 .default-theme__tokenString {
-  @apply text-emerald-600;
+  @apply text-emerald-400;
 }
 .default-theme__tokenNumber {
-  @apply text-amber-600;
+  @apply text-amber-400;
 }
 .default-theme__tokenBoolean {
-  @apply text-teal-600;
+  @apply text-teal-400;
 }

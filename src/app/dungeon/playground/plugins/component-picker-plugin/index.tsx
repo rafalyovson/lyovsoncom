@@ -87,7 +87,9 @@ const ComponentPickerMenuItem = ({
   }
   return (
     <Button
-      className="text-sm w-full flex gap-1 justify-start hover:bg-muted"
+      className={`text-sm w-full flex gap-1 justify-start ${
+        isSelected ? "bg-muted" : ""
+      }`}
       variant={"ghost"}
       tabIndex={-1}
       ref={option.setRefElement}
@@ -283,7 +285,7 @@ export const ComponentPickerPlugin = (): JSX.Element => {
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
                 <div className="fixed">
-                  <nav className="flex flex-col w-48 bg-background p-4 rounded-md h-72 overflow-y-scroll">
+                  <nav className="flex flex-col w-48 bg-background rounded-md h-72 overflow-y-scroll">
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
                         index={i}
