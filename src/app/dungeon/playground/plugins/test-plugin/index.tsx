@@ -102,7 +102,7 @@ function parseLexicalJSON(json: any) {
 }
 
 export const TestPlugin = () => {
-  const [state, setState] = React.useState<any>({});
+  const [_state, setState] = React.useState<any>({});
   const [editor] = useLexicalComposerContext();
   const editorState = editor.getEditorState().toJSON();
 
