@@ -23,6 +23,7 @@ import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
 import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
 import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
 import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
+import { TestPlugin } from "./plugins/test-plugin";
 import { ToolbarPlugin } from "./plugins/toolbar-plugin";
 import { TweetNode, TwitterPlugin } from "./plugins/x-plugin";
 import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
@@ -93,6 +94,7 @@ export const Editor = () => {
             ErrorBoundary={LexicalErrorBoundary}
           />
         </div>
+        <TestPlugin />
         <HistoryPlugin />
         <ImagesPlugin />
         <AutoFocusPlugin />

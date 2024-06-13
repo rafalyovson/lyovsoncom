@@ -1,10 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Button } from "@/components/ui/button";
-import { $createCodeNode } from "@lexical/code";
-import {
-  INSERT_ORDERED_LIST_COMMAND,
-  INSERT_UNORDERED_LIST_COMMAND,
-} from "@lexical/list";
 import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import {
@@ -12,28 +7,11 @@ import {
   MenuOption,
   useBasicTypeaheadTriggerMatch,
 } from "@lexical/react/LexicalTypeaheadMenuPlugin";
-import { $createHeadingNode, $createQuoteNode } from "@lexical/rich-text";
-import { $setBlocksType } from "@lexical/selection";
-import {
-  $createParagraphNode,
-  $getSelection,
-  $isRangeSelection,
-  FORMAT_ELEMENT_COMMAND,
-  LexicalEditor,
-  TextNode,
-} from "lexical";
-import {
-  AlignCenter,
-  Code,
-  Heading,
-  Image,
-  List,
-  ListOrdered,
-  Quote,
-  Text,
-} from "lucide-react";
-import { Dispatch, useCallback, useMemo, useState } from "react";
+import { FORMAT_ELEMENT_COMMAND, LexicalEditor, TextNode } from "lexical";
+import { AlignCenter, Image } from "lucide-react";
+import React, { Dispatch, useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
+import { BlockTypes } from "../../block-types";
 import { useDialog } from "../../hooks/use-dialog";
 import { EmbedConfigs } from "../auto-embed-plugin";
 import { InsertImageDialog } from "../images-plugin";
@@ -112,76 +90,16 @@ function getBaseOptions(
   showDialog: ShowDialog,
   setIsOpen: Dispatch<boolean>
 ) {
+  console.log(BlockTypes);
   return [
-    new ComponentPickerOption("Paragraph", {
-      icon: <Text className="h-4 w-4" />,
-      keywords: ["normal", "paragraph", "p", "text"],
-      onSelect: () =>
-        editor.update(() => {
-          const selection = $getSelection();
-          if ($isRangeSelection(selection)) {
-            $setBlocksType(selection, () => $createParagraphNode());
-          }
-        }),
-    }),
-    ...([1, 2, 3] as const).map(
-      (n) =>
-        new ComponentPickerOption(`Heading ${n}`, {
-          icon: <Heading className="h-4 w-4" />,
-          keywords: ["heading", "header", `h${n}`],
-          onSelect: () =>
-            editor.update(() => {
-              const selection = $getSelection();
-              if ($isRangeSelection(selection)) {
-                $setBlocksType(selection, () => $createHeadingNode(`h${n}`));
-              }
-            }),
+    ...BlockTypes.map(
+      (type) =>
+        new ComponentPickerOption(type.label, {
+          icon: React.createElement(type.icon, { className: "w-4 h-4" }),
+          keywords: [type.value],
+          onSelect: () => type.format(editor),
         })
     ),
-
-    new ComponentPickerOption("Numbered List", {
-      icon: <ListOrdered className="h-4 w-4" />,
-      keywords: ["numbered list", "ordered list", "ol"],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
-    }),
-    new ComponentPickerOption("Bulleted List", {
-      icon: <List className="h-4 w-4" />,
-      keywords: ["bulleted list", "unordered list", "ul"],
-      onSelect: () =>
-        editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
-    }),
-    new ComponentPickerOption("Quote", {
-      icon: <Quote className="h-4 w-4" />,
-      keywords: ["block quote"],
-      onSelect: () =>
-        editor.update(() => {
-          const selection = $getSelection();
-          if ($isRangeSelection(selection)) {
-            $setBlocksType(selection, () => $createQuoteNode());
-          }
-        }),
-    }),
-    new ComponentPickerOption("Code", {
-      icon: <Code className="h-4 w-4" />,
-      keywords: ["javascript", "python", "js", "codeblock"],
-      onSelect: () =>
-        editor.update(() => {
-          const selection = $getSelection();
-
-          if ($isRangeSelection(selection)) {
-            if (selection.isCollapsed()) {
-              $setBlocksType(selection, () => $createCodeNode());
-            } else {
-              // Will this ever happen?
-              const textContent = selection.getTextContent();
-              const codeNode = $createCodeNode();
-              selection.insertNodes([codeNode]);
-              selection.insertRawText(textContent);
-            }
-          }
-        }),
-    }),
 
     ...EmbedConfigs.map(
       (embedConfig) =>

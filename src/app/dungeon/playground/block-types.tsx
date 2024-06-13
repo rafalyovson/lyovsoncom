@@ -19,14 +19,33 @@ import {
   List,
   ListOrdered,
   Quote,
+  Text, // Ensure this is the correct import for the Text icon
 } from "lucide-react";
+import React from "react";
 
-export const BlockTypes = [
+// Define the icon type
+type IconType = React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<React.SVGProps<SVGSVGElement>> & {
+    title?: string | undefined;
+  }
+> & {
+  displayName?: string | undefined;
+};
+
+interface BlockType {
+  value: string;
+  label: string;
+  icon: IconType;
+  format: (editor: any) => void;
+  remove?: (editor: any) => void;
+}
+
+export const BlockTypes: BlockType[] = [
   {
     value: "paragraph",
     label: "Paragraph",
     icon: Text,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -39,7 +58,7 @@ export const BlockTypes = [
     value: "h1",
     label: "Large Heading",
     icon: Heading1,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -52,7 +71,7 @@ export const BlockTypes = [
     value: "h2",
     label: "Medium Heading",
     icon: Heading2,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -65,7 +84,7 @@ export const BlockTypes = [
     value: "h3",
     label: "Small Heading",
     icon: Heading3,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -78,10 +97,10 @@ export const BlockTypes = [
     value: "ul",
     label: "Bullet List",
     icon: List,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND);
     },
-    remove: (editor: any) => {
+    remove: (editor) => {
       editor.dispatchCommand(REMOVE_LIST_COMMAND);
     },
   },
@@ -89,10 +108,10 @@ export const BlockTypes = [
     value: "ol",
     label: "Numbered List",
     icon: ListOrdered,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND);
     },
-    remove: (editor: any) => {
+    remove: (editor) => {
       editor.dispatchCommand(REMOVE_LIST_COMMAND);
     },
   },
@@ -100,7 +119,7 @@ export const BlockTypes = [
     value: "quote",
     label: "Quote",
     icon: Quote,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
@@ -113,7 +132,7 @@ export const BlockTypes = [
     value: "code",
     label: "Code Block",
     icon: Code,
-    format: (editor: any) => {
+    format: (editor) => {
       editor.update(() => {
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {

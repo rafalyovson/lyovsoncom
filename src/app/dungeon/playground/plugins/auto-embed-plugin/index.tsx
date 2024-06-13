@@ -78,7 +78,8 @@ export const TwitterEmbedConfig: EmbedConfigType = {
 
   // Create the Lexical embed node from the url data.
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
-    editor.dispatchCommand(INSERT_TWEET_COMMAND, result.id);
+    console.log("result", result);
+    editor.dispatchCommand(INSERT_TWEET_COMMAND, result.url);
   },
 
   // For extra searching.
@@ -200,7 +201,7 @@ export const AutoEmbedDialog = ({
         if (embedConfig != null && inputText != null && urlMatch != null) {
           Promise.resolve(embedConfig.parseUrl(inputText)).then(
             (parseResult) => {
-              setEmbedResult(parseResult);
+              setEmbedResult({ ...parseResult!, url: inputText });
             }
           );
         } else if (embedResult != null) {
@@ -213,6 +214,7 @@ export const AutoEmbedDialog = ({
   const onClick = () => {
     if (embedResult != null) {
       setIsOpen(false);
+
       embedConfig.insertNode(editor, embedResult);
     }
   };

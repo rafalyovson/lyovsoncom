@@ -49,13 +49,11 @@ const useSuspenseImage = (src: string) => {
 
 const LazyImage = ({
   altText,
-  className,
   imageRef,
   src,
   onError,
 }: {
   altText: string;
-  className: string | null;
   imageRef: { current: null | HTMLImageElement };
   src: string;
   onError: () => void;
@@ -65,7 +63,7 @@ const LazyImage = ({
     <Card>
       <CardContent className="pt-6">
         <img
-          className={`${className} max-w-96 max-h-96 mx-auto object-cover`}
+          className={`max-w-full h-auto mx-auto object-contain`}
           src={src}
           alt={altText}
           ref={imageRef}
@@ -272,7 +270,6 @@ export const ImageComponent = ({
           <BrokenImage />
         ) : (
           <LazyImage
-            className=""
             src={src}
             altText={altText}
             imageRef={imageRef}

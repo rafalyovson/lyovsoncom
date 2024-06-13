@@ -32,7 +32,8 @@ export const TwitterPlugin = (): JSX.Element | null => {
     return editor.registerCommand<string>(
       INSERT_TWEET_COMMAND,
       (payload) => {
-        const tweetNode = $createTweetNode(payload);
+        const id = payload.split("/").pop();
+        const tweetNode = $createTweetNode(id!, payload);
         $insertNodeToNearestRoot(tweetNode);
 
         return true;

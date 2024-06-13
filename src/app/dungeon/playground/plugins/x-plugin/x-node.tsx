@@ -71,7 +71,6 @@ function TweetComponent({
 
   const createTweet = useCallback(async () => {
     try {
-      // @ts-expect-error Twitter is attached to the window.
       await window.twttr.widgets.createTweet(tweetID, containerRef.current, {});
 
       setIsTweetLoading(false);
@@ -130,19 +129,20 @@ function TweetComponent({
 export type SerializedTweetNode = Spread<
   {
     id: string;
+    url?: string;
   },
   SerializedDecoratorBlockNode
 >;
 
 export class TweetNode extends DecoratorBlockNode {
   __id: string;
-
+  url?: string;
   static getType(): string {
     return "tweet";
   }
 
   static clone(node: TweetNode): TweetNode {
-    return new TweetNode(node.__id, node.__format, node.__key);
+    return new TweetNode(node.__id, node.url, node.__format, node.__key);
   }
 
   static importJSON(serializedNode: SerializedTweetNode): TweetNode {
@@ -155,6 +155,7 @@ export class TweetNode extends DecoratorBlockNode {
     return {
       ...super.exportJSON(),
       id: this.getId(),
+      url: this.url,
       type: "tweet",
       version: 1,
     };
@@ -182,9 +183,15 @@ export class TweetNode extends DecoratorBlockNode {
     return { element };
   }
 
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+  constructor(
+    id: string,
+    url?: string,
+    format?: ElementFormatType,
+    key?: NodeKey
+  ) {
     super(format, key);
     this.__id = id;
+    this.url = url || "";
   }
 
   getId(): string {
@@ -222,8 +229,11 @@ export class TweetNode extends DecoratorBlockNode {
   }
 }
 
-export function $createTweetNode(tweetID: string): TweetNode {
-  return new TweetNode(tweetID);
+export function $createTweetNode(
+  tweetID: string,
+  tweetURL?: string
+): TweetNode {
+  return new TweetNode(tweetID, tweetURL);
 }
 
 export function $isTweetNode(
