@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $wrapNodeInElement, mergeRegister } from "@lexical/utils";
 import {
@@ -13,9 +15,6 @@ import {
   LexicalEditor,
 } from "lexical";
 import { useEffect, useRef, useState } from "react";
-import { DialogActions, DialogButtonsList } from "../../ui/Dialog";
-import { FileInput } from "../../ui/file-input";
-import TextInput from "../../ui/text-input";
 import { $createImageNode, ImageNode, ImagePayload } from "./image-node";
 
 export type InsertImagePayload = Readonly<ImagePayload>;
@@ -34,31 +33,40 @@ export function InsertImageUriDialogBody({
   const isDisabled = src === "";
 
   return (
-    <>
-      <TextInput
-        label="Image URL"
-        placeholder="i.e. https://source.unsplash.com/random"
-        onChange={setSrc}
-        value={src}
-        data-test-id="image-modal-url-input"
-      />
-      <TextInput
-        label="Alt Text"
-        placeholder="Random unsplash image"
-        onChange={setAltText}
-        value={altText}
-        data-test-id="image-modal-alt-text-input"
-      />
-      <DialogActions>
-        <Button
-          data-test-id="image-modal-confirm-btn"
-          disabled={isDisabled}
-          onClick={() => onClick({ altText, src })}
-        >
-          Confirm
-        </Button>
-      </DialogActions>
-    </>
+    <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-2">
+        <Label className="">{"Image URL"}</Label>
+        <Input
+          placeholder={"i.e. https://source.unsplash.com/random"}
+          value={src}
+          onChange={(e) => {
+            setSrc(e.target.value);
+          }}
+          data-test-id={"image-modal-url-input"}
+        />
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <Label className="">{"Alt Text"}</Label>
+        <Input
+          placeholder={"Random unsplash image"}
+          value={altText}
+          onChange={(e) => {
+            setAltText(e.target.value);
+          }}
+          data-test-id={"image-modal-alt-text-input"}
+        />
+      </section>
+
+      <Button
+        variant={"secondary"}
+        data-test-id="image-modal-confirm-btn"
+        disabled={isDisabled}
+        onClick={() => onClick({ altText, src })}
+      >
+        Confirm
+      </Button>
+    </section>
   );
 }
 
@@ -86,30 +94,39 @@ export function InsertImageUploadedDialogBody({
   };
 
   return (
-    <>
-      <FileInput
-        label="Image Upload"
-        onChange={loadImage}
-        accept="image/*"
-        data-test-id="image-modal-file-upload"
-      />
-      <TextInput
-        label="Alt Text"
-        placeholder="Descriptive alternative text"
-        onChange={setAltText}
-        value={altText}
-        data-test-id="image-modal-alt-text-input"
-      />
-      <DialogActions>
-        <Button
-          data-test-id="image-modal-file-upload-btn"
-          disabled={isDisabled}
-          onClick={() => onClick({ altText, src })}
-        >
-          Confirm
-        </Button>
-      </DialogActions>
-    </>
+    <section className="flex flex-col gap-2">
+      <section className="flex flex-col gap-2">
+        <Label className="">{"Image Upload"}</Label>
+        <Input
+          type="file"
+          accept={"image/*"}
+          onChange={(e) => loadImage(e.target.files)}
+          data-test-id={"image-modal-file-upload"}
+          title="Upload an image"
+        />
+      </section>
+
+      <section className="flex flex-col gap-2">
+        <Label className="">{"Alt Text"}</Label>
+        <Input
+          placeholder={"Descriptive alternative text"}
+          value={altText}
+          onChange={(e) => {
+            setAltText(e.target.value);
+          }}
+          data-test-id={"image-modal-alt-text-input"}
+        />
+      </section>
+
+      <Button
+        variant={"secondary"}
+        data-test-id="image-modal-file-upload-btn"
+        disabled={isDisabled}
+        onClick={() => onClick({ altText, src })}
+      >
+        Confirm
+      </Button>
+    </section>
   );
 }
 
@@ -142,7 +159,7 @@ export function InsertImageDialog({
   return (
     <>
       {!mode && (
-        <DialogButtonsList>
+        <section className="flex flex-col gap-2 ">
           <Button
             variant={"secondary"}
             data-test-id="image-modal-option-url"
@@ -157,7 +174,7 @@ export function InsertImageDialog({
           >
             File
           </Button>
-        </DialogButtonsList>
+        </section>
       )}
       {mode === "url" && <InsertImageUriDialogBody onClick={onClick} />}
       {mode === "file" && <InsertImageUploadedDialogBody onClick={onClick} />}

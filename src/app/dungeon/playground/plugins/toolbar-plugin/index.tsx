@@ -50,7 +50,7 @@ import {
   Undo,
 } from "lucide-react";
 import { Dispatch, useCallback, useEffect, useReducer } from "react";
-import { getSelectedNode } from "../../utils/getSelectedNode";
+import { getSelectedNode } from "../../utils/get-selected-node";
 import { sanitizeUrl } from "../../utils/url";
 import { BlockMenu } from "./block-menu";
 import { CodeMenu } from "./code-menu";
@@ -285,16 +285,6 @@ export const ToolbarPlugin = ({
       NormalPriority
     );
   }, [editor, state.isLink, setIsLinkEditMode]);
-
-  // const insertLink = useCallback(() => {
-  //   if (!state.isLink) {
-  //     setIsLinkEditMode(true);
-  //     editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl("https://"));
-  //   } else {
-  //     setIsLinkEditMode(false);
-  //     editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-  //   }
-  // }, [editor, state.isLink, setIsLinkEditMode]);
 
   const alignButtons = [
     {

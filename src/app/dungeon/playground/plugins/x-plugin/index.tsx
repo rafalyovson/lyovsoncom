@@ -1,2 +1,2 @@
-export { TweetNode } from "./x-node";
-export { TwitterPlugin } from "./x-plugin";
+export { TweetNode as XNode } from "./x-node";
+export { TwitterPlugin as XPlugin } from "./x-plugin";

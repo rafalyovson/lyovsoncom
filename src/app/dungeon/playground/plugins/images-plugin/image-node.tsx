@@ -1,3 +1,4 @@
+import { Card, CardContent } from "@/components/ui/card";
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -10,10 +11,7 @@ import type {
 } from "lexical";
 
 import { $applyNodeReplacement, DecoratorNode } from "lexical";
-import * as React from "react";
 import { Suspense } from "react";
-
-const ImageComponent = React.lazy(() => import("./image-component"));
 
 export interface ImagePayload {
   altText: string;
@@ -129,11 +127,11 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   decorate(): JSX.Element {
     return (
       <Suspense fallback={null}>
-        <ImageComponent
-          src={this.__src}
-          altText={this.__altText}
-          nodeKey={this.getKey()}
-        />
+        <Card>
+          <CardContent className="pt-6">
+            <img src={this.__src} alt={this.__altText} />
+          </CardContent>
+        </Card>
       </Suspense>
     );
   }

@@ -115,7 +115,7 @@ export const TestPlugin = () => {
           {editorState.root.children.map(createJSXElement)}
         </section>
         <Button onClick={() => setState(parseLexicalJSON(editorState))}>
-          Reset
+          Save
         </Button>
       </div>
     </>

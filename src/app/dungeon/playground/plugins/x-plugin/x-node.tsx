@@ -10,7 +10,6 @@ import type {
   DOMConversionMap,
   DOMConversionOutput,
   DOMExportOutput,
-  EditorConfig,
   ElementFormatType,
   LexicalEditor,
   LexicalNode,
@@ -19,28 +18,11 @@ import type {
 } from "lexical";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
 } from "@lexical/react/LexicalDecoratorBlockNode";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const WIDGET_SCRIPT_URL = "https://platform.twitter.com/widgets.js";
-
-type TweetComponentProps = Readonly<{
-  className: Readonly<{
-    base: string;
-    focus: string;
-  }>;
-  format: ElementFormatType | null;
-  loadingComponent?: JSX.Element | string;
-  nodeKey: NodeKey;
-  onError?: (error: string) => void;
-  onLoad?: () => void;
-  tweetID: string;
-}>;
+import { XEmbed } from "react-social-media-embed";
 
 function $convertTweetElement(
   domNode: HTMLDivElement
@@ -51,79 +33,6 @@ function $convertTweetElement(
     return { node };
   }
   return null;
-}
-
-let isTwitterScriptLoading = true;
-
-function TweetComponent({
-  className,
-  format,
-  loadingComponent,
-  nodeKey,
-  onError,
-  onLoad,
-  tweetID,
-}: TweetComponentProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const previousTweetIDRef = useRef<string>("");
-  const [isTweetLoading, setIsTweetLoading] = useState(false);
-
-  const createTweet = useCallback(async () => {
-    try {
-      await window.twttr.widgets.createTweet(tweetID, containerRef.current, {});
-
-      setIsTweetLoading(false);
-      isTwitterScriptLoading = false;
-
-      if (onLoad) {
-        onLoad();
-      }
-    } catch (error) {
-      if (onError) {
-        onError(String(error));
-      }
-    }
-  }, [onError, onLoad, tweetID]);
-
-  useEffect(() => {
-    if (tweetID !== previousTweetIDRef.current) {
-      setIsTweetLoading(true);
-
-      if (isTwitterScriptLoading) {
-        const script = document.createElement("script");
-        script.src = WIDGET_SCRIPT_URL;
-        script.async = true;
-        document.body?.appendChild(script);
-        script.onload = createTweet;
-        if (onError) {
-          script.onerror = onError as OnErrorEventHandler;
-        }
-      } else {
-        createTweet();
-      }
-
-      if (previousTweetIDRef) {
-        previousTweetIDRef.current = tweetID;
-      }
-    }
-  }, [createTweet, onError, tweetID]);
-
-  return (
-    <BlockWithAlignableContents
-      className={className}
-      format={format}
-      nodeKey={nodeKey}
-    >
-      {isTweetLoading && loadingComponent}
-
-      <Card>
-        <CardContent className="pt-6">
-          <div className=" " ref={containerRef} />
-        </CardContent>
-      </Card>
-    </BlockWithAlignableContents>
-  );
 }
 
 export type SerializedTweetNode = Spread<
@@ -205,26 +114,16 @@ export class TweetNode extends DecoratorBlockNode {
     return `https://x.com/i/web/status/${this.__id}`;
   }
 
-  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
-    const embedBlockTheme = config.theme.embedBlock || {};
-    const className = {
-      base: embedBlockTheme.base || "",
-      focus: embedBlockTheme.focus || "",
-    };
+  decorate(_editor: LexicalEditor): JSX.Element {
+    if (!this.url) {
+      return <></>;
+    }
     return (
-      <TweetComponent
-        className={className}
-        format={this.__format}
-        loadingComponent={
-          <Card>
-            <CardContent className="pt-6">
-              <Skeleton className="mx-auto w-full  aspect-video" />
-            </CardContent>
-          </Card>
-        }
-        nodeKey={this.getKey()}
-        tweetID={this.__id}
-      />
+      <Card>
+        <CardContent className="pt-6">
+          <XEmbed url={this.url} />
+        </CardContent>
+      </Card>
     );
   }
 }

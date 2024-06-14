@@ -11,9 +11,9 @@ import {
 import { INSERT_EMBED_COMMAND } from "@lexical/react/LexicalAutoEmbedPlugin";
 import { Image } from "lucide-react";
 import { useState } from "react";
-import { BlockTypes } from "../../block-types";
+import { BlockTypes } from "../../data/block-types";
+import { EmbedConfigs } from "../../data/embed-configs";
 import { useDialog } from "../../hooks/use-dialog";
-import { EmbedConfigs } from "../auto-embed-plugin";
 import { InsertImageDialog } from "../images-plugin";
 
 export function BlockMenu({
@@ -66,9 +66,7 @@ export function BlockMenu({
                 editor.dispatchCommand(INSERT_EMBED_COMMAND, embedConfig.type);
               }}
             >
-              <span>
-                <Image className="mr-2 h-4 w-4" />
-              </span>
+              <span>{embedConfig.icon}</span>
               <span>{embedConfig.contentName}</span>
             </MenubarItem>
           ))}

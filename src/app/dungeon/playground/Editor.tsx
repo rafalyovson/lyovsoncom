@@ -12,10 +12,12 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
+import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { useState } from "react";
+import { EditorState } from "lexical";
+import { useCallback, useState } from "react";
 import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
@@ -25,9 +27,10 @@ import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
 import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
 import { TestPlugin } from "./plugins/test-plugin";
 import { ToolbarPlugin } from "./plugins/toolbar-plugin";
-import { TweetNode, TwitterPlugin } from "./plugins/x-plugin";
+import { XNode, XPlugin } from "./plugins/x-plugin";
 import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
 import { defaultTheme } from "./themes/default-theme";
+import { debounce } from "./utils/debounce";
 
 const editorConfig = {
   namespace: "Playground",
@@ -48,7 +51,7 @@ const editorConfig = {
     AutoLinkNode,
     LinkNode,
     YouTubeNode,
-    TweetNode,
+    XNode,
     ImageNode,
   ],
 };
@@ -58,6 +61,17 @@ export const Editor = () => {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
+  const debouncedOnChange = useCallback(
+    debounce((editorState: EditorState) => {
+      console.log("editorState", editorState.toJSON());
+    }, 1000),
+    []
+  );
+
+  const onChange = (editorState: EditorState) => {
+    debouncedOnChange(editorState);
+  };
+
   const onRef = (floatingAnchorElem: HTMLDivElement) => {
     if (floatingAnchorElem !== null) {
       setFloatingAnchorElem(floatingAnchorElem);
@@ -66,15 +80,10 @@ export const Editor = () => {
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className=" border w-full max-w-[600px] mx-auto rounded-md">
+      <main className=" border w-full max-w-[600px] mx-auto rounded-md">
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (
           <>
-            {/* <FloatingLinkEditorPlugin
-              anchorElem={floatingAnchorElem}
-              isLinkEditMode={isLinkEditMode}
-              setIsLinkEditMode={setIsLinkEditMode}
-            /> */}
             <FloatingTextFormatToolbarPlugin
               isLinkEditMode={isLinkEditMode}
               anchorElem={floatingAnchorElem}
@@ -83,18 +92,19 @@ export const Editor = () => {
           </>
         )}
 
-        <div className=" rounded-b-md">
+        <section className=" rounded-b-md">
           <RichTextPlugin
             contentEditable={
-              <div className="outline-none " ref={onRef}>
+              <article className="outline-none " ref={onRef}>
                 <ContentEditable className="p-4 border outline-ring prose dark:prose-invert h-96 overflow-y-scroll" />
-              </div>
+              </article>
             }
             placeholder={<></>}
             ErrorBoundary={LexicalErrorBoundary}
           />
-        </div>
+        </section>
         <TestPlugin />
+        <OnChangePlugin onChange={onChange} ignoreSelectionChange={true} />
         <HistoryPlugin />
         <ImagesPlugin />
         <AutoFocusPlugin />
@@ -104,11 +114,11 @@ export const Editor = () => {
         <LinkPlugin />
         <AutoLinkPlugin />
         <AutoEmbedPlugin />
-        <TwitterPlugin />
+        <XPlugin />
         <YouTubePlugin />
         <ListMaxIndentLevelPlugin maxDepth={7} />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-      </div>
+      </main>
     </LexicalComposer>
   );
 };

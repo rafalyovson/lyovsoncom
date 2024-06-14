@@ -32,7 +32,8 @@ export const YouTubePlugin = (): JSX.Element | null => {
     return editor.registerCommand<string>(
       INSERT_YOUTUBE_COMMAND,
       (payload) => {
-        const youTubeNode = $createYouTubeNode(payload);
+        const id = payload.split("/").pop();
+        const youTubeNode = $createYouTubeNode(id!, payload);
         $insertNodeToNearestRoot(youTubeNode);
 
         return true;

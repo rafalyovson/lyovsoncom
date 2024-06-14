@@ -11,9 +11,9 @@ import { FORMAT_ELEMENT_COMMAND, LexicalEditor, TextNode } from "lexical";
 import { AlignCenter, Image } from "lucide-react";
 import React, { Dispatch, useCallback, useMemo, useState } from "react";
 import * as ReactDOM from "react-dom";
-import { BlockTypes } from "../../block-types";
+import { BlockTypes } from "../../data/block-types";
+import { EmbedConfigs } from "../../data/embed-configs";
 import { useDialog } from "../../hooks/use-dialog";
-import { EmbedConfigs } from "../auto-embed-plugin";
 import { InsertImageDialog } from "../images-plugin";
 
 class ComponentPickerOption extends MenuOption {
@@ -90,7 +90,6 @@ function getBaseOptions(
   showDialog: ShowDialog,
   setIsOpen: Dispatch<boolean>
 ) {
-  console.log(BlockTypes);
   return [
     ...BlockTypes.map(
       (type) =>
@@ -104,7 +103,7 @@ function getBaseOptions(
     ...EmbedConfigs.map(
       (embedConfig) =>
         new ComponentPickerOption(`${embedConfig.contentName}`, {
-          icon: <Image className="h-4 w-4" />,
+          icon: embedConfig.icon,
           keywords: [...embedConfig.keywords, "embed"],
           onSelect: () =>
             editor.dispatchCommand(INSERT_EMBED_COMMAND, embedConfig.type),

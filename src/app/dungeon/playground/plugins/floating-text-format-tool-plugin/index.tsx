@@ -49,8 +49,8 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { getDOMRangeRect } from "../../utils/getDOMRangeRect";
-import { getSelectedNode } from "../../utils/getSelectedNode";
+import { getDOMRangeRect } from "../../utils/get-dom-rect-range";
+import { getSelectedNode } from "../../utils/get-selected-node";
 import { sanitizeUrl } from "../../utils/url";
 import { setFloatingElemPosition } from "./set-floating-elem-position";
 

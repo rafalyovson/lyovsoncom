@@ -1,6 +1,4 @@
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent } from "@/components/ui/card";
-import { BlockWithAlignableContents } from "@lexical/react/LexicalBlockWithAlignableContents";
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
@@ -9,58 +7,18 @@ import type {
   DOMConversionMap,
   DOMConversionOutput,
   DOMExportOutput,
-  EditorConfig,
   ElementFormatType,
   LexicalEditor,
   LexicalNode,
   NodeKey,
   Spread,
 } from "lexical";
-
-type YouTubeComponentProps = Readonly<{
-  className: Readonly<{
-    base: string;
-    focus: string;
-  }>;
-  format: ElementFormatType | null;
-  nodeKey: NodeKey;
-  videoID: string;
-}>;
-
-function YouTubeComponent({
-  className,
-  format,
-  nodeKey,
-  videoID,
-}: YouTubeComponentProps) {
-  return (
-    <BlockWithAlignableContents
-      className={className}
-      format={format}
-      nodeKey={nodeKey}
-    >
-      <Card>
-        <CardContent className="pt-6">
-          <AspectRatio ratio={16 / 9}>
-            <iframe
-              width="100%"
-              height="100%"
-              src={`https://www.youtube-nocookie.com/embed/${videoID}`}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen={true}
-              title="YouTube video"
-            />
-          </AspectRatio>
-        </CardContent>
-      </Card>
-    </BlockWithAlignableContents>
-  );
-}
+import { YouTubeEmbed } from "react-social-media-embed";
 
 export type SerializedYouTubeNode = Spread<
   {
-    videoID: string;
+    id: string;
+    url: string;
   },
   SerializedDecoratorBlockNode
 >;
@@ -69,8 +27,9 @@ function $convertYoutubeElement(
   domNode: HTMLElement
 ): null | DOMConversionOutput {
   const videoID = domNode.getAttribute("data-lexical-youtube");
-  if (videoID) {
-    const node = $createYouTubeNode(videoID);
+  const videoURL = domNode.getAttribute("data-lexical-youtube-url");
+  if (videoID && videoURL) {
+    const node = $createYouTubeNode(videoID, videoURL);
     return { node };
   }
   return null;
@@ -78,17 +37,18 @@ function $convertYoutubeElement(
 
 export class YouTubeNode extends DecoratorBlockNode {
   __id: string;
+  url: string;
 
   static getType(): string {
     return "youtube";
   }
 
   static clone(node: YouTubeNode): YouTubeNode {
-    return new YouTubeNode(node.__id, node.__format, node.__key);
+    return new YouTubeNode(node.__id, node.url, node.__format, node.__key);
   }
 
   static importJSON(serializedNode: SerializedYouTubeNode): YouTubeNode {
-    const node = $createYouTubeNode(serializedNode.videoID);
+    const node = $createYouTubeNode(serializedNode.id, serializedNode.url);
     node.setFormat(serializedNode.format);
     return node;
   }
@@ -98,13 +58,20 @@ export class YouTubeNode extends DecoratorBlockNode {
       ...super.exportJSON(),
       type: "youtube",
       version: 1,
-      videoID: this.__id,
+      id: this.__id,
+      url: this.url,
     };
   }
 
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+  constructor(
+    id: string,
+    url: string,
+    format?: ElementFormatType,
+    key?: NodeKey
+  ) {
     super(format, key);
     this.__id = id;
+    this.url = url;
   }
 
   exportDOM(): DOMExportOutput {
@@ -155,25 +122,25 @@ export class YouTubeNode extends DecoratorBlockNode {
     return `https://www.youtube.com/watch?v=${this.__id}`;
   }
 
-  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
-    const embedBlockTheme = config.theme.embedBlock || {};
-    const className = {
-      base: embedBlockTheme.base || "",
-      focus: embedBlockTheme.focus || "",
-    };
+  decorate(_editor: LexicalEditor): JSX.Element {
+    if (!this.url) {
+      return <></>;
+    }
     return (
-      <YouTubeComponent
-        className={className}
-        format={this.__format}
-        nodeKey={this.getKey()}
-        videoID={this.__id}
-      />
+      <Card>
+        <CardContent className="pt-6">
+          <YouTubeEmbed url={this.url} />
+        </CardContent>
+      </Card>
     );
   }
 }
 
-export function $createYouTubeNode(videoID: string): YouTubeNode {
-  return new YouTubeNode(videoID);
+export function $createYouTubeNode(
+  videoID: string,
+  videoURL: string
+): YouTubeNode {
+  return new YouTubeNode(videoID, videoURL);
 }
 
 export function $isYouTubeNode(
