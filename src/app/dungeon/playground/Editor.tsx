@@ -21,7 +21,6 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { EditorState } from "lexical";
 import { useCallback, useState } from "react";
-import { lexicalJSON } from "./data/test-data";
 import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
@@ -38,7 +37,7 @@ import { debounce } from "./utils/debounce";
 
 const editorConfig: InitialConfigType = {
   namespace: "Content",
-  // editorState: JSON.stringify(lexicalJSON),
+
   theme: defaultTheme,
   onError(error: Error) {
     throw error;
@@ -62,7 +61,6 @@ const editorConfig: InitialConfigType = {
 };
 
 export const Editor = () => {
-  console.log("lexicalJSON", lexicalJSON);
   console.log(editorConfig);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
