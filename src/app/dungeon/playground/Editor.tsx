@@ -5,7 +5,10 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { TRANSFORMERS } from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
@@ -18,6 +21,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { EditorState } from "lexical";
 import { useCallback, useState } from "react";
+import { lexicalJSON } from "./data/test-data";
 import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
 import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
 import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
@@ -32,8 +36,9 @@ import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
 import { defaultTheme } from "./themes/default-theme";
 import { debounce } from "./utils/debounce";
 
-const editorConfig = {
-  namespace: "Playground",
+const editorConfig: InitialConfigType = {
+  namespace: "Content",
+  // editorState: JSON.stringify(lexicalJSON),
   theme: defaultTheme,
   onError(error: Error) {
     throw error;
@@ -57,6 +62,8 @@ const editorConfig = {
 };
 
 export const Editor = () => {
+  console.log("lexicalJSON", lexicalJSON);
+  console.log(editorConfig);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
