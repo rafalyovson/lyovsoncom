@@ -5,10 +5,7 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { TRANSFORMERS } from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from "@lexical/react/LexicalComposer";
+import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
@@ -28,16 +25,15 @@ import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
 import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
 import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
 import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
-import { TestPlugin } from "./plugins/test-plugin";
+
 import { ToolbarPlugin } from "./plugins/toolbar-plugin";
 import { XNode, XPlugin } from "./plugins/x-plugin";
 import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
 import { defaultTheme } from "./themes/default-theme";
 import { debounce } from "./utils/debounce";
 
-const editorConfig: InitialConfigType = {
-  namespace: "Content",
-
+const editorConfig = {
+  namespace: "Playground",
   theme: defaultTheme,
   onError(error: Error) {
     throw error;
@@ -61,7 +57,6 @@ const editorConfig: InitialConfigType = {
 };
 
 export const Editor = () => {
-  console.log(editorConfig);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -108,7 +103,7 @@ export const Editor = () => {
             ErrorBoundary={LexicalErrorBoundary}
           />
         </section>
-        <TestPlugin />
+
         <OnChangePlugin onChange={onChange} ignoreSelectionChange={true} />
         <HistoryPlugin />
         <ImagesPlugin />
