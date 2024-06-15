@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import React from "react";
 import { XEmbed, YouTubeEmbed } from "react-social-media-embed";
 
-const FORMATS = {
+export const FORMATS = {
   BOLD: 1,
   ITALIC: 1 << 1,
   STRIKETHROUGH: 1 << 2,
@@ -14,7 +12,7 @@ const FORMATS = {
   HIGHLIGHT: 1 << 7,
 };
 
-function applyFormatting(textElement: any, format: any) {
+export const applyFormatting = (textElement: any, format: any) => {
   if (format) {
     if (format & FORMATS.BOLD) textElement = <b>{textElement}</b>;
     if (format & FORMATS.ITALIC) textElement = <i>{textElement}</i>;
@@ -26,9 +24,9 @@ function applyFormatting(textElement: any, format: any) {
     if (format & FORMATS.HIGHLIGHT) textElement = <mark>{textElement}</mark>;
   }
   return textElement;
-}
+};
 
-function createJSXElement(node: any) {
+export const createJSXElement = (node: any) => {
   let element: JSX.Element;
   const style = node.format ? { textAlign: node.format } : {};
 
@@ -95,29 +93,8 @@ function createJSXElement(node: any) {
   }
 
   return element;
-}
+};
 
-function parseLexicalJSON(json: any) {
+export const parseLexicalJSON = (json: any) => {
   return createJSXElement(json.root);
-}
-
-export const TestPlugin = () => {
-  const [_state, setState] = React.useState<any>({});
-  const [editor] = useLexicalComposerContext();
-  const editorState = editor.getEditorState().toJSON();
-
-  console.log("editorState", editorState);
-
-  return (
-    <>
-      <div className="flex flex-col gap-4">
-        <section className="prose dark:prose-invert">
-          {editorState.root.children.map(createJSXElement)}
-        </section>
-        <Button onClick={() => setState(parseLexicalJSON(editorState))}>
-          Save
-        </Button>
-      </div>
-    </>
-  );
 };

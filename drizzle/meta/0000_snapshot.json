@@ -1,5 +1,5 @@
 {
-  "id": "75a69f2b-398e-4ed0-9d40-4621eee562f7",
+  "id": "60e0e9ac-58a3-46d6-9d99-4e7b4faffd06",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "6",
   "dialect": "postgresql",
@@ -305,7 +305,7 @@
         },
         "content": {
           "name": "content",
-          "type": "text",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         },
@@ -338,6 +338,18 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -395,6 +407,54 @@
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.socialNetwork": {
+      "name": "socialNetwork",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "socialNetwork_userId_user_id_fk": {
+          "name": "socialNetwork_userId_user_id_fk",
+          "tableFrom": "socialNetwork",
           "tableTo": "user",
           "columnsFrom": [
             "userId"
@@ -516,8 +576,38 @@
           "primaryKey": false,
           "notNull": false
         },
-        "image": {
-          "name": "image",
+        "avatar": {
+          "name": "avatar",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "xLink": {
+          "name": "xLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "redditLink": {
+          "name": "redditLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "linkedInLink": {
+          "name": "linkedInLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "githubLink": {
+          "name": "githubLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "youtubeLink": {
+          "name": "youtubeLink",
           "type": "text",
           "primaryKey": false,
           "notNull": false

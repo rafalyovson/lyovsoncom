@@ -37,12 +37,14 @@ CREATE TABLE IF NOT EXISTS "comment" (
 CREATE TABLE IF NOT EXISTS "post" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
-	"content" text NOT NULL,
+	"content" json NOT NULL,
 	"featuredImg" text,
 	"published" boolean NOT NULL,
 	"createdAt" timestamp NOT NULL,
 	"authorId" text NOT NULL,
 	"slug" text NOT NULL,
+	"type" text NOT NULL,
+	"metadata" json,
 	CONSTRAINT "post_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
@@ -50,6 +52,13 @@ CREATE TABLE IF NOT EXISTS "session" (
 	"sessionToken" text PRIMARY KEY NOT NULL,
 	"userId" text NOT NULL,
 	"expires" timestamp NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "socialNetwork" (
+	"id" text PRIMARY KEY NOT NULL,
+	"userId" text NOT NULL,
+	"name" text,
+	"url" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tag_post" (
@@ -68,7 +77,12 @@ CREATE TABLE IF NOT EXISTS "user" (
 	"name" text,
 	"email" text NOT NULL,
 	"emailVerified" timestamp,
-	"image" text
+	"avatar" text,
+	"xLink" text,
+	"redditLink" text,
+	"linkedInLink" text,
+	"githubLink" text,
+	"youtubeLink" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verificationToken" (
@@ -128,6 +142,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "socialNetwork" ADD CONSTRAINT "socialNetwork_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

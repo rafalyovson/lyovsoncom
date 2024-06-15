@@ -12,8 +12,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
+import { contentTypes } from "@/data/content-types";
 import { Post, posts } from "@/data/schema";
 import { slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,16 +31,26 @@ import { useActionState, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Editor } from "../../editor/Editor";
 import { ImageUpload } from "./image-upload";
 
 const PostSchema = createInsertSchema(posts, {
-  title: z.string().trim().min(1, { message: "Title is required" }),
+  id: z.string().uuid().optional(),
   authorId: z.string().uuid().optional(),
-  featuredImg: z.string().url().optional(),
+  title: z.string().trim().min(1, { message: "Title is required" }),
+  featuredImg: z.string().url(),
+  published: z.boolean(),
+  type: z.string(),
+  content: z.string().optional(),
+  createdAt: z.string().optional(),
+  slug: z.string(),
+  metadata: z.any().optional(),
 });
 
 export function PostForm({ post, action }: { post?: Post; action: any }) {
-  const [state, formAction, isPending] = useActionState(action, {
+  const [content, setContent] = useState("");
+  const newAction = action.bind(null, content);
+  const [state, formAction, isPending] = useActionState(newAction, {
     message: "",
     url: "",
     slug: post?.slug || "",
@@ -42,12 +59,12 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
-    mode: "all",
+    mode: "onChange",
     resolver: zodResolver(PostSchema),
     defaultValues: {
       title: post?.title || "",
       slug: post?.slug || "",
-      content: post?.content || "",
+      type: post?.type || "article",
       featuredImg: post?.featuredImg || "",
       published: post?.published || false,
       authorId: post?.authorId || "",
@@ -162,18 +179,37 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
 
           <FormField
             control={form.control}
-            name="content"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <Textarea className="resize-none" {...field} />
-                </FormControl>
-                <FormDescription>Post body goes here.</FormDescription>
+                <FormLabel>Type</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(value)}
+                  value={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a post type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {contentTypes.map((type) => (
+                      <SelectItem key={type.type} value={type.type}>
+                        {type.type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <input type="hidden" {...field} />
+                <FormDescription>
+                  Choose the post type. This will determine the content format.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <Editor state={content} setState={setContent} />
 
           <Button className="w-full" type="submit" disabled={isPending}>
             Submit

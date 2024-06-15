@@ -1,3 +1,4 @@
+import { parseLexicalJSON } from "@/app/dungeon/editor/data/serialize-deserialize.ts";
 import { Post } from "@/data/schema";
 import { getPostBySlug } from "@/lib/getPostBySlug";
 import { getUserById } from "@/lib/getUserById";
@@ -52,7 +53,7 @@ const Page = async ({ params }: { params: any }) => {
     <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg">
       <PostHeader post={post} />
       <div className="container max-w-2xl mx-auto mt-4 text-lg leading-relaxed">
-        {post.content}
+        {parseLexicalJSON(post.content)}
       </div>
     </article>
   );

@@ -1,11 +1,11 @@
-import { Editor } from "../playground/Editor";
+import { Editor } from "./Editor";
 
-const Page = () => {
+const page = () => {
   return (
-    <main>
+    <article className="flex gap-2">
       <Editor />
-    </main>
+    </article>
   );
 };
 
-export default Page;
+export default page;

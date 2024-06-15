@@ -1,6 +1,6 @@
 {
-  "id": "0d134373-02a8-43c4-a528-dc1b9b40369f",
-  "prevId": "75a69f2b-398e-4ed0-9d40-4621eee562f7",
+  "id": "ac1e7959-9db6-4625-bdbe-1a5235f56ccc",
+  "prevId": "60e0e9ac-58a3-46d6-9d99-4e7b4faffd06",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -305,7 +305,7 @@
         },
         "content": {
           "name": "content",
-          "type": "text",
+          "type": "json",
           "primaryKey": false,
           "notNull": true
         },
@@ -338,6 +338,18 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -566,6 +578,36 @@
         },
         "image": {
           "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "xLink": {
+          "name": "xLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "redditLink": {
+          "name": "redditLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "linkedInLink": {
+          "name": "linkedInLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "githubLink": {
+          "name": "githubLink",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "youtubeLink": {
+          "name": "youtubeLink",
           "type": "text",
           "primaryKey": false,
           "notNull": false

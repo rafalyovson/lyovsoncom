@@ -32,38 +32,39 @@ import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
 import { defaultTheme } from "./themes/default-theme";
 import { debounce } from "./utils/debounce";
 
-const editorConfig = {
-  namespace: "Playground",
-  theme: defaultTheme,
-  onError(error: Error) {
-    throw error;
-  },
-  nodes: [
-    HeadingNode,
-    ListNode,
-    ListItemNode,
-    QuoteNode,
-    CodeNode,
-    CodeHighlightNode,
-    TableNode,
-    TableCellNode,
-    TableRowNode,
-    AutoLinkNode,
-    LinkNode,
-    YouTubeNode,
-    XNode,
-    ImageNode,
-  ],
-};
+export const Editor = ({ state, setState }: { state: any; setState: any }) => {
+  const editorConfig = {
+    namespace: "Content",
+    initialContentState: state,
+    theme: defaultTheme,
+    onError(error: Error) {
+      throw error;
+    },
+    nodes: [
+      HeadingNode,
+      ListNode,
+      ListItemNode,
+      QuoteNode,
+      CodeNode,
+      CodeHighlightNode,
+      TableNode,
+      TableCellNode,
+      TableRowNode,
+      AutoLinkNode,
+      LinkNode,
+      YouTubeNode,
+      XNode,
+      ImageNode,
+    ],
+  };
 
-export const Editor = () => {
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
   const debouncedOnChange = useCallback(
     debounce((editorState: EditorState) => {
-      console.log("editorState", editorState.toJSON());
+      setState(editorState.toJSON());
     }, 1000),
     []
   );

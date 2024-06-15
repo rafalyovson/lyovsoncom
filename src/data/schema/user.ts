@@ -8,11 +8,12 @@ export const users = pgTable("user", {
   name: text("name"),
   email: text("email").notNull(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  avatar: text("avatar"),
-  xLink: text("xLink"), // Field for X (Twitter) profile link
-  redditLink: text("redditLink"), // Field for Reddit profile link
-  linkedInLink: text("linkedInLink"), // Field for LinkedIn profile link
-  githubLink: text("githubLink"), // Field for GitHub profile link
+  image: text("image"),
+  xLink: text("xLink"),
+  redditLink: text("redditLink"),
+  linkedInLink: text("linkedInLink"),
+  githubLink: text("githubLink"),
+  youtubeLink: text("youtubeLink"),
 });
 
 export type User = InferSelectModel<typeof users>;
