@@ -1,4 +1,4 @@
-import { parseLexicalJSON } from "@/app/dungeon/editor/data/serialize-deserialize.ts";
+import { parseLexicalJSON } from "@/app/dungeon/ui/editor/data/serialize-deserialize.ts";
 import { Post } from "@/data/schema";
 import { getPostBySlug } from "@/lib/getPostBySlug";
 import { getUserById } from "@/lib/getUserById";

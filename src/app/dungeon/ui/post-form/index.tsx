@@ -31,7 +31,7 @@ import { useActionState, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Editor } from "../../editor/Editor";
+import { Editor } from "../editor/Editor";
 import { ImageUpload } from "./image-upload";
 
 const PostSchema = createInsertSchema(posts, {
