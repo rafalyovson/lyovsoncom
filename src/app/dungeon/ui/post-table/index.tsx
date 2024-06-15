@@ -1,6 +1,5 @@
 "use client";
 
-import { deletePost } from "@/app/dungeon/lib/postActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { deletePost } from "@/lib/actions/delete-post";
 import { PostWithUser } from "@/lib/getAllPosts";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
