@@ -1,7 +1,7 @@
-"use server";
+// "use server";
 
-import { del } from "@vercel/blob";
+// import { del } from "@vercel/blob";
 
-export const deleteImage = async (url: string) => {
-  del(url);
-};
+// export const deleteImage = async (url: string) => {
+//   del(url);
+// };

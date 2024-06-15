@@ -3,5 +3,14 @@
 import { del } from "@vercel/blob";
 
 export const deleteImage = async (url: string) => {
-  del(url);
+  console.log("deleteImage", url);
+  try {
+    if (url === "") {
+      console.error(`Invalid URL: ${url}`);
+      return;
+    }
+    await del(url);
+  } catch (error) {
+    console.error("Failed to delete image:", error);
+  }
 };

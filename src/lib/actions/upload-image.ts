@@ -10,12 +10,9 @@ export async function uploadImage(
 ) {
   const { oldImage } = prevState;
 
-  console.log("PPPP", prevState);
-
   if (oldImage) {
     console.log("delete old image");
     await deleteImage(oldImage);
-    console.log("AAAA");
   }
 
   const imageFile = formData.get("image") as File;
@@ -27,5 +24,6 @@ export async function uploadImage(
     addRandomSuffix: false,
   });
 
+  console.log("result", result);
   return { url: result.url, oldImage: "" };
 }

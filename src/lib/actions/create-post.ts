@@ -9,10 +9,6 @@ export const createPost = async (
   _prevState: any,
   formData: FormData
 ) => {
-  console.log("_prevState", _prevState);
-  console.log("content", content);
-  console.log("formData", formData);
-
   const session = await auth();
   if (!session || !session.user) {
     return { message: "Not authenticated", url: "" };

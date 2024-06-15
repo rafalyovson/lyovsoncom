@@ -33,7 +33,7 @@ export const ImageUpload = ({
 
   const [state, formAction, isPending] = useActionState(uploadImage, {
     url: "",
-    oldImage: oldImage || "  ",
+    oldImage: oldImage || "",
   });
 
   if (state.url !== "") {
