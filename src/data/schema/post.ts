@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, json, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./user";
 
 export const posts = pgTable("post", {
@@ -7,7 +7,7 @@ export const posts = pgTable("post", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   title: text("title").notNull(),
-  content: text("content").notNull(),
+  content: json("content").notNull(),
   featuredImg: text("featuredImg"),
   published: boolean("published")
     .notNull()
@@ -19,6 +19,8 @@ export const posts = pgTable("post", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   slug: text("slug").notNull().unique(),
+  type: text("type").notNull(),
+  metadata: json("metadata"),
 });
 
 export type Post = InferSelectModel<typeof posts>;
