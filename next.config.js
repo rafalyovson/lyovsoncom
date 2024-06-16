@@ -12,6 +12,11 @@ const nextConfig = {
         hostname: "**.blob.vercel-storage.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+        pathname: "/**",
+      },
     ],
   },
   experimental: {

@@ -21,7 +21,8 @@
       "default",
       {
         "ignore": [
-          "iframe[allow]"
+          "iframe[allow]",
+          "iframe[loading]"
         ]
       }
     ],

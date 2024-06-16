@@ -33,9 +33,11 @@ import { defaultTheme } from "./themes/default-theme";
 import { debounce } from "./utils/debounce";
 
 export const Editor = ({ state, setState }: { state: any; setState: any }) => {
+  console.log("state", JSON.stringify(state));
   const editorConfig = {
     namespace: "Content",
-    initialContentState: state,
+    editorState: state ? JSON.stringify(state) : undefined,
+
     theme: defaultTheme,
     onError(error: Error) {
       throw error;

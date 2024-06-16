@@ -1,5 +1,6 @@
 import React from "react";
-import { XEmbed, YouTubeEmbed } from "react-social-media-embed";
+import { XEmbed } from "./x-embed";
+import { YouTubeEmbed } from "./youtube-embed";
 
 export const FORMATS = {
   BOLD: 1,
@@ -74,15 +75,14 @@ export const createJSXElement = (node: any) => {
       );
       break;
     case "image":
+      // eslint-disable-next-line @next/next/no-img-element
       element = <img src={node.src} alt={node.alt ?? ""} style={style} />;
       break;
     case "tweet":
       element = <XEmbed url={node.url} />;
       break;
     case "youtube":
-      element = (
-        <YouTubeEmbed url={`https://www.youtube.com/watch?v=${node.videoID}`} />
-      );
+      element = <YouTubeEmbed url={node.url} />;
       break;
     default:
       element = (

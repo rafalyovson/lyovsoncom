@@ -48,7 +48,7 @@ const PostSchema = createInsertSchema(posts, {
 });
 
 export function PostForm({ post, action }: { post?: Post; action: any }) {
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(post?.content || "");
   const newAction = action.bind(null, content);
   const [state, formAction, isPending] = useActionState(newAction, {
     message: "",
