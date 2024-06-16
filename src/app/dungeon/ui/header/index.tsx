@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { DungeonLinks } from "@/data/dungeon-links";
-import { Link2, PanelLeft, Search } from "lucide-react";
+import { PanelLeft, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,7 +48,7 @@ export const Header = () => {
                   href={link.url}
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
-                  <Link2 className="h-5 w-5" />
+                  {link.icon}
                   {link.name}
                 </Link>
               );

@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { DungeonLinks } from "@/data/dungeon-links";
-import { Link2, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import Link from "next/link";
 
 export const Sidebar = () => {
@@ -23,7 +23,7 @@ export const Sidebar = () => {
                   className="h-8 w-8 "
                 >
                   <Link href={link.url} className="">
-                    <Link2 className="h-5 w-5" />
+                    {link.icon}
                     <span className="sr-only">{link.name}</span>
                   </Link>
                 </Button>

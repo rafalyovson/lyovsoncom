@@ -23,6 +23,7 @@ export const FooterMenu = () => {
       {session && (
         <section className="flex flex-row items-center  gap-4 text-center flex-wrap">
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             aria-label="create a new post"
@@ -33,6 +34,7 @@ export const FooterMenu = () => {
           </Button>
 
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             aria-label="return to the entrance of the dungeon"
@@ -43,6 +45,7 @@ export const FooterMenu = () => {
           </Button>
 
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             aria-label="visit the playground"
@@ -53,6 +56,7 @@ export const FooterMenu = () => {
           </Button>
 
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             aria-label="return to the tower"
@@ -66,6 +70,7 @@ export const FooterMenu = () => {
           </Button>
 
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             aria-label="read all the posts"
@@ -83,13 +88,17 @@ export const FooterMenu = () => {
             aria-label="sign out"
             onClick={() => signOut()}
           >
-            <FontAwesomeIcon icon={faArrowRightFromBracket} />
+            <FontAwesomeIcon
+              icon={faArrowRightFromBracket}
+              className="rounded-full"
+            />
           </Button>
         </section>
       )}
       {!session && (
         <section className="flex flex-row items-center justify-center gap-4 text-center flex-wrap">
           <Button
+            asChild
             size="icon"
             variant={"secondary"}
             onClick={() => signIn()}

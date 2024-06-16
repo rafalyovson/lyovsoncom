@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { XEmbed } from "./x-embed";
 import { YouTubeEmbed } from "./youtube-embed";
@@ -11,6 +12,14 @@ export const FORMATS = {
   SUBSCRIPT: 1 << 5,
   SUPERSCRIPT: 1 << 6,
   HIGHLIGHT: 1 << 7,
+};
+
+export const isInternalLink = (url: string) => {
+  return (
+    url.startsWith("/") ||
+    url.startsWith("https://lyovson.com") ||
+    url.startsWith("https://www.lyovson.com")
+  );
 };
 
 export const applyFormatting = (textElement: any, format: any) => {
@@ -29,64 +38,96 @@ export const applyFormatting = (textElement: any, format: any) => {
 
 export const createJSXElement = (node: any) => {
   let element: JSX.Element;
-  const style = node.format ? { textAlign: node.format } : {};
+
+  const className = node.format ? `text-${node.format}` : "";
 
   switch (node.type) {
     case "root":
-      element = <div style={style}>{node.children?.map(createJSXElement)}</div>;
+      element = (
+        <main className={`${className}`}>
+          {node.children?.map(createJSXElement)}
+        </main>
+      );
       break;
+
     case "paragraph":
-      element = <p style={style}>{node.children?.map(createJSXElement)}</p>;
+      element = (
+        <p className={`${className}`}>{node.children?.map(createJSXElement)}</p>
+      );
       break;
+
     case "heading":
       element = React.createElement(
-        `h${node.tag}`,
-        { style },
+        `${node.tag}`,
+        { className: `§{className}` },
         node.children?.map(createJSXElement)
       );
       break;
+
     case "link":
-      element = (
-        <a href={node.url} style={style}>
+      element = isInternalLink(node.url) ? (
+        <Link className={`${className} `} href={node.url}>
+          {node.children?.map(createJSXElement)}
+        </Link>
+      ) : (
+        <a className={`${className}`} href={node.url}>
           {node.children?.map(createJSXElement)}
         </a>
       );
       break;
+
     case "text":
       let textElement: JSX.Element | string = node.text ?? "";
       textElement = applyFormatting(textElement, node.format);
       element = <>{textElement}</>;
       break;
+
     case "list":
       element = node.ordered ? (
-        <ol style={style}>{node.children?.map(createJSXElement)}</ol>
+        <ol className={`${className}`}>
+          {node.children?.map(createJSXElement)}
+        </ol>
       ) : (
-        <ul style={style}>{node.children?.map(createJSXElement)}</ul>
+        <ul className={`${className}`}>
+          {node.children?.map(createJSXElement)}
+        </ul>
       );
       break;
+
     case "listitem":
-      element = <li style={style}>{node.children?.map(createJSXElement)}</li>;
+      element = (
+        <li className={`${className}`}>
+          {node.children?.map(createJSXElement)}
+        </li>
+      );
       break;
+
     case "blockquote":
       element = (
-        <blockquote style={style}>
+        <blockquote className={`${className}`}>
           {node.children?.map(createJSXElement)}
         </blockquote>
       );
       break;
+
     case "image":
-      // eslint-disable-next-line @next/next/no-img-element
-      element = <img src={node.src} alt={node.alt ?? ""} style={style} />;
+      element = (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img className={`${className}`} src={node.src} alt={node.alt ?? ""} />
+      );
       break;
+
     case "tweet":
       element = <XEmbed url={node.url} />;
       break;
+
     case "youtube":
       element = <YouTubeEmbed url={node.url} />;
       break;
+
     default:
       element = (
-        <span style={style}>
+        <span className={`${className}`}>
           {node.children?.map(createJSXElement) ?? null}
         </span>
       );

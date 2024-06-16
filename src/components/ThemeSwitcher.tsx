@@ -18,8 +18,12 @@ const ThemeSwitch = () => {
       onClick={toggleTheme}
       title="Toggle Theme"
       variant={"secondary"}
+      size={"icon"}
     >
-      <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
+      <FontAwesomeIcon
+        icon={theme === "light" ? faMoon : faSun}
+        className="rounded-full"
+      />
     </Button>
   );
 };
