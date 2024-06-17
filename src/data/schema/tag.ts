@@ -6,6 +6,7 @@ export const tags = pgTable("tag", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
+  slug: text("slug").notNull(),
 });
 
 export type Tag = InferSelectModel<typeof tags>;
