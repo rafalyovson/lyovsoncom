@@ -43,7 +43,12 @@ export function BlockMenu({
         <MenubarTrigger className="p-0">
           {BlockTypes.map((option) =>
             option.value === blockType ? (
-              <Button key={option.value} size={"icon"} variant={"ghost"}>
+              <Button
+                key={option.value}
+                size={"icon"}
+                variant={"ghost"}
+                onClick={(e) => e.preventDefault()}
+              >
                 <option.icon className="w-4 h-4" />
               </Button>
             ) : null

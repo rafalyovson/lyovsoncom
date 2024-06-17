@@ -1,5 +1,5 @@
 import { PostForm } from "@/app/dungeon/ui/post-form";
-import { updatePost } from "@/lib/actions/update-post";
+import { postUpdate } from "@/lib/actions/post-update";
 import { getPostBySlug } from "@/lib/getPostBySlug";
 import { redirect } from "next/navigation";
 
@@ -14,10 +14,10 @@ const Page = async ({ params }: { params: { slug: string | undefined } }) => {
   }
 
   return (
-    <main className="max-w-[600px] mx-auto">
+    <main className=" mx-auto">
       <div className="flex flex-col p-10 space-y-6 border   ">
         <h1 className="text-2xl font-bold text-center">Update Post</h1>
-        <PostForm post={post} action={updatePost} />
+        <PostForm post={post} action={postUpdate} />
       </div>
     </main>
   );

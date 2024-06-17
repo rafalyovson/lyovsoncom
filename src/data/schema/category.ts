@@ -6,9 +6,7 @@ export const categories: ReturnType<typeof pgTable> = pgTable("category", {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
-  parentId: text("parentId").references(() => categories.id, {
-    onDelete: "set null",
-  }),
+  slug: text("slug").notNull(),
 });
 
 export type Category = InferSelectModel<typeof categories>;

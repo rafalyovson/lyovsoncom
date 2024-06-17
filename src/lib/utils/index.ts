@@ -31,3 +31,6 @@ export function getFileExtension(filename: string): string | null {
   // Return the extension or null if no match is found
   return match && match[1] ? match[1] : null;
 }
+
+export const capitalize = (string: string) =>
+  string.charAt(0).toUpperCase() + string.slice(1);

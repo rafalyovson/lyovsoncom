@@ -22,7 +22,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { contentTypes } from "@/data/content-types";
 import { Post, posts } from "@/data/schema";
-import { slugify } from "@/lib/utils";
+import { capitalize, slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createInsertSchema } from "drizzle-zod";
 import Image from "next/image";
@@ -41,7 +41,7 @@ const PostSchema = createInsertSchema(posts, {
   featuredImg: z.string().url(),
   published: z.boolean(),
   type: z.string(),
-  content: z.string().optional(),
+  content: z.string(),
   createdAt: z.string().optional(),
   slug: z.string(),
   metadata: z.any().optional(),
@@ -59,7 +59,7 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
   const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
-    mode: "onChange",
+    mode: "all",
     resolver: zodResolver(PostSchema),
     defaultValues: {
       title: post?.title || "",
@@ -79,141 +79,152 @@ export function PostForm({ post, action }: { post?: Post; action: any }) {
   return (
     <>
       <Form {...form}>
-        <form className="w-full space-y-6" action={formAction}>
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    onChange={(e) => {
-                      form.setValue("slug", slugify(e.target.value));
-                      field.onChange(e);
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>Post title.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="slug"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Slug</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormDescription>Post slug used in URLs.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="featuredImg"
-            render={({ field: { onChange, value, ...field } }) => (
-              <FormItem>
-                <FormLabel>Image</FormLabel>
-                <FormControl>
-                  <>
-                    <Input
-                      className="hidden"
-                      {...field}
-                      onChange={(e) => onChange(e)}
-                      value={value || ""}
-                    />
-                    {form.getValues("featuredImg") && (
-                      <Card>
-                        <CardContent className="pt-6">
-                          <Image
-                            src={form.getValues("featuredImg")!}
-                            alt={"image"}
-                            width={400}
-                            height={400}
-                            className="mx-auto"
-                          />
-                        </CardContent>
-                      </Card>
-                    )}
-                    <Button
-                      className="w-full"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setImageModalOpen(true);
-                      }}
-                      variant={"secondary"}
-                    >
-                      Upload Image
-                    </Button>
-                  </>
-                </FormControl>
-                <FormDescription>Featured image for the post.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="published"
-            render={() => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Published</FormLabel>
-                  <FormDescription>Check to publish the post.</FormDescription>
-                </div>
-                <FormControl>
-                  <Switch name="published" defaultChecked={post?.published} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Type</FormLabel>
-                <Select
-                  onValueChange={(value) => field.onChange(value)}
-                  value={field.value}
-                >
+        <form
+          className="w-full flex flex-col md:flex-row gap-2 h-full max-w-[1200px] mx-auto"
+          action={formAction}
+        >
+          <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-1/3 ">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a post type" />
-                    </SelectTrigger>
+                    <Input
+                      {...field}
+                      onChange={(e) => {
+                        form.setValue("slug", slugify(e.target.value));
+                        field.onChange(e);
+                      }}
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {contentTypes.map((type) => (
-                      <SelectItem key={type.type} value={type.type}>
-                        {type.type}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <input type="hidden" {...field} />
-                <FormDescription>
-                  Choose the post type. This will determine the content format.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormDescription>Post title.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Editor state={content} setState={setContent} />
+            <FormField
+              control={form.control}
+              name="slug"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Slug</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>Post slug used in URLs.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <Button className="w-full" type="submit" disabled={isPending}>
-            Submit
-          </Button>
+            <FormField
+              control={form.control}
+              name="featuredImg"
+              render={({ field: { onChange, value, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Image</FormLabel>
+                  <FormControl>
+                    <>
+                      <Input
+                        className="hidden"
+                        {...field}
+                        onChange={(e) => onChange(e)}
+                        value={value || ""}
+                      />
+                      {form.getValues("featuredImg") && (
+                        <Card>
+                          <CardContent className="pt-6">
+                            <Image
+                              src={form.getValues("featuredImg")!}
+                              alt={"image"}
+                              width={400}
+                              height={400}
+                              className="mx-auto"
+                            />
+                          </CardContent>
+                        </Card>
+                      )}
+                      <Button
+                        className="w-full"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setImageModalOpen(true);
+                        }}
+                        variant={"secondary"}
+                      >
+                        Upload Image
+                      </Button>
+                    </>
+                  </FormControl>
+                  <FormDescription>
+                    Featured image for the post.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="published"
+              render={() => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Published</FormLabel>
+                    <FormDescription>
+                      Check to publish the post.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch name="published" defaultChecked={post?.published} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select
+                    onValueChange={(value) => field.onChange(value)}
+                    value={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a post type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {contentTypes.map((type) => (
+                        <SelectItem key={type.type} value={type.type}>
+                          {capitalize(type.type)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <input type="hidden" {...field} />
+                  <FormDescription>
+                    Choose the post type. This will determine the content
+                    format.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+          <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ]">
+            <Editor state={content} setState={setContent} />
+
+            <Button className="w-full" type="submit" disabled={isPending}>
+              Submit
+            </Button>
+          </section>
         </form>
       </Form>
 

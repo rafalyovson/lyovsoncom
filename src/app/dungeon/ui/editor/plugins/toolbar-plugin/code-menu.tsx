@@ -6,6 +6,7 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+import { capitalize } from "@/lib/utils";
 import { $isCodeNode, getCodeLanguages } from "@lexical/code";
 import { $getNodeByKey } from "lexical";
 
@@ -36,8 +37,7 @@ export function CodeMenu({
   return (
     <MenubarMenu>
       <MenubarTrigger className="font-mono">
-        {/* <Code className="mr-2 h-4 w-4" /> */}
-        <span>{codeLanguage.toUpperCase()}</span>
+        <span>{capitalize(codeLanguage)}</span>
       </MenubarTrigger>
       <MenubarContent className="h-72 overflow-y-scroll">
         {codeLanguages.map((language: string) => (
@@ -46,8 +46,7 @@ export function CodeMenu({
             key={language}
             onClick={() => onCodeLanguageSelect(language)}
           >
-            {/* <Code className="mr-2 h-4 w-4" /> */}
-            <span>{language.toUpperCase()}</span>
+            <span>{capitalize(language)}</span>
           </MenubarItem>
         ))}
       </MenubarContent>

@@ -83,7 +83,7 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
 
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <main className=" border w-full max-w-[600px] mx-auto rounded-md">
+      <main className="h-full border w-full  mx-auto rounded-md flex flex-col gap-2 justify-between ">
         <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
         {floatingAnchorElem && (
           <>
@@ -95,11 +95,11 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
           </>
         )}
 
-        <section className=" rounded-b-md">
+        <section className=" rounded-md h-full ">
           <RichTextPlugin
             contentEditable={
-              <article className="outline-none " ref={onRef}>
-                <ContentEditable className="p-4 border outline-ring prose dark:prose-invert h-96 overflow-y-scroll" />
+              <article className="outline-none h-full " ref={onRef}>
+                <ContentEditable className="p-4 outline-ring prose dark:prose-invert overflow-y-scroll max-w-none min-h-60 h-full" />
               </article>
             }
             placeholder={<></>}

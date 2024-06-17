@@ -389,7 +389,9 @@ export const ToolbarPlugin = ({
           size={"icon"}
           variant={"ghost"}
           disabled={!state.canUndo}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
+
             editor.dispatchCommand(UNDO_COMMAND, undefined);
           }}
           aria-label="Undo"
@@ -400,7 +402,8 @@ export const ToolbarPlugin = ({
           size={"icon"}
           variant={"ghost"}
           disabled={!state.canRedo}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             editor.dispatchCommand(REDO_COMMAND, undefined);
           }}
           aria-label="Redo"
@@ -428,6 +431,7 @@ export const ToolbarPlugin = ({
                     size={"icon"}
                     variant={"ghost"}
                     aria-label={button.label}
+                    onClick={(e) => e.preventDefault()}
                   >
                     <button.icon className="h-4 w-4" />
                   </Button>
@@ -438,7 +442,8 @@ export const ToolbarPlugin = ({
               {alignButtons.map((button) => (
                 <MenubarItem
                   key={button.type}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     editor.dispatchCommand(
                       FORMAT_ELEMENT_COMMAND,
                       button.type as ElementFormatType
@@ -457,7 +462,10 @@ export const ToolbarPlugin = ({
                 key={button.type}
                 size={"icon"}
                 variant={state[button.type] ? "secondary" : "ghost"}
-                onClick={button.action}
+                onClick={(e) => {
+                  e.preventDefault();
+                  button.action();
+                }}
                 aria-label={button.label}
               >
                 <button.icon className="h-4 w-4" />

@@ -13,7 +13,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { uploadImage } from "@/lib/actions/upload-image";
+import { imageCreate } from "@/lib/actions/image-create";
 import { Dispatch, useActionState } from "react";
 import { toast } from "sonner";
 import ImageForm from "./image-form";
@@ -31,7 +31,7 @@ export const ImageUpload = ({
 }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  const [state, formAction, isPending] = useActionState(uploadImage, {
+  const [state, formAction, isPending] = useActionState(imageCreate, {
     url: "",
     oldImage: oldImage || "",
   });
@@ -48,9 +48,9 @@ export const ImageUpload = ({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add a Social</DialogTitle>
+            <DialogTitle>Upload Image</DialogTitle>
             <DialogDescription>
-              Add a social network to your profile.
+              Upload the featured image of the post.
             </DialogDescription>
           </DialogHeader>
           <ImageForm
@@ -66,9 +66,9 @@ export const ImageUpload = ({
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
       <DrawerContent className="p-8 ">
         <DrawerHeader className="text-left">
-          <DrawerTitle>Add a Social</DrawerTitle>
+          <DrawerTitle>Upload Image</DrawerTitle>
           <DrawerDescription>
-            Add a social network to your profile.
+            Upload the featured image of the post.
           </DrawerDescription>
         </DrawerHeader>
         <ImageForm form={form} formAction={formAction} isPending={isPending} />

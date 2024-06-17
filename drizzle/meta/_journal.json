@@ -15,6 +15,13 @@
       "when": 1718449024173,
       "tag": "0001_loving_tattoo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1718628629967,
+      "tag": "0002_glamorous_praxagora",
+      "breakpoints": true
     }
   ]
 }

@@ -1,0 +1,52 @@
+"use server";
+
+import { auth } from "@/data/auth";
+import { db } from "@/data/db";
+import { posts } from "@/data/schema";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const postCreate = async (
+  content: JSON,
+  _prevState: any,
+  formData: FormData
+) => {
+  const session = await auth();
+  if (!session || !session.user) {
+    return { message: "Not authenticated", url: "" };
+  }
+  const user = session.user;
+
+  const data = {
+    title: formData.get("title") as string,
+    slug: formData.get("slug") as string,
+    content: JSON.stringify(content),
+    featuredImg: formData.get("featuredImg") as string,
+    authorId: user.id!,
+    published: formData.get("published") ? true : false,
+    type: formData.get("type") as string,
+  };
+
+  const schema = createInsertSchema(posts, {
+    title: z.string().min(1, { message: "Title is required" }),
+    slug: z.string().min(1, { message: "Slug is required" }),
+    content: z.string().min(1, { message: "Content is required" }),
+    featuredImg: z.string().url().min(1, { message: "Image is required" }),
+    authorId: z.string().uuid().optional(),
+    published: z.boolean().default(false),
+    type: z
+      .enum(["article", "review", "embed", "podcast", "video"])
+      .default("article"),
+  });
+
+  const parsedData = schema.safeParse(data);
+
+  if (parsedData.success) {
+    await db.insert(posts).values(data);
+    console.log("success");
+    return { message: "Post created!", url: `/posts/${data.slug}` };
+  } else {
+    console.log("error", parsedData.error.issues);
+    return { message: "", url: "" };
+  }
+};
