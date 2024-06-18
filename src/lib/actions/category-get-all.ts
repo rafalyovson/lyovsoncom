@@ -1,3 +1,5 @@
+"use server";
+
 import { db } from "@/data/db";
 import { categories } from "@/data/schema";
 

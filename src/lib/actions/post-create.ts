@@ -2,7 +2,8 @@
 
 import { auth } from "@/data/auth";
 import { db } from "@/data/db";
-import { posts } from "@/data/schema";
+import { categories, categoryPost, posts } from "@/data/schema";
+import { eq } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -11,6 +12,8 @@ export const postCreate = async (
   _prevState: any,
   formData: FormData
 ) => {
+  console.log(formData);
+
   const session = await auth();
   if (!session || !session.user) {
     return { message: "Not authenticated", url: "" };
@@ -41,9 +44,25 @@ export const postCreate = async (
 
   const parsedData = schema.safeParse(data);
 
+  const category = formData.get("category");
+
   if (parsedData.success) {
     await db.insert(posts).values(data);
-    console.log("success");
+
+    const newPost = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.slug, data.slug));
+
+    const allCats = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.name, category));
+
+    await db
+      .insert(categoryPost)
+      .values({ postId: newPost[0].id, categoryId: allCats[0].id });
+
     return { message: "Post created!", url: `/posts/${data.slug}` };
   } else {
     console.log("error", parsedData.error.issues);
