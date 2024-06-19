@@ -60,7 +60,7 @@ export function PostFormClient({
   allCats: any;
   allTags: any;
 }) {
-  console.log("😈", post);
+  console.log("😈", allTags);
   const [content, setContent] = useState(post.content || "");
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState(post?.tags || []);
