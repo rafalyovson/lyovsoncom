@@ -2,23 +2,30 @@
 
 import { auth } from "@/data/auth";
 import { db } from "@/data/db";
-import { categories, categoryPost, posts } from "@/data/schema";
+import {
+  categories,
+  categoryPost,
+  posts,
+  tags as tagCat,
+  tagPost,
+} from "@/data/schema";
 import { eq } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const postCreate = async (
+  tags: any,
   content: JSON,
   _prevState: any,
   formData: FormData
 ) => {
-  console.log(formData);
-
   const session = await auth();
   if (!session || !session.user) {
     return { message: "Not authenticated", url: "" };
   }
   const user = session.user;
+
+  const allTags = await db.select().from(tagCat);
 
   const data = {
     title: formData.get("title") as string,
@@ -42,6 +49,7 @@ export const postCreate = async (
       .default("article"),
   });
 
+  console.log("tags", tags);
   const parsedData = schema.safeParse(data);
 
   const category = formData.get("category");
@@ -62,6 +70,27 @@ export const postCreate = async (
     await db
       .insert(categoryPost)
       .values({ postId: newPost[0].id, categoryId: allCats[0].id });
+
+    console.log("👠", tags);
+    console.log("👠", allTags);
+
+    tags.forEach(async (tag: any) => {
+      if (allTags.filter((t) => t.slug === tag.slug).length > 0) {
+        const tagId = allTags.filter((t) => t.slug === tag.slug)[0].id;
+        await db
+          .insert(tagPost)
+          .values({ postId: newPost[0].id, tagId: tagId! });
+      } else {
+        await db.insert(tags).values({ slug: tag.slug, name: tag.name });
+        const newTag = await db
+          .select()
+          .from(tags)
+          .where(eq(tags.slug, tag.slug));
+        await db
+          .insert(tagPost)
+          .values({ postId: newPost[0].id, tagId: newTag[0].id });
+      }
+    });
 
     return { message: "Post created!", url: `/posts/${data.slug}` };
   } else {

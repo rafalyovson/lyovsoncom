@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -59,27 +60,30 @@ export function PostFormClient({
   allCats: any;
   allTags: any;
 }) {
-  const [content, setContent] = useState(post?.post.content || "");
-  const newAction = action.bind(null, content);
+  console.log("😈", post);
+  const [content, setContent] = useState(post.content || "");
+  const [imageModalOpen, setImageModalOpen] = useState(false);
+  const [postTags, setPostTags] = useState(post?.tags || []);
+  const [newTag, setNewTag] = useState("");
+
+  const actionWithTags = action.bind(null, postTags);
+  const newAction = actionWithTags.bind(null, content);
   const [state, formAction, isPending] = useActionState(newAction, {
     message: "",
     url: "",
-    slug: post?.post.slug || "",
+    slug: post.slug || "",
   });
-
-  console.log(allTags);
-  const [imageModalOpen, setImageModalOpen] = useState(false);
 
   const form = useForm<z.infer<typeof PostSchema>>({
     mode: "all",
     resolver: zodResolver(PostSchema),
     defaultValues: {
-      title: post?.post.title || "",
-      slug: post?.post.slug || "",
-      type: post?.post.type || "article",
-      featuredImg: post?.post.featuredImg || "",
-      published: post?.post.published || false,
-      authorId: post?.post.authorId || "",
+      title: post.title || "",
+      slug: post.slug || "",
+      type: post.type || "article",
+      featuredImg: post.featuredImg || "",
+      published: post.published || false,
+      authorId: post.authorId || "",
     },
   });
 
@@ -191,10 +195,7 @@ export function PostFormClient({
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch
-                      name="published"
-                      defaultChecked={post?.post.published}
-                    />
+                    <Switch name="published" defaultChecked={post.published} />
                   </FormControl>
                 </FormItem>
               )}
@@ -235,10 +236,14 @@ export function PostFormClient({
 
             <section className="flex flex-col gap-2">
               <Label htmlFor="category">Category</Label>
-              <Select name="category">
+              <Select name="category" defaultValue={post?.category?.name}>
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={post?.category.name ?? "Select a category"}
+                    placeholder={
+                      post?.category?.name
+                        ? post?.category?.name
+                        : "Select a category"
+                    }
                   />
                 </SelectTrigger>
 
@@ -250,6 +255,55 @@ export function PostFormClient({
                   ))}
                 </SelectContent>
               </Select>
+            </section>
+            <section className="flex flex-col gap-2">
+              <Label htmlFor="tags">Tags</Label>
+              <Input
+                name="tags"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (newTag === "") return;
+                    setPostTags([
+                      ...postTags,
+                      { name: newTag, slug: slugify(newTag) },
+                    ]);
+                    setNewTag("");
+                  }
+                }}
+              />
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (newTag === "") return;
+                  setPostTags([
+                    ...postTags,
+                    { name: newTag, slug: slugify(newTag) },
+                  ]);
+                  setNewTag("");
+                }}
+              >
+                Add Tag
+              </Button>
+              <section className="flex flex-wrap gap-2">
+                {postTags.map((tag: any) => (
+                  <Badge
+                    className=" cursor-pointer"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPostTags(
+                        postTags.filter((t: any) => t.name !== tag.name)
+                      );
+                    }}
+                    key={tag.id}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              </section>
             </section>
           </section>
           <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ]">
@@ -266,7 +320,7 @@ export function PostFormClient({
         isOpen={imageModalOpen}
         form={form}
         setIsOpen={setImageModalOpen}
-        oldImage={post?.post.featuredImg || ""}
+        oldImage={post.featuredImg || ""}
       />
     </>
   );
