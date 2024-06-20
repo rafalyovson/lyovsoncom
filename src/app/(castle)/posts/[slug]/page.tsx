@@ -1,15 +1,11 @@
 import { parseLexicalJSON } from "@/app/dungeon/ui/editor/data/serialize-deserialize.ts";
-import { Post } from "@/data/schema";
-import { getPostBySlug } from "@/lib/getPostBySlug";
-import { getUserById } from "@/lib/getUserById";
+import { badgeVariants } from "@/components/ui/badge";
+import { getPostBySlug2 } from "@/lib/actions/post-get-full";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
-const PostHeader = async ({ post }: { post: Post }) => {
-  const author = await getUserById(post.authorId);
-  if (!author) {
-    throw new Error(`User with id "${post.authorId}" not found.`);
-  }
+const PostHeader = async ({ post }: { post: any }) => {
   return (
     <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
       <section className="flex flex-col gap-2 lg:w-1/2">
@@ -19,7 +15,7 @@ const PostHeader = async ({ post }: { post: Post }) => {
         <aside className="flex items-center justify-center gap-4 lg:justify-start">
           <p className="">
             <span className="text-sm ">by </span>
-            <span className="underline">{author.name}</span>
+            <span className="underline">{post.author.name}</span>
           </p>
           <p className="">
             <span className="text-sm ">on </span>
@@ -27,7 +23,31 @@ const PostHeader = async ({ post }: { post: Post }) => {
               {new Date(post.createdAt).toLocaleDateString()}
             </span>
           </p>
+
+          <section className="flex gap-2">
+            {post.categories.map((category: any) => (
+              <Link
+                className="underline"
+                key={category.id}
+                href={`/posts/${category.slug}`}
+              >
+                {`@${category.name}`}
+              </Link>
+            ))}
+          </section>
         </aside>
+
+        <section className="flex gap-2 justify-center lg:justify-start">
+          {post.tags.map((tag: any) => (
+            <Link
+              className={badgeVariants({ variant: "default" })}
+              key={tag.id}
+              href={`/posts/${tag.slug}`}
+            >
+              {tag.name}
+            </Link>
+          ))}
+        </section>
       </section>
       <section className="flex justify-center lg:w-1/2">
         <Image
@@ -44,7 +64,7 @@ const PostHeader = async ({ post }: { post: Post }) => {
 
 const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug2(slug);
   if (!post) {
     redirect("/posts");
   }

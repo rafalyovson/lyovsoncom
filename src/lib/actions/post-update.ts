@@ -10,134 +10,124 @@ import {
   tagPost,
 } from "@/data/schema";
 import { eq } from "drizzle-orm";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
 import { tagCreate } from "./tag-create";
 
 export const postUpdate = async (
-  tags: any,
+  tags: any[],
   content: JSON,
   prevState: any,
   formData: FormData
 ) => {
+  // Authenticate user
   const session = await auth();
   if (!session || !session.user) {
     return { message: "Not authenticated", url: "" };
   }
   const user = session.user;
 
-  const allTags = await db.select().from(tagCat);
-
-  const allTagPost = await db.select().from(tagPost);
-  console.log("👯‍♀️", allTagPost);
-
+  // Prepare post data
   const data = {
     title: formData.get("title") as string,
     slug: formData.get("slug") as string,
     featuredImg: formData.get("featuredImg") as string,
     authorId: user.id!,
-    published: formData.get("published") ? true : false,
-    content: content as JSON,
+    published: !!formData.get("published"),
+    content: JSON.stringify(content),
     type: formData.get("type") as string,
   };
 
-  const category = formData.get("category");
+  // Validate data using Zod schema
+  const schema = createInsertSchema(posts, {
+    title: z.string().min(1, { message: "Title is required" }),
+    slug: z.string().min(1, { message: "Slug is required" }),
+    content: z.string().min(1, { message: "Content is required" }),
+    featuredImg: z.string().url().min(1, { message: "Image is required" }),
+    authorId: z.string().uuid().optional(),
+    published: z.boolean().default(false),
+    type: z
+      .enum(["article", "review", "embed", "podcast", "video"])
+      .default("article"),
+  });
 
-  if (prevState.slug !== data.slug) {
+  const parsedData = schema.safeParse(data);
+  if (!parsedData.success) {
+    console.log("Validation error", parsedData.error.issues);
+    return { message: "Validation error", url: "" };
+  }
+
+  // Fetch all tags and categories
+  const allTags = await db.select().from(tagCat);
+  const category = formData.get("category") as string;
+
+  // Check if post already exists
+  const [existingPost] = await db
+    .select()
+    .from(posts)
+    .where(eq(posts.slug, data.slug));
+  const oldPostTags = await db
+    .select()
+    .from(tagPost)
+    .where(eq(tagPost.postId, existingPost?.id));
+
+  // Update or insert post
+  if (prevState.slug === data.slug) {
+    await db.update(posts).set(data).where(eq(posts.slug, data.slug));
+  } else {
     await db.delete(posts).where(eq(posts.slug, prevState.slug));
     await db
       .delete(categoryPost)
       .where(eq(categoryPost.postId, prevState.slug));
-
     await db.insert(posts).values(data);
+  }
 
-    const newPost = await db
-      .select()
-      .from(posts)
-      .where(eq(posts.slug, data.slug));
-
-    const allCats = await db
+  // Update category
+  if (category) {
+    const [categoryRecord] = await db
       .select()
       .from(categories)
       .where(eq(categories.name, category));
-
+    await db
+      .delete(categoryPost)
+      .where(eq(categoryPost.postId, existingPost.id));
     await db
       .insert(categoryPost)
-      .values({ postId: newPost[0].id, categoryId: allCats[0].id });
-
-    tags.forEach(async (tag: any) => {
-      if (allTags.filter((t) => t.slug === tag.slug).length > 0) {
-        const tagId = allTags.filter((t) => t.slug === tag.slug)[0].id;
-        await db
-          .insert(tagPost)
-          .values({ postId: newPost[0].id, tagId: tagId! });
-      } else {
-        await db.insert(tags).values({ slug: tag.slug, name: tag.name });
-        const newTag = await db
-          .select()
-          .from(tags)
-          .where(eq(tags.slug, tag.slug));
-        await db
-          .insert(tagPost)
-          .values({ postId: newPost[0].id, tagId: newTag[0].id });
-      }
-    });
-
-    return { message: "Post updated!", url: `/posts/${data.slug}` };
+      .values({ postId: existingPost.id, categoryId: categoryRecord.id });
   }
 
-  await db.update(posts).set(data).where(eq(posts.slug, data.slug));
+  // Update tags
+  for (const tag of tags) {
+    const [existingTag] = allTags.filter((t) => t.slug === tag.slug);
 
-  const newPost = await db
-    .select()
-    .from(posts)
-    .where(eq(posts.slug, data.slug));
+    if (existingTag) {
+      const tagId = existingTag.id;
 
-  const allCats = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.name, category));
-
-  await db.delete(categoryPost).where(eq(categoryPost.postId, newPost[0].id));
-
-  await db
-    .insert(categoryPost)
-    .values({ postId: newPost[0].id, categoryId: allCats[0].id });
-
-  tags.forEach(async (tag: any) => {
-    //check if tag already exists in db
-    if (allTags.filter((t) => t.slug === tag.slug).length > 0) {
-      const tagId = allTags.filter((t) => t.slug === tag.slug)[0].id;
-
-      // check if tag is already in post
-      const oldIds = await db
-        .select()
-        .from(tagPost)
-        .where(eq(tagPost.postId, newPost[0].id));
-
-      oldIds.forEach(async (oldId: any) => {
-        if (oldId.tagId !== tagId) {
-          console.log(newPost[0].id, tagId, "🎄");
-          await db
-            .insert(tagPost)
-            .values({ postId: newPost[0].id, tagId: tagId! });
+      for (const oldTag of oldPostTags) {
+        if (!tags.some((t) => t.id === oldTag.tagId)) {
+          await db.delete(tagPost).where(eq(tagPost.postId, existingPost.id));
         }
-      });
+
+        if (oldTag.tagId !== tagId) {
+          await db.insert(tagPost).values({ postId: existingPost.id, tagId });
+        }
+      }
     } else {
-      const data = new FormData();
-      data.append("slug", tag.slug);
-      data.append("name", tag.name);
+      const newTagData = new FormData();
+      newTagData.append("slug", tag.slug);
+      newTagData.append("name", tag.name);
 
-      await tagCreate({ message: "" }, data);
+      await tagCreate({ message: "" }, newTagData);
 
-      const newTag = await db
+      const [newTag] = await db
         .select()
         .from(tagCat)
         .where(eq(tagCat.slug, tag.slug));
-
       await db
         .insert(tagPost)
-        .values({ postId: newPost[0]?.id, tagId: newTag[0]?.id });
+        .values({ postId: existingPost?.id, tagId: newTag?.id });
     }
-  });
+  }
 
   return { message: "Post updated!", url: `/posts/${data.slug}` };
 };

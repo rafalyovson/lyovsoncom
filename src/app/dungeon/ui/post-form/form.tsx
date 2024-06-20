@@ -60,8 +60,8 @@ export function PostFormClient({
   allCats: any;
   allTags: any;
 }) {
-  console.log("😈", allTags);
-  const [content, setContent] = useState(post.content || "");
+  console.log("😈", post);
+  const [content, setContent] = useState(post?.content || "");
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState(post?.tags || []);
   const [newTag, setNewTag] = useState("");
@@ -71,19 +71,19 @@ export function PostFormClient({
   const [state, formAction, isPending] = useActionState(newAction, {
     message: "",
     url: "",
-    slug: post.slug || "",
+    slug: post?.slug || "",
   });
 
   const form = useForm<z.infer<typeof PostSchema>>({
     mode: "all",
     resolver: zodResolver(PostSchema),
     defaultValues: {
-      title: post.title || "",
-      slug: post.slug || "",
-      type: post.type || "article",
-      featuredImg: post.featuredImg || "",
-      published: post.published || false,
-      authorId: post.authorId || "",
+      title: post?.title || "",
+      slug: post?.slug || "",
+      type: post?.type || "article",
+      featuredImg: post?.featuredImg || "",
+      published: post?.published || false,
+      authorId: post?.authorId || "",
     },
   });
 
@@ -195,7 +195,7 @@ export function PostFormClient({
                     </FormDescription>
                   </div>
                   <FormControl>
-                    <Switch name="published" defaultChecked={post.published} />
+                    <Switch name="published" defaultChecked={post?.published} />
                   </FormControl>
                 </FormItem>
               )}
@@ -240,8 +240,8 @@ export function PostFormClient({
                 <SelectTrigger>
                   <SelectValue
                     placeholder={
-                      post?.category?.name
-                        ? post?.category?.name
+                      post?.categories[0]?.name
+                        ? post.categories[0].name
                         : "Select a category"
                     }
                   />
@@ -320,7 +320,7 @@ export function PostFormClient({
         isOpen={imageModalOpen}
         form={form}
         setIsOpen={setImageModalOpen}
-        oldImage={post.featuredImg || ""}
+        oldImage={post?.featuredImg || ""}
       />
     </>
   );
