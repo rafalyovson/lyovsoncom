@@ -98,13 +98,15 @@ export const FooterMenu = () => {
       {!session && (
         <section className="flex flex-row items-center justify-center gap-4 text-center flex-wrap">
           <Button
-            asChild
             size="icon"
             variant={"secondary"}
             onClick={() => signIn()}
             aria-label="sign in"
           >
-            <FontAwesomeIcon icon={faRightToBracket} />
+            <FontAwesomeIcon
+              icon={faRightToBracket}
+              className="rounded-full "
+            />
           </Button>
           <ThemeSwitch />
         </section>

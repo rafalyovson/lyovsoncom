@@ -17,17 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Post } from "@/data/types";
 import { postDelete } from "@/lib/actions/post-delete";
-import { PostWithUser } from "@/lib/getAllPosts";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export const PostTable = ({
-  allPostsWithUsers,
-}: {
-  allPostsWithUsers: PostWithUser[];
-}) => {
+export const PostTable = ({ posts }: { posts: Post[] }) => {
+  console.log("😈", posts);
   return (
     <Card className="flex-grow">
       <CardHeader className="px-7">
@@ -51,8 +48,7 @@ export const PostTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {allPostsWithUsers.map((postwithuser: PostWithUser) => {
-              const { post, user } = postwithuser;
+            {posts.map((post: Post) => {
               return (
                 <TableRow key={post.id}>
                   <TableCell className="w-[120px]">
@@ -67,7 +63,7 @@ export const PostTable = ({
                   <TableCell className="font-medium">
                     <Link href={`/posts/${post.slug}`}>{post.title}</Link>
                   </TableCell>
-                  <TableCell>{user?.name}</TableCell>
+                  <TableCell>{post.author!.name}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {post.createdAt.toLocaleDateString()}
                   </TableCell>
@@ -78,21 +74,23 @@ export const PostTable = ({
                       <Badge variant={"secondary"}>Draft</Badge>
                     )}
                   </TableCell>
-                  <TableCell className=" flex flex-col gap-2 w-[100px]  items-end">
-                    <Button asChild variant={"secondary"} size="icon">
-                      <Link href={`/dungeon/posts/update/${post.slug}`}>
-                        <Edit />
-                      </Link>
-                    </Button>
-                    <Button
-                      size={"icon"}
-                      onClick={() => {
-                        postDelete(post);
-                      }}
-                      variant={"destructive"}
-                    >
-                      <Trash2 />
-                    </Button>
+                  <TableCell className="">
+                    <section className="flex gap-2 ">
+                      <Button asChild variant={"secondary"} size="icon">
+                        <Link href={`/dungeon/posts/update/${post.slug}`}>
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button
+                        size={"icon"}
+                        onClick={() => {
+                          postDelete(post);
+                        }}
+                        variant={"destructive"}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </section>
                   </TableCell>
                 </TableRow>
               );

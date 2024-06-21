@@ -1,10 +1,13 @@
 import { PostGrid } from "@/app/(castle)/ui/post-grid";
-import { getAllPosts, PostWithUser } from "@/lib/getAllPosts";
+import { postsGetAll } from "@/lib/actions/posts-get-all";
 
 const page = async () => {
-  const allPostsWithUsers: PostWithUser[] = await getAllPosts();
+  const allPosts = await postsGetAll();
+  if (!allPosts) {
+    return <div>No posts</div>;
+  }
 
-  const posts = allPostsWithUsers.filter((post) => post.post.published);
+  const posts = allPosts.filter((post) => post.published);
   return <PostGrid posts={posts} />;
 };
 

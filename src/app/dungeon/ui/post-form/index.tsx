@@ -1,5 +1,5 @@
-import { categoryGetAll } from "@/lib/actions/category-get-all";
-import { tagGetAll } from "@/lib/actions/tag-get-all";
+import { categoriesGetAll } from "@/lib/actions/categories-get-all";
+import { tagsGetAll } from "@/lib/actions/tags-get-all";
 import { PostFormClient } from "./form";
 export const PostForm = async ({
   post,
@@ -8,8 +8,8 @@ export const PostForm = async ({
   post?: any;
   action: any;
 }) => {
-  const allCats = await categoryGetAll();
-  const allTags = await tagGetAll();
+  const allCats = await categoriesGetAll();
+  const allTags = await tagsGetAll();
 
   return (
     <PostFormClient

@@ -1,10 +1,10 @@
 import { Category } from "@/data/schema";
+import { categoriesGetAll } from "@/lib/actions/categories-get-all";
 import { categoryCreate } from "@/lib/actions/category-create";
-import { categoryGetAll } from "@/lib/actions/category-get-all";
 import { CategoryForm } from "./category-form";
 import { CategoryRow } from "./category-row";
 const Page = async () => {
-  const cats = await categoryGetAll();
+  const cats = await categoriesGetAll();
   return (
     <>
       <main className="flex flex-col gap-4 p-4">

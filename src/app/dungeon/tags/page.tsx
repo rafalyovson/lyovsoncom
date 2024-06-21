@@ -1,10 +1,10 @@
 import { Tag } from "@/data/schema";
 import { tagCreate } from "@/lib/actions/tag-create";
-import { tagGetAll } from "@/lib/actions/tag-get-all";
+import { tagsGetAll } from "@/lib/actions/tags-get-all";
 import { TagForm } from "./tag-form";
 import { TagRow } from "./tag-row";
 const Page = async () => {
-  const tags = await tagGetAll();
+  const tags = await tagsGetAll();
   return (
     <>
       <main className="flex flex-col gap-4 p-4">

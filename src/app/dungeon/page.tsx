@@ -1,14 +1,17 @@
 import { PostTable } from "@/app/dungeon/ui/post-table";
-import { getAllPosts, PostWithUser } from "@/lib/getAllPosts";
+import { postsGetAll } from "@/lib/actions/posts-get-all";
 
-const Page = async () => {
-  const allPostsWithUsers: PostWithUser[] = await getAllPosts();
+const Posts = async () => {
+  const posts = await postsGetAll();
+  if (!posts) {
+    return <div>No posts</div>;
+  }
 
   return (
     <main>
-      <PostTable allPostsWithUsers={allPostsWithUsers} />
+      <PostTable posts={posts} />
     </main>
   );
 };
 
-export default Page;
+export default Posts;

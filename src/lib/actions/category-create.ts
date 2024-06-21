@@ -2,6 +2,7 @@
 
 import { db } from "@/data/db";
 import { categories } from "@/data/schema";
+import { eq } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,9 +12,18 @@ export const categoryCreate = async (
   formData: FormData
 ) => {
   const data = {
-    name: formData.get("name") as string,
-    slug: formData.get("slug") as string,
+    name: formData.get("name"),
+    slug: formData.get("slug"),
   };
+
+  const existingCategory = await db
+    .select()
+    .from(categories)
+    .where(eq(categories.name, data.name));
+
+  if (existingCategory.length > 0) {
+    return { message: "Category already exists" };
+  }
 
   const schema = createInsertSchema(categories, {
     name: z.string().min(1, { message: "Name is required" }),
@@ -24,11 +34,9 @@ export const categoryCreate = async (
 
   if (parsedData.success) {
     await db.insert(categories).values(data);
-    console.log("success");
     revalidatePath("/dungeon/categories");
     return { message: "success" };
   } else {
-    console.log("error", parsedData.error.issues);
     return { message: "error" };
   }
 };

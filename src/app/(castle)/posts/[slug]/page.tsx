@@ -1,6 +1,6 @@
 import { parseLexicalJSON } from "@/app/dungeon/ui/editor/data/serialize-deserialize.ts";
 import { badgeVariants } from "@/components/ui/badge";
-import { getPostBySlug2 } from "@/lib/actions/post-get-full";
+import { postGetFull } from "@/lib/actions/post-get-full";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -29,7 +29,7 @@ const PostHeader = async ({ post }: { post: any }) => {
               <Link
                 className="underline"
                 key={category.id}
-                href={`/posts/${category.slug}`}
+                href={`/posts/categories/${category.slug}`}
               >
                 {`@${category.name}`}
               </Link>
@@ -42,9 +42,9 @@ const PostHeader = async ({ post }: { post: any }) => {
             <Link
               className={badgeVariants({ variant: "default" })}
               key={tag.id}
-              href={`/posts/${tag.slug}`}
+              href={`/posts/tags/${tag.slug}`}
             >
-              {tag.name}
+              {`#${tag.name}`}
             </Link>
           ))}
         </section>
@@ -64,7 +64,7 @@ const PostHeader = async ({ post }: { post: any }) => {
 
 const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
-  const post = await getPostBySlug2(slug);
+  const post = await postGetFull(slug);
   if (!post) {
     redirect("/posts");
   }

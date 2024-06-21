@@ -29,6 +29,34 @@
       "when": 1718641592320,
       "tag": "0003_superb_blacklash",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1718954704822,
+      "tag": "0004_magical_grim_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1718954931745,
+      "tag": "0005_brave_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1718955565892,
+      "tag": "0006_white_captain_flint",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1718956348818,
+      "tag": "0007_tricky_network",
+      "breakpoints": true
     }
   ]
 }

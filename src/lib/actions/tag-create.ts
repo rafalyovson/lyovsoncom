@@ -2,6 +2,8 @@
 
 import { db } from "@/data/db";
 import { tags } from "@/data/schema";
+import { capitalize } from "@/lib/utils";
+import { eq } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -11,9 +13,18 @@ export const tagCreate = async (
   formData: FormData
 ) => {
   const data = {
-    name: formData.get("name") as string,
+    name: capitalize(formData.get("name") as string),
     slug: formData.get("slug") as string,
   };
+
+  const existingTag = await db
+    .select()
+    .from(tags)
+    .where(eq(tags.name, data.name));
+
+  if (existingTag.length > 0) {
+    return { message: "Tag already exists" };
+  }
 
   const schema = createInsertSchema(tags, {
     name: z.string().min(1, { message: "Name is required" }),
@@ -24,11 +35,9 @@ export const tagCreate = async (
 
   if (parsedData.success) {
     await db.insert(tags).values(data);
-    console.log("success");
     revalidatePath("/dungeon/tags");
     return { message: "success" };
   } else {
-    console.log("error", parsedData.error.issues);
     return { message: "error" };
   }
 };

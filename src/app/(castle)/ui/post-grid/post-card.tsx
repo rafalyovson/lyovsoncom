@@ -8,18 +8,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { PostWithUser } from "@/lib/getAllPosts";
+import { Post } from "@/data/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
-  console.log(postWithUser);
-  const { post, user } = postWithUser;
+export const PostCard = ({ post }: { post: Post }) => {
   return (
     <Card>
       <Link href={`/posts/${post.slug}`}>
         <CardHeader>
           <Image
+            className="rounded-md aspect-square"
             src={post.featuredImg || "/images/placeholder.png"}
             alt={post.title + " featured image"}
             width="400"
@@ -29,7 +28,7 @@ export const PostCard = ({ postWithUser }: { postWithUser: PostWithUser }) => {
 
         <CardContent>
           <CardTitle>{post.title}</CardTitle>
-          <CardDescription>{user?.name}</CardDescription>
+          <CardDescription>{post.author!.name}</CardDescription>
         </CardContent>
       </Link>
     </Card>

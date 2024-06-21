@@ -1,5 +1,5 @@
 import { PostForm } from "@/app/dungeon/ui/post-form";
-import { getPostBySlug2 } from "@/lib/actions/post-get-full";
+import { postGetFull } from "@/lib/actions/post-get-full";
 import { postUpdate } from "@/lib/actions/post-update";
 import { redirect } from "next/navigation";
 const Page = async ({ params }: { params: { slug: string | undefined } }) => {
@@ -7,7 +7,7 @@ const Page = async ({ params }: { params: { slug: string | undefined } }) => {
     redirect("/dungeon");
   }
 
-  const fullPost = await getPostBySlug2(params.slug);
+  const fullPost = await postGetFull(params.slug);
 
   console.log("🐤", fullPost);
 

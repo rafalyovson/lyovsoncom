@@ -1,9 +1,9 @@
 "use server";
 
 import { db } from "@/data/db";
-import { categories } from "@/data/schema";
+import { categories } from "@/data/schema/category";
 
-export const categoryGetAll = async () => {
+export const categoriesGetAll = async () => {
   const cats = await db.select().from(categories);
   return cats;
 };
