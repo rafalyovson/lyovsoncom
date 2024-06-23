@@ -1,1 +1,0 @@
-ALTER TABLE "tag" ADD COLUMN "slug" text NOT NULL;

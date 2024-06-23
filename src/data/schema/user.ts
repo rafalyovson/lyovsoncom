@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { boolean, json, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { images } from "./image";
 
 export const users = pgTable("user", {
   id: text("id")
@@ -12,6 +13,9 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   bio: text("bio"),
   image: text("image"),
+  imageId: text("image_id").references(() => images.id, {
+    onDelete: "set null",
+  }), // Reference to image table
   xLink: text("xLink"),
   redditLink: text("redditLink"),
   linkedInLink: text("linkedInLink"),

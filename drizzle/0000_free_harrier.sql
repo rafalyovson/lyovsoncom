@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS "account" (
 CREATE TABLE IF NOT EXISTS "category" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"parentId" text
+	"slug" text NOT NULL,
+	"color" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "category_post" (
@@ -34,6 +35,14 @@ CREATE TABLE IF NOT EXISTS "comment" (
 	"parentId" text
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "image" (
+	"id" text PRIMARY KEY NOT NULL,
+	"url" text NOT NULL,
+	"name" text,
+	"alt_text" text,
+	"type" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "post" (
 	"id" text PRIMARY KEY NOT NULL,
 	"title" text NOT NULL,
@@ -45,6 +54,7 @@ CREATE TABLE IF NOT EXISTS "post" (
 	"slug" text NOT NULL,
 	"type" text NOT NULL,
 	"metadata" json,
+	"featured_image_id" text,
 	CONSTRAINT "post_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
@@ -69,20 +79,27 @@ CREATE TABLE IF NOT EXISTS "tag_post" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tag" (
 	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL
+	"name" text NOT NULL,
+	"slug" text NOT NULL,
+	"color" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "user" (
 	"id" text PRIMARY KEY NOT NULL,
+	"username" text,
+	"isLyovson" boolean DEFAULT false,
 	"name" text,
 	"email" text NOT NULL,
 	"emailVerified" timestamp,
-	"avatar" text,
+	"bio" text,
+	"image_id" text,
 	"xLink" text,
 	"redditLink" text,
 	"linkedInLink" text,
 	"githubLink" text,
-	"youtubeLink" text
+	"youtubeLink" text,
+	"links" json,
+	CONSTRAINT "user_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "verificationToken" (
@@ -94,12 +111,6 @@ CREATE TABLE IF NOT EXISTS "verificationToken" (
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "category" ADD CONSTRAINT "category_parentId_category_id_fk" FOREIGN KEY ("parentId") REFERENCES "public"."category"("id") ON DELETE set null ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -141,6 +152,12 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "post" ADD CONSTRAINT "post_featured_image_id_image_id_fk" FOREIGN KEY ("featured_image_id") REFERENCES "public"."image"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -160,6 +177,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "tag_post" ADD CONSTRAINT "tag_post_tag_id_tag_id_fk" FOREIGN KEY ("tag_id") REFERENCES "public"."tag"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user" ADD CONSTRAINT "user_image_id_image_id_fk" FOREIGN KEY ("image_id") REFERENCES "public"."image"("id") ON DELETE set null ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

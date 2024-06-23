@@ -7,6 +7,7 @@ export const categories: ReturnType<typeof pgTable> = pgTable("category", {
     .$defaultFn(() => crypto.randomUUID()),
   name: text("name").notNull(),
   slug: text("slug").notNull(),
+  color: text("color"),
 });
 
 export type Category = InferSelectModel<typeof categories>;

@@ -18,6 +18,10 @@ export type { NewVerificationToken, VerificationToken } from "./verification";
 export { posts } from "./post";
 export type { NewPost, Post } from "./post";
 
+// image
+export { images } from "./image";
+export type { Image, NewImage } from "./image";
+
 // category
 export { categories } from "./category";
 export type { Category, NewCategory } from "./category";

@@ -1,0 +1,15 @@
+import { InferInsertModel, InferSelectModel } from "drizzle-orm";
+import { pgTable, text } from "drizzle-orm/pg-core";
+
+export const images = pgTable("image", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  url: text("url").notNull(),
+  name: text("name"),
+  altText: text("alt_text"),
+  type: text("type").notNull(), // E.g., "postImage", "userImage"
+});
+
+export type Image = InferSelectModel<typeof images>;
+export type NewImage = InferInsertModel<typeof images>;
