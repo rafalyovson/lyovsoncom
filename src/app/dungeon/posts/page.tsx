@@ -1,15 +1,14 @@
 import { PostTable } from "@/app/dungeon/ui/post-table";
 import { postsGetAll } from "@/lib/actions/posts-get-all";
+import { PageHeader } from "../ui/page-header";
 
 const Posts = async () => {
   const posts = await postsGetAll();
-  if (!posts) {
-    return <div>No posts</div>;
-  }
 
   return (
     <main>
-      <PostTable posts={posts} />
+      <PageHeader title="Posts" link="/dungeon/posts/create" />
+      {posts && <PostTable posts={posts} />}
     </main>
   );
 };

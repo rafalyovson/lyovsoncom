@@ -3,6 +3,7 @@ import { User } from "@/data/schema";
 import { usersGetAll } from "@/lib/actions/users-get-all";
 import Image from "next/image";
 import Link from "next/link";
+import { PageHeader } from "../ui/page-header";
 
 const Users = async () => {
   const allUsers = await usersGetAll();
@@ -11,7 +12,7 @@ const Users = async () => {
   }
   return (
     <>
-      <h1>Users</h1>
+      <PageHeader title="Users" link="/dungeon/users/create" />
       <section className="flex flex-col gap-4 p-4">
         {allUsers.map((user: User) => (
           <Link key={user.id} href={`/dungeon/users/${user.username}`}>

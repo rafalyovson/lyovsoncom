@@ -5,10 +5,11 @@ export const images = pgTable("image", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
+  slug: text("slug").notNull(),
   url: text("url").notNull(),
-  name: text("name"),
+  caption: text("name"),
   altText: text("alt_text"),
-  type: text("type").notNull(), // E.g., "postImage", "userImage"
+  group: text("type").notNull(), // E.g., "postImage", "userImage"
 });
 
 export type Image = InferSelectModel<typeof images>;
