@@ -10,12 +10,12 @@ import { useActionState, useState } from "react";
 import { ImageForm } from "../image-form";
 
 export const UserForm = ({ action, user }: { action: any; user?: any }) => {
-  const [state, formAction, isPending] = useActionState(action, {
+  const [_state, formAction, isPending] = useActionState(action, {
     message: "",
     success: false,
   });
 
-  const [image, setImage] = useState(user?.imageId || "");
+  const [image, _setImage] = useState(user?.imageId || "");
 
   return (
     <form
