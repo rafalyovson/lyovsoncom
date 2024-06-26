@@ -74,7 +74,7 @@ export function PostFormClient({
               onChange={(e) => setTitle(() => e.target.value)}
             />
           </section>
-          <section className="flex flex-col gap-2 hidden ">
+          <section className=" flex-col gap-2 hidden ">
             <Label htmlFor="slug">Slug</Label>
             <Input
               name="slug"

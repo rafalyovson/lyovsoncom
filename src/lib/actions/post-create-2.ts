@@ -17,7 +17,7 @@ import { z } from "zod";
 
 export const postCreate = async (
   content: any, // Changed JSON to any for better TypeScript compatibility
-  prevState: any,
+  _prevState: any,
   formData: FormData
 ) => {
   const data: NewPost = {
