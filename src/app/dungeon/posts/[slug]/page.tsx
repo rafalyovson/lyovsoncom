@@ -4,6 +4,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 const PostHeader = async ({ post }: { post: any }) => {
+  console.log("🐤", post);
   return (
     <header className="flex flex-col-reverse items-center gap-12 lg:flex-row-reverse">
       <section className="flex flex-col gap-2 lg:w-1/2">
@@ -25,11 +26,11 @@ const PostHeader = async ({ post }: { post: any }) => {
       </section>
       <section className="flex justify-center lg:w-1/2">
         <Image
-          src={post.featuredImg || ""}
-          alt={post.title}
+          className="rounded-lg shadow-lg "
+          src={post.featuredImage?.url || ""}
+          alt={post.featuredImage?.altText || ""}
           width="600"
           height="600"
-          className="rounded-lg shadow-lg "
         />
       </section>
     </header>

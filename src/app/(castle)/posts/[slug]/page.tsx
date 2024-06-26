@@ -51,8 +51,8 @@ const PostHeader = async ({ post }: { post: any }) => {
       </section>
       <section className="flex justify-center lg:w-1/2">
         <Image
-          src={post.featuredImg || ""}
-          alt={post.title}
+          src={post.featuredImage?.url || ""}
+          alt={post.featuredImage?.altText || ""}
           width="600"
           height="600"
           className="rounded-lg shadow-lg "
@@ -68,6 +68,8 @@ const Page = async ({ params }: { params: any }) => {
   if (!post) {
     redirect("/posts");
   }
+
+  console.log("🐤", post);
 
   return (
     <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg">

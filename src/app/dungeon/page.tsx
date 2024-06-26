@@ -1,17 +1,9 @@
-import { PostTable } from "@/app/dungeon/ui/post-table";
-import { postsGetAll } from "@/lib/actions/posts-get-all";
-
-const Posts = async () => {
-  const posts = await postsGetAll();
-  if (!posts) {
-    return <div>No posts</div>;
-  }
-
+const DungeonHome = async () => {
   return (
     <main>
-      <PostTable posts={posts} />
+      <h1>Dungeon</h1>
     </main>
   );
 };
 
-export default Posts;
+export default DungeonHome;

@@ -1,6 +1,6 @@
 import { About } from "@/app/(castle)/ui/About";
 
-const Page = () => {
+const CastleHome = () => {
   return (
     <>
       <About />
@@ -8,4 +8,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default CastleHome;

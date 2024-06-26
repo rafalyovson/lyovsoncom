@@ -19,8 +19,8 @@ export const PostCard = ({ post }: { post: Post }) => {
         <CardHeader>
           <Image
             className="rounded-md aspect-square"
-            src={post.featuredImg || "/images/placeholder.png"}
-            alt={post.title + " featured image"}
+            src={post.featuredImage?.url || ""}
+            alt={post.featuredImage?.altText || ""}
             width="400"
             height="400"
           />

@@ -1,9 +1,15 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -13,8 +19,10 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { contentTypes } from "@/data/content-types";
-import { Category } from "@/data/schema";
-import { capitalize, slugify } from "@/lib/utils";
+import { Category, User } from "@/data/schema";
+import { capitalize, cn, slugify } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
 import { Editor } from "../editor/Editor";
@@ -24,16 +32,19 @@ export function PostFormClient({
   post,
   action,
   allCats,
+  authors,
 }: {
   post?: any;
   action: any;
   allCats: any;
+  authors: any;
 }) {
   const [content, setContent] = useState(post?.content || "");
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState(post?.tags || []);
   const [newTag, setNewTag] = useState("");
-
+  const [date, setDate] = useState<Date>();
+  const [title, setTitle] = useState(post?.title || "");
   const [image, setImage] = useState(null);
 
   const actionWithContent = action.bind(null, content);
@@ -59,17 +70,41 @@ export function PostFormClient({
               name="title"
               type="text"
               placeholder="Title"
-              defaultValue={post?.title || ""}
+              value={title}
+              onChange={(e) => setTitle(() => e.target.value)}
             />
           </section>
-          <section className="flex flex-col gap-2  ">
+          <section className="flex flex-col gap-2 hidden ">
             <Label htmlFor="slug">Slug</Label>
             <Input
               name="slug"
               type="text"
               placeholder="Slug"
               defaultValue={post?.slug || ""}
+              value={slugify(title)}
             />
+          </section>
+
+          <section className="flex flex-col gap-2">
+            <Label htmlFor="authorId">Author</Label>
+            <Select name="authorId" defaultValue={post?.author?.name || ""}>
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={
+                    post?.author?.name
+                      ? post?.author?.name
+                      : "Choose the author"
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {authors.map((author: User) => (
+                  <SelectItem key={author.id} value={author.id!}>
+                    {capitalize(author.name!)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </section>
 
           <PostImageForm
@@ -79,12 +114,49 @@ export function PostFormClient({
             setImage={setImage}
           />
 
+          <section className="flex flex-col gap-2">
+            <Label htmlFor="createdAt">Created At</Label>
+            <Input
+              className="hidden"
+              name="createdAt"
+              type="string"
+              value={date?.toDateString()}
+              defaultValue={
+                post?.createdAt?.toDateString() || new Date().toDateString()
+              }
+            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                  defaultMonth={new Date()}
+                />
+              </PopoverContent>
+            </Popover>
+          </section>
+
           <section className="flex flex-col gap-2 ">
             <Label htmlFor="published">Published</Label>
             <Switch name="published" defaultChecked={post?.published} />
           </section>
 
           <section className="flex flex-col gap-2 ">
+            <Label htmlFor="type">Type</Label>
             <Select name="type" defaultValue={post?.type}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a post type" />

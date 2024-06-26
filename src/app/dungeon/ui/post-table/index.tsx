@@ -54,8 +54,8 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                   <TableCell className="w-[120px]">
                     <Image
                       className="w-[100px] aspect-square object-cover"
-                      src={post.featuredImg || ""}
-                      alt={post.title}
+                      src={post.featuredImage?.url || ""}
+                      alt={post.featuredImage?.altText || ""}
                       width={200}
                       height={200}
                     />

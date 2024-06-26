@@ -1,4 +1,5 @@
 import { categoriesGetAll } from "@/lib/actions/categories-get-all";
+import { usersGetAll } from "@/lib/actions/users-get-all";
 import { PostFormClient } from "./form";
 export const PostForm = async ({
   post,
@@ -8,6 +9,14 @@ export const PostForm = async ({
   action: any;
 }) => {
   const allCats = await categoriesGetAll();
+  const authors = await usersGetAll();
 
-  return <PostFormClient post={post} action={action} allCats={allCats} />;
+  return (
+    <PostFormClient
+      post={post}
+      action={action}
+      allCats={allCats}
+      authors={authors}
+    />
+  );
 };
