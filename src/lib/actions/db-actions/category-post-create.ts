@@ -18,13 +18,14 @@ export async function categoryPostCreate(data: {
   const parsedData = schema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log("Validation error", parsedData.error.issues);
+    console.log("🐤 Validation error", parsedData.error.issues);
     return {
       success: parsedData.success,
       message: "Validation error",
       categoryPost: null,
     };
   }
+
   try {
     await db.insert(categoryPost).values(data);
     return {

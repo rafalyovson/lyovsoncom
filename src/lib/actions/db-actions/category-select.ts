@@ -43,6 +43,7 @@ export async function categorySelectBySlug(slug: string): Promise<{
       .select()
       .from(categories)
       .where(eq(categories.slug, slug));
+    console.log("theCategory", theCategory);
     return { success: true, category: theCategory, message: "Success" };
   } catch (error) {
     console.error("Error selecting category by slug:", error);

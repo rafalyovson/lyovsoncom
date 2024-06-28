@@ -6,7 +6,7 @@ export async function categoryPostDelete(data: {
   postId?: string;
   categoryId?: string;
 }): Promise<{ success: boolean; message: string }> {
-  if (!data.postId || !data.categoryId) {
+  if (!data.postId && !data.categoryId) {
     return { success: false, message: "Invalid data" };
   }
 

@@ -39,13 +39,15 @@ export function PostFormClient({
   allCats: any;
   authors: any;
 }) {
+  console.log("🦷", post);
+
   const [content, setContent] = useState(post?.content || "");
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState(post?.tags || []);
   const [newTag, setNewTag] = useState("");
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState<Date>(post?.createdAt || new Date());
   const [title, setTitle] = useState(post?.title || "");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(post?.featuredImage || null);
 
   const actionWithContent = action.bind(null, content);
   const [state, formAction, isPending] = useActionState(actionWithContent, {
@@ -79,32 +81,18 @@ export function PostFormClient({
               onChange={(e) => setTitle(() => e.target.value)}
             />
           </section>
-          <section className=" flex-col gap-2 hidden ">
-            <Label htmlFor="slug">Slug</Label>
-            <Input
-              name="slug"
-              type="text"
-              placeholder="Slug"
-              defaultValue={post?.slug || ""}
-              value={slugify(title)}
-            />
-          </section>
 
           <section className="flex flex-col gap-2">
             <Label htmlFor="authorId">Author</Label>
-            <Select name="authorId" defaultValue={post?.author?.name || ""}>
+            <Select name="authorId" defaultValue={post?.author?.id || ""}>
               <SelectTrigger>
                 <SelectValue
-                  placeholder={
-                    post?.author?.name
-                      ? post?.author?.name
-                      : "Choose the author"
-                  }
+                  placeholder={post?.author?.name || "Choose the author"}
                 />
               </SelectTrigger>
               <SelectContent>
                 {authors.map((author: User) => (
-                  <SelectItem key={author.id} value={author.id!}>
+                  <SelectItem key={author.id} value={author.id}>
                     {capitalize(author.name!)}
                   </SelectItem>
                 ))}
@@ -147,7 +135,7 @@ export function PostFormClient({
                 <Calendar
                   mode="single"
                   selected={date}
-                  onSelect={setDate}
+                  onSelect={(e) => setDate(new Date(e!))}
                   initialFocus
                   defaultMonth={new Date()}
                 />
@@ -179,7 +167,7 @@ export function PostFormClient({
 
           <section className="flex flex-col gap-2">
             <Label htmlFor="category">Category</Label>
-            <Select name="category" defaultValue={post?.category?.name}>
+            <Select name="category" defaultValue={post?.categories?.[0]?.name}>
               <SelectTrigger>
                 <SelectValue
                   placeholder={

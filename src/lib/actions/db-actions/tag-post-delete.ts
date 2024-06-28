@@ -6,7 +6,7 @@ export async function tagPostDelete(data: {
   postId?: string;
   tagId?: string;
 }): Promise<{ success: boolean; message: string }> {
-  if (!data.postId || !data.tagId) {
+  if (!data.postId && !data.tagId) {
     return { success: false, message: "Invalid data" };
   }
 
