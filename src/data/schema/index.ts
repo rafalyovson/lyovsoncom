@@ -15,7 +15,7 @@ export { verificationTokens } from "./verification";
 export type { NewVerificationToken, VerificationToken } from "./verification";
 
 // post
-export { posts } from "./post";
+export { postInsertSchema, postSelectSchema, posts } from "./post";
 export type { NewPost, Post } from "./post";
 
 // image
@@ -23,11 +23,15 @@ export { images } from "./image";
 export type { Image, NewImage } from "./image";
 
 // category
-export { categories } from "./category";
+export {
+  categories,
+  categoryInsertSchema,
+  categorySelectSchema,
+} from "./category";
 export type { Category, NewCategory } from "./category";
 
 // tag
-export { tags } from "./tag";
+export { tagInsertSchema, tagSelectSchema, tags } from "./tag";
 export type { NewTag, Tag } from "./tag";
 
 // categoryPost

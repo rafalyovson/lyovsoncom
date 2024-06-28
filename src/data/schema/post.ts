@@ -1,5 +1,8 @@
 import { InferInsertModel, InferSelectModel } from "drizzle-orm";
 import { boolean, json, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
+import { PostType } from "../post-types";
 import { images } from "./image"; // Import the new images table
 import { users } from "./user";
 
@@ -29,3 +32,18 @@ export const posts = pgTable("post", {
 
 export type Post = InferSelectModel<typeof posts>;
 export type NewPost = InferInsertModel<typeof posts>;
+
+export const postInsertSchema = createInsertSchema(posts, {
+  title: z.string().min(1, { message: "Title is required" }),
+  slug: z.string().min(1, { message: "Slug is required" }),
+  content: z.string().min(1, { message: "Content is required" }),
+  featuredImageId: z.string().min(1, { message: "Image is required" }),
+  authorId: z.string().uuid(),
+  published: z.boolean().default(false),
+  createdAt: z.date(),
+  type: z
+    .nativeEnum(PostType, { message: "Invalid post type" })
+    .default(PostType.Article),
+});
+
+export const postSelectSchema = createSelectSchema(posts, {});

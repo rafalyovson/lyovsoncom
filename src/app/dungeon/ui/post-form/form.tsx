@@ -51,10 +51,15 @@ export function PostFormClient({
   const [state, formAction, isPending] = useActionState(actionWithContent, {
     message: "",
     success: false,
+    post: post || null,
   });
 
-  if (state.message !== "") {
-    toast.success("Done!");
+  if (state.success) {
+    toast.success(state.message);
+  }
+
+  if (!state.success && state.message !== "") {
+    toast.error(state.message);
   }
 
   return (

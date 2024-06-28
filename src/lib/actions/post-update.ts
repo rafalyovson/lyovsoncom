@@ -57,19 +57,11 @@ export const postUpdate = async (
     return { message: "Validation error", url: "" };
   }
 
-  // Fetch all tags and categories
-  const allTags = await db.select().from(tagCat);
-  const category = formData.get("category") as string;
-
   // Check if post already exists
   const [existingPost] = await db
     .select()
     .from(posts)
     .where(eq(posts.slug, data.slug));
-  const oldPostTags = await db
-    .select()
-    .from(tagPost)
-    .where(eq(tagPost.postId, existingPost?.id));
 
   // Update or insert post
   if (prevState.slug === data.slug) {
@@ -83,6 +75,7 @@ export const postUpdate = async (
   }
 
   // Update category
+  const category = formData.get("category") as string;
   if (category) {
     const [categoryRecord] = await db
       .select()
@@ -97,6 +90,12 @@ export const postUpdate = async (
   }
 
   // Update tags
+
+  const allTags = await db.select().from(tagCat);
+  const oldPostTags = await db
+    .select()
+    .from(tagPost)
+    .where(eq(tagPost.postId, existingPost?.id));
   for (const tag of tags) {
     const [existingTag] = allTags.filter((t) => t.slug === tag.slug);
 

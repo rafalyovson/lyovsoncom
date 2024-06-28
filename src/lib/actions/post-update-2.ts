@@ -1,18 +1,19 @@
 "use server";
 
 import { NewPost, Post, postInsertSchema } from "@/data/schema";
-import { capitalize, slugify } from "@/lib/utils";
-import { redirect } from "next/navigation";
+import { slugify } from "@/lib/utils";
 import { categoryPostCreate } from "./db-actions/category-post-create";
+import { categoryPostDelete } from "./db-actions/category-post-delete";
 import { categorySelectBySlug } from "./db-actions/category-select";
+import { postDeleteById } from "./db-actions/post-delete";
 import { postInsert } from "./db-actions/post-insert";
-import { tagCreate } from "./db-actions/tag-create";
+import { postUpdate } from "./db-actions/post-update";
 import { tagPostCreate } from "./db-actions/tag-post-create";
-import { tagSelectBySlug } from "./db-actions/tag-select";
+import { tagSelectAll, tagSelectBySlug } from "./db-actions/tag-select";
 
-export async function postCreate(
+export async function postUpdate2(
   content: any, // Changed JSON to any for better TypeScript compatibility
-  _prevState: { message: string; success: boolean; post: Post | null },
+  prevState: { message: string; success: boolean; post: Post },
   formData: FormData
 ): Promise<{ success: boolean; message: string; post: Post | null }> {
   const data: NewPost = {
@@ -34,16 +35,27 @@ export async function postCreate(
   }
 
   try {
-    const { post: newPost } = await postInsert(data);
+    let newPost;
+    if (prevState.post.slug === data.slug) {
+      const { post } = await postUpdate(data);
+      newPost = post;
+    } else {
+      await postDeleteById(prevState.post.id);
+      const { post } = await postInsert(data);
+      newPost = post;
+    }
 
     if (!newPost) {
       return { message: "Post not found", success: false, post: null };
     }
 
-    const category = formData.get("category") as string;
-    if (category) {
-      const result = await categorySelectBySlug(category);
+    const categorySlug = formData.get("category") as string;
+    if (categorySlug) {
+      const result = await categorySelectBySlug(categorySlug);
       if (result.success && result.category) {
+        await categoryPostDelete({
+          postId: prevState.post.id,
+        });
         await categoryPostCreate({
           postId: newPost.id,
           categoryId: result.category.id,
@@ -51,33 +63,23 @@ export async function postCreate(
       }
     }
 
-    const tags = formData.getAll("tags") as string[];
-    tags
+    const newTags = formData.getAll("tags") as string[];
+    const allTags = await tagSelectAll();
+    console.log("allTags", allTags);
+
+    newTags
       .filter((tag) => tag !== "")
       .forEach(async (tag) => {
         const result = await tagSelectBySlug(slugify(tag));
-        let tagId;
         if (result.success && result.tag) {
-          tagId = result.tag.id;
-        } else {
-          const { tag: newTag } = await tagCreate({
-            slug: slugify(tag),
-            name: capitalize(tag),
+          await tagPostCreate({
+            postId: newPost.id,
+            tagId: result.tag.id,
           });
-
-          if (newTag) {
-            tagId = newTag.id;
-          }
-        }
-        if (tagId) {
-          await tagPostCreate({ postId: newPost.id, tagId });
-        } else {
-          console.error("Failed to create tag");
         }
       });
-    redirect("/dungeon/posts");
     return {
-      message: "Post created successfully",
+      message: "Post updated successfully",
       success: true,
       post: newPost,
     };
