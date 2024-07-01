@@ -1,99 +1,92 @@
 "use server";
 
-import { auth } from "@/data/auth";
-import { db } from "@/data/db";
-import {
-  categories,
-  categoryPost,
-  posts,
-  tags as tagCat,
-  tagPost,
-} from "@/data/schema";
-import { eq } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { NewPost, Post, postInsertSchema } from "@/data/schema";
+import { capitalize, slugify } from "@/lib/utils";
+import { redirect } from "next/navigation";
+import { categoryPostCreate } from "./db-actions/category-post-create";
+import { categorySelectBySlug } from "./db-actions/category-select";
+import { postInsert } from "./db-actions/post-insert";
+import { tagCreate } from "./db-actions/tag-create";
+import { tagPostCreate } from "./db-actions/tag-post-create";
+import { tagSelectBySlug } from "./db-actions/tag-select";
 
-export const postCreate = async (
-  tags: any[],
-  content: JSON,
-  _prevState: any,
+export async function postCreate(
+  content: any, // Changed JSON to any for better TypeScript compatibility
+  _prevState: { message: string; success: boolean; post: Post | null },
   formData: FormData
-) => {
-  // Authenticate user
-  const session = await auth();
-  if (!session || !session.user) {
-    return { message: "Not authenticated", url: "" };
-  }
-  const user = session.user;
-
-  // Prepare post data
-  const data = {
+): Promise<{ success: boolean; message: string; post: Post | null }> {
+  const data: NewPost = {
     title: formData.get("title") as string,
-    slug: formData.get("slug") as string,
+    slug: slugify(formData.get("title") as string),
+    featuredImageId: formData.get("featuredImageId") as string,
+    published: formData.get("published") === "on" ? true : false,
     content: JSON.stringify(content),
-    featuredImg: formData.get("featuredImg") as string,
-    authorId: user.id!,
-    published: !!formData.get("published"),
     type: formData.get("type") as string,
+    authorId: formData.get("authorId") as string,
+    createdAt: new Date(formData.get("createdAt") as string),
   };
 
-  // Validate data using Zod schema
-  const schema = createInsertSchema(posts, {
-    title: z.string().min(1, { message: "Title is required" }),
-    slug: z.string().min(1, { message: "Slug is required" }),
-    content: z.string().min(1, { message: "Content is required" }),
-    featuredImg: z.string().url().min(1, { message: "Image is required" }),
-    authorId: z.string().uuid().optional(),
-    published: z.boolean().default(false),
-    type: z
-      .enum(["article", "review", "embed", "podcast", "video"])
-      .default("article"),
-  });
+  const parsedData = postInsertSchema.safeParse(data);
 
-  const parsedData = schema.safeParse(data);
   if (!parsedData.success) {
-    console.log("Validation error", parsedData.error.issues);
-    return { message: "Validation error", url: "" };
+    return { message: "Validation error", success: false, post: null };
   }
 
-  // Insert new post
-  await db.insert(posts).values(data);
-  const [newPost] = await db
-    .select()
-    .from(posts)
-    .where(eq(posts.slug, data.slug));
+  try {
+    const { post: newPost } = await postInsert(data);
 
-  // Update category
-  const category = formData.get("category") as string;
-  if (category) {
-    const [categoryRecord] = await db
-      .select()
-      .from(categories)
-      .where(eq(categories.name, category));
-    await db
-      .insert(categoryPost)
-      .values({ postId: newPost.id, categoryId: categoryRecord.id });
-  }
-
-  // Fetch all existing tags
-  const allTags = await db.select().from(tagCat);
-
-  // Update tags
-  for (const tag of tags) {
-    const [existingTag] = allTags.filter((t) => t.slug === tag.slug);
-    if (existingTag) {
-      await db
-        .insert(tagPost)
-        .values({ postId: newPost.id, tagId: existingTag.id });
-    } else {
-      await db.insert(tagCat).values({ slug: tag.slug, name: tag.name });
-      const [newTag] = await db
-        .select()
-        .from(tagCat)
-        .where(eq(tagCat.slug, tag.slug));
-      await db.insert(tagPost).values({ postId: newPost.id, tagId: newTag.id });
+    if (!newPost) {
+      return { message: "Post not found", success: false, post: null };
     }
-  }
 
-  return { message: "Post created!", url: `/posts/${data.slug}` };
-};
+    const categoryName = formData.get("category") as string;
+    if (categoryName) {
+      const result = await categorySelectBySlug({
+        slug: slugify(categoryName),
+      });
+
+      if (result.success && result.category) {
+        await categoryPostCreate({
+          postId: newPost.id,
+          categoryId: result.category.id,
+        });
+      }
+    }
+
+    const tags = formData.getAll("tags") as string[];
+    tags.filter(Boolean).forEach(async (tag) => {
+      const result = await tagSelectBySlug({ slug: slugify(tag) });
+      let tagId;
+      if (result.success && result.tag) {
+        tagId = result.tag.id;
+      } else {
+        const { tag: newTag } = await tagCreate({
+          slug: slugify(tag),
+          name: capitalize(tag),
+        });
+
+        if (newTag) {
+          tagId = newTag.id;
+        }
+      }
+      if (tagId) {
+        await tagPostCreate({ postId: newPost.id, tagId });
+      } else {
+        console.error("Failed to create tag");
+      }
+    });
+    redirect("/dungeon/posts");
+    return {
+      message: "Post created successfully",
+      success: true,
+      post: newPost,
+    };
+  } catch (error) {
+    console.error("Failed to insert post:", error);
+    return {
+      message: "Failed to insert post",
+      success: false,
+      post: null,
+    };
+  }
+}

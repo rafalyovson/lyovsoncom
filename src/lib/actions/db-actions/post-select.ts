@@ -8,7 +8,7 @@ export async function postSelectAll(): Promise<{
   message: string;
 }> {
   try {
-    const allPosts: Post[] = await db.select().from(posts);
+    const allPosts = await db.select().from(posts);
     return { success: true, posts: allPosts, message: "Success" };
   } catch (error) {
     console.error("Error selecting all posts:", error);
@@ -16,16 +16,16 @@ export async function postSelectAll(): Promise<{
   }
 }
 
-export async function postSelectBySlug(slug: string): Promise<{
+export async function postSelectBySlug(data: { slug: string }): Promise<{
   success: boolean;
   post: Post | null;
   message: string;
 }> {
   try {
-    const [thePost]: Post[] = await db
+    const [thePost] = await db
       .select()
       .from(posts)
-      .where(eq(posts.slug, slug));
+      .where(eq(posts.slug, data.slug));
     return { success: true, post: thePost, message: "Success" };
   } catch (error) {
     console.error("Error selecting post by slug:", error);
@@ -33,16 +33,16 @@ export async function postSelectBySlug(slug: string): Promise<{
   }
 }
 
-export async function postSelectById(id: string): Promise<{
+export async function postSelectById(data: { id: string }): Promise<{
   success: boolean;
   post: Post | null;
   message: string;
 }> {
   try {
-    const [thePost]: Post[] = await db
+    const [thePost] = await db
       .select()
       .from(posts)
-      .where(eq(posts.id, id));
+      .where(eq(posts.id, data.id));
     return { success: true, post: thePost, message: "Success" };
   } catch (error) {
     console.error("Error selecting post by id:", error);

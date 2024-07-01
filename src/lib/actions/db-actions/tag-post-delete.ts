@@ -6,15 +6,19 @@ export async function tagPostDelete(data: {
   postId?: string;
   tagId?: string;
 }): Promise<{ success: boolean; message: string }> {
-  if (!data.postId && !data.tagId) {
-    return { success: false, message: "Invalid data" };
-  }
-
   try {
-    if (data.postId) {
-      await db.delete(tagPost).where(eq(tagPost.postId, data.postId));
+    if (data.postId && data.tagId) {
+      await db
+        .delete(tagPost)
+        .where(
+          eq(tagPost.postId, data.postId) && eq(tagPost.tagId, data.tagId)
+        );
     } else if (data.tagId) {
       await db.delete(tagPost).where(eq(tagPost.tagId, data.tagId));
+    } else if (data.postId) {
+      await db.delete(tagPost).where(eq(tagPost.postId, data.postId));
+    } else {
+      return { success: false, message: "Invalid data" };
     }
 
     return { success: true, message: "TagPost deleted successfully" };

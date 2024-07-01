@@ -6,17 +6,22 @@ export async function categoryPostDelete(data: {
   postId?: string;
   categoryId?: string;
 }): Promise<{ success: boolean; message: string }> {
-  if (!data.postId && !data.categoryId) {
-    return { success: false, message: "Invalid data" };
-  }
-
   try {
-    if (data.postId) {
-      await db.delete(categoryPost).where(eq(categoryPost.postId, data.postId));
+    if (data.postId && data.categoryId) {
+      await db
+        .delete(categoryPost)
+        .where(
+          eq(categoryPost.postId, data.postId) &&
+            eq(categoryPost.categoryId, data.categoryId)
+        );
     } else if (data.categoryId) {
       await db
         .delete(categoryPost)
         .where(eq(categoryPost.categoryId, data.categoryId));
+    } else if (data.postId) {
+      await db.delete(categoryPost).where(eq(categoryPost.postId, data.postId));
+    } else {
+      return { success: false, message: "Invalid data" };
     }
 
     return { success: true, message: "CategoryPost deleted successfully" };

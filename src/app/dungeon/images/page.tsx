@@ -9,6 +9,7 @@ import Link from "next/link";
 import { PageHeader } from "../ui/page-header";
 
 const ImageGrid = ({ images }: { images: ImageType[] }) => {
+  console.log("🐤", images);
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto max-w-[1200px] gap-4 place-items-center ">
       {images.map((image: ImageType) => (

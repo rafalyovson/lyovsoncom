@@ -1,12 +1,9 @@
 "use server";
 
-import { db } from "@/data/db";
-import { images } from "@/data/schema";
+import { imageInsertSchema } from "@/data/schema";
 import { slugify } from "@/lib/utils";
-import { put } from "@vercel/blob";
-import { eq } from "drizzle-orm";
-import { createInsertSchema } from "drizzle-zod";
-import { z } from "zod";
+import { blobInsert } from "./db-actions/blob-insert";
+import { imageInsert } from "./db-actions/image-insert";
 
 export async function imageCreate(_prevData: any, formData: FormData) {
   const data = {
@@ -15,43 +12,38 @@ export async function imageCreate(_prevData: any, formData: FormData) {
     group: formData.get("group") as string,
   };
 
-  const imageFile = formData.get("file") as File;
+  const file = formData.get("file") as File;
 
-  if (!data.caption || !data.altText || !data.group || !imageFile) {
+  if (!data.caption || !data.altText || !data.group || !file) {
     return { message: "Invalid form data", success: false, image: null };
   }
 
-  const imageName = `${data.group}.${slugify(data.caption)}.${
-    imageFile.type.split("/")[1]
+  const name = `${data.group}.${slugify(data.caption)}.${
+    file.type.split("/")[1]
   }`;
 
-  const result = await put(imageName, imageFile, {
-    access: "public",
-    addRandomSuffix: false,
-  });
+  const result = await blobInsert({ name, file });
 
-  if (!result) {
-    return { message: "Image upload failed", success: false, image: null };
+  if (!result.success || !result.blobMeta) {
+    return { message: result.message, success: result.success, image: null };
   }
 
-  const { url } = result;
-  const slug = url.split("/").pop() as string;
+  const { url, pathname: slug } = result.blobMeta;
 
-  const schema = createInsertSchema(images, {
-    url: z.string().url().min(1, { message: "Image is required" }),
-    slug: z.string().min(1, { message: "Slug is required" }),
-  });
+  const fullData = { ...data, url, slug };
 
-  const parsedData = schema.safeParse({ ...data, url, slug });
+  const parsedData = imageInsertSchema.safeParse(fullData);
 
   if (!parsedData.success) {
     console.log("Validation error", parsedData.error.issues);
-    return { message: "Validation error", success: false };
+    return { message: "Validation error", success: false, image: null };
   }
 
-  await db.insert(images).values({ ...data, url, slug });
-
-  const [newImage] = await db.select().from(images).where(eq(images.url, url));
-
-  return { message: "success", success: true, image: newImage };
+  try {
+    const result = await imageInsert(fullData);
+    return result;
+  } catch (error) {
+    console.error("Failed to insert image:", error);
+    return { message: "Failed to insert image", success: false, image: null };
+  }
 }

@@ -16,7 +16,7 @@ export async function categorySelectAll(): Promise<{
   }
 }
 
-export async function categorySelectById(id: string): Promise<{
+export async function categorySelectById(data: { id: string }): Promise<{
   success: boolean;
   category: Category | null;
   message: string;
@@ -25,7 +25,7 @@ export async function categorySelectById(id: string): Promise<{
     const [theCategory] = await db
       .select()
       .from(categories)
-      .where(eq(categories.id, id));
+      .where(eq(categories.id, data.id));
     return { success: true, category: theCategory, message: "Success" };
   } catch (error) {
     console.error("Error selecting category by id:", error);
@@ -33,7 +33,7 @@ export async function categorySelectById(id: string): Promise<{
   }
 }
 
-export async function categorySelectBySlug(slug: string): Promise<{
+export async function categorySelectBySlug(data: { slug: string }): Promise<{
   success: boolean;
   category: Category | null;
   message: string;
@@ -42,9 +42,13 @@ export async function categorySelectBySlug(slug: string): Promise<{
     const [theCategory] = await db
       .select()
       .from(categories)
-      .where(eq(categories.slug, slug));
-    console.log("theCategory", theCategory);
-    return { success: true, category: theCategory, message: "Success" };
+      .where(eq(categories.slug, data.slug));
+
+    if (theCategory.length === 0) {
+      return { success: false, category: null, message: "Category not found" };
+    } else {
+      return { success: true, category: theCategory, message: "Success" };
+    }
   } catch (error) {
     console.error("Error selecting category by slug:", error);
     return { success: false, category: null, message: "Error" };

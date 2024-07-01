@@ -19,7 +19,7 @@ export { postInsertSchema, postSelectSchema, posts } from "./post";
 export type { NewPost, Post } from "./post";
 
 // image
-export { images } from "./image";
+export { imageInsertSchema, imageSelectSchema, images } from "./image";
 export type { Image, NewImage } from "./image";
 
 // category

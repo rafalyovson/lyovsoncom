@@ -1,4 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Image as ImageType } from "@/data/schema";
 import Image from "next/image";
 
@@ -14,6 +17,11 @@ export const ImageCard = ({ image }: { image: ImageType }) => {
           height={200}
         />
       </CardContent>
+      <CardFooter>
+        <Button className="w-full" variant={"secondary"} onClick={() => {}}>
+          Delete
+        </Button>
+      </CardFooter>
     </Card>
   );
 };
