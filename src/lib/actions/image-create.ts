@@ -1,9 +1,9 @@
 "use server";
 
-import { imageInsertSchema } from "@/data/schema";
-import { slugify } from "@/lib/utils";
-import { blobInsert } from "./db-actions/blob-insert";
-import { imageInsert } from "./db-actions/image-insert";
+import {imageInsertSchema} from "@/data/schema";
+import {slugify} from "@/lib/utils";
+import {blobInsert} from "./db-actions/blob-insert";
+import {imageInsert} from "./db-actions/image-insert";
 
 export async function imageCreate(_prevData: any, formData: FormData) {
   const data = {
@@ -40,8 +40,7 @@ export async function imageCreate(_prevData: any, formData: FormData) {
   }
 
   try {
-    const result = await imageInsert(fullData);
-    return result;
+      return await imageInsert(fullData);
   } catch (error) {
     console.error("Failed to insert image:", error);
     return { message: "Failed to insert image", success: false, image: null };

@@ -1,6 +1,6 @@
 "use server";
 
-import { imageDeletebyUrl } from "./db-actions/image-delete";
+import {imageDeletebyUrl} from "./db-actions/image-delete";
 
 export async function imageDelete(
   _prevState: { message: string; success: boolean },
@@ -12,8 +12,7 @@ export async function imageDelete(
     return { success: false, message: "Invalid URL" };
   }
   try {
-    const imageResult = await imageDeletebyUrl({ url });
-    return imageResult;
+    return await imageDeletebyUrl({url});
   } catch (error) {
     console.error("Failed to delete image:", error);
     return { success: false, message: "Failed to delete image" };

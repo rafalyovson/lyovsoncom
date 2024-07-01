@@ -18,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Post } from "@/data/types";
-import { postDelete } from "@/lib/actions/post-delete";
 import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -84,7 +83,6 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                       <Button
                         size={"icon"}
                         onClick={() => {
-                          postDelete(post);
                         }}
                         variant={"destructive"}
                       >

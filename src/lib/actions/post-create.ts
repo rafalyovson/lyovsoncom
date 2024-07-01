@@ -2,7 +2,6 @@
 
 import { NewPost, Post, postInsertSchema } from "@/data/schema";
 import { capitalize, slugify } from "@/lib/utils";
-import { redirect } from "next/navigation";
 import { categoryPostCreate } from "./db-actions/category-post-create";
 import { categorySelectBySlug } from "./db-actions/category-select";
 import { postInsert } from "./db-actions/post-insert";
@@ -19,7 +18,7 @@ export async function postCreate(
     title: formData.get("title") as string,
     slug: slugify(formData.get("title") as string),
     featuredImageId: formData.get("featuredImageId") as string,
-    published: formData.get("published") === "on" ? true : false,
+    published: formData.get("published") === "on",
     content: JSON.stringify(content),
     type: formData.get("type") as string,
     authorId: formData.get("authorId") as string,
@@ -54,7 +53,7 @@ export async function postCreate(
     }
 
     const tags = formData.getAll("tags") as string[];
-    tags.filter(Boolean).forEach(async (tag) => {
+    for (const tag of tags.filter(Boolean)) {
       const result = await tagSelectBySlug({ slug: slugify(tag) });
       let tagId;
       if (result.success && result.tag) {
@@ -74,8 +73,8 @@ export async function postCreate(
       } else {
         console.error("Failed to create tag");
       }
-    });
-    redirect("/dungeon/posts");
+    }
+
     return {
       message: "Post created successfully",
       success: true,

@@ -1,9 +1,9 @@
 "use server";
 
-import { imageDeletebyUrl } from "./db-actions/image-delete";
-import { imageSelectById } from "./db-actions/image-select";
-import { postDeleteById } from "./db-actions/post-delete";
-import { postSelectById } from "./db-actions/post-select";
+import {imageDeletebyUrl} from "./db-actions/image-delete";
+import {imageSelectById} from "./db-actions/image-select";
+import {postDeleteById} from "./db-actions/post-delete";
+import {postSelectById} from "./db-actions/post-select";
 
 export const postDelete = async (
   _prevState: { message: string; success: boolean },
@@ -31,7 +31,5 @@ export const postDelete = async (
     return imageResult;
   }
 
-  const result = await postDeleteById({ id: postId });
-
-  return result;
+  return await postDeleteById({id: postId});
 };
