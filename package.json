@@ -81,13 +81,13 @@
     "input-otp": "^1.2.4",
     "lexical": "^0.15.0",
     "lucide-react": "^0.379.0",
-    "next": "15.0.0-canary.50",
+    "next": "15.0.0-canary.51",
     "next-auth": "5.0.0-beta.19",
     "next-themes": "^0.2.1",
     "react": "19.0.0-rc-100dfd7dab-20240701",
     "react-day-picker": "^8.10.1",
     "react-dom": "19.0.0-rc-100dfd7dab-20240701",
-    "react-hook-form": "^7.52.0",
+    "react-hook-form": "^7.52.1",
     "react-player": "3.0.0-canary.4",
     "react-resizable-panels": "^2.0.19",
     "react-social-media-embed": "^2.5.13",
@@ -99,7 +99,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "prettier": "^3.3.2",
     "@types/node": "^20.14.9",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
@@ -108,6 +107,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.2.4",
     "postcss": "^8.4.39",
+    "prettier": "^3.3.2",
     "tailwindcss": "^3.4.4"
   },
   "packageManager": "pnpm@9.4.0+sha256.b6fd0bfda555e7e584ad7e56b30c68b01d5a04f9ee93989f4b93ca8473c49c74"

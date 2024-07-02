@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { imageGroups } from "@/data/image-groups";
-import { Image } from "@/data/schema";
-import { imageCreate } from "@/lib/actions/image-create";
-import { capitalize } from "@/lib/utils";
-import { Dispatch, useActionState } from "react";
-import { toast } from "sonner";
+} from '@/components/ui/select';
+import { imageGroups } from '@/data/image-groups';
+import { Image } from '@/data/schema';
+import { imageCreate } from '@/lib/actions/server-actions/image-create';
+import { capitalize } from '@/lib/utils';
+import { Dispatch, useActionState } from 'react';
+import { toast } from 'sonner';
 
 export const ImageForm = ({
   setImage,
@@ -25,7 +25,7 @@ export const ImageForm = ({
   setImage?: Dispatch<Image | null>;
 }) => {
   const [state, formAction, isPending] = useActionState(imageCreate, {
-    message: "",
+    message: '',
     success: false,
     image: null,
   });
@@ -40,9 +40,9 @@ export const ImageForm = ({
     setIsOpen && setIsOpen(false);
   }
 
-  if (!state.success && state.message !== "") {
+  if (!state.success && state.message !== '') {
     toast.error(state.message);
-    state.message = "";
+    state.message = '';
   }
 
   return (

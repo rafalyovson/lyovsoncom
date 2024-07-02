@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Category } from "@/data/schema";
-import { categoryDelete } from "@/lib/actions/category-delete";
-import { Delete } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Category } from '@/data/schema';
+import { categoryDelete } from '@/lib/actions/server-actions/category-delete';
+import { Delete } from 'lucide-react';
 
 export const CategoryRow = ({ cat }: { cat: Category }) => {
   return (
@@ -15,8 +15,8 @@ export const CategoryRow = ({ cat }: { cat: Category }) => {
         <h2>{cat.name}</h2>
         <Button
           asChild
-          variant={"ghost"}
-          size={"icon"}
+          variant={'ghost'}
+          size={'icon'}
           onClick={() => {
             categoryDelete(cat.id);
           }}

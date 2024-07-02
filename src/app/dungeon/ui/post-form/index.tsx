@@ -1,6 +1,7 @@
-import { categoriesGetAll } from "@/lib/actions/categories-get-all";
-import { usersGetAll } from "@/lib/actions/users-get-all";
-import { PostFormClient } from "./form";
+import { PostFormClient } from './form';
+import { userSelectAll } from '@/lib/actions/db-actions/user-select';
+import { categorySelectAll } from '@/lib/actions/db-actions/category-select';
+
 export const PostForm = async ({
   post,
   action,
@@ -8,15 +9,21 @@ export const PostForm = async ({
   post?: any;
   action: any;
 }) => {
-  const allCats = await categoriesGetAll();
-  const authors = await usersGetAll();
+  const catResult = await categorySelectAll();
+  if (!catResult.success || !catResult.categories) {
+    return <div>{catResult.message}</div>;
+  }
+  const authorResult = await userSelectAll();
+  if (!authorResult.success || !authorResult.users) {
+    return <div>{authorResult.message}</div>;
+  }
 
   return (
     <PostFormClient
       post={post}
       action={action}
-      allCats={allCats}
-      authors={authors}
+      allCats={catResult.categories}
+      authors={authorResult.users}
     />
   );
 };

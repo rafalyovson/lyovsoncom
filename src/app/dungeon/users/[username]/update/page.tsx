@@ -1,9 +1,9 @@
-import { db } from "@/data/db";
-import { users } from "@/data/schema";
-import { userUpdate } from "@/lib/actions/user-update";
-import { eq } from "drizzle-orm";
-import { redirect } from "next/navigation";
-import UserForm from "../../../ui/user-form";
+import { db } from '@/data/db';
+import { users } from '@/data/schema';
+import { userUpdate } from '@/lib/actions/server-actions/user-update';
+import { eq } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
+import UserForm from '../../../ui/user-form';
 
 const Page = async ({ params }: { params: any }) => {
   const { username } = params;
@@ -14,7 +14,7 @@ const Page = async ({ params }: { params: any }) => {
     .where(eq(users.username, username));
 
   if (!user) {
-    redirect("/dungeon/users");
+    redirect('/dungeon/users');
   }
 
   return (

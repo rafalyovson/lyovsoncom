@@ -1,10 +1,16 @@
-import { Category } from "@/data/schema";
-import { categoriesGetAll } from "@/lib/actions/categories-get-all";
-import { categoryCreate } from "@/lib/actions/category-create";
-import { CategoryForm } from "./category-form";
-import { CategoryRow } from "./category-row";
+import { Category } from '@/data/schema';
+import { categorySelectAll } from '@/lib/actions/db-actions/category-select';
+import { categoryCreate } from '@/lib/actions/server-actions/category-create';
+import { CategoryForm } from './category-form';
+import { CategoryRow } from './category-row';
+
 const Page = async () => {
-  const cats = await categoriesGetAll();
+  const result = await categorySelectAll();
+  if (!result.success || !result.categories) {
+    return <div>{result.message}</div>;
+  }
+
+  const cats = result.categories;
   return (
     <>
       <main className="flex flex-col gap-4 p-4">

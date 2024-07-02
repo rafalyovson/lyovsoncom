@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Tag } from "@/data/schema";
-import { tagDelete } from "@/lib/actions/tag-delete";
-import { Delete } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Tag } from '@/data/schema';
+import { tagDelete } from '@/lib/actions/server-actions/tag-delete';
+import { Delete } from 'lucide-react';
 
 export const TagRow = ({ cat }: { cat: Tag }) => {
   return (
@@ -15,8 +15,8 @@ export const TagRow = ({ cat }: { cat: Tag }) => {
         <h2>{cat.name}</h2>
         <Button
           asChild
-          variant={"ghost"}
-          size={"icon"}
+          variant={'ghost'}
+          size={'icon'}
           onClick={() => {
             tagDelete(cat.id);
           }}

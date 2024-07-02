@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import UserForm from '../../ui/user-form';
-import { userUpdate } from '@/lib/actions/user-update';
+import { userUpdate } from '@/lib/actions/server-actions/user-update';
 import { userSelectByUsername } from '@/lib/actions/db-actions/user-select';
 
 const Page = async ({ params }: { params: any }) => {
