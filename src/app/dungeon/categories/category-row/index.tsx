@@ -2,10 +2,29 @@
 
 import { Button } from '@/components/ui/button';
 import { Category } from '@/data/schema';
-import { categoryDelete } from '@/lib/actions/server-actions/category-delete';
+import { categoryDeleteAction } from '@/lib/actions/server-actions/category-delete';
 import { Delete } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useActionState } from 'react';
+import { toast } from 'sonner';
 
 export const CategoryRow = ({ cat }: { cat: Category }) => {
+  const [state, formAction, isPending] = useActionState(categoryDeleteAction, {
+    message: '',
+    success: false,
+  });
+
+  if (state.success && state.message !== '') {
+    toast.success(state.message);
+    state.success = false;
+    state.message = '';
+  }
+
+  if (!state.success && state.message !== '') {
+    toast.error(state.message);
+    state.message = '';
+  }
+
   return (
     <>
       <article
@@ -13,16 +32,12 @@ export const CategoryRow = ({ cat }: { cat: Category }) => {
         className="flex gap-2 items-center justify-between w-48"
       >
         <h2>{cat.name}</h2>
-        <Button
-          asChild
-          variant={'ghost'}
-          size={'icon'}
-          onClick={() => {
-            categoryDelete(cat.id);
-          }}
-        >
-          <Delete className="h-4 w-4" />
-        </Button>
+        <form action={formAction} method="post">
+          <Input type="hidden" name="id" value={cat.id} />
+          <Button asChild variant={'ghost'} size={'icon'} disabled={isPending}>
+            <Delete className="h-4 w-4" />
+          </Button>
+        </form>
       </article>
     </>
   );

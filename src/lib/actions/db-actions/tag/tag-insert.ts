@@ -1,17 +1,17 @@
-import { db } from "@/data/db";
-import { NewTag, Tag, tagInsertSchema, tags } from "@/data/schema";
-import { eq } from "drizzle-orm";
+import { db } from '@/data/db';
+import { NewTag, Tag, tagInsertSchema, tags } from '@/data/schema';
+import { eq } from 'drizzle-orm';
 
-export async function tagCreate(
-  data: NewTag
+export async function tagInsert(
+  data: NewTag,
 ): Promise<{ success: boolean; message: string; tag: Tag | null }> {
   const parsedData = tagInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log("Validation error", parsedData.error.issues);
+    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: "Validation error",
+      message: 'Validation error',
       tag: null,
     };
   }
@@ -24,14 +24,14 @@ export async function tagCreate(
       .where(eq(tags.slug, data.slug));
     return {
       success: parsedData.success,
-      message: "Tag created successfully",
+      message: 'Tag created successfully',
       tag: newTag,
     };
   } catch (error) {
-    console.error("Failed to insert tag:", error);
+    console.error('Failed to insert tag:', error);
     return {
       success: false,
-      message: "Failed to insert tag",
+      message: 'Failed to insert tag',
       tag: null,
     };
   }

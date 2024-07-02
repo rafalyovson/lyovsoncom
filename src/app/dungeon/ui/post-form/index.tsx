@@ -1,6 +1,6 @@
 import { PostFormClient } from './form';
-import { userSelectAll } from '@/lib/actions/db-actions/user-select';
-import { categorySelectAll } from '@/lib/actions/db-actions/category-select';
+import { userSelectAll } from '@/lib/actions/db-actions/user/user-select';
+import { categorySelectAll } from '@/lib/actions/db-actions/category/category-select';
 
 export const PostForm = async ({
   post,

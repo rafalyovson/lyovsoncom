@@ -34,7 +34,7 @@ export const ImageForm = ({
     setImage(state.image);
   }
 
-  if (state.success) {
+  if (state.success && state.message === '') {
     toast.success(state.message);
     state.success = false;
     setIsOpen && setIsOpen(false);

@@ -1,9 +1,10 @@
 'use server';
 
-import { imageDeletebyUrl } from '../db-actions/image-delete';
-import { imageSelectById } from '../db-actions/image-select';
-import { postDeleteById } from '../db-actions/post-delete';
-import { postSelectById } from '../db-actions/post-select';
+import {
+  imageDeletebyUrl,
+  imageSelectById,
+} from '@/lib/actions/db-actions/image';
+import { postDeleteById, postSelectById } from '@/lib/actions/db-actions/post';
 
 export const postDelete = async (
   _prevState: { message: string; success: boolean },

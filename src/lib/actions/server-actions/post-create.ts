@@ -2,12 +2,12 @@
 
 import { NewPost, Post, postInsertSchema } from '@/data/schema';
 import { capitalize, slugify } from '@/lib/utils';
-import { categoryPostCreate } from '../db-actions/category-post-create';
-import { categorySelectBySlug } from '../db-actions/category-select';
-import { postInsert } from '../db-actions/post-insert';
-import { tagCreate } from '../db-actions/tag-create';
-import { tagPostCreate } from '../db-actions/tag-post-create';
-import { tagSelectBySlug } from '../db-actions/tag-select';
+import { categoryPostInsert } from '@/lib/actions/db-actions/category-post';
+import { categorySelectBySlug } from '@/lib/actions/db-actions/category';
+import { postInsert } from '@/lib/actions/db-actions/post';
+import { tagInsert } from '../db-actions/tag/tag-insert';
+import { tagPostInsert } from '@/lib/actions/db-actions/tag-post';
+import { tagSelectBySlug } from '../db-actions/tag/tag-select';
 
 export async function postCreate(
   content: any, // Changed JSON to any for better TypeScript compatibility
@@ -45,7 +45,7 @@ export async function postCreate(
       });
 
       if (result.success && result.category) {
-        await categoryPostCreate({
+        await categoryPostInsert({
           postId: newPost.id,
           categoryId: result.category.id,
         });
@@ -59,7 +59,7 @@ export async function postCreate(
       if (result.success && result.tag) {
         tagId = result.tag.id;
       } else {
-        const { tag: newTag } = await tagCreate({
+        const { tag: newTag } = await tagInsert({
           slug: slugify(tag),
           name: capitalize(tag),
         });
@@ -69,7 +69,7 @@ export async function postCreate(
         }
       }
       if (tagId) {
-        await tagPostCreate({ postId: newPost.id, tagId });
+        await tagPostInsert({ postId: newPost.id, tagId });
       } else {
         console.error('Failed to create tag');
       }

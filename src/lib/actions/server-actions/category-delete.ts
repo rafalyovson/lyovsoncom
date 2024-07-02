@@ -1,11 +1,14 @@
-"use server";
+'use server';
 
-import { db } from "@/data/db";
-import { categories } from "@/data/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath } from 'next/cache';
+import { categoryDeleteById } from '@/lib/actions/db-actions/category';
 
-export const categoryDelete = async (data: string): Promise<void> => {
-  await db.delete(categories).where(eq(categories.id, data));
-  revalidatePath("/dungeon/categories");
+export const categoryDeleteAction = async (
+  _prevState: { message: string; success: boolean },
+  data: FormData,
+): Promise<{ success: boolean; message: string }> => {
+  const id = data.get('id') as string;
+  const result = await categoryDeleteById({ id });
+  revalidatePath('/dungeon/categories');
+  return result;
 };

@@ -1,14 +1,12 @@
 'use server';
 
 import { db } from '@/data/db';
-import { categories } from '@/data/schema';
+import { categories, categoryInsertSchema } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-import { createInsertSchema } from 'drizzle-zod';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
-import { categoryInsert } from '@/lib/actions/db-actions/category';
+import { categoryUpdate } from '@/lib/actions/db-actions/category';
 
-export const categoryCreateAction = async (
+export const categoryUpdateAction = async (
   _prevState: { message: string; success: boolean },
   formData: FormData,
 ): Promise<{ success: boolean; message: string }> => {
@@ -26,17 +24,12 @@ export const categoryCreateAction = async (
     return { message: 'Category already exists', success: false };
   }
 
-  const schema = createInsertSchema(categories, {
-    name: z.string().min(1, { message: 'Name is required' }),
-    slug: z.string().min(1, { message: 'Slug is required' }),
-  });
-
-  const parsedData = schema.safeParse(data);
+  const parsedData = categoryInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
     return { message: 'Wrong data', success: false };
   }
-  const result = await categoryInsert(data);
+  const result = await categoryUpdate(data);
   if (!result.success) {
     return { message: result.message, success: result.success };
   }

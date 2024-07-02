@@ -1,24 +1,26 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useActionState } from "react";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useActionState } from 'react';
+import { toast } from 'sonner';
 
 export const CategoryForm = ({ action }: { action: any }) => {
   const [state, formAction, isPending] = useActionState(action, {
-    message: "",
+    message: '',
+    success: false,
   });
 
-  if (state.message === "success") {
-    toast.success("Successfully added category");
-    state.message = "";
+  if (state.success && state.message !== '') {
+    toast.success(state.message);
+    state.success = false;
+    state.message = '';
   }
 
-  if (state.message === "error") {
-    toast.error("Error adding category");
-    state.message = "";
+  if (!state.success && state.message !== '') {
+    toast.error(state.message);
+    state.message = '';
   }
 
   return (
@@ -31,7 +33,7 @@ export const CategoryForm = ({ action }: { action: any }) => {
         <Label htmlFor="slug">Slug</Label>
         <Input type="text" id="slug" name="slug" />
       </section>
-      <Button disabled={isPending} variant={"secondary"}>
+      <Button disabled={isPending} variant={'secondary'}>
         Add
       </Button>
     </form>

@@ -1,11 +1,14 @@
 'use server';
 
-import { imageInsertSchema } from '@/data/schema';
+import { Image, imageInsertSchema } from '@/data/schema';
 import { slugify } from '@/lib/utils';
-import { blobInsert } from '../db-actions/blob-insert';
-import { imageInsert } from '../db-actions/image-insert';
+import { blobInsert } from '@/lib/actions/db-actions/blob';
+import { imageInsert } from '@/lib/actions/db-actions/image';
 
-export async function imageCreate(_prevData: any, formData: FormData) {
+export async function imageCreate(
+  _prevData: { message: string; success: boolean; image: Image | null },
+  formData: FormData,
+): Promise<{ success: boolean; message: string; image: Image | null }> {
   const data = {
     caption: formData.get('caption') as string,
     altText: formData.get('altText') as string,

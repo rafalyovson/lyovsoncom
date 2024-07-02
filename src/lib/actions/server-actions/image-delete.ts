@@ -1,6 +1,7 @@
 'use server';
 
-import { imageDeletebyUrl } from '../db-actions/image-delete';
+import { imageDeletebyUrl } from '@/lib/actions/db-actions/image';
+import { blobDelete } from '@/lib/actions/db-actions/blob';
 
 export async function imageDelete(
   _prevState: { message: string; success: boolean },
@@ -12,7 +13,15 @@ export async function imageDelete(
     return { success: false, message: 'Invalid URL' };
   }
   try {
-    return await imageDeletebyUrl({ url });
+    const blobResults = await blobDelete({ url });
+    if (!blobResults.success) {
+      return blobResults;
+    }
+    const imageResults = await imageDeletebyUrl({ url });
+    if (!imageResults.success) {
+      return imageResults;
+    }
+    return imageResults;
   } catch (error) {
     console.error('Failed to delete image:', error);
     return { success: false, message: 'Failed to delete image' };

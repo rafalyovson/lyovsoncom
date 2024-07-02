@@ -3,7 +3,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { postSelectFullBySlug } from '@/lib/actions/db-actions/post-select-full';
+import { postSelectFullBySlug } from '@/lib/actions/db-actions/post/post-select-full';
 import { PostFull } from '@/data/types/post-full';
 
 const PostHeader = async ({ post }: { post: PostFull }) => {

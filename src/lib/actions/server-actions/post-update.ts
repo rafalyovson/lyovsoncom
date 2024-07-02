@@ -2,16 +2,19 @@
 
 import { NewPost, Post, postInsertSchema } from '@/data/schema';
 import { capitalize, slugify } from '@/lib/utils';
-import { categoryPostCreate } from '../db-actions/category-post-create';
-import { categoryPostDelete } from '../db-actions/category-post-delete';
-import { categorySelectBySlug } from '../db-actions/category-select';
-import { postDeleteById } from '../db-actions/post-delete';
-import { postInsert } from '../db-actions/post-insert';
-import { postUpdate as postUpdateAction } from '../db-actions/post-update';
-import { tagCreate } from '../db-actions/tag-create';
-import { tagPostCreate } from '../db-actions/tag-post-create';
-import { tagPostDelete } from '../db-actions/tag-post-delete';
-import { tagSelectBySlug } from '../db-actions/tag-select';
+import {
+  categoryPostDelete,
+  categoryPostInsert,
+} from '@/lib/actions/db-actions/category-post';
+import { categorySelectBySlug } from '@/lib/actions/db-actions/category';
+import { postDeleteById, postInsert } from '@/lib/actions/db-actions/post';
+import { postUpdate as postUpdateAction } from '../db-actions/post/post-update';
+import { tagInsert } from '../db-actions/tag/tag-insert';
+import {
+  tagPostDelete,
+  tagPostInsert,
+} from '@/lib/actions/db-actions/tag-post';
+import { tagSelectBySlug } from '../db-actions/tag/tag-select';
 
 export async function postUpdate(
   content: any, // Changed JSON to any for better TypeScript compatibility
@@ -65,7 +68,7 @@ export async function postUpdate(
         await categoryPostDelete({
           postId: oldPost.id,
         });
-        await categoryPostCreate({
+        await categoryPostInsert({
           postId: newPost.id,
           categoryId: result.category.id,
         });
@@ -83,18 +86,18 @@ export async function postUpdate(
       const result = await tagSelectBySlug({ slug: tagSlug });
 
       if (result.success && result.tag) {
-        await tagPostCreate({
+        await tagPostInsert({
           postId: newPost.id,
           tagId: result.tag.id,
         });
       } else {
-        const result = await tagCreate({
+        const result = await tagInsert({
           name: tagName,
           slug: tagSlug,
         });
 
         if (result.success && result.tag) {
-          await tagPostCreate({
+          await tagPostInsert({
             postId: newPost.id,
             tagId: result.tag.id,
           });

@@ -1,6 +1,6 @@
 import { Category } from '@/data/schema';
-import { categorySelectAll } from '@/lib/actions/db-actions/category-select';
-import { categoryCreate } from '@/lib/actions/server-actions/category-create';
+import { categorySelectAll } from '@/lib/actions/db-actions/category/category-select';
+import { categoryCreateAction } from '@/lib/actions/server-actions/category-create';
 import { CategoryForm } from './category-form';
 import { CategoryRow } from './category-row';
 
@@ -21,7 +21,7 @@ const Page = async () => {
           ))}
         </section>
       </main>
-      <CategoryForm action={categoryCreate} />
+      <CategoryForm action={categoryCreateAction} />
     </>
   );
 };
