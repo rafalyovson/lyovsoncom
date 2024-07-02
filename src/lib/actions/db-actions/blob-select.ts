@@ -24,7 +24,7 @@ export async function blobSelectAll(data: {
   }
 }
 
-export async function blobSelect(data: { url: string }): Promise<{
+export async function blobSelectByUrl(data: { url: string }): Promise<{
   success: boolean;
   blobMeta: BlobMeta | null;
   message: string;

@@ -1,46 +1,34 @@
-import { PostTable } from "@/app/dungeon/ui/post-table";
-import { Post } from "@/data/types";
-import { postsGetAll } from "@/lib/actions/posts-get-all";
-import { capitalize } from "@/lib/utils";
+import {PostTable} from "@/app/dungeon/ui/post-table";
+import {capitalize} from "@/lib/utils";
+import {postSelectFullAll} from "@/lib/actions/db-actions/post-select-full";
 
 type Params = {
-  params: {
-    slug?: string;
-  };
+    params: {
+        slug?: string;
+    };
 };
 
-const Posts = async ({ params }: Params) => {
-  const { slug } = params;
+const Tags = async ({params}: Params) => {
+    const {slug} = params;
 
-  try {
-    const allPosts: Post[] | null = await postsGetAll();
+    const result = await postSelectFullAll();
 
-    if (!allPosts || allPosts.length === 0) {
-      return <div>No posts available</div>;
+    if (!result.success || !result.posts) {
+        return <div>No posts available</div>;
     }
 
-    if (!slug) {
-      return <div>No category selected</div>;
-    }
 
-    const posts = allPosts.filter((post) =>
-      post.tags?.some((tag) => tag.slug === slug)
-    );
+    const posts = result.posts.filter((post) => post.tags?.some((tag) => tag.slug === slug));
 
     if (posts.length === 0) {
-      return <div>No posts found for this category</div>;
+        return <div>No posts found for this tag</div>;
     }
 
-    return (
-      <main>
-        <h1>Tag: {capitalize(slug)}</h1>
-        <PostTable posts={posts} />
-      </main>
-    );
-  } catch (error) {
-    console.error("Failed to fetch posts", error);
-    return <div>Error fetching posts</div>;
-  }
+    return (<main>
+        <h1>Tag: {capitalize(slug!)}</h1>
+        <PostTable posts={posts}/>
+    </main>);
+
 };
 
-export default Posts;
+export default Tags;

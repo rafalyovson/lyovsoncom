@@ -1,34 +1,31 @@
-import { db } from "@/data/db";
-import { users } from "@/data/schema";
-import { postsGetAll } from "@/lib/actions/posts-get-all";
-import { eq } from "drizzle-orm";
-import { PostGrid } from "../../ui/post-grid";
+import {PostFull} from "@/data/types/post-full";
+import {postSelectFullAll} from "@/lib/actions/db-actions/post-select-full";
+import {PostGrid} from "../../ui/post-grid";
+import {userSelectByUsername} from "@/lib/actions/db-actions/user-select";
+import {redirect} from "next/navigation";
 
 const Page = async () => {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.username, "jess"));
+    const userResult = await userSelectByUsername({username: "jess"});
 
-  if (!user) {
-    return <h1>User not found</h1>;
-  }
+    if (!userResult.success || !userResult.user) {
+        redirect("/jess");
+    }
 
-  const posts = await postsGetAll();
+    const result = await postSelectFullAll();
 
-  if (!posts) {
-    return <h1>No posts found</h1>;
-  }
+    if (!result.success || !result.posts) {
+        return <h1>{result.message}</h1>;
+    }
 
-  const jessPosts = posts.filter(
-    (post) => post.author!.username === user.username
-  );
+    const jessPosts = result.posts.filter(
+        (post: PostFull) => post.author!.username === userResult.user!.username
+    );
 
-  return (
-    <>
-      <h1>Jess</h1>
-      <PostGrid posts={jessPosts} />
-    </>
-  );
+    return (
+        <>
+            <h1>Jess</h1>
+            <PostGrid posts={jessPosts}/>
+        </>
+    );
 };
 export default Page;

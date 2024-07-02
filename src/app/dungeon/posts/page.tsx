@@ -1,16 +1,20 @@
-import { PostTable } from "@/app/dungeon/ui/post-table";
-import { postsGetAll } from "@/lib/actions/posts-get-all";
-import { PageHeader } from "../ui/page-header";
+import {PostTable} from "@/app/dungeon/ui/post-table";
+import {PageHeader} from "../ui/page-header";
+import {postSelectFullAll} from "@/lib/actions/db-actions/post-select-full";
 
 const Posts = async () => {
-  const posts = await postsGetAll();
+    const result = await postSelectFullAll();
 
-  return (
-    <main>
-      <PageHeader title="Posts" link="/dungeon/posts/create" />
-      {posts && <PostTable posts={posts} />}
-    </main>
-  );
+    if (!result.success || !result.posts) {
+        return <div>{result.message}</div>;
+    }
+
+    return (
+        <main>
+            <PageHeader title="Posts" link="/dungeon/posts/create"/>
+            <PostTable posts={result.posts}/>
+        </main>
+    );
 };
 
 export default Posts;

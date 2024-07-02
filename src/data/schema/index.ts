@@ -45,7 +45,3 @@ export type { NewTagPost, TagPost } from "./tagPost";
 // comment
 export { comments } from "./comment";
 export type { Comment, NewComment } from "./comment";
-
-// socialNetwork
-export { socialNetworks } from "./socialNetwork";
-export type { NewSocialNetwork, SocialNetwork } from "./socialNetwork";

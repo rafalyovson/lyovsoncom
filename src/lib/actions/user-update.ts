@@ -23,7 +23,6 @@ export const userUpdate = async (
     console.log("Validation error", parsedData.error.issues);
     return;
   }
-
   await db.update(users).set(data).where(eq(users.username, username));
   redirect("/dungeon/users/" + username);
 };
