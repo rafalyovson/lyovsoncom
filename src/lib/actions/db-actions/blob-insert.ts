@@ -1,7 +1,7 @@
 import { type Blob } from "@/data/types/blob";
 import { BlobMeta } from "@/data/types/blob-meta";
 import { put } from "@vercel/blob";
-import { blobSelect } from "./blob-select";
+import { blobSelectByUrl } from "./blob-select";
 
 export async function blobInsert(data: {
   name: string;
@@ -12,7 +12,7 @@ export async function blobInsert(data: {
       access: "public",
       addRandomSuffix: false,
     });
-    const result = await blobSelect({ url: blob.url });
+    const result = await blobSelectByUrl({ url: blob.url });
     if (result.success) {
       return {
         success: true,

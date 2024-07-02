@@ -1,5 +1,5 @@
-import { del } from "@vercel/blob";
-import { blobSelect } from "./blob-select";
+import { del } from '@vercel/blob';
+import { blobSelectByUrl } from './blob-select';
 
 export async function blobDelete(data: { url: string }): Promise<{
   success: boolean;
@@ -7,13 +7,13 @@ export async function blobDelete(data: { url: string }): Promise<{
 }> {
   try {
     await del(data.url);
-    const oldBlob = await blobSelect({ url: data.url });
+    const oldBlob = await blobSelectByUrl({ url: data.url });
     if (oldBlob.success) {
-      return { success: false, message: "Failed to delete blob" };
+      return { success: false, message: 'Failed to delete blob' };
     }
-    return { success: true, message: "Blob deleted successfully" };
+    return { success: true, message: 'Blob deleted successfully' };
   } catch (error) {
-    console.error("Failed to delete blob:", error);
-    return { success: false, message: "Failed to delete blob" };
+    console.error('Failed to delete blob:', error);
+    return { success: false, message: 'Failed to delete blob' };
   }
 }
