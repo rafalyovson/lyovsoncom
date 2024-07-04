@@ -1,5 +1,5 @@
-import { Post } from "@/data/types";
-import { PostCard } from "./post-card";
+import { Post } from '@/data/types/post';
+import { PostCard } from './post-card';
 
 export const PostGrid = async ({ posts }: { posts: Post[] }) => {
   return (

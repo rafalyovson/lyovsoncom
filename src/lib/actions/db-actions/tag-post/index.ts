@@ -1,3 +1,3 @@
 export { tagPostDelete } from './tag-post-delete';
-export { tagPostSelect } from './tag-post-select';
+export { tagPostSelectOnePost } from './tag-post-select-one-post';
 export { tagPostInsert } from './tag-post-insert';

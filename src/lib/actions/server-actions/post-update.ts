@@ -6,7 +6,7 @@ import {
   categoryPostDelete,
   categoryPostInsert,
 } from '@/lib/actions/db-actions/category-post';
-import { categorySelectBySlug } from '@/lib/actions/db-actions/category';
+import { categorySelectOneBySlug } from '@/lib/actions/db-actions/category';
 import { postDeleteById, postInsert } from '@/lib/actions/db-actions/post';
 import { postUpdate as postUpdateAction } from '../db-actions/post/post-update';
 import { tagInsert } from '../db-actions/tag/tag-insert';
@@ -14,7 +14,7 @@ import {
   tagPostDelete,
   tagPostInsert,
 } from '@/lib/actions/db-actions/tag-post';
-import { tagSelectBySlug } from '../db-actions/tag/tag-select';
+import { tagSelectOneBySlug } from '@/lib/actions/db-actions/tag';
 
 export async function postUpdate(
   content: any, // Changed JSON to any for better TypeScript compatibility
@@ -60,7 +60,7 @@ export async function postUpdate(
 
     const categoryName = formData.get('category') as string;
     if (categoryName) {
-      const result = await categorySelectBySlug({
+      const result = await categorySelectOneBySlug({
         slug: slugify(categoryName),
       });
 
@@ -83,7 +83,7 @@ export async function postUpdate(
     for (const tag of newPostTagStrings.filter(Boolean)) {
       const tagSlug = slugify(tag);
       const tagName = capitalize(tag);
-      const result = await tagSelectBySlug({ slug: tagSlug });
+      const result = await tagSelectOneBySlug({ slug: tagSlug });
 
       if (result.success && result.tag) {
         await tagPostInsert({

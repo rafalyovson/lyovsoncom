@@ -1,16 +1,22 @@
-import { db } from "@/data/db";
-import { Image, imageInsertSchema, images, NewImage } from "@/data/schema";
-import { eq } from "drizzle-orm";
+import { db } from '@/data/db';
+import { Image, imageInsertSchema, images, NewImage } from '@/data/schema';
+import { eq } from 'drizzle-orm';
+
+type ImageInsertResponse = {
+  success: boolean;
+  message: string;
+  image: Image | null;
+};
 
 export async function imageInsert(
-  data: NewImage
-): Promise<{ success: boolean; message: string; image: Image | null }> {
+  data: NewImage,
+): Promise<ImageInsertResponse> {
   const parsedData = imageInsertSchema.safeParse(data);
   if (!parsedData.success) {
-    console.log("Validation error", parsedData.error.issues);
+    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: "Validation error",
+      message: 'Validation error',
       image: null,
     };
   }
@@ -23,14 +29,14 @@ export async function imageInsert(
       .where(eq(images.url, data.url));
     return {
       success: parsedData.success,
-      message: "Image created successfully",
+      message: 'Image created successfully',
       image: newImage,
     };
   } catch (error) {
-    console.error("Failed to insert image:", error);
+    console.error('Failed to insert image:', error);
     return {
       success: false,
-      message: "Failed to insert image",
+      message: 'Failed to insert image',
       image: null,
     };
   }

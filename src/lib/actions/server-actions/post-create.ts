@@ -3,11 +3,11 @@
 import { NewPost, Post, postInsertSchema } from '@/data/schema';
 import { capitalize, slugify } from '@/lib/utils';
 import { categoryPostInsert } from '@/lib/actions/db-actions/category-post';
-import { categorySelectBySlug } from '@/lib/actions/db-actions/category';
+import { categorySelectOneBySlug } from '@/lib/actions/db-actions/category';
 import { postInsert } from '@/lib/actions/db-actions/post';
 import { tagInsert } from '../db-actions/tag/tag-insert';
 import { tagPostInsert } from '@/lib/actions/db-actions/tag-post';
-import { tagSelectBySlug } from '../db-actions/tag/tag-select';
+import { tagSelectOneBySlug } from '@/lib/actions/db-actions/tag';
 
 export async function postCreate(
   content: any, // Changed JSON to any for better TypeScript compatibility
@@ -40,7 +40,7 @@ export async function postCreate(
 
     const categoryName = formData.get('category') as string;
     if (categoryName) {
-      const result = await categorySelectBySlug({
+      const result = await categorySelectOneBySlug({
         slug: slugify(categoryName),
       });
 
@@ -54,7 +54,7 @@ export async function postCreate(
 
     const tags = formData.getAll('tags') as string[];
     for (const tag of tags.filter(Boolean)) {
-      const result = await tagSelectBySlug({ slug: slugify(tag) });
+      const result = await tagSelectOneBySlug({ slug: slugify(tag) });
       let tagId;
       if (result.success && result.tag) {
         tagId = result.tag.id;

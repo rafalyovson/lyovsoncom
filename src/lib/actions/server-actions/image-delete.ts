@@ -1,6 +1,6 @@
 'use server';
 
-import { imageDeletebyUrl } from '@/lib/actions/db-actions/image';
+import { imageDeleteByUrl } from '@/lib/actions/db-actions/image';
 import { blobDelete } from '@/lib/actions/db-actions/blob';
 
 export async function imageDelete(
@@ -17,7 +17,7 @@ export async function imageDelete(
     if (!blobResults.success) {
       return blobResults;
     }
-    const imageResults = await imageDeletebyUrl({ url });
+    const imageResults = await imageDeleteByUrl({ url });
     if (!imageResults.success) {
       return imageResults;
     }

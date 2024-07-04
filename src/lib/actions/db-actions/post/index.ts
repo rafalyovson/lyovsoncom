@@ -1,8 +1,8 @@
 export { postDeleteById } from './post-delete';
 export { postInsert } from './post-insert';
-export { postSelectAll } from './post-select';
-export { postSelectById } from './post-select';
-export { postSelectBySlug } from './post-select';
+export { postSelectOneById } from './post-select-one';
+export { postSelectOneBySlug } from './post-select-one';
 export { postUpdate } from './post-update';
-export { postSelectFullAll } from './post-select-full';
-export { postSelectFullBySlug } from './post-select-full';
+export { postSelectFullOneBySlug } from './post-select-full-one';
+export { postSelectAll } from '@/lib/actions/db-actions/post/post-select-all';
+export { postSelectFullAll } from '@/lib/actions/db-actions/post/post-select-full-all';

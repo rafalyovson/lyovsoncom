@@ -1,6 +1,7 @@
 import { PostTable } from '@/app/dungeon/ui/post-table';
 import { PageHeader } from '../ui/page-header';
-import { postSelectFullAll } from '@/lib/actions/db-actions/post/post-select-full';
+
+import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
 const Posts = async () => {
   const result = await postSelectFullAll();

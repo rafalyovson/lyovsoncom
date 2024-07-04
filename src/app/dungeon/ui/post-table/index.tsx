@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -16,14 +16,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Post } from "@/data/types";
-import { Edit, Trash2 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+} from '@/components/ui/table';
+import { Post } from '@/data/types/post';
+import { Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export const PostTable = ({ posts }: { posts: Post[] }) => {
-  console.log("😈", posts);
+  console.log('😈', posts);
   return (
     <Card className="flex-grow">
       <CardHeader className="px-7">
@@ -53,8 +53,8 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                   <TableCell className="w-[120px]">
                     <Image
                       className="w-[100px] aspect-square object-cover"
-                      src={post.featuredImage?.url || ""}
-                      alt={post.featuredImage?.altText || ""}
+                      src={post.featuredImage?.url || ''}
+                      alt={post.featuredImage?.altText || ''}
                       width={200}
                       height={200}
                     />
@@ -68,23 +68,22 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                   </TableCell>
                   <TableCell className="hidden sm:table-cell w-[100px]">
                     {post.published ? (
-                      <Badge variant={"default"}>Published</Badge>
+                      <Badge variant={'default'}>Published</Badge>
                     ) : (
-                      <Badge variant={"secondary"}>Draft</Badge>
+                      <Badge variant={'secondary'}>Draft</Badge>
                     )}
                   </TableCell>
                   <TableCell className="">
                     <section className="flex gap-2 ">
-                      <Button asChild variant={"secondary"} size="icon">
+                      <Button asChild variant={'secondary'} size="icon">
                         <Link href={`/dungeon/posts/update/${post.slug}`}>
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>
                       <Button
-                        size={"icon"}
-                        onClick={() => {
-                        }}
-                        variant={"destructive"}
+                        size={'icon'}
+                        onClick={() => {}}
+                        variant={'destructive'}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

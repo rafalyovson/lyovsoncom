@@ -1,2 +1,2 @@
-export { userSelectAll } from './user-select';
-export { userSelectByUsername } from './user-select';
+export { userSelectByUsername } from './user-select-one';
+export { userSelectAll } from '@/lib/actions/db-actions/user/user-select-all';

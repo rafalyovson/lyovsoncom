@@ -1,7 +1,7 @@
 import { PostForm } from '@/app/dungeon/ui/post-form';
 import { postUpdate } from '@/lib/actions/server-actions/post-update';
 import { redirect } from 'next/navigation';
-import { postSelectFullBySlug } from '@/lib/actions/db-actions/post/post-select-full';
+import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 
 const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
@@ -9,7 +9,7 @@ const Page = async ({ params }: { params: { slug: string } }) => {
     redirect('/dungeon');
   }
 
-  const result = await postSelectFullBySlug({ slug });
+  const result = await postSelectFullOneBySlug({ slug });
 
   if (!result.success || !result.post) {
     redirect('/dungeon/posts');

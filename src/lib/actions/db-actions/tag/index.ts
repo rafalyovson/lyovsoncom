@@ -1,6 +1,6 @@
 export { tagDelete } from './tag-delete';
 export { tagInsert } from './tag-insert';
-export { tagSelectAll } from './tag-select';
-export { tagSelectById } from './tag-select';
-export { tagSelectBySlug } from './tag-select';
+export { tagSelectOneById } from './tag-select-one';
+export { tagSelectOneBySlug } from './tag-select-one';
 export { tagUpdate } from './tag-update';
+export { tagSelectAll } from '@/lib/actions/db-actions/tag/tag-select-all';

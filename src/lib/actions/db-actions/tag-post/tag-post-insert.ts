@@ -2,14 +2,16 @@ import { db } from '@/data/db';
 import { TagPost, tagPost } from '@/data/schema';
 import { z } from 'zod';
 
-export async function tagPostInsert(data: {
-  tagId: string;
-  postId: string;
-}): Promise<{
+type TagPostInsertResponse = {
   success: boolean;
   message: string;
   tagPost: TagPost | null;
-}> {
+};
+
+export async function tagPostInsert(data: {
+  tagId: string;
+  postId: string;
+}): Promise<TagPostInsertResponse> {
   const schema = z.object({
     tagId: z.string().uuid({ message: 'Invalid tag ID' }),
     postId: z.string().uuid({ message: 'Invalid post ID' }),

@@ -1,8 +1,8 @@
 import { Category } from '@/data/schema';
-import { categorySelectAll } from '@/lib/actions/db-actions/category/category-select';
 import { categoryCreateAction } from '@/lib/actions/server-actions/category-create';
 import { CategoryForm } from './category-form';
 import { CategoryRow } from './category-row';
+import { categorySelectAll } from '@/lib/actions/db-actions/category';
 
 const Page = async () => {
   const result = await categorySelectAll();

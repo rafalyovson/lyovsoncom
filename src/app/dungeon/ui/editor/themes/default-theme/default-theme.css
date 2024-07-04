@@ -317,3 +317,34 @@
 .default-theme__tokenBoolean {
   @apply text-teal-400;
 }
+
+.default-theme__textBold {
+  @apply font-bold;
+}
+.default-theme__textItalic {
+  @apply italic;
+}
+.default-theme__textUnderline {
+  @apply underline;
+}
+.default-theme__textStrikethrough {
+  @apply line-through;
+}
+.default-theme__textUnderlineStrikethrough {
+  @apply underline line-through;
+}
+.default-theme__textSubscript {
+  font-size: 0.8em;
+  vertical-align: sub !important;
+}
+.default-theme__textSuperscript {
+  font-size: 0.8em;
+  vertical-align: super;
+}
+.default-theme__textCode {
+  /*background-color: rgb(240, 242, 245);*/
+  /*padding: 1px 0.25rem;*/
+  /*font-family: Menlo, Consolas, Monaco, monospace;*/
+  /*font-size: 94%;*/
+  @apply font-mono;
+}

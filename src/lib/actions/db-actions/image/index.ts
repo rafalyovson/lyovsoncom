@@ -1,6 +1,6 @@
-export { imageDeletebyUrl } from './image-delete';
+export { imageDeleteByUrl } from './image-delete';
 export { imageInsert } from './image-insert';
-export { imageSelectAll } from './image-select';
-export { imageSelectById } from './image-select';
-export { imageSelectBySlug } from './image-select';
+export { imageSelectById } from './image-select-one';
+export { imageSelectBySlug } from './image-select-one';
 export { imageUpdate } from './image-update';
+export { imageSelectAll } from '@/lib/actions/db-actions/image/image-select-all';

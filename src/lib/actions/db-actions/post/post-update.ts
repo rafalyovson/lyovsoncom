@@ -1,17 +1,21 @@
-import { db } from "@/data/db";
-import { NewPost, Post, postInsertSchema, posts } from "@/data/schema";
-import { eq } from "drizzle-orm";
+import { db } from '@/data/db';
+import { NewPost, Post, postInsertSchema, posts } from '@/data/schema';
+import { eq } from 'drizzle-orm';
 
-export async function postUpdate(
-  data: NewPost
-): Promise<{ success: boolean; message: string; post: Post | null }> {
+type PostUpdateResponse = {
+  success: boolean;
+  message: string;
+  post: Post | null;
+};
+
+export async function postUpdate(data: NewPost): Promise<PostUpdateResponse> {
   const parsedData = postInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log("Validation error", parsedData.error.issues);
+    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: "Validation error",
+      message: 'Validation error',
       post: null,
     };
   }
@@ -24,14 +28,14 @@ export async function postUpdate(
       .where(eq(posts.slug, data.slug));
     return {
       success: parsedData.success,
-      message: "Post updated successfully",
+      message: 'Post updated successfully',
       post: newPost,
     };
   } catch (error) {
-    console.error("Failed to update post:", error);
+    console.error('Failed to update post:', error);
     return {
       success: false,
-      message: "Failed to update post",
+      message: 'Failed to update post',
       post: null,
     };
   }

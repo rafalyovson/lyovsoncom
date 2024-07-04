@@ -1,6 +1,6 @@
 import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
 import Image from 'next/image';
-import { postSelectFullBySlug } from '@/lib/actions/db-actions/post/post-select-full';
+import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 import { redirect } from 'next/navigation';
 import { PostFull } from '@/data/types/post-full';
 
@@ -39,7 +39,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
 
 const Page = async ({ params }: { params: any }) => {
   const { slug } = params;
-  const result = await postSelectFullBySlug({ slug });
+  const result = await postSelectFullOneBySlug({ slug });
   if (!result.success || !result.post) {
     redirect('/dungeon/posts');
   }

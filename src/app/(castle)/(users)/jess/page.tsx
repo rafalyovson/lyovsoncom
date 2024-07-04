@@ -1,8 +1,8 @@
 import { PostFull } from '@/data/types/post-full';
-import { postSelectFullAll } from '@/lib/actions/db-actions/post/post-select-full';
 import { PostGrid } from '../../ui/post-grid';
-import { userSelectByUsername } from '@/lib/actions/db-actions/user/user-select';
+import { userSelectByUsername } from '@/lib/actions/db-actions/user/user-select-one';
 import { redirect } from 'next/navigation';
+import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
 const Page = async () => {
   const userResult = await userSelectByUsername({ username: 'jess' });

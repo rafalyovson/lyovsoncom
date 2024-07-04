@@ -1,11 +1,9 @@
 'use server';
 
 import { db } from '@/data/db';
-import { categories } from '@/data/schema';
+import { categories, postInsertSchema } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-import { createInsertSchema } from 'drizzle-zod';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 import { categoryInsert } from '@/lib/actions/db-actions/category';
 
 export const categoryCreateAction = async (
@@ -26,12 +24,7 @@ export const categoryCreateAction = async (
     return { message: 'Category already exists', success: false };
   }
 
-  const schema = createInsertSchema(categories, {
-    name: z.string().min(1, { message: 'Name is required' }),
-    slug: z.string().min(1, { message: 'Slug is required' }),
-  });
-
-  const parsedData = schema.safeParse(data);
+  const parsedData = postInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
     return { message: 'Wrong data', success: false };

@@ -1,17 +1,20 @@
 'use server';
 
 import {
-  imageDeletebyUrl,
+  imageDeleteByUrl,
   imageSelectById,
 } from '@/lib/actions/db-actions/image';
-import { postDeleteById, postSelectById } from '@/lib/actions/db-actions/post';
+import {
+  postDeleteById,
+  postSelectOneById,
+} from '@/lib/actions/db-actions/post';
 
 export const postDelete = async (
   _prevState: { message: string; success: boolean },
   formData: FormData,
 ): Promise<{ success: boolean; message: string }> => {
   const postId = formData.get('id') as string;
-  const { success, post } = await postSelectById({ id: postId });
+  const { success, post } = await postSelectOneById({ id: postId });
   if (!success || !post) {
     return { success: false, message: 'Post not found' };
   }
@@ -26,7 +29,7 @@ export const postDelete = async (
     return { success: imageSuccess, message: imageMessage };
   }
 
-  const imageResult = await imageDeletebyUrl({ url: image.url });
+  const imageResult = await imageDeleteByUrl({ url: image.url });
 
   if (!imageResult.success) {
     return imageResult;

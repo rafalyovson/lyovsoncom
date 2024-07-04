@@ -1,5 +1,6 @@
 import { PostGrid } from '@/app/(castle)/ui/post-grid';
-import { postSelectFullAll } from '@/lib/actions/db-actions/post/post-select-full';
+
+import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
 const page = async () => {
   const result = await postSelectFullAll();

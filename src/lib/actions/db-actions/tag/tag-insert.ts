@@ -2,9 +2,13 @@ import { db } from '@/data/db';
 import { NewTag, Tag, tagInsertSchema, tags } from '@/data/schema';
 import { eq } from 'drizzle-orm';
 
-export async function tagInsert(
-  data: NewTag,
-): Promise<{ success: boolean; message: string; tag: Tag | null }> {
+type TagInsertResponse = {
+  success: boolean;
+  message: string;
+  tag: Tag | null;
+};
+
+export async function tagInsert(data: NewTag): Promise<TagInsertResponse> {
   const parsedData = tagInsertSchema.safeParse(data);
 
   if (!parsedData.success) {

@@ -2,7 +2,8 @@ import { Tag } from '@/data/schema';
 import { tagCreate } from '@/lib/actions/server-actions/tag-create';
 import { TagForm } from './tag-form';
 import { TagRow } from './tag-row';
-import { tagSelectAll } from '@/lib/actions/db-actions/tag/tag-select';
+
+import { tagSelectAll } from '@/lib/actions/db-actions/tag';
 
 const Page = async () => {
   const result = await tagSelectAll();

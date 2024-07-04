@@ -7,9 +7,15 @@ import {
 } from '@/data/schema';
 import { eq } from 'drizzle-orm';
 
+type CategoryInsertResponse = {
+  success: boolean;
+  message: string;
+  category: Category | null;
+};
+
 export async function categoryInsert(
   data: NewCategory,
-): Promise<{ success: boolean; message: string; category: Category | null }> {
+): Promise<CategoryInsertResponse> {
   const parsedData = categoryInsertSchema.safeParse(data);
 
   if (!parsedData.success) {

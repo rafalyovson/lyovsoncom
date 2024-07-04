@@ -3,7 +3,8 @@ import { User } from '@/data/schema';
 import Image from 'next/image';
 import Link from 'next/link';
 import { PageHeader } from '../ui/page-header';
-import { userSelectAll } from '@/lib/actions/db-actions/user/user-select';
+
+import { userSelectAll } from '@/lib/actions/db-actions/user';
 
 const Users = async () => {
   const result = await userSelectAll();

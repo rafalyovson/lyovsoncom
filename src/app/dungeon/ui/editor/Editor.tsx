@@ -1,41 +1,41 @@
-"use client";
+'use client';
 
-import { CodeHighlightNode, CodeNode } from "@lexical/code";
-import { AutoLinkNode, LinkNode } from "@lexical/link";
-import { ListItemNode, ListNode } from "@lexical/list";
-import { TRANSFORMERS } from "@lexical/markdown";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { EditorState } from "lexical";
-import { useCallback, useState } from "react";
-import { AutoEmbedPlugin } from "./plugins/auto-embed-plugin";
-import { AutoLinkPlugin } from "./plugins/auto-link-plugin";
-import { CodeHighlightPlugin } from "./plugins/code-highlight-plugin";
-import { ComponentPickerPlugin } from "./plugins/component-picker-plugin";
-import { FloatingTextFormatToolbarPlugin } from "./plugins/floating-text-format-tool-plugin";
-import { ImageNode, ImagesPlugin } from "./plugins/images-plugin";
-import { ListMaxIndentLevelPlugin } from "./plugins/list-max-indent-level-plugin";
+import { CodeHighlightNode, CodeNode } from '@lexical/code';
+import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ListItemNode, ListNode } from '@lexical/list';
+import { TRANSFORMERS } from '@lexical/markdown';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { EditorState } from 'lexical';
+import { useCallback, useState } from 'react';
+import { AutoEmbedPlugin } from './plugins/auto-embed-plugin';
+import { AutoLinkPlugin } from './plugins/auto-link-plugin';
+import { CodeHighlightPlugin } from './plugins/code-highlight-plugin';
+import { ComponentPickerPlugin } from './plugins/component-picker-plugin';
+import { FloatingTextFormatToolbarPlugin } from './plugins/floating-text-format-tool-plugin';
+import { ImageNode, ImagesPlugin } from './plugins/images-plugin';
+import { ListMaxIndentLevelPlugin } from './plugins/list-max-indent-level-plugin';
 
-import { ToolbarPlugin } from "./plugins/toolbar-plugin";
-import { XNode, XPlugin } from "./plugins/x-plugin";
-import { YouTubeNode, YouTubePlugin } from "./plugins/youtube-plugin";
-import { defaultTheme } from "./themes/default-theme";
-import { debounce } from "./utils/debounce";
+import { ToolbarPlugin } from './plugins/toolbar-plugin';
+import { XNode, XPlugin } from './plugins/x-plugin';
+import { YouTubeNode, YouTubePlugin } from './plugins/youtube-plugin';
+import { defaultTheme } from './themes/default-theme';
+import { debounce } from './utils/debounce';
 
 export const Editor = ({ state, setState }: { state: any; setState: any }) => {
-  console.log("state", JSON.stringify(state));
+  console.log('state', JSON.stringify(state));
   const editorConfig = {
-    namespace: "Content",
+    namespace: 'Content',
     editorState: state ? JSON.stringify(state) : undefined,
 
     theme: defaultTheme,
@@ -68,7 +68,7 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
     debounce((editorState: EditorState) => {
       setState(editorState.toJSON());
     }, 1000),
-    []
+    [],
   );
 
   const onChange = (editorState: EditorState) => {
@@ -99,7 +99,7 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
           <RichTextPlugin
             contentEditable={
               <article className="outline-none h-full " ref={onRef}>
-                <ContentEditable className="p-4 outline-ring prose dark:prose-invert overflow-y-scroll max-w-none min-h-60 h-full" />
+                <ContentEditable className="p-4 outline-ring prose dark:prose-invert  overflow-y-scroll max-w-none min-h-60 h-full" />
               </article>
             }
             placeholder={<></>}

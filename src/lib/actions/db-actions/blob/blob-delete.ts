@@ -1,13 +1,17 @@
 import { del } from '@vercel/blob';
-import { blobSelectByUrl } from './blob-select';
+import { blobSelectOneByUrl } from './blob-select-one';
 
-export async function blobDelete(data: { url: string }): Promise<{
+type BlobDeleteResponse = {
   success: boolean;
   message: string;
-}> {
+};
+
+export async function blobDelete(data: {
+  url: string;
+}): Promise<BlobDeleteResponse> {
   try {
     await del(data.url);
-    const oldBlob = await blobSelectByUrl({ url: data.url });
+    const oldBlob = await blobSelectOneByUrl({ url: data.url });
     if (oldBlob.success) {
       return { success: false, message: 'Failed to delete blob' };
     }
