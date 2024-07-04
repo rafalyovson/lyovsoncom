@@ -1,4 +1,4 @@
-import { Post, PostFull } from '@/data/types';
+import { Post } from '@/data/types';
 import { db } from '@/data/db';
 import {
   categories,
@@ -10,14 +10,9 @@ import {
   users,
 } from '@/data/schema';
 import { eq } from 'drizzle-orm';
+import { PostFullAllResponse } from '@/lib/actions/db-actions/post';
 
-type PostSelectFullAllResponse = {
-  message: string;
-  success: boolean;
-  posts: PostFull[] | null;
-};
-
-export async function postSelectFullAll(): Promise<PostSelectFullAllResponse> {
+export async function postSelectFullAll(): Promise<PostFullAllResponse> {
   const results = await db
     .select({
       post: posts,
@@ -69,5 +64,9 @@ export async function postSelectFullAll(): Promise<PostSelectFullAllResponse> {
 
   const allPosts = Array.from(postMap.values());
 
-  return { message: 'Success', success: true, posts: allPosts };
+  return {
+    message: 'Posts selected successfully',
+    success: true,
+    posts: allPosts,
+  };
 }

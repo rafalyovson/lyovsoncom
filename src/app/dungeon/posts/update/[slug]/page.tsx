@@ -1,5 +1,5 @@
 import { PostForm } from '@/app/dungeon/ui/post-form';
-import { postUpdate } from '@/lib/actions/server-actions/post-update';
+import { postUpdate } from '@/lib/actions/server-actions/post/post-update';
 import { redirect } from 'next/navigation';
 import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 

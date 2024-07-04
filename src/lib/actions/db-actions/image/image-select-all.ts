@@ -1,18 +1,16 @@
-import { Image, images } from '@/data/schema';
+import { images } from '@/data/schema';
 import { db } from '@/data/db';
+import { ImageAllResponse } from '@/lib/actions/db-actions/image';
 
-type ImageSelectAllResponse = {
-  success: boolean;
-  images: Image[] | null;
-  message: string;
-};
-
-export async function imageSelectAll(): Promise<ImageSelectAllResponse> {
+export async function imageSelectAll(): Promise<ImageAllResponse> {
   try {
     const allImages = await db.select().from(images);
-    return { success: true, images: allImages, message: 'Success' };
+    return {
+      success: true,
+      images: allImages,
+      message: 'Images selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting all images:', error);
-    return { success: false, images: null, message: 'Error' };
+    return { success: false, images: null, message: 'Failed to select images' };
   }
 }

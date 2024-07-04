@@ -1,20 +1,18 @@
 import { BlobMeta } from '@/data/types/blob-meta';
 import { head } from '@vercel/blob';
-
-type BlobSelectOneResponse = {
-  success: boolean;
-  blobMeta: BlobMeta | null;
-  message: string;
-};
+import { BlobOneResponse } from '@/lib/actions/db-actions/blob';
 
 export async function blobSelectOneByUrl(data: {
   url: string;
-}): Promise<BlobSelectOneResponse> {
+}): Promise<BlobOneResponse> {
   try {
     const blobMeta: BlobMeta = await head(data.url);
-    return { success: true, blobMeta: blobMeta, message: 'Success' };
+    return {
+      success: true,
+      blobMeta: blobMeta,
+      message: 'Blob selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting blob:', error);
-    return { success: false, blobMeta: null, message: 'Error' };
+    return { success: false, blobMeta: null, message: 'Failed to select blob' };
   }
 }

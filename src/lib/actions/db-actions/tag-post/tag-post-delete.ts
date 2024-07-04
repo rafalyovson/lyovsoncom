@@ -1,16 +1,12 @@
 import { db } from '@/data/db';
 import { tagPost } from '@/data/schema/tagPost';
 import { eq } from 'drizzle-orm';
-
-type TagPostDeleteResponse = {
-  success: boolean;
-  message: string;
-};
+import { TagPostResponse } from '@/lib/actions/db-actions/tag-post';
 
 export async function tagPostDelete(data: {
   postId?: string;
   tagId?: string;
-}): Promise<TagPostDeleteResponse> {
+}): Promise<TagPostResponse> {
   try {
     if (data.postId && data.tagId) {
       await db
@@ -23,12 +19,11 @@ export async function tagPostDelete(data: {
     } else if (data.postId) {
       await db.delete(tagPost).where(eq(tagPost.postId, data.postId));
     } else {
-      return { success: false, message: 'Invalid data' };
+      return { success: false, message: 'Invalid TagPost data' };
     }
 
     return { success: true, message: 'TagPost deleted successfully' };
   } catch (error) {
-    console.error('Failed to delete tagPost:', error);
     return { success: false, message: 'Failed to delete tagPost' };
   }
 }

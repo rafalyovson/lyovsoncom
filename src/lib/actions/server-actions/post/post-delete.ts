@@ -8,11 +8,12 @@ import {
   postDeleteById,
   postSelectOneById,
 } from '@/lib/actions/db-actions/post';
+import { PostResponse } from '@/lib/actions/db-actions/post/';
 
 export const postDelete = async (
-  _prevState: { message: string; success: boolean },
+  _prevState: PostResponse,
   formData: FormData,
-): Promise<{ success: boolean; message: string }> => {
+): Promise<PostResponse> => {
   const postId = formData.get('id') as string;
   const { success, post } = await postSelectOneById({ id: postId });
   if (!success || !post) {

@@ -1,5 +1,5 @@
 import { Tag } from '@/data/schema';
-import { tagCreate } from '@/lib/actions/server-actions/tag-create';
+import { tagCreate } from '@/lib/actions/server-actions/tag/tag-create';
 import { TagForm } from './tag-form';
 import { TagRow } from './tag-row';
 

@@ -1,28 +1,18 @@
 import { db } from '@/data/db';
-import {
-  categories,
-  Category,
-  categoryInsertSchema,
-  NewCategory,
-} from '@/data/schema';
+import { categories, categoryInsertSchema, NewCategory } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type UpdateCategoryResponse = {
-  success: boolean;
-  message: string;
-  category: Category | null;
-};
+import { CategoryOneResponse } from '@/lib/actions/db-actions/category';
 
 export async function categoryUpdate(
   data: NewCategory,
-): Promise<UpdateCategoryResponse> {
+): Promise<CategoryOneResponse> {
   const parsedData = categoryInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
     console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Category data',
       category: null,
     };
   }

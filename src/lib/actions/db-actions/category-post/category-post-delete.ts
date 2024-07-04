@@ -1,16 +1,12 @@
 import { db } from '@/data/db';
 import { categoryPost } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type CategoryPostDeleteResponse = {
-  success: boolean;
-  message: string;
-};
+import { CategoryPostResponse } from '@/lib/actions/db-actions/category-post';
 
 export async function categoryPostDelete(data: {
   postId?: string;
   categoryId?: string;
-}): Promise<CategoryPostDeleteResponse> {
+}): Promise<CategoryPostResponse> {
   try {
     if (data.postId && data.categoryId) {
       await db
@@ -26,12 +22,10 @@ export async function categoryPostDelete(data: {
     } else if (data.postId) {
       await db.delete(categoryPost).where(eq(categoryPost.postId, data.postId));
     } else {
-      return { success: false, message: 'Invalid data' };
+      return { success: false, message: 'Invalid CategoryPost data' };
     }
-
     return { success: true, message: 'CategoryPost deleted successfully' };
   } catch (error) {
-    console.error('Failed to delete categoryPost:', error);
     return { success: false, message: 'Failed to delete categoryPost' };
   }
 }

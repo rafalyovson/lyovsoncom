@@ -1,39 +1,40 @@
 import { db } from '@/data/db';
-import { Post, posts } from '@/data/schema';
+import { posts } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type PostSelectOneResponse = {
-  success: boolean;
-  post: Post | null;
-  message: string;
-};
+import { PostOneResponse } from '@/lib/actions/db-actions/post';
 
 export async function postSelectOneBySlug(data: {
   slug: string;
-}): Promise<PostSelectOneResponse> {
+}): Promise<PostOneResponse> {
   try {
     const [thePost] = await db
       .select()
       .from(posts)
       .where(eq(posts.slug, data.slug));
-    return { success: true, post: thePost, message: 'Success' };
+    return {
+      success: true,
+      post: thePost,
+      message: 'Post selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting post by slug:', error);
-    return { success: false, post: null, message: 'Error' };
+    return { success: false, post: null, message: 'Failed to select post' };
   }
 }
 
 export async function postSelectOneById(data: {
   id: string;
-}): Promise<PostSelectOneResponse> {
+}): Promise<PostOneResponse> {
   try {
     const [thePost] = await db
       .select()
       .from(posts)
       .where(eq(posts.id, data.id));
-    return { success: true, post: thePost, message: 'Success' };
+    return {
+      success: true,
+      post: thePost,
+      message: 'Post selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting post by id:', error);
-    return { success: false, post: null, message: 'Error' };
+    return { success: false, post: null, message: 'Failed to select post' };
   }
 }

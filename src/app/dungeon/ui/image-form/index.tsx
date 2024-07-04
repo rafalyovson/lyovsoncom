@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { imageGroups } from '@/data/image-groups';
 import { Image } from '@/data/schema';
-import { imageCreate } from '@/lib/actions/server-actions/image-create';
+import { imageCreate } from '@/lib/actions/server-actions/image/image-create';
 import { capitalize } from '@/lib/utils';
 import { Dispatch, useActionState } from 'react';
 import { toast } from 'sonner';

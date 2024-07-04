@@ -9,18 +9,12 @@ import {
   users,
 } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-import { PostFull } from '@/data/types/post-full';
 import { Post } from '@/data/types/post';
-
-type PostSelectFullOneResponse = {
-  message: string;
-  success: boolean;
-  post: PostFull | null;
-};
+import { PostFullOneResponse } from '@/lib/actions/db-actions/post';
 
 export async function postSelectFullOneBySlug(data: {
   slug: string;
-}): Promise<PostSelectFullOneResponse> {
+}): Promise<PostFullOneResponse> {
   const results = await db
     .select({
       post: posts,
@@ -39,7 +33,7 @@ export async function postSelectFullOneBySlug(data: {
     .where(eq(posts.slug, data.slug));
 
   if (results.length === 0) {
-    return { message: 'No posts found', success: false, post: null };
+    return { message: 'No post found', success: false, post: null };
   }
 
   const post: Post = results[0].post;
@@ -60,5 +54,5 @@ export async function postSelectFullOneBySlug(data: {
     }
   });
 
-  return { message: 'Success', success: true, post: post };
+  return { message: 'Post selected successfully', success: true, post: post };
 }

@@ -1,36 +1,29 @@
 import { db } from '@/data/db';
-import { Tag, tags } from '@/data/schema';
+import { tags } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type TagSelectOneResponse = {
-  success: boolean;
-  tag: Tag | null;
-  message: string;
-};
+import { TagOneResponse } from '@/lib/actions/db-actions/tag';
 
 export async function tagSelectOneById(data: {
   id: string;
-}): Promise<TagSelectOneResponse> {
+}): Promise<TagOneResponse> {
   try {
     const [theTag] = await db.select().from(tags).where(eq(tags.id, data.id));
-    return { success: true, tag: theTag, message: 'Success' };
+    return { success: true, tag: theTag, message: 'Tag selected successfully' };
   } catch (error) {
-    console.error('Error selecting tag by id:', error);
-    return { success: false, tag: null, message: 'Error' };
+    return { success: false, tag: null, message: 'Failed to select tag' };
   }
 }
 
 export async function tagSelectOneBySlug(data: {
   slug: string;
-}): Promise<TagSelectOneResponse> {
+}): Promise<TagOneResponse> {
   try {
     const [theTag] = await db
       .select()
       .from(tags)
       .where(eq(tags.slug, data.slug));
-    return { success: true, tag: theTag, message: 'Success' };
+    return { success: true, tag: theTag, message: 'Tag selected successfully' };
   } catch (error) {
-    console.error('Error selecting tag by slug:', error);
-    return { success: false, tag: null, message: 'Error' };
+    return { success: false, tag: null, message: 'Failed to select tag' };
   }
 }

@@ -1,14 +1,14 @@
 'use server';
 
-import { Image, imageInsertSchema } from '@/data/schema';
+import { imageInsertSchema } from '@/data/schema';
 import { slugify } from '@/lib/utils';
 import { blobInsert } from '@/lib/actions/db-actions/blob';
-import { imageInsert } from '@/lib/actions/db-actions/image';
+import { imageInsert, ImageOneResponse } from '@/lib/actions/db-actions/image';
 
 export async function imageCreate(
-  _prevData: { message: string; success: boolean; image: Image | null },
+  _prevData: ImageOneResponse,
   formData: FormData,
-): Promise<{ success: boolean; message: string; image: Image | null }> {
+): Promise<ImageOneResponse> {
   const data = {
     caption: formData.get('caption') as string,
     altText: formData.get('altText') as string,
@@ -42,10 +42,5 @@ export async function imageCreate(
     return { message: 'Validation error', success: false, image: null };
   }
 
-  try {
-    return await imageInsert(fullData);
-  } catch (error) {
-    console.error('Failed to insert image:', error);
-    return { message: 'Failed to insert image', success: false, image: null };
-  }
+  return await imageInsert(fullData);
 }

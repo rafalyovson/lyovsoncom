@@ -1,21 +1,15 @@
 import { db } from '@/data/db';
-import { NewTag, Tag, tagInsertSchema, tags } from '@/data/schema';
+import { NewTag, tagInsertSchema, tags } from '@/data/schema';
 import { eq } from 'drizzle-orm';
+import { TagOneResponse } from '@/lib/actions/db-actions/tag';
 
-type TagUpdateResponse = {
-  success: boolean;
-  message: string;
-  tag: Tag | null;
-};
-
-export async function tagUpdate(data: NewTag): Promise<TagUpdateResponse> {
+export async function tagUpdate(data: NewTag): Promise<TagOneResponse> {
   const parsedData = tagInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Tag data',
       tag: null,
     };
   }
@@ -32,7 +26,6 @@ export async function tagUpdate(data: NewTag): Promise<TagUpdateResponse> {
       tag: newTag,
     };
   } catch (error) {
-    console.error('Failed to update tag:', error);
     return {
       success: false,
       message: 'Failed to update tag',

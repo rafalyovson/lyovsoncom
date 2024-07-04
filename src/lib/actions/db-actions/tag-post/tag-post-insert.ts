@@ -1,29 +1,17 @@
 import { db } from '@/data/db';
-import { TagPost, tagPost } from '@/data/schema';
-import { z } from 'zod';
-
-type TagPostInsertResponse = {
-  success: boolean;
-  message: string;
-  tagPost: TagPost | null;
-};
+import { tagPost, tagPostInsertSchema } from '@/data/schema';
+import { TagPostOneResponse } from '@/lib/actions/db-actions/tag-post';
 
 export async function tagPostInsert(data: {
   tagId: string;
   postId: string;
-}): Promise<TagPostInsertResponse> {
-  const schema = z.object({
-    tagId: z.string().uuid({ message: 'Invalid tag ID' }),
-    postId: z.string().uuid({ message: 'Invalid post ID' }),
-  });
-
-  const parsedData = schema.safeParse(data);
+}): Promise<TagPostOneResponse> {
+  const parsedData = tagPostInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Error validating TagPost data',
       tagPost: null,
     };
   }
@@ -35,10 +23,9 @@ export async function tagPostInsert(data: {
       tagPost: data,
     };
   } catch (error) {
-    console.error('Failed to insert tag:', error);
     return {
       success: false,
-      message: 'Failed to insert tag',
+      message: 'Failed to insert TagPost',
       tagPost: null,
     };
   }

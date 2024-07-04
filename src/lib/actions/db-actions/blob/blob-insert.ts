@@ -1,18 +1,12 @@
 import { type Blob } from '@/data/types/blob';
-import { BlobMeta } from '@/data/types/blob-meta';
 import { put } from '@vercel/blob';
 import { blobSelectOneByUrl } from './blob-select-one';
-
-type BlobInsertResponse = {
-  success: boolean;
-  message: string;
-  blobMeta: BlobMeta | null;
-};
+import { BlobOneResponse } from '@/lib/actions/db-actions/blob';
 
 export async function blobInsert(data: {
   name: string;
   file: File;
-}): Promise<BlobInsertResponse> {
+}): Promise<BlobOneResponse> {
   try {
     const blob: Blob = await put(data.name, data.file, {
       access: 'public',
@@ -33,7 +27,6 @@ export async function blobInsert(data: {
       };
     }
   } catch (error) {
-    console.error('Failed to insert blob:', error);
     return { success: false, message: 'Failed to insert blob', blobMeta: null };
   }
 }

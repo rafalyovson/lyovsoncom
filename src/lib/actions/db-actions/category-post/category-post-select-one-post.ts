@@ -1,16 +1,11 @@
 import { db } from '@/data/db';
-import { CategoryPost, categoryPost } from '@/data/schema';
+import { categoryPost } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type CategoryPostSelectOnePostResponse = {
-  success: boolean;
-  categoryPosts: CategoryPost[] | null;
-  message: string;
-};
+import { CategoryPostAllResponse } from '@/lib/actions/db-actions/category-post';
 
 export async function categoryPostSelectOnePost(data: {
   postId: string;
-}): Promise<CategoryPostSelectOnePostResponse> {
+}): Promise<CategoryPostAllResponse> {
   try {
     const allCategoryPosts = await db
       .select()
@@ -19,10 +14,13 @@ export async function categoryPostSelectOnePost(data: {
     return {
       success: true,
       categoryPosts: allCategoryPosts,
-      message: 'Success',
+      message: 'CategoryPosts selected successfully',
     };
   } catch (error) {
-    console.error('Error selecting tags:', error);
-    return { success: false, categoryPosts: null, message: 'Error' };
+    return {
+      success: false,
+      categoryPosts: null,
+      message: 'Failed to select posts',
+    };
   }
 }

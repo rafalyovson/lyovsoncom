@@ -1,18 +1,20 @@
-import { categories, Category } from '@/data/schema';
+import { categories } from '@/data/schema';
 import { db } from '@/data/db';
+import { CategoryAllResponse } from '@/lib/actions/db-actions/category/index';
 
-type CategorySelectAllResponse = {
-  success: boolean;
-  categories: Category[] | null;
-  message: string;
-};
-
-export async function categorySelectAll(): Promise<CategorySelectAllResponse> {
+export async function categorySelectAll(): Promise<CategoryAllResponse> {
   try {
     const allCategories = await db.select().from(categories);
-    return { success: true, categories: allCategories, message: 'Success' };
+    return {
+      success: true,
+      categories: allCategories,
+      message: 'Categories selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting all categories:', error);
-    return { success: false, categories: null, message: 'Error' };
+    return {
+      success: false,
+      categories: null,
+      message: 'Failed to select categories',
+    };
   }
 }

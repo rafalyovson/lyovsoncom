@@ -1,21 +1,15 @@
 import { db } from '@/data/db';
-import { NewPost, Post, postInsertSchema, posts } from '@/data/schema';
+import { NewPost, postInsertSchema, posts } from '@/data/schema';
 import { eq } from 'drizzle-orm';
+import { PostOneResponse } from '@/lib/actions/db-actions/post';
 
-type PostInsertResponse = {
-  success: boolean;
-  message: string;
-  post: Post | null;
-};
-
-export async function postInsert(data: NewPost): Promise<PostInsertResponse> {
+export async function postInsert(data: NewPost): Promise<PostOneResponse> {
   const parsedData = postInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Post data',
       post: null,
     };
   }
@@ -28,11 +22,10 @@ export async function postInsert(data: NewPost): Promise<PostInsertResponse> {
       .where(eq(posts.slug, data.slug));
     return {
       success: parsedData.success,
-      message: 'Post created successfully',
+      message: 'Post inserted successfully',
       post: newPost,
     };
   } catch (error) {
-    console.error('Failed to insert post:', error);
     return {
       success: false,
       message: 'Failed to insert post',

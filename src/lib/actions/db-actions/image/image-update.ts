@@ -1,21 +1,15 @@
 import { db } from '@/data/db';
 import { Image, imageInsertSchema, images } from '@/data/schema';
 import { eq } from 'drizzle-orm';
+import { ImageOneResponse } from '@/lib/actions/db-actions/image';
 
-type ImageUpdateResponse = {
-  success: boolean;
-  message: string;
-  image: Image | null;
-};
-
-export async function imageUpdate(data: Image): Promise<ImageUpdateResponse> {
+export async function imageUpdate(data: Image): Promise<ImageOneResponse> {
   const parsedData = imageInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Image data',
       image: null,
     };
   }
@@ -32,7 +26,6 @@ export async function imageUpdate(data: Image): Promise<ImageUpdateResponse> {
       image: newImage,
     };
   } catch (error) {
-    console.error('Failed to update image:', error);
     return {
       success: false,
       message: 'Failed to update image',

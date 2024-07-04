@@ -1,18 +1,16 @@
 import { db } from '@/data/db';
-import { User, users } from '@/data/schema';
+import { users } from '@/data/schema';
+import { UserAllResponse } from '@/lib/actions/db-actions/user';
 
-type UserSelectAllResponse = {
-  success: boolean;
-  users: User[] | null;
-  message: string;
-};
-
-export async function userSelectAll(): Promise<UserSelectAllResponse> {
+export async function userSelectAll(): Promise<UserAllResponse> {
   try {
     const allUsers = await db.select().from(users);
-    return { success: true, users: allUsers, message: 'Success' };
+    return {
+      success: true,
+      users: allUsers,
+      message: 'Users selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting all users:', error);
-    return { success: false, users: null, message: 'Error' };
+    return { success: false, users: null, message: 'Failed to select users' };
   }
 }

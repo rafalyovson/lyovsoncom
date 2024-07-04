@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { contentTypes } from "@/data/content-types";
-import { Category, User } from "@/data/schema";
-import { capitalize, cn, slugify } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { useActionState, useState } from "react";
-import { toast } from "sonner";
-import { Editor } from "../editor/Editor";
-import { PostImageForm } from "./post-image-form";
+} from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { contentTypes } from '@/data/content-types';
+import { Category, User } from '@/data/schema';
+import { capitalize, cn, slugify } from '@/lib/utils';
+import { format } from 'date-fns';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { useActionState, useState } from 'react';
+import { toast } from 'sonner';
+import { Editor } from '../editor/Editor';
+import { PostImageForm } from './post-image-form';
 
 export function PostFormClient({
   post,
@@ -39,19 +39,17 @@ export function PostFormClient({
   allCats: any;
   authors: any;
 }) {
-  console.log("🦷", post);
-
-  const [content, setContent] = useState(post?.content || "");
+  const [content, setContent] = useState(post?.content || '');
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState(post?.tags || []);
-  const [newTag, setNewTag] = useState("");
+  const [newTag, setNewTag] = useState('');
   const [date, setDate] = useState<Date>(post?.createdAt || new Date());
-  const [title, setTitle] = useState(post?.title || "");
+  const [title, setTitle] = useState(post?.title || '');
   const [image, setImage] = useState(post?.featuredImage || null);
 
   const actionWithContent = action.bind(null, content);
   const [state, formAction, isPending] = useActionState(actionWithContent, {
-    message: "",
+    message: '',
     success: false,
     post: post || null,
   });
@@ -60,7 +58,7 @@ export function PostFormClient({
     toast.success(state.message);
   }
 
-  if (!state.success && state.message !== "") {
+  if (!state.success && state.message !== '') {
     toast.error(state.message);
   }
 
@@ -84,10 +82,10 @@ export function PostFormClient({
 
           <section className="flex flex-col gap-2">
             <Label htmlFor="authorId">Author</Label>
-            <Select name="authorId" defaultValue={post?.author?.id || ""}>
+            <Select name="authorId" defaultValue={post?.author?.id || ''}>
               <SelectTrigger>
                 <SelectValue
-                  placeholder={post?.author?.name || "Choose the author"}
+                  placeholder={post?.author?.name || 'Choose the author'}
                 />
               </SelectTrigger>
               <SelectContent>
@@ -121,14 +119,14 @@ export function PostFormClient({
             <Popover>
               <PopoverTrigger asChild>
                 <Button
-                  variant={"outline"}
+                  variant={'outline'}
                   className={cn(
-                    "justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    'justify-start text-left font-normal',
+                    !date && 'text-muted-foreground',
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  {date ? format(date, 'PPP') : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
@@ -173,7 +171,7 @@ export function PostFormClient({
                   placeholder={
                     post?.categories[0]?.name
                       ? post.categories[0].name
-                      : "Select a category"
+                      : 'Select a category'
                   }
                 />
               </SelectTrigger>
@@ -194,14 +192,14 @@ export function PostFormClient({
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === 'Enter') {
                   e.preventDefault();
-                  if (newTag === "") return;
+                  if (newTag === '') return;
                   setPostTags([
                     ...postTags,
                     { name: newTag, slug: slugify(newTag) },
                   ]);
-                  setNewTag("");
+                  setNewTag('');
                 }
               }}
             />
@@ -209,12 +207,12 @@ export function PostFormClient({
             <Button
               onClick={(e) => {
                 e.preventDefault();
-                if (newTag === "") return;
+                if (newTag === '') return;
                 setPostTags([
                   ...postTags,
                   { name: newTag, slug: slugify(newTag) },
                 ]);
-                setNewTag("");
+                setNewTag('');
               }}
             >
               Add Tag
@@ -224,14 +222,14 @@ export function PostFormClient({
               {postTags.map((tag: any) => (
                 <div className="flex items-center space-x-2" key={tag.id}>
                   <Checkbox
-                    name={"tags"}
+                    name={'tags'}
                     checked
                     id={tag.slug}
                     value={tag.slug}
                     onClick={(e) => {
                       e.preventDefault();
                       setPostTags(
-                        postTags.filter((t: any) => t.name !== tag.name)
+                        postTags.filter((t: any) => t.name !== tag.name),
                       );
                     }}
                   />

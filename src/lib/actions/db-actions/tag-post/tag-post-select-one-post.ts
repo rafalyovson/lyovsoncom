@@ -1,24 +1,26 @@
 import { db } from '@/data/db';
-import { TagPost, tagPost } from '@/data/schema';
+import { tagPost } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type TagPostSelectOnePostResponse = {
-  success: boolean;
-  tagPosts: TagPost[] | null;
-  message: string;
-};
+import { TagPostAllResponse } from '@/lib/actions/db-actions/tag-post';
 
 export async function tagPostSelectOnePost(data: {
   postId: string;
-}): Promise<TagPostSelectOnePostResponse> {
+}): Promise<TagPostAllResponse> {
   try {
     const allTagPosts = await db
       .select()
       .from(tagPost)
       .where(eq(tagPost.postId, data.postId));
-    return { success: true, tagPosts: allTagPosts, message: 'Success' };
+    return {
+      success: true,
+      tagPosts: allTagPosts,
+      message: 'TagPosts selected successfully',
+    };
   } catch (error) {
-    console.error('Error selecting tags:', error);
-    return { success: false, tagPosts: null, message: 'Error' };
+    return {
+      success: false,
+      tagPosts: null,
+      message: 'Failed to select tagPosts',
+    };
   }
 }

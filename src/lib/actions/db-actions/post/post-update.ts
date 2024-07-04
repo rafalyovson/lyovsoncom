@@ -1,21 +1,15 @@
 import { db } from '@/data/db';
-import { NewPost, Post, postInsertSchema, posts } from '@/data/schema';
+import { NewPost, postInsertSchema, posts } from '@/data/schema';
 import { eq } from 'drizzle-orm';
+import { PostOneResponse } from '@/lib/actions/db-actions/post';
 
-type PostUpdateResponse = {
-  success: boolean;
-  message: string;
-  post: Post | null;
-};
-
-export async function postUpdate(data: NewPost): Promise<PostUpdateResponse> {
+export async function postUpdate(data: NewPost): Promise<PostOneResponse> {
   const parsedData = postInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Post data',
       post: null,
     };
   }
@@ -32,7 +26,6 @@ export async function postUpdate(data: NewPost): Promise<PostUpdateResponse> {
       post: newPost,
     };
   } catch (error) {
-    console.error('Failed to update post:', error);
     return {
       success: false,
       message: 'Failed to update post',

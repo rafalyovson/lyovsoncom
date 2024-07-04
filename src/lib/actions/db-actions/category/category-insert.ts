@@ -1,28 +1,17 @@
 import { db } from '@/data/db';
-import {
-  categories,
-  Category,
-  categoryInsertSchema,
-  NewCategory,
-} from '@/data/schema';
+import { categories, categoryInsertSchema, NewCategory } from '@/data/schema';
 import { eq } from 'drizzle-orm';
-
-type CategoryInsertResponse = {
-  success: boolean;
-  message: string;
-  category: Category | null;
-};
+import { CategoryOneResponse } from '@/lib/actions/db-actions/category';
 
 export async function categoryInsert(
   data: NewCategory,
-): Promise<CategoryInsertResponse> {
+): Promise<CategoryOneResponse> {
   const parsedData = categoryInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
-    console.log('Validation error', parsedData.error.issues);
     return {
       success: parsedData.success,
-      message: 'Validation error',
+      message: 'Failed to validate Category data',
       category: null,
     };
   }
@@ -35,11 +24,10 @@ export async function categoryInsert(
       .where(eq(categories.slug, data.slug));
     return {
       success: parsedData.success,
-      message: 'Category created successfully',
+      message: 'Category inserted successfully',
       category: newCategory,
     };
   } catch (error) {
-    console.error('Failed to insert category:', error);
     return {
       success: false,
       message: 'Failed to insert category',

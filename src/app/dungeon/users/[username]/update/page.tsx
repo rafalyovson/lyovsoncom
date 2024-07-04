@@ -1,6 +1,6 @@
 import { db } from '@/data/db';
 import { users } from '@/data/schema';
-import { userUpdate } from '@/lib/actions/server-actions/user-update';
+import { userUpdate } from '@/lib/actions/server-actions/user/user-update';
 import { eq } from 'drizzle-orm';
 import { redirect } from 'next/navigation';
 import UserForm from '../../../ui/user-form';
