@@ -11,6 +11,11 @@ export async function tagSelectAll(): Promise<TagAllResponse> {
       message: 'Tags selected successfully',
     };
   } catch (error) {
-    return { success: false, tags: null, message: 'Failed to select tags' };
+    return {
+      success: false,
+      tags: null,
+      message: 'Failed to select tags',
+      error,
+    };
   }
 }

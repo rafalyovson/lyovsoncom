@@ -30,6 +30,7 @@ export async function postUpdate(data: NewPost): Promise<PostOneResponse> {
       success: false,
       message: 'Failed to update post',
       post: null,
+      error,
     };
   }
 }

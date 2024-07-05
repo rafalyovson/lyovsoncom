@@ -28,6 +28,7 @@ export async function categoryPostInsert(data: {
       success: false,
       message: 'Failed to insert CategoryPost',
       categoryPost: null,
+      error,
     };
   }
 }

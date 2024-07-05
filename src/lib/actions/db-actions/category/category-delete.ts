@@ -10,6 +10,6 @@ export async function categoryDeleteById(data: {
     await db.delete(categories).where(eq(categories.id, data.id));
     return { success: true, message: 'Category deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete category' };
+    return { success: false, message: 'Failed to delete category', error };
   }
 }

@@ -30,6 +30,7 @@ export async function postInsert(data: NewPost): Promise<PostOneResponse> {
       success: false,
       message: 'Failed to insert post',
       post: null,
+      error,
     };
   }
 }

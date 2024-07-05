@@ -21,6 +21,7 @@ export async function tagPostSelectOnePost(data: {
       success: false,
       tagPosts: null,
       message: 'Failed to select tagPosts',
+      error,
     };
   }
 }

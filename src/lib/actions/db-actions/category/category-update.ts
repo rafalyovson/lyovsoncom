@@ -34,6 +34,7 @@ export async function categoryUpdate(
       success: false,
       message: 'Failed to update category',
       category: null,
+      error,
     };
   }
 }

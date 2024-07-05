@@ -32,6 +32,7 @@ export async function categoryInsert(
       success: false,
       message: 'Failed to insert category',
       category: null,
+      error,
     };
   }
 }

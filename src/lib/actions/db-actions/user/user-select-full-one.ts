@@ -7,7 +7,6 @@ import { UserFull } from '@/data/types/user-full';
 export async function userSelectFullOneByUsername(data: {
   username: string;
 }): Promise<UserFullOneResponse> {
-  console.log('username', data.username);
   try {
     const [result] = await db
       .select({
@@ -17,7 +16,6 @@ export async function userSelectFullOneByUsername(data: {
       .from(users)
       .leftJoin(images, eq(users.imageId, images.id))
       .where(eq(users.username, data.username));
-    console.log('result', result);
 
     if (!result.user) {
       return { success: false, user: null, message: 'User not found' };
@@ -32,6 +30,46 @@ export async function userSelectFullOneByUsername(data: {
       message: 'User selected successfully',
     };
   } catch (error) {
-    return { success: false, user: null, message: 'Failed to select user' };
+    return {
+      success: false,
+      user: null,
+      message: 'Failed to select user',
+      error,
+    };
+  }
+}
+
+export async function userSelectFullOneById(data: {
+  id: string;
+}): Promise<UserFullOneResponse> {
+  try {
+    const [result] = await db
+      .select({
+        user: users,
+        image: images,
+      })
+      .from(users)
+      .leftJoin(images, eq(users.imageId, images.id))
+      .where(eq(users.id, data.id));
+
+    if (!result.user) {
+      return { success: false, user: null, message: 'User not found' };
+    }
+
+    const user: UserFull = result.user;
+    user.avatar = result.image || undefined;
+
+    return {
+      success: true,
+      user: user,
+      message: 'User selected successfully',
+    };
+  } catch (error) {
+    return {
+      success: false,
+      user: null,
+      message: 'Failed to select user',
+      error,
+    };
   }
 }

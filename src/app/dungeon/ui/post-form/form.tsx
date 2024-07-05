@@ -106,6 +106,7 @@ export function PostFormClient({
             setIsOpen={setImageModalOpen}
             image={image}
             setImage={setImage}
+            group={'post'}
           />
 
           <section className="flex flex-col gap-2">
@@ -151,9 +152,9 @@ export function PostFormClient({
 
           <section className="flex flex-col gap-2 ">
             <Label htmlFor="type">Type</Label>
-            <Select name="type" defaultValue={post?.type}>
+            <Select name="type" defaultValue={post?.type || 'article'}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a post type" />
+                <SelectValue placeholder={post?.type || 'Article'} />
               </SelectTrigger>
 
               <SelectContent>
@@ -171,11 +172,7 @@ export function PostFormClient({
             <Select name="category" defaultValue={post?.categories?.[0]?.name}>
               <SelectTrigger>
                 <SelectValue
-                  placeholder={
-                    post?.categories[0]?.name
-                      ? post.categories[0].name
-                      : 'Select a category'
-                  }
+                  placeholder={post?.categories[0]?.name || 'Select a category'}
                 />
               </SelectTrigger>
               <SelectContent>

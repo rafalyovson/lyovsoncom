@@ -59,7 +59,11 @@ export async function postSelectFullOneBySlug(data: {
 
     return { message: 'Post selected successfully', success: true, post: post };
   } catch (error) {
-    console.error('Failed to select post:', error);
-    return { message: 'Failed to select post', success: false, post: null };
+    return {
+      message: 'Failed to select post',
+      success: false,
+      post: null,
+      error,
+    };
   }
 }

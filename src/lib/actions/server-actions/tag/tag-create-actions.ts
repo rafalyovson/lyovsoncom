@@ -17,10 +17,14 @@ export const tagCreateActions = async (
     slug: formData.get('slug') as string,
   };
 
-  const existingTag = await tagSelectOneBySlug({ slug: data.slug });
+  const result = await tagSelectOneBySlug({ slug: data.slug });
 
-  if (!existingTag.success) {
-    return existingTag;
+  if (result.tag) {
+    return {
+      message: 'Tag already exists',
+      success: false,
+      tag: null,
+    };
   }
 
   const parsedData = tagInsertSchema.safeParse(data);

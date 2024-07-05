@@ -30,6 +30,7 @@ export async function imageUpdate(data: Image): Promise<ImageOneResponse> {
       success: false,
       message: 'Failed to update image',
       image: null,
+      error,
     };
   }
 }

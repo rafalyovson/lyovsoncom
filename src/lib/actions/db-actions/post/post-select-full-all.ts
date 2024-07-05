@@ -71,7 +71,11 @@ export async function postSelectFullAll(): Promise<PostFullAllResponse> {
       posts: allPosts,
     };
   } catch (error) {
-    console.error('Failed to select posts:', error);
-    return { message: 'Failed to select posts', success: false, posts: null };
+    return {
+      message: 'Failed to select posts',
+      success: false,
+      posts: null,
+      error,
+    };
   }
 }

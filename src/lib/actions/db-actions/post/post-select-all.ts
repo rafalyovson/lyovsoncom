@@ -11,6 +11,11 @@ export async function postSelectAll(): Promise<PostAllResponse> {
       message: 'Posts selected successfully',
     };
   } catch (error) {
-    return { success: false, posts: null, message: 'Failed to select posts' };
+    return {
+      success: false,
+      posts: null,
+      message: 'Failed to select posts',
+      error,
+    };
   }
 }

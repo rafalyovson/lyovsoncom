@@ -17,7 +17,12 @@ export async function imageSelectById(data: {
       message: 'Selected image successfully',
     };
   } catch (error) {
-    return { success: false, image: null, message: 'Failed to select image' };
+    return {
+      success: false,
+      image: null,
+      message: 'Failed to select image',
+      error,
+    };
   }
 }
 
@@ -35,6 +40,11 @@ export async function imageSelectBySlug(data: {
       message: 'Selected image successfully',
     };
   } catch (error) {
-    return { success: false, image: null, message: 'Failed to select image' };
+    return {
+      success: false,
+      image: null,
+      message: 'Failed to select image',
+      error,
+    };
   }
 }

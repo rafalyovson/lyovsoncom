@@ -20,9 +20,11 @@ import { toast } from 'sonner';
 export const ImageForm = ({
   setImage,
   setIsOpen,
+  group,
 }: {
   setIsOpen?: Dispatch<boolean>;
   setImage?: Dispatch<Image | null>;
+  group?: string;
 }) => {
   const [state, formAction, isPending] = useActionState(imageCreateAction, {
     message: '',
@@ -57,13 +59,16 @@ export const ImageForm = ({
       </section>
       <section className="flex flex-col gap-2">
         <Label htmlFor="file">File</Label>
-        <Input name="file" type="file" />
+        <Input name="file" type="file" accept="image/*" />
       </section>
       <section className="flex flex-col gap-2">
         <Label htmlFor="group">Group</Label>
         <Select name="group">
           <SelectTrigger>
-            <SelectValue placeholder="Select a group" />
+            <SelectValue
+              placeholder={(group && capitalize(group)) || 'Select a group'}
+              defaultValue={group}
+            />
           </SelectTrigger>
           <SelectContent>
             {imageGroups.map((group: any) => (

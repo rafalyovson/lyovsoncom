@@ -8,6 +8,6 @@ export async function tagDelete(data: { id: string }): Promise<TagResponse> {
     await db.delete(tags).where(eq(tags.id, data.id));
     return { success: true, message: 'Tag deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete tag' };
+    return { success: false, message: 'Failed to delete tag', error };
   }
 }

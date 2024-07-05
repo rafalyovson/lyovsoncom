@@ -15,6 +15,7 @@ export async function categorySelectAll(): Promise<CategoryAllResponse> {
       success: false,
       categories: null,
       message: 'Failed to select categories',
+      error,
     };
   }
 }

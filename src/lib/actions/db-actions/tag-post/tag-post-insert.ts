@@ -27,6 +27,7 @@ export async function tagPostInsert(data: {
       success: false,
       message: 'Failed to insert TagPost',
       tagPost: null,
+      error,
     };
   }
 }

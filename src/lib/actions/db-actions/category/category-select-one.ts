@@ -21,6 +21,7 @@ export async function categorySelectOneById(data: {
       success: false,
       category: null,
       message: 'Failed to select category',
+      error,
     };
   }
 }
@@ -48,6 +49,7 @@ export async function categorySelectOneBySlug(data: {
       success: false,
       category: null,
       message: 'Failed to select category',
+      error,
     };
   }
 }

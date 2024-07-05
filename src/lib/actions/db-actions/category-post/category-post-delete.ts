@@ -26,6 +26,6 @@ export async function categoryPostDelete(data: {
     }
     return { success: true, message: 'CategoryPost deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete categoryPost' };
+    return { success: false, message: 'Failed to delete categoryPost', error };
   }
 }

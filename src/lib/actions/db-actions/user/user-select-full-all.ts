@@ -29,7 +29,11 @@ export async function userSelectFullAll(): Promise<UserFullAllResponse> {
       message: 'Users selected successfully',
     };
   } catch (error) {
-    console.error('Failed to select users:', error);
-    return { success: false, users: null, message: 'Failed to select users' };
+    return {
+      success: false,
+      users: null,
+      message: 'Failed to select users',
+      error,
+    };
   }
 }

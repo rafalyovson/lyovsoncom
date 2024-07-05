@@ -51,7 +51,9 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                     />
                   </TableCell>
                   <TableCell className="font-medium">
-                    <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+                    <Link href={`/dungeon/posts/${post.slug}`}>
+                      {post.title}
+                    </Link>
                   </TableCell>
                   <TableCell>{post.author!.name}</TableCell>
                   <TableCell className="hidden md:table-cell">

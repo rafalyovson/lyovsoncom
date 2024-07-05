@@ -13,14 +13,12 @@ import { Edit } from 'lucide-react';
 import Image from 'next/image';
 
 export async function UserTable({ users }: { users: UserFull[] }) {
-  console.log('users', users);
-
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Image</TableHead>
-          <TableHead>Username</TableHead>
+
           <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
         </TableRow>
@@ -37,8 +35,10 @@ export async function UserTable({ users }: { users: UserFull[] }) {
                 height={200}
               />
             </TableCell>
-            <TableCell>{user.username}</TableCell>
-            <TableCell>{user.name}</TableCell>
+
+            <TableCell>
+              <Link href={`/dungeon/users/${user.username}`}>{user.name}</Link>
+            </TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>
               <section className="flex gap-2 ">

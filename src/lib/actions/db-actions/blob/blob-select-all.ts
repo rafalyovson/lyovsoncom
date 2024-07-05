@@ -26,6 +26,7 @@ export async function blobSelectAll(data: {
       success: false,
       blobs: null,
       message: 'Failed to select blobs',
+      error,
     };
   }
 }

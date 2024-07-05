@@ -12,13 +12,16 @@ export const ImageUploadForm = ({
   setIsOpen,
   image,
   setImage,
+  group,
 }: {
   isOpen: boolean;
   setIsOpen: Dispatch<boolean>;
   setId?: Dispatch<string>;
   image?: ImageType | null;
   setImage?: any;
+  group?: string;
 }) => {
+  console.log('group', group);
   return (
     <section className="flex flex-col gap-2  ">
       <Label htmlFor="imageId">Image</Label>
@@ -46,7 +49,7 @@ export const ImageUploadForm = ({
         title="Upload Image"
         desc="Upload the featured image of the post."
       >
-        <ImageForm setImage={setImage} setIsOpen={setIsOpen} />
+        <ImageForm setImage={setImage} setIsOpen={setIsOpen} group={group} />
       </ResponsiveModal>
     </section>
   );

@@ -30,6 +30,7 @@ export async function userUpdateByUsername(
       success: false,
       message: 'Failed to update user',
       user: null,
+      error,
     };
   }
 }

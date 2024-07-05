@@ -21,6 +21,7 @@ export async function categoryPostSelectOnePost(data: {
       success: false,
       categoryPosts: null,
       message: 'Failed to select posts',
+      error,
     };
   }
 }

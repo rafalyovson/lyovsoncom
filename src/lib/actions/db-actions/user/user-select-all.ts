@@ -11,6 +11,11 @@ export async function userSelectAll(): Promise<UserAllResponse> {
       message: 'Users selected successfully',
     };
   } catch (error) {
-    return { success: false, users: null, message: 'Failed to select users' };
+    return {
+      success: false,
+      users: null,
+      message: 'Failed to select users',
+      error,
+    };
   }
 }

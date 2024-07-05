@@ -30,6 +30,7 @@ export async function tagUpdate(data: NewTag): Promise<TagOneResponse> {
       success: false,
       message: 'Failed to update tag',
       tag: null,
+      error,
     };
   }
 }

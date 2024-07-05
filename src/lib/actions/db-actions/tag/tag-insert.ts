@@ -30,6 +30,7 @@ export async function tagInsert(data: NewTag): Promise<TagOneResponse> {
       success: false,
       message: 'Failed to insert tag',
       tag: null,
+      error,
     };
   }
 }

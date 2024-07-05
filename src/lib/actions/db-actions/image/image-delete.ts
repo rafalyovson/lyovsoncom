@@ -10,6 +10,6 @@ export async function imageDeleteByUrl(data: {
     await db.delete(images).where(eq(images.url, data.url));
     return { success: true, message: 'Image deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete image' };
+    return { success: false, message: 'Failed to delete image', error };
   }
 }

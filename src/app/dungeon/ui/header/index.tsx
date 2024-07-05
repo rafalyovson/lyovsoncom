@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Breadcrumb,
@@ -6,8 +6,8 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,20 +15,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { DungeonLinks } from "@/data/dungeon-links";
-import { PanelLeft, Search } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { DungeonLinks } from '@/data/dungeon-links';
+import { PanelLeft, Search } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { UserFull } from '@/data/types/user-full';
+import { signOut } from 'next-auth/react';
 
-export const Header = () => {
+export const Header = ({ user }: { user: UserFull }) => {
   const pathname = usePathname();
-  const pathSegments = pathname.split("/");
-
-  console.log(pathname);
+  const pathSegments = pathname.split('/');
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -64,7 +64,7 @@ export const Header = () => {
                 <BreadcrumbItem key={index}>
                   <BreadcrumbLink asChild>
                     <Link
-                      href={`${pathSegments.slice(0, index + 1).join("/")}`}
+                      href={`${pathSegments.slice(0, index + 1).join('/')}`}
                     >
                       {segment}
                     </Link>
@@ -86,27 +86,34 @@ export const Header = () => {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
+          <Button variant="outline" size="icon">
             <Image
-              src="/rafa.jpg"
+              className="overflow-hidden rounded-md aspect-square object-cover"
+              src={user.avatar?.url || ''}
               width={36}
               height={36}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
+              alt={user.avatar?.altText || ''}
             />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            <Link href={`/dungeon/users/${user.username}`}>My Account</Link>
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href={`/dungeon/users/${user.username}/update`}>
+              Settings
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
+          <DropdownMenuItem
+            className={'cursor-pointer'}
+            onClick={() => signOut()}
+          >
+            Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>

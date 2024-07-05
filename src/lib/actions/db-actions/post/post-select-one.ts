@@ -17,7 +17,12 @@ export async function postSelectOneBySlug(data: {
       message: 'Post selected successfully',
     };
   } catch (error) {
-    return { success: false, post: null, message: 'Failed to select post' };
+    return {
+      success: false,
+      post: null,
+      message: 'Failed to select post',
+      error,
+    };
   }
 }
 
@@ -35,6 +40,11 @@ export async function postSelectOneById(data: {
       message: 'Post selected successfully',
     };
   } catch (error) {
-    return { success: false, post: null, message: 'Failed to select post' };
+    return {
+      success: false,
+      post: null,
+      message: 'Failed to select post',
+      error,
+    };
   }
 }

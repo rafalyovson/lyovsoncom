@@ -13,6 +13,11 @@ export async function blobSelectOneByUrl(data: {
       message: 'Blob selected successfully',
     };
   } catch (error) {
-    return { success: false, blobMeta: null, message: 'Failed to select blob' };
+    return {
+      success: false,
+      blobMeta: null,
+      message: 'Failed to select blob',
+      error,
+    };
   }
 }

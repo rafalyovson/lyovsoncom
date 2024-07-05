@@ -1,11 +1,10 @@
 'use server';
 
-import { db } from '@/data/db';
-import { categories, postInsertSchema } from '@/data/schema';
-import { eq } from 'drizzle-orm';
+import { postInsertSchema } from '@/data/schema';
 import {
   categoryInsert,
   CategoryOneResponse,
+  categorySelectOneBySlug,
 } from '@/lib/actions/db-actions/category';
 
 export const categoryCreateAction = async (
@@ -13,16 +12,13 @@ export const categoryCreateAction = async (
   formData: FormData,
 ): Promise<CategoryOneResponse> => {
   const data = {
-    name: formData.get('name'),
-    slug: formData.get('slug'),
+    name: formData.get('name') as string,
+    slug: formData.get('slug') as string,
   };
 
-  const existingCategory = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.name, data.name));
+  const result = await categorySelectOneBySlug({ slug: data.slug! });
 
-  if (existingCategory.length > 0) {
+  if (result.category) {
     return {
       message: 'Category already exists',
       success: false,

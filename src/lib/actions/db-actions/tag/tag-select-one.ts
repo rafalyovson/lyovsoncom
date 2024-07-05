@@ -10,7 +10,12 @@ export async function tagSelectOneById(data: {
     const [theTag] = await db.select().from(tags).where(eq(tags.id, data.id));
     return { success: true, tag: theTag, message: 'Tag selected successfully' };
   } catch (error) {
-    return { success: false, tag: null, message: 'Failed to select tag' };
+    return {
+      success: false,
+      tag: null,
+      message: 'Failed to select tag',
+      error,
+    };
   }
 }
 
@@ -24,6 +29,11 @@ export async function tagSelectOneBySlug(data: {
       .where(eq(tags.slug, data.slug));
     return { success: true, tag: theTag, message: 'Tag selected successfully' };
   } catch (error) {
-    return { success: false, tag: null, message: 'Failed to select tag' };
+    return {
+      success: false,
+      tag: null,
+      message: 'Failed to select tag',
+      error,
+    };
   }
 }

@@ -11,6 +11,11 @@ export async function imageSelectAll(): Promise<ImageAllResponse> {
       message: 'Images selected successfully',
     };
   } catch (error) {
-    return { success: false, images: null, message: 'Failed to select images' };
+    return {
+      success: false,
+      images: null,
+      message: 'Failed to select images',
+      error,
+    };
   }
 }

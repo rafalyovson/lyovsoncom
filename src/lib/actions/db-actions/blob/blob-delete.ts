@@ -11,6 +11,6 @@ export async function blobDelete(data: { url: string }): Promise<BlobResponse> {
     }
     return { success: true, message: 'Blob deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete blob' };
+    return { success: false, message: 'Failed to delete blob', error };
   }
 }

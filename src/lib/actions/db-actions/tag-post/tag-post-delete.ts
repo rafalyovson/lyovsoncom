@@ -24,6 +24,6 @@ export async function tagPostDelete(data: {
 
     return { success: true, message: 'TagPost deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete tagPost' };
+    return { success: false, message: 'Failed to delete tagPost', error };
   }
 }

@@ -10,6 +10,6 @@ export async function postDeleteById(data: {
     await db.delete(posts).where(eq(posts.id, data.id));
     return { success: true, message: 'Post deleted successfully' };
   } catch (error) {
-    return { success: false, message: 'Failed to delete post' };
+    return { success: false, message: 'Failed to delete post', error };
   }
 }

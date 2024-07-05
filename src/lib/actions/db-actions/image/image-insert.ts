@@ -28,6 +28,7 @@ export async function imageInsert(data: NewImage): Promise<ImageOneResponse> {
       success: false,
       message: 'Failed to insert image',
       image: null,
+      error,
     };
   }
 }
