@@ -1,5 +1,5 @@
 import { Category } from '@/data/schema';
-import { categoryCreateAction } from '@/lib/actions/server-actions/category/category-create';
+import { categoryCreateAction } from '@/lib/actions/server-actions/category/category-create-action';
 import { CategoryForm } from './category-form';
 import { CategoryRow } from './category-row';
 import { categorySelectAll } from '@/lib/actions/db-actions/category';

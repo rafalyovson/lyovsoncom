@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Tag } from '@/data/schema';
-import { tagDelete } from '@/lib/actions/server-actions/tag/tag-delete';
+import { tagDeleteAction } from '@/lib/actions/server-actions/tag/tag-delete-action';
 import { Delete } from 'lucide-react';
 
 export const TagRow = ({ cat }: { cat: Tag }) => {
@@ -18,7 +18,7 @@ export const TagRow = ({ cat }: { cat: Tag }) => {
           variant={'ghost'}
           size={'icon'}
           onClick={() => {
-            tagDelete(cat.id);
+            tagDeleteAction(cat.id);
           }}
         >
           <Delete className="h-4 w-4" />

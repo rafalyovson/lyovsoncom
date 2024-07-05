@@ -1,4 +1,5 @@
 import { NewPost } from '@/data/schema';
+import { slugify } from '@/lib/utils/index';
 
 export function postFromFormData({
   formData,
@@ -9,8 +10,8 @@ export function postFromFormData({
 }): NewPost {
   return {
     title: formData.get('title') as string,
-    slug: formData.get('slug') as string,
-    featuredImageId: formData.get('featuredImageId') as string,
+    slug: slugify(formData.get('title') as string),
+    featuredImageId: formData.get('imageId') as string,
     published: formData.get('published') === 'on',
     content: JSON.stringify(content),
     type: formData.get('type') as string,

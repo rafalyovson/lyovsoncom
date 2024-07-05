@@ -5,7 +5,7 @@ import { slugify } from '@/lib/utils';
 import { blobInsert } from '@/lib/actions/db-actions/blob';
 import { imageInsert, ImageOneResponse } from '@/lib/actions/db-actions/image';
 
-export async function imageCreate(
+export async function imageCreateAction(
   _prevData: ImageOneResponse,
   formData: FormData,
 ): Promise<ImageOneResponse> {

@@ -1,7 +1,9 @@
+import { PageHeader } from '@/app/dungeon/ui/page-header';
+
 const DungeonHome = async () => {
   return (
     <main>
-      <h1>Dungeon</h1>
+      <PageHeader title="Dungeon" link="/dungeon" />
     </main>
   );
 };

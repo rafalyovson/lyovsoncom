@@ -26,7 +26,7 @@ import { Calendar as CalendarIcon } from 'lucide-react';
 import { useActionState, useState } from 'react';
 import { toast } from 'sonner';
 import { Editor } from '../editor/Editor';
-import { PostImageForm } from './post-image-form';
+import { ImageUploadForm } from '../image-uplaod-form';
 
 export function PostFormClient({
   post,
@@ -56,10 +56,13 @@ export function PostFormClient({
 
   if (state.success) {
     toast.success(state.message);
+    state.success = false;
+    state.message = '';
   }
 
   if (!state.success && state.message !== '') {
     toast.error(state.message);
+    state.message = '';
   }
 
   return (
@@ -98,7 +101,7 @@ export function PostFormClient({
             </Select>
           </section>
 
-          <PostImageForm
+          <ImageUploadForm
             isOpen={imageModalOpen}
             setIsOpen={setImageModalOpen}
             image={image}

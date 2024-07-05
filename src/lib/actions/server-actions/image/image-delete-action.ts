@@ -6,7 +6,7 @@ import {
 } from '@/lib/actions/db-actions/image';
 import { blobDelete } from '@/lib/actions/db-actions/blob';
 
-export async function imageDelete(
+export async function imageDeleteAction(
   _prevState: ImageResponse,
   formData: FormData,
 ): Promise<ImageResponse> {

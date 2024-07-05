@@ -1,21 +1,28 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { DialogContent } from "@radix-ui/react-dialog";
-import { useActionState, useState } from "react";
-import { ImageForm } from "../image-form";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useActionState, useState } from 'react';
+import { ImageUploadForm } from '@/app/dungeon/ui/image-uplaod-form';
+import { UserFull } from '@/data/types/user-full';
 
-export const UserForm = ({ action, user }: { action: any; user?: any }) => {
+export const UserForm = ({
+  action,
+  user,
+}: {
+  action: any;
+  user?: UserFull | null;
+}) => {
   const [_state, formAction, isPending] = useActionState(action, {
-    message: "",
+    message: '',
     success: false,
+    user: user || null,
   });
 
-  const [image, _setImage] = useState(user?.imageId || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const [avatar, setAvatar] = useState(user?.avatar || null);
 
   return (
     <form
@@ -29,42 +36,38 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="name"
           type="text"
           placeholder="Name"
-          defaultValue={user.name || ""}
+          defaultValue={user?.name || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
-        <Label htmlFor="name">Email</Label>
+        <Label htmlFor="username">Username</Label>
+        <Input
+          name="username"
+          type="text"
+          placeholder="Username"
+          defaultValue={user?.username || ''}
+        />
+      </section>
+      <section className="flex flex-col gap-2 ">
+        <Label htmlFor="email">Email</Label>
         <Input
           name="email"
           type="email"
           placeholder="Email"
-          defaultValue={user.email || ""}
+          defaultValue={user?.email || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
         <Label htmlFor="bio">Bio</Label>
-        <Textarea name="bio" placeholder="Bio" defaultValue={user.bio!} />
+        <Textarea name="bio" placeholder="Bio" defaultValue={user?.bio!} />
       </section>
 
-      {image && (
-        <section className="flex flex-col gap-2 ">
-          <Label htmlFor="imageId">Image</Label>
-          <Input
-            name="imageId"
-            type="text"
-            placeholder="Image"
-            defaultValue={user.imageId || ""}
-          />
-        </section>
-      )}
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button>Upload Image</Button>
-        </DialogTrigger>
-        <DialogContent className="p-8">
-          <ImageForm />
-        </DialogContent>
-      </Dialog>
+      <ImageUploadForm
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        image={avatar}
+        setImage={setAvatar}
+      />
 
       <section className="flex flex-col gap-2 ">
         <Label htmlFor="xLink">X</Label>
@@ -72,7 +75,7 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="xLink"
           type="url"
           placeholder="X"
-          defaultValue={user.xLink || ""}
+          defaultValue={user?.xLink || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
@@ -81,7 +84,7 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="redditLink"
           type="url"
           placeholder="Reddit"
-          defaultValue={user.redditLink || ""}
+          defaultValue={user?.redditLink || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
@@ -90,7 +93,7 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="githubLink"
           type="url"
           placeholder="GitHub"
-          defaultValue={user.githubLink || ""}
+          defaultValue={user?.githubLink || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
@@ -99,7 +102,7 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="linkedInLink"
           type="url"
           placeholder="Linkedin"
-          defaultValue={user.linkedInLink || ""}
+          defaultValue={user?.linkedInLink || ''}
         />
       </section>
       <section className="flex flex-col gap-2 ">
@@ -108,7 +111,7 @@ export const UserForm = ({ action, user }: { action: any; user?: any }) => {
           name="youtubeLink"
           type="url"
           placeholder="Youtube"
-          defaultValue={user.youtubeLink || ""}
+          defaultValue={user?.youtubeLink || ''}
         />
       </section>
       <Button disabled={isPending} type="submit">

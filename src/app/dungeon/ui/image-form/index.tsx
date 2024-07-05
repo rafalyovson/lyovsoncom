@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { imageGroups } from '@/data/image-groups';
 import { Image } from '@/data/schema';
-import { imageCreate } from '@/lib/actions/server-actions/image/image-create';
+import { imageCreateAction } from '@/lib/actions/server-actions/image/image-create-action';
 import { capitalize } from '@/lib/utils';
 import { Dispatch, useActionState } from 'react';
 import { toast } from 'sonner';
@@ -24,7 +24,7 @@ export const ImageForm = ({
   setIsOpen?: Dispatch<boolean>;
   setImage?: Dispatch<Image | null>;
 }) => {
-  const [state, formAction, isPending] = useActionState(imageCreate, {
+  const [state, formAction, isPending] = useActionState(imageCreateAction, {
     message: '',
     success: false,
     image: null,

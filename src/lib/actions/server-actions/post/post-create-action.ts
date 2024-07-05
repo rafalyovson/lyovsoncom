@@ -5,7 +5,7 @@ import { postInsert, PostOneResponse } from '@/lib/actions/db-actions/post';
 import { postFromFormData } from '@/lib/utils/post-from-formdata';
 import { handlePostCats, handlePostTags } from '@/lib/utils';
 
-export async function postCreate(
+export async function postCreateAction(
   content: any,
   _prevState: PostOneResponse,
   formData: FormData,
@@ -14,6 +14,7 @@ export async function postCreate(
   const parsedData = postInsertSchema.safeParse(data);
 
   if (!parsedData.success) {
+    console.log('Validation error', parsedData.error.issues);
     return {
       message: 'Failed to validate Post data',
       success: false,

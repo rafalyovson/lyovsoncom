@@ -5,12 +5,12 @@ import {
   postDeleteById,
   postInsert,
   PostOneResponse,
+  postUpdate,
 } from '@/lib/actions/db-actions/post';
-import { postUpdate as postUpdateAction } from '../../db-actions/post/post-update';
 import { postFromFormData } from '@/lib/utils/post-from-formdata';
 import { handlePostCats, handlePostTags } from '@/lib/utils';
 
-export async function postUpdate(
+export async function postUpdateAction(
   content: any,
   prevState: PostOneResponse,
   formData: FormData,
@@ -37,7 +37,7 @@ export async function postUpdate(
     await postDeleteById({ id: oldPost.id });
     result = await postInsert(data);
   } else {
-    result = await postUpdateAction(data);
+    result = await postUpdate(data);
   }
 
   if (!result || !result.post) {

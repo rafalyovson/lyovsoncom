@@ -1,13 +1,13 @@
-import { ResponsiveModal } from "@/components/responsive-modal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Image as ImageType } from "@/data/schema";
-import { Dispatch } from "react";
-import { ImageCard } from "../../image-card";
-import { ImageForm } from "../../image-form";
+import { ResponsiveModal } from '@/components/responsive-modal';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Image as ImageType } from '@/data/schema';
+import { Dispatch } from 'react';
+import { ImageCard } from '../image-card';
+import { ImageForm } from '../image-form';
 
-export const PostImageForm = ({
+export const ImageUploadForm = ({
   isOpen,
   setIsOpen,
   image,
@@ -21,10 +21,10 @@ export const PostImageForm = ({
 }) => {
   return (
     <section className="flex flex-col gap-2  ">
-      <Label htmlFor="featuredImageId">Image</Label>
+      <Label htmlFor="imageId">Image</Label>
       <Input
         className="hidden"
-        name="featuredImageId"
+        name="imageId"
         type="text"
         placeholder="Featured Image Id"
         value={image?.id}
@@ -36,9 +36,9 @@ export const PostImageForm = ({
           e.preventDefault();
           setIsOpen(true);
         }}
-        variant={"secondary"}
+        variant={'secondary'}
       >
-        {image ? "Update Image" : "Upload Image"}
+        {image ? 'Update Image' : 'Upload Image'}
       </Button>
       <ResponsiveModal
         isOpen={isOpen}

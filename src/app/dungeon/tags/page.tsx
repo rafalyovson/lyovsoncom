@@ -1,5 +1,5 @@
 import { Tag } from '@/data/schema';
-import { tagCreate } from '@/lib/actions/server-actions/tag/tag-create';
+import { tagCreateActions } from '@/lib/actions/server-actions/tag/tag-create-actions';
 import { TagForm } from './tag-form';
 import { TagRow } from './tag-row';
 
@@ -22,7 +22,7 @@ const Page = async () => {
           ))}
         </section>
       </main>
-      <TagForm action={tagCreate} />
+      <TagForm action={tagCreateActions} />
     </>
   );
 };

@@ -10,7 +10,7 @@ import {
 } from '@/lib/actions/db-actions/post';
 import { PostResponse } from '@/lib/actions/db-actions/post/';
 
-export const postDelete = async (
+export const postDeleteAction = async (
   _prevState: PostResponse,
   formData: FormData,
 ): Promise<PostResponse> => {

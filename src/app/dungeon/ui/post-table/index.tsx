@@ -2,13 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -21,15 +15,12 @@ import { Post } from '@/data/types/post';
 import { Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { postDeleteById } from '@/lib/actions/db-actions/post';
 
 export const PostTable = ({ posts }: { posts: Post[] }) => {
   console.log('😈', posts);
   return (
     <Card className="flex-grow">
-      <CardHeader className="px-7">
-        <CardTitle>Posts</CardTitle>
-        <CardDescription>All of the posts.</CardDescription>
-      </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
@@ -82,7 +73,7 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                       </Button>
                       <Button
                         size={'icon'}
-                        onClick={() => {}}
+                        onClick={() => postDeleteById({ id: post.id })}
                         variant={'destructive'}
                       >
                         <Trash2 className="h-4 w-4" />

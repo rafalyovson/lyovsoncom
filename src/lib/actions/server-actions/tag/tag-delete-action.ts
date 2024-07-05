@@ -5,6 +5,6 @@ import {
   TagResponse,
 } from '@/lib/actions/db-actions/tag';
 
-export const tagDelete = async (data: string): Promise<TagResponse> => {
+export const tagDeleteAction = async (data: string): Promise<TagResponse> => {
   return await tagDeleteById({ id: data });
 };

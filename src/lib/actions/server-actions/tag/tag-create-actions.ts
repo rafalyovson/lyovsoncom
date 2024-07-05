@@ -8,7 +8,7 @@ import {
   tagSelectOneBySlug,
 } from '@/lib/actions/db-actions/tag';
 
-export const tagCreate = async (
+export const tagCreateActions = async (
   _prevState: TagOneResponse,
   formData: FormData,
 ): Promise<TagOneResponse> => {
