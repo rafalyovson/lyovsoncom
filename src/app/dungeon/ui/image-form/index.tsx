@@ -19,10 +19,9 @@ import { toast } from 'sonner';
 
 export const ImageForm = ({
   setImage,
-  setIsOpen,
+
   group,
 }: {
-  setIsOpen?: Dispatch<boolean>;
   setImage?: Dispatch<Image | null>;
   group?: string;
 }) => {
@@ -39,7 +38,6 @@ export const ImageForm = ({
   if (state.success && state.message === '') {
     toast.success(state.message);
     state.success = false;
-    setIsOpen && setIsOpen(false);
   }
 
   if (!state.success && state.message !== '') {
@@ -48,38 +46,39 @@ export const ImageForm = ({
   }
 
   return (
-    <form className="flex flex-col gap-4 p-4" action={formAction}>
-      <section className="flex flex-col gap-2">
-        <Label htmlFor="caption">Caption</Label>
-        <Input name="caption" type="text" placeholder="Caption" />
-      </section>
-      <section className="flex flex-col gap-2">
-        <Label htmlFor="altText">Alt Text</Label>
-        <Input name="altText" type="text" placeholder="Alt Text" />
-      </section>
-      <section className="flex flex-col gap-2">
-        <Label htmlFor="file">File</Label>
-        <Input name="file" type="file" accept="image/*" />
-      </section>
-      <section className="flex flex-col gap-2">
-        <Label htmlFor="group">Group</Label>
-        <Select name="group">
-          <SelectTrigger>
-            <SelectValue
-              placeholder={(group && capitalize(group)) || 'Select a group'}
-              defaultValue={group}
-            />
-          </SelectTrigger>
-          <SelectContent>
-            {imageGroups.map((group: any) => (
-              <SelectItem key={group} value={group}>
-                {capitalize(group)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </section>
-      <Button disabled={isPending}>Submit</Button>
-    </form>
+    <>
+      <form className="flex flex-col gap-4 p-4" action={formAction}>
+        <section className="flex flex-col gap-2">
+          <Label htmlFor="caption">Caption</Label>
+          <Input name="caption" type="text" placeholder="Caption" />
+        </section>
+        <section className="flex flex-col gap-2">
+          <Label htmlFor="altText">Alt Text</Label>
+          <Input name="altText" type="text" placeholder="Alt Text" />
+        </section>
+        <section className="flex flex-col gap-2">
+          <Label htmlFor="file">File</Label>
+          <Input name="file" type="file" accept="image/*" />
+        </section>
+        <section className="flex flex-col gap-2">
+          <Label htmlFor="group">Group</Label>
+          <Select name="group" defaultValue={group}>
+            <SelectTrigger>
+              <SelectValue
+                placeholder={(group && capitalize(group)) || 'Select a group'}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {imageGroups.map((group: any) => (
+                <SelectItem key={group} value={group}>
+                  {capitalize(group)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </section>
+        <Button disabled={isPending}>Submit</Button>
+      </form>
+    </>
   );
 };

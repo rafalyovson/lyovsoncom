@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -19,33 +18,42 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { contentTypes } from '@/data/content-types';
-import { Category, User } from '@/data/schema';
-import { capitalize, cn, slugify } from '@/lib/utils';
+import { Category, Image, NewTag, Tag, User } from '@/data/schema';
+import { capitalize, cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { useActionState, useState } from 'react';
 import { toast } from 'sonner';
-import { Editor } from '../editor/Editor';
-import { ImageUploadForm } from '../image-uplaod-form';
+import { Editor } from '../../editor/Editor';
+import { ImageUploadForm } from '../../image-uplaod-form';
+import { PostFormTag } from './post-form-tag';
+import { PostFull } from '@/data/types';
+import { PostFormCategory } from '@/app/dungeon/ui/post-form/form/post-form-category';
+
+type PostFormClientProps = {
+  post?: PostFull;
+  action: any;
+  allCats: Category[];
+  authors: User[];
+  allImages: Image[];
+};
 
 export function PostFormClient({
   post,
   action,
   allCats,
   authors,
-}: {
-  post?: any;
-  action: any;
-  allCats: any;
-  authors: any;
-}) {
+  allImages,
+}: PostFormClientProps) {
   const [content, setContent] = useState(post?.content || '');
   const [imageModalOpen, setImageModalOpen] = useState(false);
-  const [postTags, setPostTags] = useState(post?.tags || []);
+  const [postTags, setPostTags] = useState((post?.tags as NewTag[]) || []);
   const [newTag, setNewTag] = useState('');
   const [date, setDate] = useState<Date>(post?.createdAt || new Date());
   const [title, setTitle] = useState(post?.title || '');
   const [image, setImage] = useState(post?.featuredImage || null);
+
+  console.log('post', post);
 
   const actionWithContent = action.bind(null, content);
   const [state, formAction, isPending] = useActionState(actionWithContent, {
@@ -71,7 +79,7 @@ export function PostFormClient({
         className="w-full flex flex-col md:flex-row gap-2 h-full max-w-[1200px] mx-auto"
         action={formAction}
       >
-        <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-1/3 ">
+        <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-1/3 justify-between ">
           <section className="flex flex-col gap-2  ">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -107,6 +115,7 @@ export function PostFormClient({
             image={image}
             setImage={setImage}
             group={'post'}
+            allImages={allImages}
           />
 
           <section className="flex flex-col gap-2">
@@ -115,10 +124,8 @@ export function PostFormClient({
               className="hidden"
               name="createdAt"
               type="string"
-              value={date?.toDateString()}
-              defaultValue={
-                post?.createdAt?.toDateString() || new Date().toDateString()
-              }
+              value={date.toDateString()}
+              readOnly
             />
             <Popover>
               <PopoverTrigger asChild>
@@ -146,11 +153,6 @@ export function PostFormClient({
           </section>
 
           <section className="flex flex-col gap-2 ">
-            <Label htmlFor="published">Published</Label>
-            <Switch name="published" defaultChecked={post?.published} />
-          </section>
-
-          <section className="flex flex-col gap-2 ">
             <Label htmlFor="type">Type</Label>
             <Select name="type" defaultValue={post?.type || 'article'}>
               <SelectTrigger>
@@ -167,85 +169,26 @@ export function PostFormClient({
             </Select>
           </section>
 
-          <section className="flex flex-col gap-2">
-            <Label htmlFor="category">Category</Label>
-            <Select name="category" defaultValue={post?.categories?.[0]?.name}>
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={post?.categories[0]?.name || 'Select a category'}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {allCats.map((cat: Category) => (
-                  <SelectItem key={cat.id} value={cat.name}>
-                    {capitalize(cat.name)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <PostFormCategory allCats={allCats} post={post} />
+
+          <PostFormTag
+            postTags={postTags as Tag[]}
+            setPostTags={setPostTags}
+            newTag={newTag}
+            setNewTag={setNewTag}
+          />
+
+          <section className="flex gap-2 justify-between">
+            <Label htmlFor="published">Published</Label>
+            <Switch name="published" defaultChecked={post?.published} />
           </section>
 
-          <section className="flex flex-col gap-2">
-            <Label htmlFor="tags">Tags</Label>
-            <Input
-              name="tags"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  if (newTag === '') return;
-                  setPostTags([
-                    ...postTags,
-                    { name: newTag, slug: slugify(newTag) },
-                  ]);
-                  setNewTag('');
-                }
-              }}
-            />
-
-            <Button
-              onClick={(e) => {
-                e.preventDefault();
-                if (newTag === '') return;
-                setPostTags([
-                  ...postTags,
-                  { name: newTag, slug: slugify(newTag) },
-                ]);
-                setNewTag('');
-              }}
-            >
-              Add Tag
-            </Button>
-
-            <section className="flex flex-wrap gap-2">
-              {postTags.map((tag: any) => (
-                <div className="flex items-center space-x-2" key={tag.id}>
-                  <Checkbox
-                    name={'tags'}
-                    checked
-                    id={tag.slug}
-                    value={tag.slug}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setPostTags(
-                        postTags.filter((t: any) => t.name !== tag.name),
-                      );
-                    }}
-                  />
-                  <label
-                    htmlFor={tag.slug}
-                    className="text-sm font-medium leading-none "
-                  >
-                    {tag.name}
-                  </label>
-                </div>
-              ))}
-            </section>
+          <section className="flex gap-2 justify-between">
+            <Label htmlFor="featured">Featured</Label>
+            <Switch name="featured" defaultChecked={post?.featured} />
           </section>
         </section>
-
-        <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ]">
+        <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ">
           <Editor state={content} setState={setContent} />
 
           <Button className="w-full" type="submit" disabled={isPending}>

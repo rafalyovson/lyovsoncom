@@ -25,15 +25,12 @@ import { ComponentPickerPlugin } from './plugins/component-picker-plugin';
 import { FloatingTextFormatToolbarPlugin } from './plugins/floating-text-format-tool-plugin';
 import { ImageNode, ImagesPlugin } from './plugins/images-plugin';
 import { ListMaxIndentLevelPlugin } from './plugins/list-max-indent-level-plugin';
-
-import { ToolbarPlugin } from './plugins/toolbar-plugin';
 import { XNode, XPlugin } from './plugins/x-plugin';
 import { YouTubeNode, YouTubePlugin } from './plugins/youtube-plugin';
 import { defaultTheme } from './themes/default-theme';
 import { debounce } from './utils/debounce';
 
 export const Editor = ({ state, setState }: { state: any; setState: any }) => {
-  console.log('state', JSON.stringify(state));
   const editorConfig = {
     namespace: 'Content',
     editorState: state ? JSON.stringify(state) : undefined,
@@ -84,7 +81,7 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
   return (
     <LexicalComposer initialConfig={editorConfig}>
       <main className="h-full border w-full  mx-auto rounded-md flex flex-col gap-2 justify-between ">
-        <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
+        {/*<ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />*/}
         {floatingAnchorElem && (
           <>
             <FloatingTextFormatToolbarPlugin
@@ -95,11 +92,14 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
           </>
         )}
 
-        <section className=" rounded-md h-full ">
+        <section className="flex flex-col gap-2 rounded-lg h-full ">
           <RichTextPlugin
             contentEditable={
-              <article className="outline-none h-full " ref={onRef}>
-                <ContentEditable className="p-4 outline-ring prose dark:prose-invert  overflow-y-scroll max-w-none min-h-60 h-full" />
+              <article
+                className="outline-none md:h-[700px] flex-grow rounded-lg"
+                ref={onRef}
+              >
+                <ContentEditable className="p-4 outline-ring prose dark:prose-invert scrollbar-slim rounded-lg  overflow-y-auto max-w-none min-h-60 h-full" />
               </article>
             }
             placeholder={<></>}

@@ -3,7 +3,7 @@ import { images } from '@/data/schema';
 import { eq } from 'drizzle-orm';
 import { ImageOneResponse } from '@/lib/actions/db-actions/image';
 
-export async function imageSelectById(data: {
+export async function imageSelectOneById(data: {
   id: string;
 }): Promise<ImageOneResponse> {
   try {
@@ -26,7 +26,7 @@ export async function imageSelectById(data: {
   }
 }
 
-export async function imageSelectBySlug(data: {
+export async function imageSelectOneBySlug(data: {
   slug: string;
 }): Promise<ImageOneResponse> {
   try {

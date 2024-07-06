@@ -7,13 +7,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { useActionState, useState } from 'react';
 import { ImageUploadForm } from '@/app/dungeon/ui/image-uplaod-form';
 import { UserFull } from '@/data/types/user-full';
+import { Image as ImageType } from '@/data/schema';
 
 export const UserForm = ({
   action,
   user,
+  allImages,
 }: {
   action: any;
   user?: UserFull | null;
+  allImages: ImageType[];
 }) => {
   const [_state, formAction, isPending] = useActionState(action, {
     message: '',
@@ -68,6 +71,7 @@ export const UserForm = ({
         image={avatar}
         setImage={setAvatar}
         group={'user'}
+        allImages={allImages}
       />
 
       <section className="flex flex-col gap-2 ">

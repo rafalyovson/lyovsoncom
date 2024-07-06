@@ -2,7 +2,7 @@
 
 import {
   imageDeleteByUrl,
-  imageSelectById,
+  imageSelectOneById,
 } from '@/lib/actions/db-actions/image';
 import {
   postDeleteById,
@@ -24,7 +24,7 @@ export const postDeleteAction = async (
     image,
     success: imageSuccess,
     message: imageMessage,
-  } = await imageSelectById({ id: post.featuredImageId! });
+  } = await imageSelectOneById({ id: post.featuredImageId! });
 
   if (!imageSuccess || !image) {
     return { success: imageSuccess, message: imageMessage };

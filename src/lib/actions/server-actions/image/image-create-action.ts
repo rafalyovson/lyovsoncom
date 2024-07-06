@@ -3,7 +3,11 @@
 import { imageInsertSchema } from '@/data/schema';
 import { slugify } from '@/lib/utils';
 import { blobInsert } from '@/lib/actions/db-actions/blob';
-import { imageInsert, ImageOneResponse } from '@/lib/actions/db-actions/image';
+import {
+  imageInsert,
+  ImageOneResponse,
+  imageSelectOneBySlug,
+} from '@/lib/actions/db-actions/image';
 
 export async function imageCreateAction(
   _prevData: ImageOneResponse,
@@ -21,9 +25,17 @@ export async function imageCreateAction(
     return { message: 'Invalid form data', success: false, image: null };
   }
 
-  const name = `${data.group}.${slugify(data.caption)}.${
+  let name = `${data.group}.${slugify(data.caption)}.${
     file.type.split('/')[1]
   }`;
+
+  const checkExistingName = await imageSelectOneBySlug({ slug: name });
+
+  if (checkExistingName.success && checkExistingName.image) {
+    name = `another.${data.group}.${slugify(data.caption)}.${
+      file.type.split('/')[1]
+    }`;
+  }
 
   const result = await blobInsert({ name, file });
 

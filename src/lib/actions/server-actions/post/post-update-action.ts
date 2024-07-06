@@ -20,7 +20,6 @@ export async function postUpdateAction(
   if (!oldPost) {
     return prevState;
   }
-
   const data = postFromFormData({ formData, content });
   const parsedData = postInsertSchema.safeParse(data);
 
