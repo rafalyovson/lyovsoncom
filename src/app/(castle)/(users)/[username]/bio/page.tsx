@@ -2,20 +2,21 @@ import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deseria
 import { redirect } from 'next/navigation';
 import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
 
-const Page = async () => {
+const Page = async ({ params }: { params: { username: string } }) => {
+  const username = params.username;
   const result = await userSelectFullOneByUsername({
-    username: 'rafa',
+    username,
   });
 
   if (!result.success || !result.user) {
-    redirect('/rafa');
+    redirect('/');
   }
   return (
     <>
-      <title>Rafa Lyovson&apos;s Bio | Lyovson.com</title>
+      <title>{`${result.user.name}'s Bio | Lyovson.com`}</title>
 
       <article className="p-8 mx-auto prose dark:prose-invert lg:prose-xl">
-        <h1>Rafa Lyovson&apos;s Bio</h1>
+        <h1 className={`text-2xl `}>{`${result.user.name}'s Bio`}</h1>
         {parseLexicalJSON(result.user.longBio)}
       </article>
     </>

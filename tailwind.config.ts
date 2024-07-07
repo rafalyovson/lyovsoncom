@@ -24,8 +24,8 @@ const config = {
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
-        rafa: 'var(--rafa)',
-        jess: 'var(--jess)',
+        rafa: 'var(--rafaa)',
+        jess: 'var(--jessa)',
 
         primary: {
           DEFAULT: 'hsl(var(--primary))',

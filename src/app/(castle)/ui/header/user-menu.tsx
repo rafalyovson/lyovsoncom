@@ -1,80 +1,54 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Image from "next/image";
-import Link from "next/link";
+} from '@/components/ui/sheet';
+import Image from 'next/image';
+import Link from 'next/link';
+import { UserFull } from '@/data/types/user-full';
+import { UserSocialMenu } from '@/components/user-soical-menu';
 
-export const Menu = ({ user }: { user: any }) => {
-  const { id, name, bio, socials, menu } = user;
+export const Menu = ({ user }: { user: UserFull }) => {
   return (
     <SheetContent
       className="flex flex-col gap-4 w-full lg:w-[300px]"
-      side={id === "jess" ? "left" : "right"}
+      side={user.username === 'jess' ? 'left' : 'right'}
     >
       <SheetHeader>
         <Card className="w-[250px] mx-auto">
           <CardHeader>
             <Image
-              alt={id}
-              src={`/${id.toLowerCase()}.png`}
+              alt={user.avatar?.altText || ''}
+              src={user.avatar?.url || ''}
               width={300}
               height={400}
             />
           </CardHeader>
           <CardContent>
-            <Link className="hover:underline" href={`/${id}`}>
-              <SheetTitle>{name}</SheetTitle>
+            <Link className="hover:underline" href={`/${user.username}`}>
+              <SheetTitle>{user.name}</SheetTitle>
             </Link>
 
-            <SheetDescription>{bio}</SheetDescription>
+            <SheetDescription>{user.shortBio}</SheetDescription>
           </CardContent>
           <CardFooter>
-            <section className="flex gap-2 justify-between w-full">
-              {socials.map((social: any) => (
-                <Button
-                  className=" "
-                  size={"icon"}
-                  variant={"ghost"}
-                  key={social.name}
-                  asChild
-                >
-                  <a
-                    title={`Visit ${name}'s ${social.name} page.`}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <FontAwesomeIcon icon={social.icon} className="w-8 h-8 " />
-                  </a>
-                </Button>
-              ))}
-            </section>
+            <UserSocialMenu
+              className={`flex-wrap justify-center items-center align-middle`}
+              user={user}
+            />
           </CardFooter>
         </Card>
       </SheetHeader>
-
-      <section className="flex flex-col gap-2">
-        {menu.map((menuItem: any) => (
-          <Button variant={"link"} key={menuItem.name} asChild>
-            <Link
-              className="hover:underline flex gap-2 text-lg"
-              href={menuItem.url}
-            >
-              {menuItem.name}
-            </Link>
-          </Button>
-        ))}
+      <section className="flex flex-col gap-2 items-center">
+        <Link href={`/${user.username}/bio`}> Bio</Link>
+        <Link href={`/${user.username}/portfolio`}> Portfolio</Link>
       </section>
     </SheetContent>
   );

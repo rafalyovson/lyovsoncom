@@ -1,6 +1,6 @@
-import { Footer } from "./ui/footer";
-import { Header } from "./ui/header";
-import { Main } from "./ui/main";
+import { Footer } from './ui/footer';
+import { Header } from './ui/header';
+import { Main } from './ui/main';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (

@@ -4,11 +4,12 @@ import { userSelectByUsername } from '@/lib/actions/db-actions/user/user-select-
 import { redirect } from 'next/navigation';
 import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
-const Page = async () => {
-  const userResult = await userSelectByUsername({ username: 'jess' });
+const Page = async ({ params }: { params: { username: string } }) => {
+  const username = params.username;
+  const userResult = await userSelectByUsername({ username });
 
   if (!userResult.success || !userResult.user) {
-    redirect('/rafa');
+    redirect(`/`);
   }
 
   const result = await postSelectFullAll();
@@ -17,15 +18,15 @@ const Page = async () => {
     return <h1>{result.message}</h1>;
   }
 
-  const rafaPosts = result.posts.filter(
+  const userPosts = result.posts.filter(
     (post: PostFull) => post.author!.username === userResult.user!.username,
   );
 
   return (
-    <>
-      <h1>Rafa</h1>
-      <PostGrid posts={rafaPosts} />
-    </>
+    <main>
+      <h1 className={`text-2xl text-center`}>{userResult.user.name}</h1>
+      <PostGrid posts={userPosts} />
+    </main>
   );
 };
 export default Page;
