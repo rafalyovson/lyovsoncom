@@ -5,9 +5,11 @@ import { userUpdateByUsername } from '@/lib/actions/db-actions/user/user-update'
 import { UserOneResponse } from '@/lib/actions/db-actions/user';
 
 export const userUpdateAction = async (
+  longBio: any,
   prevState: any,
   formData: FormData,
 ): Promise<UserOneResponse> => {
+  console.log('🐤', JSON.stringify(longBio));
   const username = prevState.user?.username;
   if (!username) {
     return {
@@ -21,7 +23,8 @@ export const userUpdateAction = async (
     name: formData.get('name') as string,
     email: formData.get('email') as string,
     username: formData.get('username') as string,
-    bio: formData.get('bio') as string,
+    shortBio: formData.get('shortBio') as string,
+    longBio: JSON.stringify(longBio),
     image: formData.get('image') as string,
     imageId: formData.get('imageId') as string,
     xLink: formData.get('xLink') as string,

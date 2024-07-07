@@ -7,11 +7,11 @@ import { redirect } from 'next/navigation';
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
   if (!session || !session.user) {
-    redirect('/login');
+    redirect('/');
   }
   const result = await userSelectFullOneById({ id: session.user.id! });
   if (!result.success || !result.user) {
-    redirect('/login');
+    redirect('/');
   }
 
   return (

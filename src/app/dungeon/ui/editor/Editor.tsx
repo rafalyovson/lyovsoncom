@@ -30,7 +30,13 @@ import { YouTubeNode, YouTubePlugin } from './plugins/youtube-plugin';
 import { defaultTheme } from './themes/default-theme';
 import { debounce } from './utils/debounce';
 
-export const Editor = ({ state, setState }: { state: any; setState: any }) => {
+type EditorProps = {
+  state: any;
+  setState: any;
+  name?: string;
+};
+
+export const Editor = ({ state, setState, name }: EditorProps) => {
   const editorConfig = {
     namespace: 'Content',
     editorState: state ? JSON.stringify(state) : undefined,
@@ -99,7 +105,10 @@ export const Editor = ({ state, setState }: { state: any; setState: any }) => {
                 className="outline-none md:h-[700px] flex-grow rounded-lg"
                 ref={onRef}
               >
-                <ContentEditable className="p-4 outline-ring prose dark:prose-invert scrollbar-slim rounded-lg  overflow-y-auto max-w-none min-h-60 h-full" />
+                <ContentEditable
+                  name={name}
+                  className="p-4 outline-ring prose dark:prose-invert scrollbar-slim rounded-lg  overflow-y-auto max-w-none min-h-60 h-full"
+                />
               </article>
             }
             placeholder={<></>}

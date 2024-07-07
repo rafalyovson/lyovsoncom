@@ -12,11 +12,12 @@ export const users = pgTable('user', {
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
-  bio: text('bio'),
+  shortBio: text('shortBio'),
+  longBio: json('longBio'),
   image: text('image'),
   imageId: text('image_id').references(() => images.id, {
     onDelete: 'set null',
-  }), // Reference to image table
+  }),
   xLink: text('xLink'),
   redditLink: text('redditLink'),
   linkedInLink: text('linkedInLink'),

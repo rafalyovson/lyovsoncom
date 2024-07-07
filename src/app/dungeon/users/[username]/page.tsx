@@ -11,6 +11,7 @@ import {
   faXTwitter,
   faYoutube,
 } from '@fortawesome/free-brands-svg-icons';
+import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
 
 const Page = async ({ params }: { params: any }) => {
   const result = await userSelectFullOneByUsername({
@@ -27,7 +28,7 @@ const Page = async ({ params }: { params: any }) => {
       </section>
       <section className={`flex flex-col gap-2 `}>
         <h1 className="text-2xl font-bold ">{result.user.name}</h1>
-        <p>{result.user.bio}</p>
+        <p>{result.user.shortBio}</p>
         <nav className="flex gap-2">
           {result.user.email && (
             <Button asChild variant={'secondary'} size="icon">
@@ -96,6 +97,15 @@ const Page = async ({ params }: { params: any }) => {
             </Button>
           )}
         </nav>
+        {result.user.longBio ? (
+          <section className={`prose dark:prose-invert`}>
+            {parseLexicalJSON(result.user.longBio)}
+          </section>
+        ) : (
+          <section className="flex flex-col gap-2 ">
+            <p>No bio</p>
+          </section>
+        )}
       </section>
     </article>
   );

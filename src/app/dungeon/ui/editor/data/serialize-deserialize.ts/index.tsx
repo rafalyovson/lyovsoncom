@@ -1,7 +1,7 @@
-import Link from "next/link";
-import React from "react";
-import { XEmbed } from "./x-embed";
-import { YouTubeEmbed } from "./youtube-embed";
+import Link from 'next/link';
+import React from 'react';
+import { XEmbed } from './x-embed';
+import { YouTubeEmbed } from './youtube-embed';
 
 export const FORMATS = {
   BOLD: 1,
@@ -16,9 +16,9 @@ export const FORMATS = {
 
 export const isInternalLink = (url: string) => {
   return (
-    url.startsWith("/") ||
-    url.startsWith("https://lyovson.com") ||
-    url.startsWith("https://www.lyovson.com")
+    url.startsWith('/') ||
+    url.startsWith('https://lyovson.com') ||
+    url.startsWith('https://www.lyovson.com')
   );
 };
 
@@ -39,10 +39,10 @@ export const applyFormatting = (textElement: any, format: any) => {
 export const createJSXElement = (node: any) => {
   let element: JSX.Element;
 
-  const className = node.format ? `text-${node.format}` : "";
+  const className = node.format ? `text-${node.format}` : '';
 
   switch (node.type) {
-    case "root":
+    case 'root':
       element = (
         <main className={`${className}`}>
           {node.children?.map(createJSXElement)}
@@ -50,21 +50,21 @@ export const createJSXElement = (node: any) => {
       );
       break;
 
-    case "paragraph":
+    case 'paragraph':
       element = (
         <p className={`${className}`}>{node.children?.map(createJSXElement)}</p>
       );
       break;
 
-    case "heading":
+    case 'heading':
       element = React.createElement(
         `${node.tag}`,
         { className: `§{className}` },
-        node.children?.map(createJSXElement)
+        node.children?.map(createJSXElement),
       );
       break;
 
-    case "link":
+    case 'link':
       element = isInternalLink(node.url) ? (
         <Link className={`${className} `} href={node.url}>
           {node.children?.map(createJSXElement)}
@@ -76,13 +76,13 @@ export const createJSXElement = (node: any) => {
       );
       break;
 
-    case "text":
-      let textElement: JSX.Element | string = node.text ?? "";
+    case 'text':
+      let textElement: JSX.Element | string = node.text ?? '';
       textElement = applyFormatting(textElement, node.format);
       element = <>{textElement}</>;
       break;
 
-    case "list":
+    case 'list':
       element = node.ordered ? (
         <ol className={`${className}`}>
           {node.children?.map(createJSXElement)}
@@ -94,7 +94,7 @@ export const createJSXElement = (node: any) => {
       );
       break;
 
-    case "listitem":
+    case 'listitem':
       element = (
         <li className={`${className}`}>
           {node.children?.map(createJSXElement)}
@@ -102,7 +102,7 @@ export const createJSXElement = (node: any) => {
       );
       break;
 
-    case "blockquote":
+    case 'blockquote':
       element = (
         <blockquote className={`${className}`}>
           {node.children?.map(createJSXElement)}
@@ -110,18 +110,18 @@ export const createJSXElement = (node: any) => {
       );
       break;
 
-    case "image":
+    case 'image':
       element = (
         // eslint-disable-next-line @next/next/no-img-element
-        <img className={`${className}`} src={node.src} alt={node.alt ?? ""} />
+        <img className={`${className}`} src={node.src} alt={node.alt ?? ''} />
       );
       break;
 
-    case "tweet":
+    case 'tweet':
       element = <XEmbed url={node.url} />;
       break;
 
-    case "youtube":
+    case 'youtube':
       element = <YouTubeEmbed url={node.url} />;
       break;
 
@@ -137,5 +137,7 @@ export const createJSXElement = (node: any) => {
 };
 
 export const parseLexicalJSON = (json: any) => {
+  console.log('🔥', json);
+
   return createJSXElement(json.root);
 };
