@@ -22,57 +22,12 @@ export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
   createCommand('INSERT_IMAGE_COMMAND');
 
-export function InsertImageUriDialogBody(props: {
-  onClick: (payload: InsertImagePayload) => void;
-}) {
-  const [src, setSrc] = useState('');
-  const [altText, setAltText] = useState('');
-
-  const isDisabled = src === '';
-
-  return (
-    <section className="flex flex-col gap-2">
-      <section className="flex flex-col gap-2">
-        <Label className="">{'Image URL'}</Label>
-        <Input
-          placeholder={'i.e. https://source.unsplash.com/random'}
-          value={src}
-          onChange={(e) => {
-            setSrc(e.target.value);
-          }}
-          data-test-id={'image-modal-url-input'}
-        />
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <Label className="">{'Alt Text'}</Label>
-        <Input
-          placeholder={'Random unsplash image'}
-          value={altText}
-          onChange={(e) => {
-            setAltText(e.target.value);
-          }}
-          data-test-id={'image-modal-alt-text-input'}
-        />
-      </section>
-
-      <Button
-        variant={'secondary'}
-        data-test-id="image-modal-confirm-btn"
-        disabled={isDisabled}
-        onClick={() => props.onClick({ altText, src })}
-      >
-        Confirm
-      </Button>
-    </section>
-  );
-}
-
 export function InsertImageUploadedDialogBody(props: {
   onClick: (payload: InsertImagePayload) => void;
 }) {
   const [src, setSrc] = useState('');
   const [altText, setAltText] = useState('');
+  const [caption, setCaption] = useState('');
 
   const isDisabled = src === '';
 
@@ -90,9 +45,9 @@ export function InsertImageUploadedDialogBody(props: {
   };
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-2 space-y-4">
       <section className="flex flex-col gap-2">
-        <Label className="">{'Image Upload'}</Label>
+        <Label className="">{'File'}</Label>
         <Input
           type="file"
           accept={'image/*'}
@@ -105,7 +60,7 @@ export function InsertImageUploadedDialogBody(props: {
       <section className="flex flex-col gap-2">
         <Label className="">{'Alt Text'}</Label>
         <Input
-          placeholder={'Descriptive alternative text'}
+          placeholder={'Alt Text'}
           value={altText}
           onChange={(e) => {
             setAltText(e.target.value);
@@ -114,11 +69,23 @@ export function InsertImageUploadedDialogBody(props: {
         />
       </section>
 
+      <section className="flex flex-col gap-2">
+        <Label className="">{'Caption'}</Label>
+        <Input
+          placeholder={'Caption'}
+          value={caption}
+          onChange={(e) => {
+            setCaption(e.target.value);
+          }}
+          data-test-id={'image-modal-caption-input'}
+        />
+      </section>
+
       <Button
         variant={'secondary'}
         data-test-id="image-modal-file-upload-btn"
         disabled={isDisabled}
-        onClick={() => props.onClick({ altText, src })}
+        onClick={() => props.onClick({ altText, src, caption })}
       >
         Confirm
       </Button>
@@ -130,7 +97,6 @@ export function InsertImageDialog(props: {
   activeEditor: LexicalEditor;
   onClose: () => void;
 }): ReactNode {
-  const [mode, setMode] = useState<null | 'url' | 'file'>(null);
   const hasModifier = useRef(false);
 
   useEffect(() => {
@@ -151,26 +117,7 @@ export function InsertImageDialog(props: {
 
   return (
     <>
-      {!mode && (
-        <section className="flex flex-col gap-2 ">
-          <Button
-            variant={'secondary'}
-            data-test-id="image-modal-option-url"
-            onClick={() => setMode('url')}
-          >
-            URL
-          </Button>
-          <Button
-            variant={'secondary'}
-            data-test-id="image-modal-option-file"
-            onClick={() => setMode('file')}
-          >
-            File
-          </Button>
-        </section>
-      )}
-      {mode === 'url' && <InsertImageUriDialogBody onClick={onClick} />}
-      {mode === 'file' && <InsertImageUploadedDialogBody onClick={onClick} />}
+      <InsertImageUploadedDialogBody onClick={onClick} />
     </>
   );
 }

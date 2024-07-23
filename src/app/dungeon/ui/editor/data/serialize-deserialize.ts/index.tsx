@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { ReactElement, Suspense } from 'react';
 import { XEmbed } from './x-embed';
 import { YouTubeEmbed } from './youtube-embed';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 export const FORMATS = {
   BOLD: 1,
@@ -37,7 +38,7 @@ export const applyFormatting = (textElement: any, format: any) => {
 };
 
 export const createJSXElement = (node: any) => {
-  let element: JSX.Element;
+  let element: ReactElement;
 
   const className = node.format ? `text-${node.format}` : '';
 
@@ -112,8 +113,21 @@ export const createJSXElement = (node: any) => {
 
     case 'image':
       element = (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className={`${className}`} src={node.src} alt={node.alt ?? ''} />
+        <Suspense fallback={null}>
+          <Card>
+            <CardContent className="">
+              <img
+                className={`${className}`}
+                src={node.src}
+                alt={node.alt ?? ''}
+              />{' '}
+            </CardContent>
+
+            <CardFooter className="flex flex-row items-center  text-xs text-muted-foreground">
+              {node.caption}
+            </CardFooter>
+          </Card>
+        </Suspense>
       );
       break;
 
