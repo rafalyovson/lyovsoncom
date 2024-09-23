@@ -14,6 +14,7 @@ export const postDeleteAction = async (
   _prevState: PostResponse,
   formData: FormData,
 ): Promise<PostResponse> => {
+  console.log('🐤', formData);
   const postId = formData.get('id') as string;
   const { success, post } = await postSelectOneById({ id: postId });
   if (!success || !post) {

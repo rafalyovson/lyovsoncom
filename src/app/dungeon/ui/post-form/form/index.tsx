@@ -53,8 +53,6 @@ export function PostFormClient({
   const [title, setTitle] = useState(post?.title || '');
   const [image, setImage] = useState(post?.featuredImage || null);
 
-  console.log('post', post);
-
   const actionWithContent = action.bind(null, content);
   const [state, formAction, isPending] = useActionState(actionWithContent, {
     message: '',

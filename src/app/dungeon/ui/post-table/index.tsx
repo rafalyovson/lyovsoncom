@@ -15,10 +15,22 @@ import { Post } from '@/data/types/post';
 import { Edit, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { postDeleteById } from '@/lib/actions/db-actions/post';
+import { postDeleteAction } from '@/lib/actions/server-actions/post/post-delete-action';
+import { useActionState } from 'react';
+import { toast } from 'sonner';
 
 export const PostTable = ({ posts }: { posts: Post[] }) => {
-  console.log('😈', posts);
+  const [state, formAction, isPending] = useActionState(postDeleteAction, {
+    message: '',
+    success: false,
+  });
+
+  if (state.success) {
+    toast.success(state.message);
+    state.success = false;
+    state.message = '';
+  }
+
   return (
     <Card className="flex-grow">
       <CardContent>
@@ -73,13 +85,16 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                           <Edit className="h-4 w-4" />
                         </Link>
                       </Button>
-                      <Button
-                        size={'icon'}
-                        onClick={() => postDeleteById({ id: post.id })}
-                        variant={'destructive'}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <form action={formAction} method="post">
+                        <input type="hidden" name="id" value={post.id} />
+                        <Button
+                          disabled={isPending}
+                          size={'icon'}
+                          variant={'destructive'}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </form>
                     </section>
                   </TableCell>
                 </TableRow>

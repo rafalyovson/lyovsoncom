@@ -35,9 +35,9 @@ async function UserSheet({ user }: { user: UserFull }) {
     <section>
       <Sheet>
         <SheetTrigger>
-          <Avatar className="w-12 h-14" aria-label="Open Rafa Menu">
+          <Avatar className="w-12 h-14" aria-label={`Open ${user.name}'s Menu`}>
             <AvatarImage src={user.avatar?.url || ''} />
-            <AvatarFallback>RL</AvatarFallback>
+            <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
           </Avatar>
         </SheetTrigger>
         <Menu user={user} />

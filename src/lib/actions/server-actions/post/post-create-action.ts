@@ -10,8 +10,6 @@ export async function postCreateAction(
   _prevState: PostOneResponse,
   formData: FormData,
 ): Promise<PostOneResponse> {
-  console.log('formData', formData);
-
   const data = postFromFormData({ formData, content });
   const parsedData = postInsertSchema.safeParse(data);
 
