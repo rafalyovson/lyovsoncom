@@ -73,7 +73,7 @@ const Page = async ({ params }: { params: any }) => {
   return (
     <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg">
       <PostHeader post={result.post} />
-      <div className="container max-w-2xl mx-auto mt-4 text-lg leading-relaxed prose dark:prose-invert">
+      <div className="container max-w-2xl mx-auto mt-4 text-lg leading-relaxed prose-xl dark:prose-invert ">
         {parseLexicalJSON(result.post.content)}
       </div>
     </article>

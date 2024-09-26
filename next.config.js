@@ -3,25 +3,25 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+        pathname: '/**',
       },
       {
-        protocol: "https",
-        hostname: "**.blob.vercel-storage.com",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: '**.blob.vercel-storage.com',
+        pathname: '/**',
       },
       {
-        protocol: "https",
-        hostname: "img.youtube.com",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'img.youtube.com',
+        pathname: '/**',
       },
     ],
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "3mb",
+      bodySizeLimit: '10mb',
     },
   },
 };
