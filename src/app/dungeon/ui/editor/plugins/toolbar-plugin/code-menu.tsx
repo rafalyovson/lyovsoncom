@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import {
   MenubarContent,
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from "@/components/ui/menubar";
-import { capitalize } from "@/lib/utils";
-import { $isCodeNode, getCodeLanguages } from "@lexical/code";
-import { $getNodeByKey } from "lexical";
+} from '@/components/ui/menubar';
+import { capitalize } from '@/lib/utils';
+import { $isCodeNode, getCodeLanguages } from '@lexical/code';
+import { $getNodeByKey } from 'lexical';
 
 export function CodeMenu({
   editor,
@@ -19,6 +19,7 @@ export function CodeMenu({
   selectedElementKey: any;
   codeLanguage: string;
 }) {
+  // @ts-ignore
   console.log(window.Prism.languages);
 
   const codeLanguages = getCodeLanguages();
