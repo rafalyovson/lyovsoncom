@@ -1,19 +1,17 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { FooterMenu } from '@/app/(castle)/ui/footer/footer-menu';
-import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 import { UserFull } from '@/data/types/user-full';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { Edit } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Toolbar(props: { user: UserFull }) {
   const { user } = props;
-  console.log('🐤', user);
 
   const pathName = usePathname();
-  console.log('🐤', pathName);
 
   return (
     <>

@@ -1,8 +1,9 @@
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { ReactElement, Suspense } from 'react';
 import { XEmbed } from './x-embed';
 import { YouTubeEmbed } from './youtube-embed';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
 
 export const FORMATS = {
   BOLD: 1,
@@ -52,9 +53,33 @@ export const createJSXElement = (node: any) => {
       break;
 
     case 'paragraph':
-      element = (
-        <p className={`${className}`}>{node.children?.map(createJSXElement)}</p>
-      );
+      if (node.children?.length === 1 && node.children[0].type === 'image') {
+        element = (
+          <Suspense fallback={null}>
+            <Card>
+              <CardContent className="">
+                <Image
+                  className={`${className} w-full`}
+                  src={node.children[0].src}
+                  alt={node.children[0].alt ?? ''}
+                  width={1920}
+                  height={1080}
+                />
+              </CardContent>
+
+              <CardFooter className="flex flex-row items-center  text-xs text-muted-foreground">
+                {node.children[0].caption}
+              </CardFooter>
+            </Card>
+          </Suspense>
+        );
+      } else {
+        element = (
+          <p className={`${className}`}>
+            {node.children?.map(createJSXElement)}
+          </p>
+        );
+      }
       break;
 
     case 'heading':
@@ -116,11 +141,13 @@ export const createJSXElement = (node: any) => {
         <Suspense fallback={null}>
           <Card>
             <CardContent className="">
-              <img
-                className={`${className}`}
-                src={node.src}
-                alt={node.alt ?? ''}
-              />{' '}
+              <Image
+                className={`${className} w-full`}
+                src={node.children[0].src}
+                alt={node.children[0].alt ?? ''}
+                width={1920}
+                height={1080}
+              />
             </CardContent>
 
             <CardFooter className="flex flex-row items-center  text-xs text-muted-foreground">
@@ -151,7 +178,5 @@ export const createJSXElement = (node: any) => {
 };
 
 export const parseLexicalJSON = (json: any) => {
-  console.log('🔥', json);
-
   return createJSXElement(json.root);
 };

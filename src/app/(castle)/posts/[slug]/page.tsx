@@ -1,10 +1,10 @@
 import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
 import { badgeVariants } from '@/components/ui/badge';
+import { PostFull } from '@/data/types/post-full';
+import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
-import { PostFull } from '@/data/types/post-full';
 
 const PostHeader = async ({ post }: { post: PostFull }) => {
   return (
@@ -63,7 +63,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const result = await postSelectFullOneBySlug({ slug });
   if (!result.success || !result.post) {
@@ -71,9 +71,9 @@ const Page = async ({ params }: { params: any }) => {
   }
 
   return (
-    <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg">
+    <article className="flex flex-col w-full max-w-screen-lg gap-4 s mx-auto  rounded-lg shadow-lg">
       <PostHeader post={result.post} />
-      <div className="container max-w-2xl mx-auto mt-4 text-lg leading-relaxed prose-xl dark:prose-invert ">
+      <div className="container max-w-2xl mx-auto mt-4 text-base sm:text-lg md:text-xl leading-relaxed prose-sm sm:prose md:prose-lg lg:prose-xl dark:prose-invert">
         {parseLexicalJSON(result.post.content)}
       </div>
     </article>

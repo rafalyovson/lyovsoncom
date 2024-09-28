@@ -1,18 +1,18 @@
-import { inter, lusitana } from "@/assets/Fonts";
+import { inter, lusitana } from '@/assets/Fonts';
 import {
   SessionProvider,
   ThemeProvider,
   TooltipProvider,
-} from "@/components/providers";
-import { Toaster } from "@/components/ui/sonner";
-import { auth } from "@/data/auth";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import "./globals.css";
+} from '@/components/providers';
+import { Toaster } from '@/components/ui/sonner';
+import { auth } from '@/data/auth';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import './globals.css';
 
 export const metadata = {
-  title: "Lyovson.com",
-  description: "The official website of Mr and Mrs Lyovsons.",
+  title: 'Lyovson.com',
+  description: 'The official website of Mr and Mrs Lyovsons.',
 };
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
@@ -24,7 +24,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
     >
       <body
-        className={`${"h-full overflow-auto relative "} font-inter min-w-[375px]`}
+        className={`${'h-full overflow-auto relative '} font-inter min-w-[375px]`}
       >
         <SessionProvider session={session}>
           <ThemeProvider

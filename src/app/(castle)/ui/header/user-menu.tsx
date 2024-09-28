@@ -10,10 +10,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
+import { UserSocialMenu } from '@/components/user-soical-menu';
+import { UserFull } from '@/data/types/user-full';
 import Image from 'next/image';
 import Link from 'next/link';
-import { UserFull } from '@/data/types/user-full';
-import { UserSocialMenu } from '@/components/user-soical-menu';
 
 export const Menu = ({ user }: { user: UserFull }) => {
   return (

@@ -1,14 +1,13 @@
-import Link from 'next/link';
-
+import { Toolbar } from '@/app/(castle)/ui/toolbar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from './user-menu';
-import { userSelectFullAll } from '@/lib/actions/db-actions/user/user-select-full-all';
-import { UserFull } from '@/data/types/user-full';
 import { auth } from '@/data/auth';
-import { Toolbar } from '@/app/(castle)/ui/toolbar';
+import { UserFull } from '@/data/types/user-full';
+import { userSelectFullAll } from '@/lib/actions/db-actions/user/user-select-full-all';
 import { userSelectFullOneById } from '@/lib/actions/db-actions/user/user-select-full-one';
+import Link from 'next/link';
+import { Menu } from './user-menu';
 
 export async function Header() {
   const session = await auth();
@@ -19,7 +18,6 @@ export async function Header() {
 
   const users = result.users;
   const { user } = await userSelectFullOneById({ id: session?.user?.id! });
-  console.log('🐤', user);
 
   return (
     <>
