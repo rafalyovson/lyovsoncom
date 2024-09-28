@@ -1,6 +1,6 @@
 import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
-import { redirect } from 'next/navigation';
 import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
+import { redirect } from 'next/navigation';
 
 const Page = async ({ params }: { params: { username: string } }) => {
   const username = params.username;

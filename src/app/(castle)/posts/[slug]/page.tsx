@@ -63,7 +63,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const result = await postSelectFullOneBySlug({ slug });
   if (!result.success || !result.post) {
