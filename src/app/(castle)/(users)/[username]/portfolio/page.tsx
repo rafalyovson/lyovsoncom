@@ -1,4 +1,4 @@
-async function Page({ params }: { params: { username: string } }) {
+async function Page({ params }: { params: any }) {
   console.log('params', params);
   // const username = params.username;
   // const result = await userSelectFullOneByUsername({

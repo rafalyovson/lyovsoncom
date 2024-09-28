@@ -4,7 +4,7 @@ import { userSelectByUsername } from '@/lib/actions/db-actions/user/user-select-
 import { redirect } from 'next/navigation';
 import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
-const Page = async ({ params }: { params: { username: string } }) => {
+const Page = async ({ params }: { params: any }) => {
   const username = params.username;
   const userResult = await userSelectByUsername({ username });
 
