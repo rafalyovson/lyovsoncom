@@ -17,24 +17,16 @@ export interface ImagePayload {
   key?: NodeKey;
   src: string;
   caption: string;
+  group: string; // Add group to payload
 }
-
-const isGoogleDocCheckboxImg = (img: HTMLImageElement): boolean => {
-  return (
-    img.parentElement != null &&
-    img.parentElement.tagName === 'LI' &&
-    img.previousSibling === null &&
-    img.getAttribute('aria-roledescription') === 'checkbox'
-  );
-};
 
 const $convertImageElement = (domNode: Node): null | DOMConversionOutput => {
   const img = domNode as HTMLImageElement;
-  if (img.src.startsWith('file:///') || isGoogleDocCheckboxImg(img)) {
+  if (img.src.startsWith('file:///')) {
     return null;
   }
   const { alt: altText, src } = img;
-  const node = $createImageNode({ altText, src, caption: '' });
+  const node = $createImageNode({ altText, src, caption: '', group: '' });
   return { node };
 };
 
@@ -43,6 +35,7 @@ export type SerializedImageNode = Spread<
     altText: string;
     src: string;
     caption: string;
+    group: string; // Add group to serialized node
   },
   SerializedLexicalNode
 >;
@@ -51,6 +44,7 @@ export class ImageNode extends DecoratorNode<ReactElement> {
   __src: string;
   __altText: string;
   __caption: string;
+  __group: string; // Add group property
 
   static getType(): string {
     return 'image';
@@ -60,17 +54,19 @@ export class ImageNode extends DecoratorNode<ReactElement> {
     return new ImageNode(
       node.__src,
       node.__altText,
-      node.__key,
       node.__caption,
+      node.__group, // Pass group when cloning
+      node.__key, // Ensure key is passed correctly
     );
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const { altText, src, caption } = serializedNode;
+    const { altText, src, caption, group } = serializedNode;
     return $createImageNode({
       altText,
       src,
       caption,
+      group, // Include group
     });
   }
 
@@ -91,11 +87,18 @@ export class ImageNode extends DecoratorNode<ReactElement> {
     };
   }
 
-  constructor(src: string, altText: string, caption: string, key?: NodeKey) {
-    super(key);
+  constructor(
+    src: string,
+    altText: string,
+    caption: string,
+    group: string,
+    key?: NodeKey,
+  ) {
+    super(key); // Pass the key to the superclass
     this.__src = src;
     this.__altText = altText;
     this.__caption = caption;
+    this.__group = group;
   }
 
   exportJSON(): SerializedImageNode {
@@ -105,6 +108,7 @@ export class ImageNode extends DecoratorNode<ReactElement> {
       caption: this.getCaption(),
       type: 'image',
       version: 1,
+      group: this.getGroup(), // Include group in export
     };
   }
 
@@ -136,6 +140,10 @@ export class ImageNode extends DecoratorNode<ReactElement> {
     return this.__caption;
   }
 
+  getGroup(): string {
+    return this.__group; // Getter for group
+  }
+
   decorate(): ReactElement {
     return (
       <Suspense fallback={null}>
@@ -157,9 +165,12 @@ export const $createImageNode = ({
   altText,
   src,
   caption,
+  group,
   key,
 }: ImagePayload): ImageNode => {
-  return $applyNodeReplacement(new ImageNode(src, altText, caption, key));
+  return $applyNodeReplacement(
+    new ImageNode(src, altText, caption, group, key),
+  );
 };
 
 export const $isImageNode = (
