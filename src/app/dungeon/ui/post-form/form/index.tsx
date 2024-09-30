@@ -29,6 +29,7 @@ import { ImageUploadForm } from '../../image-uplaod-form';
 import { PostFormTag } from './post-form-tag';
 import { PostFull } from '@/data/types';
 import { PostFormCategory } from '@/app/dungeon/ui/post-form/form/post-form-category';
+import { redirect } from 'next/navigation';
 
 type PostFormClientProps = {
   post?: PostFull;
@@ -60,10 +61,8 @@ export function PostFormClient({
     post: post || null,
   });
 
-  if (state.success) {
-    toast.success(state.message);
-    state.success = false;
-    state.message = '';
+  if (state.success && state.post) {
+    redirect(`/posts/${state.post.slug}`);
   }
 
   if (!state.success && state.message !== '') {

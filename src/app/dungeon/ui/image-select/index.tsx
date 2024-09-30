@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 type ImageSelectProps = {
   images: Image[];
   setImage: Dispatch<SetStateAction<Image | null>>;
+  setIsOpen: Dispatch<boolean>;
 };
 
 export function ImageSelect(props: ImageSelectProps) {
@@ -26,7 +27,13 @@ export function ImageSelect(props: ImageSelectProps) {
           </article>
         ))}
       </main>
-      <Button variant={'default'} onClick={() => props.setImage(selectedImage)}>
+      <Button
+        variant={'default'}
+        onClick={() => {
+          props.setImage(selectedImage);
+          props.setIsOpen(false);
+        }}
+      >
         Select Image
       </Button>
     </section>

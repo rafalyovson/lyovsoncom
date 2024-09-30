@@ -61,10 +61,18 @@ export const ImageUploadForm = ({
             <TabsTrigger value="upload">Upload Image</TabsTrigger>
           </TabsList>
           <TabsContent value="select">
-            <ImageSelect images={allImages} setImage={setImage} />
+            <ImageSelect
+              images={allImages}
+              setImage={setImage}
+              setIsOpen={setIsOpen}
+            />
           </TabsContent>
           <TabsContent value="upload">
-            <ImageForm setImage={setImage} group={group} />
+            <ImageForm
+              setImage={setImage}
+              group={group}
+              setIsOpen={setIsOpen}
+            />
           </TabsContent>
         </Tabs>
       </ResponsiveModal>

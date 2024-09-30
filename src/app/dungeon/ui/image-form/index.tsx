@@ -19,11 +19,12 @@ import { toast } from 'sonner';
 
 export const ImageForm = ({
   setImage,
-
+  setIsOpen,
   group,
 }: {
   setImage?: Dispatch<Image | null>;
   group?: string;
+  setIsOpen?: Dispatch<boolean>;
 }) => {
   const [state, formAction, isPending] = useActionState(imageCreateAction, {
     message: '',
@@ -33,6 +34,7 @@ export const ImageForm = ({
 
   if (setImage && state.image) {
     setImage(state.image);
+    setIsOpen && setIsOpen(false);
   }
 
   if (state.success && state.message === '') {
