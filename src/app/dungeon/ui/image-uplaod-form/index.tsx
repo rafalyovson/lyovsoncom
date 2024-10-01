@@ -54,14 +54,14 @@ export const ImageUploadForm = ({
         desc="Upload the featured image of the post."
       >
         <Tabs defaultValue="upload">
-          <TabsList>
+          <TabsList className={''}>
             <TabsTrigger value="select">Select Image</TabsTrigger>
             <TabsTrigger value="upload">Upload Image</TabsTrigger>
           </TabsList>
-          <TabsContent value="select">
+          <TabsContent value="select" className={`border  rounded-md p-2`}>
             <ImageSelect setImage={setImage} setIsOpen={setIsOpen} />
           </TabsContent>
-          <TabsContent value="upload">
+          <TabsContent value="upload" className={`border  rounded-md p-2`}>
             <ImageForm
               setImage={setImage}
               group={group}

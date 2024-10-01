@@ -4,16 +4,16 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/ui/drawer";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Dispatch } from "react";
+} from '@/components/ui/drawer';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { Dispatch } from 'react';
 
 export const ResponsiveModal = ({
   children,
@@ -21,18 +21,22 @@ export const ResponsiveModal = ({
   setIsOpen,
   title,
   desc,
+  className,
 }: {
   children: any;
   isOpen: boolean;
   setIsOpen: Dispatch<boolean>;
   title: string;
   desc: string;
+  className?: string;
 }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery('(min-width: 768px)');
   if (isDesktop) {
     return (
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent
+          className={`max-w-[800px] overflow-y-auto h-[80%] w-[80%] flex flex-col justify-evenly ${className}`}
+        >
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{desc}</DialogDescription>
@@ -44,7 +48,7 @@ export const ResponsiveModal = ({
   }
   return (
     <Drawer open={isOpen} onOpenChange={setIsOpen}>
-      <DrawerContent className="p-8 ">
+      <DrawerContent className="p-8">
         <DrawerHeader className="text-left">
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{desc}</DrawerDescription>

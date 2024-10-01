@@ -27,10 +27,10 @@ export function ImageSelect(props: ImageSelectProps) {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
-    props.group,
+    props.group || 'all',
   );
   const [isMoreAvailable, setIsMoreAvailable] = useState(true);
-  const limit = 20; // Set the limit for the number of images per page
+  const limit = 5; // Set the limit for the number of images per page
 
   // Fetch images with pagination and group filter
   const fetchImages = async (page: number, group: string | undefined) => {
@@ -53,7 +53,10 @@ export function ImageSelect(props: ImageSelectProps) {
   };
 
   useEffect(() => {
-    fetchImages(currentPage, selectedGroup);
+    fetchImages(
+      currentPage,
+      selectedGroup === 'all' ? undefined : selectedGroup,
+    );
   }, [currentPage, selectedGroup]);
 
   const handleGroupChange = (group: string) => {
@@ -71,13 +74,14 @@ export function ImageSelect(props: ImageSelectProps) {
   if (!allImages.length && !loading) return <div>No Images</div>;
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 ">
       {/* Group Filter Dropdown */}
       <Select onValueChange={handleGroupChange} defaultValue={selectedGroup}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select Group" />
         </SelectTrigger>
         <SelectContent>
+          <SelectItem value="all">All</SelectItem>
           <SelectItem value="post">Post</SelectItem>
           <SelectItem value="user">User</SelectItem>
           <SelectItem value="test">Test</SelectItem>
@@ -87,7 +91,7 @@ export function ImageSelect(props: ImageSelectProps) {
       </Select>
 
       {/* Image Grid */}
-      <main className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 max-w-full mx-auto">
+      <main className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-full mx-auto">
         {allImages.map((image) => (
           <article
             className={`cursor-pointer flex flex-col gap-2 border rounded-lg overflow-hidden ${
@@ -106,7 +110,7 @@ export function ImageSelect(props: ImageSelectProps) {
       {isMoreAvailable && (
         <Button
           variant="outline"
-          className="mx-auto mt-4"
+          className="mx-auto mt-4 w-full"
           onClick={() => setCurrentPage((prev) => prev + 1)}
         >
           Load More
