@@ -1,4 +1,3 @@
-// image-plugin.tsx
 'use client';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -11,9 +10,10 @@ import {
   createCommand,
   LexicalCommand,
 } from 'lexical';
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { $createImageNode, ImageNode } from './image-node';
-import { ImageUploadDialog } from './image-upload-dialog';
+import { ImageUploadForm } from '@/app/dungeon/ui/image-uplaod-form';
+import { Image } from '@/data/schema'; // Assuming this is where your image type is defined
 
 export type InsertImagePayload = {
   src: string;
@@ -53,15 +53,44 @@ export const ImagesPlugin = (): React.ReactNode | null => {
   return null;
 };
 
-// Wrapper component to render the upload dialog and handle insertion
+// InsertImageDialog component updated to use ImageUploadForm
 export function InsertImageDialog(props: {
   activeEditor: any;
   onClose: () => void;
-}): React.ReactNode {
-  const onUploadSuccess = (payload: InsertImagePayload) => {
-    props.activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, payload);
-    props.onClose();
+}): ReactNode {
+  const [isOpen, setIsOpen] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+
+  const handleImageInsert = (image: Image) => {
+    if (image?.url) {
+      props.activeEditor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+        src: image.url,
+        altText: image.altText || '',
+        caption: image.caption || '',
+        group: image.group || 'default-group', // Adjust group based on your needs
+      } as InsertImagePayload);
+
+      props.onClose(); // Close the dialog after inserting the image
+    }
   };
 
-  return <ImageUploadDialog onUploadSuccess={onUploadSuccess} />;
+  useEffect(() => {
+    if (selectedImage) {
+      handleImageInsert(selectedImage);
+    }
+  }, [selectedImage]);
+
+  return (
+    <>
+      {isOpen && (
+        <ImageUploadForm
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          image={selectedImage}
+          setImage={setSelectedImage}
+          group="editor-images" // Use an appropriate group for context
+        />
+      )}
+    </>
+  );
 }

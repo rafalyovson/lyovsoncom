@@ -4,14 +4,15 @@ import Image from 'next/image';
 
 export const ImageCard = ({ image }: { image: ImageType }) => {
   return (
-    <Card>
-      <CardContent className="pt-6">
+    <Card className="hover:shadow-lg transition-shadow duration-300 border rounded-lg overflow-hidden">
+      <CardContent className="p-0 w-full h-full">
         <Image
-          className="mx-auto"
+          className="object-cover w-full h-full"
           src={image.url}
-          alt={image.altText!}
-          width={'200'}
-          height={'200'}
+          alt={image.altText || 'Uploaded image'}
+          width={150}
+          height={150}
+          sizes="(max-width: 640px) 100px, (max-width: 768px) 150px, 200px"
         />
       </CardContent>
     </Card>

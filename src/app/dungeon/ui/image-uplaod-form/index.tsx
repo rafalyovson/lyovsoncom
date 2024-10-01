@@ -16,7 +16,6 @@ type ImageUploadFormProps = {
   image: ImageType | null;
   setImage: Dispatch<SetStateAction<ImageType | null>>;
   group?: string;
-  allImages: ImageType[];
 };
 
 export const ImageUploadForm = ({
@@ -25,10 +24,9 @@ export const ImageUploadForm = ({
   image,
   setImage,
   group,
-  allImages,
 }: ImageUploadFormProps) => {
   return (
-    <section className="flex flex-col gap-2  ">
+    <section className="flex flex-col gap-2">
       <Label htmlFor="imageId">Image</Label>
       <Input
         className="hidden"
@@ -55,17 +53,13 @@ export const ImageUploadForm = ({
         title="Upload Image"
         desc="Upload the featured image of the post."
       >
-        <Tabs defaultValue="select">
+        <Tabs defaultValue="upload">
           <TabsList>
             <TabsTrigger value="select">Select Image</TabsTrigger>
             <TabsTrigger value="upload">Upload Image</TabsTrigger>
           </TabsList>
           <TabsContent value="select">
-            <ImageSelect
-              images={allImages}
-              setImage={setImage}
-              setIsOpen={setIsOpen}
-            />
+            <ImageSelect setImage={setImage} setIsOpen={setIsOpen} />
           </TabsContent>
           <TabsContent value="upload">
             <ImageForm

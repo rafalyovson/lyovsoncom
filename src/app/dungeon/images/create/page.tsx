@@ -1,4 +1,4 @@
-import { ImageForm } from "../../ui/image-form";
+import { ImageForm } from '../../ui/image-form';
 
 const ImageCreate = () => {
   return (

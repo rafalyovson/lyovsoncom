@@ -7,16 +7,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { useActionState, useState } from 'react';
 import { ImageUploadForm } from '@/app/dungeon/ui/image-uplaod-form';
 import { UserFull } from '@/data/types/user-full';
-import { Image as ImageType } from '@/data/schema';
 import { Editor } from '@/app/dungeon/ui/editor/Editor';
 
 type UserFormProps = {
   action: any;
   user?: UserFull | null;
-  allImages: ImageType[];
 };
 
-export const UserForm = ({ action, user, allImages }: UserFormProps) => {
+export const UserForm = ({ action, user }: UserFormProps) => {
   const [longBio, setLongBio] = useState(user?.longBio || '');
   const [isOpen, setIsOpen] = useState(false);
   const [avatar, setAvatar] = useState(user?.avatar || null);
@@ -77,7 +75,6 @@ export const UserForm = ({ action, user, allImages }: UserFormProps) => {
           image={avatar}
           setImage={setAvatar}
           group={'user'}
-          allImages={allImages}
         />
 
         <section className="flex flex-col gap-2 ">

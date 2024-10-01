@@ -21,11 +21,7 @@ const Page = async ({ params }: { params: any }) => {
   return (
     <article className="flex flex-col w-full max-w-screen-lg gap-4 p-4 mx-auto my-4 rounded-lg shadow-lg">
       <h1>{userResult.user.name}</h1>
-      <UserForm
-        action={userUpdateAction}
-        user={userResult.user}
-        allImages={imageResult.images}
-      />
+      <UserForm action={userUpdateAction} user={userResult.user} />
     </article>
   );
 };

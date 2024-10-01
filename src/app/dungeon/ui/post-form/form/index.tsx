@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { contentTypes } from '@/data/content-types';
-import { Category, Image, NewTag, Tag, User } from '@/data/schema';
+import { Category, NewTag, Tag, User } from '@/data/schema';
 import { capitalize, cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -36,7 +36,6 @@ type PostFormClientProps = {
   action: any;
   allCats: Category[];
   authors: User[];
-  allImages: Image[];
 };
 
 export function PostFormClient({
@@ -44,7 +43,6 @@ export function PostFormClient({
   action,
   allCats,
   authors,
-  allImages,
 }: PostFormClientProps) {
   const [content, setContent] = useState(post?.content || '');
   const [imageModalOpen, setImageModalOpen] = useState(false);
@@ -112,7 +110,6 @@ export function PostFormClient({
             image={image}
             setImage={setImage}
             group={'post'}
-            allImages={allImages}
           />
 
           <section className="flex flex-col gap-2">
