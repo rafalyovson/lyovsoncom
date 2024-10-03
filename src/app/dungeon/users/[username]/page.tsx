@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation';
 import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
 import { ImageCard } from '@/app/dungeon/ui/image-card';
-import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
+import { parseLexicalJSON } from '../../ui/editor/data/serialize-deserialize';
 import { UserSocialMenu } from '@/components/user-soical-menu';
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { username: string } }) => {
   const result = await userSelectFullOneByUsername({
     username: params.username,
   });

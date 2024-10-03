@@ -1,4 +1,4 @@
-import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize.ts';
+import { parseLexicalJSON } from '../../ui/editor/data/serialize-deserialize';
 import Image from 'next/image';
 import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 import { redirect } from 'next/navigation';
@@ -37,7 +37,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const result = await postSelectFullOneBySlug({ slug });
   if (!result.success || !result.post) {
