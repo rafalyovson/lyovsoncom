@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export const PageHeader = ({
   title,
@@ -12,8 +12,8 @@ export const PageHeader = ({
   return (
     <header className="flex justify-between p-4">
       <h1 className="text-4xl font-bold text-center">{title}</h1>
-      <Button asChild variant={"secondary"} size={"icon"}>
-        <Link href={link}>
+      <Button asChild variant={'secondary'} size={'icon'}>
+        <Link href={{ pathname: link }}>
           <Plus className="h-4 w-4" />
         </Link>
       </Button>

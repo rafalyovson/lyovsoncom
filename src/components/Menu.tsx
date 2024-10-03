@@ -1,6 +1,6 @@
-"use client";
-import ThemeSwitch from "@/components/ThemeSwitcher";
-import { Button } from "@/components/ui/button";
+'use client';
+import ThemeSwitch from '@/components/ThemeSwitcher';
+import { Button } from '@/components/ui/button';
 import {
   faArrowRightFromBracket,
   faDungeon,
@@ -8,42 +8,42 @@ import {
   faGamepad,
   faPlus,
   faTowerObservation,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { signOut } from 'next-auth/react';
+import Link from 'next/link';
 
 const Menu = () => {
   return (
     <nav className="flex flex-row items-center justify-center gap-4 text-center ">
-      <Button variant={"secondary"} aria-label="create a new post">
-        <Link href="/dungeon/create-post">
+      <Button variant={'secondary'} aria-label="create a new post">
+        <Link href={{ pathname: '/dungeon/create-post' }}>
           <FontAwesomeIcon icon={faPlus} className="rounded-full" />
         </Link>
       </Button>
 
       <Button
-        variant={"secondary"}
+        variant={'secondary'}
         aria-label="return to the entrance of the dungeon"
       >
-        <Link href="/dungeon">
+        <Link href={{ pathname: '/dungeon' }}>
           <FontAwesomeIcon icon={faDungeon} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button variant={"secondary"} aria-label="visit the playground">
-        <Link href="/dungeon/playground">
+      <Button variant={'secondary'} aria-label="visit the playground">
+        <Link href={{ pathname: '/dungeon/playground' }}>
           <FontAwesomeIcon icon={faGamepad} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button variant={"secondary"} aria-label="return to the tower">
+      <Button variant={'secondary'} aria-label="return to the tower">
         <Link href="/">
           <FontAwesomeIcon icon={faTowerObservation} className="rounded-full" />
         </Link>
       </Button>
 
-      <Button variant={"secondary"} aria-label="read all the posts">
+      <Button variant={'secondary'} aria-label="read all the posts">
         <Link href="/posts">
           <FontAwesomeIcon icon={faFileText} className="rounded-full" />
         </Link>
@@ -52,7 +52,7 @@ const Menu = () => {
       <ThemeSwitch />
 
       <Button
-        variant={"secondary"}
+        variant={'secondary'}
         aria-label="sign out"
         onClick={() => signOut()}
       >

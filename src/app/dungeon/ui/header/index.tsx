@@ -45,7 +45,7 @@ export const Header = ({ user }: { user: UserFull }) => {
               return (
                 <Link
                   key={link.name}
-                  href={link.url}
+                  href={{ pathname: link.url }}
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   {link.icon}
@@ -64,7 +64,9 @@ export const Header = ({ user }: { user: UserFull }) => {
                 <BreadcrumbItem key={index}>
                   <BreadcrumbLink asChild>
                     <Link
-                      href={`${pathSegments.slice(0, index + 1).join('/')}`}
+                      href={{
+                        pathname: `${pathSegments.slice(0, index + 1).join('/')}`,
+                      }}
                     >
                       {segment}
                     </Link>

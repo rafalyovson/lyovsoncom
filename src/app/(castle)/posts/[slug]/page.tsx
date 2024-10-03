@@ -5,6 +5,7 @@ import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-sele
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Category, Tag } from '@/data/schema';
 
 const PostHeader = async ({ post }: { post: PostFull }) => {
   return (
@@ -26,11 +27,11 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
           </p>
 
           <section className="flex gap-2">
-            {post.categories!.map((category: any) => (
+            {post.categories!.map((category: Category) => (
               <Link
                 className="underline"
                 key={category.id}
-                href={`/posts/categories/${category.slug}`}
+                href={{ pathname: `/posts/categories/${category.slug}` }}
               >
                 {`@${category.name}`}
               </Link>
@@ -39,11 +40,11 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
         </aside>
 
         <section className="flex gap-2 justify-center lg:justify-start">
-          {post.tags!.map((tag: any) => (
+          {post.tags!.map((tag: Tag) => (
             <Link
               className={badgeVariants({ variant: 'default' })}
               key={tag.id}
-              href={`/posts/tags/${tag.slug}`}
+              href={{ pathname: `/posts/tags/${tag.slug}` }}
             >
               {`#${tag.name}`}
             </Link>
@@ -63,7 +64,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   const result = await postSelectFullOneBySlug({ slug });
   if (!result.success || !result.post) {

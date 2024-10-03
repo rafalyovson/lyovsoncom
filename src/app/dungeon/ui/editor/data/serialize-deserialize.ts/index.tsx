@@ -1,10 +1,11 @@
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { ReactElement, Suspense } from 'react';
+import React, { ReactElement } from 'react';
 import { XEmbed } from './x-embed';
 import { YouTubeEmbed } from './youtube-embed';
 
+// Define the formatting options as bitwise flags
 export const FORMATS = {
   BOLD: 1,
   ITALIC: 1 << 1,
@@ -16,6 +17,21 @@ export const FORMATS = {
   HIGHLIGHT: 1 << 7,
 };
 
+// Define Node type based on the structure used in your components
+export type Node = {
+  type: string;
+  tag?: string;
+  format?: number;
+  children?: Node[];
+  text?: string;
+  url?: string;
+  ordered?: boolean;
+  caption?: string;
+  src?: string;
+  alt?: string;
+};
+
+// Check if a URL is internal (belongs to the same domain)
 export const isInternalLink = (url: string) => {
   return (
     url.startsWith('/') ||
@@ -24,7 +40,11 @@ export const isInternalLink = (url: string) => {
   );
 };
 
-export const applyFormatting = (textElement: any, format: any) => {
+// Apply text formatting based on the format bitmask
+export const applyFormatting = (
+  textElement: JSX.Element | string,
+  format?: number,
+): JSX.Element | string => {
   if (format) {
     if (format & FORMATS.BOLD) textElement = <b>{textElement}</b>;
     if (format & FORMATS.ITALIC) textElement = <i>{textElement}</i>;
@@ -38,138 +58,132 @@ export const applyFormatting = (textElement: any, format: any) => {
   return textElement;
 };
 
-export const createJSXElement = (node: any) => {
+// Create a JSX element based on the node type
+export const createJSXElement = (node: Node): ReactElement => {
   let element: ReactElement;
+  const { type, tag, format, children, text, url, ordered, caption, src, alt } =
+    node;
+  const className = format ? `text-${format}` : '';
 
-  const className = node.format ? `text-${node.format}` : '';
-
-  switch (node.type) {
+  switch (type) {
     case 'root':
       element = (
         <main className={`${className}`}>
-          {node.children?.map(createJSXElement)}
+          {children?.map(createJSXElement)}
         </main>
       );
       break;
 
     case 'paragraph':
-      if (node.children?.length === 1 && node.children[0].type === 'image') {
+      if (children?.length === 1 && children[0].type === 'image') {
         element = (
-          <Suspense fallback={null}>
-            <Card>
-              <CardContent className="">
-                <Image
-                  className={`${className} w-full`}
-                  src={node.children[0].src}
-                  alt={node.children[0].alt ?? ''}
-                  width={1920}
-                  height={1080}
-                />
-              </CardContent>
-
-              <CardFooter className="flex flex-row items-center  text-xs text-muted-foreground">
-                {node.children[0].caption}
-              </CardFooter>
-            </Card>
-          </Suspense>
+          <Card>
+            <CardContent>
+              <Image
+                className={`${className} w-full`}
+                src={children[0].src!}
+                alt={children[0].alt ?? ''}
+                width={1920}
+                height={1080}
+              />
+            </CardContent>
+            <CardFooter className="flex flex-row items-center text-xs text-muted-foreground">
+              {children[0].caption}
+            </CardFooter>
+          </Card>
         );
       } else {
         element = (
-          <p className={`${className}`}>
-            {node.children?.map(createJSXElement)}
-          </p>
+          <p className={`${className}`}>{children?.map(createJSXElement)}</p>
         );
       }
       break;
 
     case 'heading':
       element = React.createElement(
-        `${node.tag}`,
-        { className: `§{className}` },
-        node.children?.map(createJSXElement),
+        tag ?? 'div',
+        { className: `${className}` },
+        children?.map(createJSXElement),
       );
       break;
 
     case 'link':
-      element = isInternalLink(node.url) ? (
-        <Link className={`${className} `} href={node.url}>
-          {node.children?.map(createJSXElement)}
+      element = isInternalLink(url ?? '') ? (
+        <Link className={`${className}`} href={{ pathname: url ?? '#' }}>
+          {children?.map(createJSXElement)}
         </Link>
       ) : (
-        <a className={`${className}`} href={node.url}>
-          {node.children?.map(createJSXElement)}
+        <a
+          className={`${className}`}
+          href={url ?? '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {children?.map(createJSXElement)}
         </a>
       );
       break;
 
     case 'text':
-      let textElement: JSX.Element | string = node.text ?? '';
-      textElement = applyFormatting(textElement, node.format);
+      let textElement: JSX.Element | string = text ?? '';
+      textElement = applyFormatting(textElement, format);
       element = <>{textElement}</>;
       break;
 
     case 'list':
-      element = node.ordered ? (
-        <ol className={`${className}`}>
-          {node.children?.map(createJSXElement)}
-        </ol>
+      element = ordered ? (
+        <ol className={`${className}`}>{children?.map(createJSXElement)}</ol>
       ) : (
-        <ul className={`${className}`}>
-          {node.children?.map(createJSXElement)}
-        </ul>
+        <ul className={`${className}`}>{children?.map(createJSXElement)}</ul>
       );
       break;
 
     case 'listitem':
       element = (
-        <li className={`${className}`}>
-          {node.children?.map(createJSXElement)}
-        </li>
+        <li className={`${className}`}>{children?.map(createJSXElement)}</li>
       );
       break;
 
     case 'blockquote':
       element = (
         <blockquote className={`${className}`}>
-          {node.children?.map(createJSXElement)}
+          {children?.map(createJSXElement)}
         </blockquote>
       );
       break;
 
     case 'image':
       element = (
-        <Suspense fallback={null}>
-          <Card>
-            <CardContent className="">
-              <Image
-                className={`${className} w-full`}
-                src={node.children[0].src}
-                alt={node.children[0].alt ?? ''}
-                width={1920}
-                height={1080}
-              />
-            </CardContent>
-
-            <CardFooter className="flex flex-row items-center  text-xs text-muted-foreground">
-              {node.caption}
-            </CardFooter>
-          </Card>
-        </Suspense>
+        <Card>
+          <CardContent>
+            <Image
+              className={`${className} w-full`}
+              src={src ?? ''}
+              alt={alt ?? ''}
+              width={1920}
+              height={1080}
+            />
+          </CardContent>
+          <CardFooter className="flex flex-row items-center text-xs text-muted-foreground">
+            {caption}
+          </CardFooter>
+        </Card>
       );
       break;
 
     case 'tweet':
-      element = <XEmbed url={node.url} />;
+      element = <XEmbed url={url ?? ''} />;
       break;
 
     case 'youtube':
-      element = <YouTubeEmbed url={node.url} />;
+      element = <YouTubeEmbed url={url ?? ''} />;
       break;
 
     default:
+      console.warn(`Unsupported node type: ${type}`);
       element = (
         <span className={`${className}`}>
-          {node.children?.map(createJSXElement) ?? null}
+          {children?.map(createJSXElement) ?? null}
         </span>
       );
   }
@@ -177,6 +191,7 @@ export const createJSXElement = (node: any) => {
   return element;
 };
 
-export const parseLexicalJSON = (json: any) => {
+// Convert the JSON structure into JSX elements
+export const parseLexicalJSON = (json: { root: Node }) => {
   return createJSXElement(json.root);
 };

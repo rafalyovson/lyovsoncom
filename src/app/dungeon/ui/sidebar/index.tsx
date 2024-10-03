@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { DungeonLinks } from "@/data/dungeon-links";
-import { Settings } from "lucide-react";
-import Link from "next/link";
+} from '@/components/ui/tooltip';
+import { DungeonLinks } from '@/data/dungeon-links';
+import { Settings } from 'lucide-react';
+import Link from 'next/link';
 
 export const Sidebar = () => {
   return (
@@ -18,11 +18,11 @@ export const Sidebar = () => {
               <TooltipTrigger>
                 <Button
                   asChild
-                  variant={"outline"}
+                  variant={'outline'}
                   size="icon"
                   className="h-8 w-8 "
                 >
-                  <Link href={link.url} className="">
+                  <Link href={{ pathname: link.url }} className="">
                     {link.icon}
                     <span className="sr-only">{link.name}</span>
                   </Link>

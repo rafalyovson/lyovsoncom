@@ -1,5 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
   images: {
     remotePatterns: [
       {
@@ -21,8 +23,15 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb',
+      bodySizeLimit: '3mb',
     },
+    reactCompiler: true,
+    typedRoutes: true,
+    turbo: {},
+    optimizeCss: true,
+    esmExternals: true,
+
+    scrollRestoration: true,
   },
 };
 

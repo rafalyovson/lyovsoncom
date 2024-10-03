@@ -24,7 +24,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
     >
       <body
-        className={`${'h-full overflow-auto relative '} font-inter min-w-[375px]`}
+        className={`h-full overflow-auto relative  font-inter min-w-[375px]`}
       >
         <SessionProvider session={session}>
           <ThemeProvider
