@@ -5,10 +5,9 @@ import { parseLexicalJSON } from '../../ui/editor/data/serialize-deserialize';
 import { UserSocialMenu } from '@/components/user-soical-menu';
 import { UserFull } from '@/data/types/user-full';
 
-const Page = async ({ params }: { params: { username: string } }) => {
-  const result = await userSelectFullOneByUsername({
-    username: params.username,
-  });
+const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
+  const { username } = await params;
+  const result = await userSelectFullOneByUsername({ username });
 
   if (!result.success || !result.user) {
     redirect('/dungeon/users');

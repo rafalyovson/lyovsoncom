@@ -88,8 +88,8 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+  const { slug } = await params;
   const result = await postSelectFullOneBySlug({ slug });
 
   // Redirect if post not found

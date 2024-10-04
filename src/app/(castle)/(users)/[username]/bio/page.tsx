@@ -3,8 +3,8 @@ import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-
 import { redirect } from 'next/navigation';
 import { SerializedEditorState } from 'lexical';
 
-const Page = async ({ params }: { params: { username: string } }) => {
-  const username = params.username;
+const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
+  const { username } = await params;
   const result = await userSelectFullOneByUsername({
     username,
   });

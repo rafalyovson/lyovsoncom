@@ -10,7 +10,6 @@ export const userUpdateAction = async (
   prevState: UserOneResponse,
   formData: FormData,
 ): Promise<UserOneResponse> => {
-  console.log('🐤', JSON.stringify(longBio));
   const username = prevState.user?.username;
   if (!username) {
     return {

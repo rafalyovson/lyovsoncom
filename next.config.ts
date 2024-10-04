@@ -26,12 +26,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '3mb',
     },
     reactCompiler: true,
-    typedRoutes: true,
-    turbo: {},
-    optimizeCss: true,
-    esmExternals: true,
-
-    scrollRestoration: true,
   },
 };
 
