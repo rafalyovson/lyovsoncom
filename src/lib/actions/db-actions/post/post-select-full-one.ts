@@ -11,6 +11,8 @@ import {
 import { eq } from 'drizzle-orm';
 import { PostFullOneResponse } from '@/lib/actions/db-actions/post';
 import { PostFull } from '@/data/types/post-full';
+import { UserFull } from '@/data/types/user-full';
+import { SerializedEditorState } from 'lexical';
 
 export async function postSelectFullOneBySlug(data: {
   slug: string;
@@ -39,10 +41,11 @@ export async function postSelectFullOneBySlug(data: {
 
     const post: PostFull = {
       ...results[0].post,
-      author: results[0].author || undefined,
+      author: (results[0].author as UserFull) || undefined,
       featuredImage: results[0].featuredImage || undefined,
       categories: [],
       tags: [],
+      content: results[0].post.content as SerializedEditorState,
     };
 
     results.forEach((result) => {

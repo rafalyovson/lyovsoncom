@@ -71,7 +71,7 @@ export const ImageForm = ({
               />
             </SelectTrigger>
             <SelectContent>
-              {imageGroups.map((group: any) => (
+              {imageGroups.map((group: string) => (
                 <SelectItem key={group} value={group}>
                   {capitalize(group)}
                 </SelectItem>

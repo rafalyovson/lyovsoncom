@@ -1,6 +1,7 @@
 import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize';
 import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
 import { redirect } from 'next/navigation';
+import { SerializedEditorState } from 'lexical';
 
 const Page = async ({ params }: { params: { username: string } }) => {
   const username = params.username;
@@ -17,7 +18,7 @@ const Page = async ({ params }: { params: { username: string } }) => {
 
       <article className="p-8 mx-auto prose dark:prose-invert lg:prose-xl">
         <h1 className={`text-2xl `}>{`${result.user.name}'s Bio`}</h1>
-        {parseLexicalJSON(result.user.longBio)}
+        {parseLexicalJSON(result.user.longBio as SerializedEditorState)}
       </article>
     </>
   );

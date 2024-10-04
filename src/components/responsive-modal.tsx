@@ -13,7 +13,7 @@ import {
   DrawerTitle,
 } from '@/components/ui/drawer';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { Dispatch } from 'react';
+import { Dispatch, ReactNode } from 'react';
 
 export const ResponsiveModal = ({
   children,
@@ -23,7 +23,7 @@ export const ResponsiveModal = ({
   desc,
   className,
 }: {
-  children: any;
+  children: ReactNode;
   isOpen: boolean;
   setIsOpen: Dispatch<boolean>;
   title: string;

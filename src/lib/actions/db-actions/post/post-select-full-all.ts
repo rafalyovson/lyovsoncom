@@ -11,6 +11,8 @@ import {
 } from '@/data/schema';
 import { PostFull } from '@/data/types/post-full';
 import { eq } from 'drizzle-orm';
+import { UserFull } from '@/data/types/user-full';
+import { SerializedEditorState } from 'lexical';
 
 export async function postSelectFullAll(): Promise<PostFullAllResponse> {
   try {
@@ -42,10 +44,11 @@ export async function postSelectFullAll(): Promise<PostFullAllResponse> {
       if (!postMap.has(postId)) {
         postMap.set(postId, {
           ...result.post,
-          author: result.author || undefined,
+          author: (result.author as UserFull) || undefined,
           featuredImage: result.featuredImage || undefined,
           categories: [],
           tags: [],
+          content: result.post.content as SerializedEditorState,
         });
       }
 

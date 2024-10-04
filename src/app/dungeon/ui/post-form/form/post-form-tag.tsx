@@ -66,7 +66,7 @@ export function PostFormTag(props: PostFormTagProps) {
 
       <section className="flex flex-wrap gap-2">
         {props.postTags &&
-          props.postTags?.map((tag: any) => (
+          props.postTags?.map((tag: Tag) => (
             <div className="flex items-center space-x-2" key={tag.id}>
               <Checkbox
                 name={'tags'}
@@ -76,7 +76,7 @@ export function PostFormTag(props: PostFormTagProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   props.setPostTags(
-                    props.postTags.filter((t: any) => t.name !== tag.name),
+                    props.postTags.filter((t: Tag) => t.name !== tag.name),
                   );
                 }}
               />

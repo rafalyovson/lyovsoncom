@@ -1,15 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { db } from "@/data/db";
-import { imageGroups } from "@/data/image-groups";
-import { Image as ImageType, images } from "@/data/schema";
-import { capitalize } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { PageHeader } from "../ui/page-header";
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { db } from '@/data/db';
+import { imageGroups } from '@/data/image-groups';
+import { Image as ImageType, images } from '@/data/schema';
+import { capitalize } from '@/lib/utils';
+import Image from 'next/image';
+import Link from 'next/link';
+import { PageHeader } from '../ui/page-header';
 
 const ImageGrid = ({ images }: { images: ImageType[] }) => {
-  console.log("🐤", images);
+  console.log('🐤', images);
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto max-w-[1200px] gap-4 place-items-center ">
       {images.map((image: ImageType) => (
@@ -57,7 +57,9 @@ const Page = async () => {
         {imageGroups.map((group: string) => (
           <TabsContent value={group} key={group}>
             <ImageGrid
-              images={allImages.filter((image: any) => image.group === group)}
+              images={allImages.filter(
+                (image: ImageType) => image.group === group,
+              )}
             />
           </TabsContent>
         ))}

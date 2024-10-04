@@ -3,6 +3,7 @@ import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-
 import { ImageCard } from '@/app/dungeon/ui/image-card';
 import { parseLexicalJSON } from '../../ui/editor/data/serialize-deserialize';
 import { UserSocialMenu } from '@/components/user-soical-menu';
+import { UserFull } from '@/data/types/user-full';
 
 const Page = async ({ params }: { params: { username: string } }) => {
   const result = await userSelectFullOneByUsername({
@@ -12,18 +13,20 @@ const Page = async ({ params }: { params: { username: string } }) => {
   if (!result.success || !result.user) {
     redirect('/dungeon/users');
   }
+
+  const user = result.user as UserFull;
   return (
     <article className="flex flex-col md:flex-row gap-4 p-4">
       <section className={` `}>
-        <ImageCard image={result.user.avatar!} />
+        <ImageCard image={user.avatar!} />
       </section>
       <section className={`flex flex-col gap-2 `}>
-        <h1 className="text-2xl font-bold ">{result.user.name}</h1>
+        <h1 className="text-2xl font-bold ">{user.name}</h1>
         <p>{result.user.shortBio}</p>
         <UserSocialMenu user={result.user} />
         {result.user.longBio ? (
           <section className={`prose dark:prose-invert`}>
-            {parseLexicalJSON(result.user.longBio)}
+            {parseLexicalJSON(user.longBio!)}
           </section>
         ) : (
           <section className="flex flex-col gap-2 ">

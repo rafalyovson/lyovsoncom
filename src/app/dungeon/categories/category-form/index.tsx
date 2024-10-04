@@ -5,11 +5,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useActionState } from 'react';
 import { toast } from 'sonner';
+import { CategoryOneResponse } from '@/lib/actions/db-actions/category';
 
-export const CategoryForm = ({ action }: { action: any }) => {
+type CategoryFormProps = {
+  action: (
+    _prevState: CategoryOneResponse,
+    formData: FormData,
+  ) => Promise<CategoryOneResponse>;
+};
+
+export const CategoryForm = ({ action }: CategoryFormProps) => {
   const [state, formAction, isPending] = useActionState(action, {
     message: '',
     success: false,
+    category: null,
   });
 
   if (state.success && state.message !== '') {

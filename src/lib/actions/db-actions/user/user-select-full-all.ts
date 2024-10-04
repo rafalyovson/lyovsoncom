@@ -3,6 +3,7 @@ import { images, users } from '@/data/schema';
 import { eq } from 'drizzle-orm';
 import { db } from '@/data/db';
 import { UserFull } from '@/data/types/user-full';
+import { SerializedEditorState } from 'lexical';
 
 export async function userSelectFullAll(): Promise<UserFullAllResponse> {
   try {
@@ -21,6 +22,7 @@ export async function userSelectFullAll(): Promise<UserFullAllResponse> {
     const allUsers: UserFull[] = results.map((result) => ({
       ...result.user,
       avatar: result.avatar || undefined,
+      longBio: result.user.longBio as SerializedEditorState,
     }));
 
     return {

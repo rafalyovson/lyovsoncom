@@ -8,18 +8,19 @@ import { useActionState, useState } from 'react';
 import { ImageUploadForm } from '@/app/dungeon/ui/image-uplaod-form';
 import { UserFull } from '@/data/types/user-full';
 import { Editor } from '@/app/dungeon/ui/editor/Editor';
+import { userOneAction } from '@/data/types/user-types';
 
 type UserFormProps = {
-  action: any;
+  action: userOneAction;
   user?: UserFull | null;
 };
 
 export const UserForm = ({ action, user }: UserFormProps) => {
-  const [longBio, setLongBio] = useState(user?.longBio || '');
+  const [longBio, setLongBio] = useState(user?.longBio || null);
   const [isOpen, setIsOpen] = useState(false);
   const [avatar, setAvatar] = useState(user?.avatar || null);
-  console.log('🐤 LB', longBio);
   const actionWithBio = action.bind(null, longBio);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_state, formAction, isPending] = useActionState(actionWithBio, {
     message: '',
     success: false,
@@ -65,7 +66,7 @@ export const UserForm = ({ action, user }: UserFormProps) => {
           <Textarea
             name="shortBio"
             placeholder="Short Bio"
-            defaultValue={user?.shortBio!}
+            defaultValue={user?.shortBio || ''}
           />
         </section>
 
@@ -126,7 +127,7 @@ export const UserForm = ({ action, user }: UserFormProps) => {
       <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ">
         <section className="flex flex-col gap-2 flex-grow ">
           <Label htmlFor="longBio">Long Bio</Label>
-          <Editor name="longBio" state={longBio} setState={setLongBio} />
+          <Editor name="longBio" state={longBio} setStateAction={setLongBio} />
         </section>
         <Button disabled={isPending} type="submit">
           Update

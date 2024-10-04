@@ -3,7 +3,7 @@ import { capitalize } from '@/lib/utils';
 
 import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
-const Tags = async ({ params }: { params: any }) => {
+const Tags = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
 
   const result = await postSelectFullAll();

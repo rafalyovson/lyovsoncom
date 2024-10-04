@@ -4,7 +4,7 @@ import UserForm from '../../../ui/user-form';
 import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
 import { imageSelectAll } from '@/lib/actions/db-actions/image';
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { username: string } }) => {
   const { username } = params;
 
   const userResult = await userSelectFullOneByUsername({ username });

@@ -2,10 +2,11 @@ import { PostFormClient } from './form';
 import { categorySelectAll } from '@/lib/actions/db-actions/category';
 import { userSelectAll } from '@/lib/actions/db-actions/user';
 import { PostFull } from '@/data/types';
+import { postOneAction } from '@/data/types/post-types';
 
 type PostFormProps = {
   post?: PostFull;
-  action: any;
+  action: postOneAction;
 };
 
 export async function PostForm({ post, action }: PostFormProps) {
