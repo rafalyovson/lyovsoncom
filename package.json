@@ -93,11 +93,11 @@
     "react-hook-form": "^7.53.0",
     "react-player": "3.0.0-canary.4",
     "react-resizable-panels": "^2.1.4",
-    "react-social-media-embed": "^2.5.14",
+    "react-social-media-embed": "^2.5.16",
     "recharts": "^2.12.7",
     "sharp": "^0.33.5",
     "sonner": "^1.5.0",
-    "tailwind-merge": "^2.5.2",
+    "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
     "zod": "^3.23.8"
