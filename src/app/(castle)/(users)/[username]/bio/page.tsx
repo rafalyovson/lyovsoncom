@@ -12,12 +12,12 @@ const Page = async ({ params }: { params: { username: string } }) => {
   if (!result.success || !result.user) {
     redirect('/');
   }
+
   return (
     <>
       <title>{`${result.user.name}'s Bio | Lyovson.com`}</title>
-
       <article className="p-8 mx-auto prose dark:prose-invert lg:prose-xl">
-        <h1 className={`text-2xl `}>{`${result.user.name}'s Bio`}</h1>
+        <h1 className="text-2xl">{`${result.user.name}'s Bio`}</h1>
         {parseLexicalJSON(result.user.longBio as SerializedEditorState)}
       </article>
     </>
