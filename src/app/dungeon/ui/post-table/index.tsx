@@ -32,57 +32,84 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
   }
 
   return (
-    <Card className="flex-grow">
+    <Card className="flex-grow bg-gradient-to-r from-[#1c1c1e] to-[#121212] rounded-xl shadow-lg p-6">
       <CardContent>
-        <Table>
+        <Table className="w-full text-gray-300">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[120px] hidden md:table-cell">
+              <TableHead className="w-[120px] hidden md:table-cell text-gray-400">
                 Image
               </TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Author</TableHead>
-              <TableHead className="hidden md:table-cell">Date</TableHead>
-              <TableHead className="hidden sm:table-cell w-[100px]">
+              <TableHead className="text-gray-400">Title</TableHead>
+              <TableHead className="text-gray-400">Author</TableHead>
+              <TableHead className="hidden md:table-cell text-gray-400">
+                Date
+              </TableHead>
+              <TableHead className="hidden sm:table-cell w-[100px] text-gray-400">
                 Status
               </TableHead>
-              <TableHead className="w-[100px] text-right">Actions</TableHead>
+              <TableHead className="w-[100px] text-right text-gray-400">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {posts.map((post: Post) => {
               return (
-                <TableRow key={post.id}>
-                  <TableCell className="w-[120px]">
+                <TableRow
+                  key={post.id}
+                  className="hover:bg-[#2c2c2e] transition-colors"
+                >
+                  <TableCell className="w-[120px] hidden md:table-cell">
                     <Image
-                      className="w-[100px] aspect-square object-cover"
-                      src={post.featuredImage?.url || ''}
-                      alt={post.featuredImage?.altText || ''}
-                      width={200}
-                      height={200}
+                      className="w-full h-auto object-cover rounded-lg shadow-sm"
+                      src={post.featuredImage?.url || '/placeholder-image.jpg'}
+                      alt={post.featuredImage?.altText || 'Post image'}
+                      width={120}
+                      height={120}
                     />
                   </TableCell>
-                  <TableCell className="font-medium">
-                    <Link href={`/dungeon/posts/${post.slug}`}>
+                  <TableCell className="font-medium text-white">
+                    <Link
+                      href={`/dungeon/posts/${post.slug}`}
+                      className="hover:underline"
+                    >
                       {post.title}
                     </Link>
                   </TableCell>
-                  <TableCell>{post.author!.name}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {post.createdAt.toLocaleDateString()}
+                  <TableCell className="text-gray-300">
+                    {post.author!.name}
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell text-gray-300">
+                    {new Date(post.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="hidden sm:table-cell w-[100px]">
                     {post.published ? (
-                      <Badge variant={'default'}>Published</Badge>
+                      <Badge
+                        variant={'default'}
+                        className="bg-primary text-background rounded-full py-1 px-3"
+                      >
+                        Published
+                      </Badge>
                     ) : (
-                      <Badge variant={'secondary'}>Draft</Badge>
+                      <Badge
+                        variant={'secondary'}
+                        className="bg-[#3a3a3c] text-gray-300 rounded-full py-1 px-3"
+                      >
+                        Draft
+                      </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="">
-                    <section className="flex gap-2 ">
-                      <Button asChild variant={'secondary'} size="icon">
+                  <TableCell className="text-right">
+                    <section className="flex gap-2 justify-end">
+                      <Button
+                        asChild
+                        variant={'secondary'}
+                        size="icon"
+                        className="hover:bg-primary/80"
+                      >
                         <Link href={`/dungeon/posts/update/${post.slug}`}>
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4 text-white" />
                         </Link>
                       </Button>
                       <form action={formAction} method="post">
@@ -91,8 +118,9 @@ export const PostTable = ({ posts }: { posts: Post[] }) => {
                           disabled={isPending}
                           size={'icon'}
                           variant={'destructive'}
+                          className="hover:bg-red-700/80"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 text-white" />
                         </Button>
                       </form>
                     </section>

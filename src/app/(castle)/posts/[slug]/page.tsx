@@ -1,5 +1,4 @@
 import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize';
-import { badgeVariants } from '@/components/ui/badge';
 import { PostFull } from '@/data/types/post-full';
 import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 import Image from 'next/image';
@@ -10,7 +9,7 @@ import { Calendar, User } from 'lucide-react';
 
 const PostHeader = async ({ post }: { post: PostFull }) => {
   return (
-    <header className="flex flex-col-reverse lg:flex-row-reverse lg:items-center lg:gap-12 gap-6 p-6 bg-gradient-to-r from-[#1c1c1e] to-[#121212] rounded-lg shadow-lg">
+    <header className="flex flex-col lg:flex-row gap-8 p-6 bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] rounded-xl shadow-xl">
       {/* Featured Image */}
       <section className="flex justify-center w-full lg:w-1/2">
         <Image
@@ -18,7 +17,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
           alt={post.featuredImage?.altText || 'Featured image'}
           width={600}
           height={600}
-          className="rounded-lg shadow-md object-cover w-full h-auto max-h-96 lg:max-h-full transform transition-transform duration-500 hover:scale-105"
+          className="rounded-lg shadow-lg object-cover w-full h-auto max-h-96 lg:max-h-full transform transition-transform duration-500 hover:scale-105"
           priority
           placeholder="blur"
           blurDataURL="/placeholder-image.jpg"
@@ -26,20 +25,20 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
       </section>
 
       {/* Post Details */}
-      <section className="flex flex-col gap-4 lg:w-1/2 p-6 bg-card rounded-lg shadow-sm">
+      <section className="flex flex-col gap-6 lg:w-1/2 p-6 bg-[#f5f5f5] dark:bg-[#1a1a1c] rounded-lg shadow-md">
         {/* Post Title */}
-        <h1 className="text-3xl lg:text-4xl font-bold text-center lg:text-left leading-snug lg:leading-tight text-gray-100">
+        <h1 className="text-4xl font-bold text-center lg:text-left leading-tight text-gray-800 dark:text-white">
           {post.title}
         </h1>
 
         {/* Author, Date, and Categories */}
-        <aside className="flex flex-col gap-2 lg:gap-4 text-gray-400">
+        <aside className="flex flex-col gap-4 text-gray-600 dark:text-gray-400">
           {/* Author */}
           <div className="flex items-center gap-2 justify-center lg:justify-start">
             <User className="text-primary w-5 h-5" />
-            <p className="text-base lg:text-lg">
+            <p className="text-lg">
               <span className="text-sm">by </span>
-              <span className="font-medium text-gray-100">
+              <span className="font-medium text-gray-800 dark:text-white">
                 {post.author!.name}
               </span>
             </p>
@@ -47,19 +46,19 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
           {/* Date */}
           <div className="flex items-center gap-2 justify-center lg:justify-start">
             <Calendar className="text-primary w-5 h-5" />
-            <p className="text-base lg:text-lg">
+            <p className="text-lg">
               <span className="text-sm">on </span>
-              <span className="text-gray-100">
+              <span className="text-gray-800 dark:text-white">
                 {new Date(post.createdAt).toLocaleDateString()}
               </span>
             </p>
           </div>
 
           {/* Categories */}
-          <section className="flex flex-wrap gap-2 justify-center lg:justify-start">
+          <section className="flex flex-wrap gap-3 justify-center lg:justify-start">
             {post.categories!.map((category: Category) => (
               <Link
-                className="text-blue-400 underline hover:text-blue-300 transition-colors"
+                className="text-sm font-semibold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                 key={category.id}
                 href={{ pathname: `/posts/categories/${category.slug}` }}
               >
@@ -70,12 +69,10 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
         </aside>
 
         {/* Tags */}
-        <section className="flex flex-wrap gap-2 justify-center lg:justify-start">
+        <section className="flex flex-wrap gap-3 justify-center lg:justify-start">
           {post.tags!.map((tag: Tag) => (
             <Link
-              className={`${badgeVariants({
-                variant: 'default',
-              })} py-1 px-2 rounded-md text-gray-200 bg-[#1c1c1e] hover:bg-primary hover:text-background transition-colors`}
+              className={`py-1 px-4 rounded-full text-sm font-semibold text-gray-800 dark:text-gray-100 bg-yellow-200 dark:bg-yellow-700 hover:bg-yellow-300 dark:hover:bg-yellow-600 transition-colors shadow-md`}
               key={tag.id}
               href={{ pathname: `/posts/tags/${tag.slug}` }}
             >
@@ -98,12 +95,12 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   }
 
   return (
-    <article className="flex flex-col w-full max-w-screen-lg gap-8 mx-auto p-4 sm:p-6 md:p-8 rounded-lg shadow-lg bg-[#09090B]">
+    <article className="flex flex-col w-full max-w-screen-lg gap-12 mx-auto p-6 sm:p-8 md:p-10 rounded-xl shadow-xl bg-[#f0f0f0] dark:bg-[#09090B]">
       {/* Post Header */}
       <PostHeader post={result.post} />
 
       {/* Post Content */}
-      <div className=" max-w-2xl mx-auto mt-6  text-gray-200 leading-relaxed">
+      <div className="max-w-2xl mx-auto mt-8 text-gray-800 dark:text-gray-300 leading-relaxed text-lg">
         {parseLexicalJSON(result.post.content)}
       </div>
     </article>

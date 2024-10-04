@@ -26,13 +26,15 @@ export async function Header() {
     <>
       {user && <Toolbar user={user} />}
       <header
-        className={` sticky ${user ? ' top-12 ' : ' top-0'} z-10 flex items-center justify-between h-24 px-4 border-b-4 bg-background `}
+        className={`sticky ${user ? 'top-12' : 'top-0'} z-10 flex items-center justify-between h-24 px-4 border-b-4 bg-background shadow-md`}
       >
         <UserSheet user={users.filter((user) => user.username === 'jess')[0]} />
         <section>
-          <Button asChild variant={'link'}>
+          <Button asChild variant={'link'} className="hover:no-underline">
             <Link href="/">
-              <h1 className="mb-2 text-2xl lg:text-4xl ">Lyovson.com</h1>
+              <h1 className="mb-2 text-2xl lg:text-4xl font-bold text-primary">
+                Lyovson.com
+              </h1>
             </Link>
           </Button>
         </section>
@@ -44,11 +46,17 @@ export async function Header() {
 
 async function UserSheet({ user }: { user: UserFull }) {
   return (
-    <section>
+    <section className="flex items-center">
       <Sheet>
         <SheetTrigger>
-          <Avatar className="w-12 h-14" aria-label={`Open ${user.name}'s Menu`}>
-            <AvatarImage src={user.avatar?.url || ''} />
+          <Avatar
+            className="w-12 h-12 hover:ring-2 ring-primary transition-all rounded-full shadow-md"
+            aria-label={`Open ${user.name}'s Menu`}
+          >
+            <AvatarImage
+              src={user.avatar?.url || '/placeholder-avatar.jpg'}
+              alt={`${user.name}'s avatar`}
+            />
             <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
           </Avatar>
         </SheetTrigger>

@@ -18,37 +18,52 @@ import Link from 'next/link';
 export const Menu = ({ user }: { user: UserFull }) => {
   return (
     <SheetContent
-      className="flex flex-col gap-4 w-full lg:w-[300px]"
+      className="flex flex-col gap-6 w-full max-w-md mx-auto lg:w-[320px] bg-[#1c1c1e] text-gray-300 shadow-lg rounded-md p-6"
       side={user.username === 'jess' ? 'left' : 'right'}
     >
-      <SheetHeader>
-        <Card className="w-[250px] mx-auto">
-          <CardHeader>
+      <SheetHeader className="flex flex-col items-center">
+        <Card className="w-full bg-[#2a2a2e] text-white rounded-lg shadow-md">
+          <CardHeader className="p-0">
             <Image
-              alt={user.avatar?.altText || ''}
-              src={user.avatar?.url || ''}
+              alt={user.avatar?.altText || 'User avatar'}
+              src={user.avatar?.url || '/placeholder-avatar.jpg'}
               width={300}
-              height={400}
+              height={300}
+              className="w-full h-56 object-cover rounded-t-lg"
             />
           </CardHeader>
-          <CardContent>
-            <Link className="hover:underline" href={`/${user.username}`}>
+          <CardContent className="p-4 text-center">
+            <Link
+              className="hover:underline text-lg font-semibold"
+              href={`/${user.username}`}
+            >
               <SheetTitle>{user.name}</SheetTitle>
             </Link>
-
-            <SheetDescription>{user.shortBio}</SheetDescription>
+            <SheetDescription className="text-sm mt-2">
+              {user.shortBio}
+            </SheetDescription>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="p-4 flex flex-wrap gap-2 justify-center items-center">
             <UserSocialMenu
-              className={`flex-wrap justify-center items-center align-middle`}
+              className="flex flex-wrap gap-3 justify-center items-center"
               user={user}
             />
           </CardFooter>
         </Card>
       </SheetHeader>
-      <section className="flex flex-col gap-2 items-center">
-        <Link href={`/${user.username}/bio`}> Bio</Link>
-        <Link href={`/${user.username}/portfolio`}> Portfolio</Link>
+      <section className="flex flex-col gap-4 items-center mt-4">
+        <Link
+          className="text-primary hover:underline text-sm lg:text-base"
+          href={`/${user.username}/bio`}
+        >
+          Bio
+        </Link>
+        <Link
+          className="text-primary hover:underline text-sm lg:text-base"
+          href={`/${user.username}/portfolio`}
+        >
+          Portfolio
+        </Link>
       </section>
     </SheetContent>
   );
