@@ -17,8 +17,11 @@ export async function Header() {
   }
 
   const users = result.users;
-  const { user } = await userSelectFullOneById({ id: session?.user?.id! });
-
+  let user;
+  if (session && session.user && session.user.id) {
+    const fulluser = await userSelectFullOneById({ id: session.user.id });
+    user = fulluser.user;
+  }
   return (
     <>
       {user && <Toolbar user={user} />}

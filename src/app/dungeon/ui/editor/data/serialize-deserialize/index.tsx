@@ -5,11 +5,12 @@ import { ImageCard } from './image-card';
 import { FormattedText } from './fromatted-text';
 import { CustomLink } from './custom-link';
 import clsx from 'clsx';
+import { SerializedEditorState } from 'lexical';
 
-type Node = {
+export type Node = {
   type: string;
   tag?: string;
-  format?: number; // Bitmask for text formatting
+  format?: string; // Bitmask for text formatting
   children?: Node[];
   text?: string;
   url?: string;
@@ -117,6 +118,6 @@ export const createJSXElement = (node: Node): ReactElement => {
   }
 };
 
-export const parseLexicalJSON = (json: { root: Node }) => {
+export const parseLexicalJSON = (json: SerializedEditorState) => {
   return createJSXElement(json.root);
 };

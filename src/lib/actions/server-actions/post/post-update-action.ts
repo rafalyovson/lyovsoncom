@@ -9,9 +9,10 @@ import {
 } from '@/lib/actions/db-actions/post';
 import { postFromFormData } from '@/lib/utils/post-from-formdata';
 import { handlePostCats, handlePostTags } from '@/lib/utils';
+import { SerializedEditorState } from 'lexical';
 
 export async function postUpdateAction(
-  content: any,
+  content: SerializedEditorState | null,
   prevState: PostOneResponse,
   formData: FormData,
 ): Promise<PostOneResponse> {

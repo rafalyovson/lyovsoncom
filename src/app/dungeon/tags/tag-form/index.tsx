@@ -1,24 +1,34 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useActionState } from "react";
-import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useActionState } from 'react';
+import { toast } from 'sonner';
+import { TagOneResponse } from '@/lib/actions/db-actions/tag';
 
-export const TagForm = ({ action }: { action: any }) => {
+type TagFormProps = {
+  action: (
+    _prevState: TagOneResponse,
+    formData: FormData,
+  ) => Promise<TagOneResponse>;
+};
+
+export const TagForm = ({ action }: TagFormProps) => {
   const [state, formAction, isPending] = useActionState(action, {
-    message: "",
+    message: '',
+    success: false,
+    tag: null,
   });
 
-  if (state.message === "success") {
-    toast.success("Successfully added tag");
-    state.message = "";
+  if (state.message === 'success') {
+    toast.success('Successfully added tag');
+    state.message = '';
   }
 
-  if (state.message === "error") {
-    toast.error("Error adding tag");
-    state.message = "";
+  if (state.message === 'error') {
+    toast.error('Error adding tag');
+    state.message = '';
   }
 
   return (
@@ -31,7 +41,7 @@ export const TagForm = ({ action }: { action: any }) => {
         <Label htmlFor="slug">Slug</Label>
         <Input type="text" id="slug" name="slug" />
       </section>
-      <Button disabled={isPending} variant={"secondary"}>
+      <Button disabled={isPending} variant={'secondary'}>
         Add
       </Button>
     </form>

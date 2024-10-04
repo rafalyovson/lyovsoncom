@@ -1,12 +1,13 @@
 import { NewPost } from '@/data/schema';
 import { slugify } from '@/lib/utils/index';
+import { SerializedEditorState } from 'lexical';
 
 export function postFromFormData({
   formData,
   content,
 }: {
   formData: FormData;
-  content: any;
+  content: SerializedEditorState | null;
 }): NewPost {
   return {
     title: formData.get('title') as string,

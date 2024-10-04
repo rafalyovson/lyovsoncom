@@ -3,10 +3,11 @@
 import { userInsertSchema } from '@/data/schema';
 import { userUpdateByUsername } from '@/lib/actions/db-actions/user/user-update';
 import { UserOneResponse } from '@/lib/actions/db-actions/user';
+import { SerializedEditorState } from 'lexical';
 
 export const userUpdateAction = async (
-  longBio: any,
-  prevState: any,
+  longBio: SerializedEditorState | null,
+  prevState: UserOneResponse,
   formData: FormData,
 ): Promise<UserOneResponse> => {
   console.log('🐤', JSON.stringify(longBio));

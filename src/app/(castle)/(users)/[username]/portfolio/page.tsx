@@ -1,20 +1,5 @@
-async function Page({ params }: { params: any }) {
-  console.log('params', params);
-  // const username = params.username;
-  // const result = await userSelectFullOneByUsername({
-  //   username,
-  // });
-
-  // if (!result.success || !result.user) {
-  //   redirect('/');
-  //
-  // }
-  return (
-    <h1 className={`text-2xl text-center`}>
-      {/*{`${result.user.name}'s Portfolio`}*/}
-      Portfolio
-    </h1>
-  );
+async function Page() {
+  return <h1 className={`text-2xl text-center`}>Portfolio</h1>;
 }
 
 export default Page;

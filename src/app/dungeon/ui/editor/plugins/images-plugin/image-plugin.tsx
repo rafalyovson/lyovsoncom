@@ -9,6 +9,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   LexicalCommand,
+  LexicalEditor,
 } from 'lexical';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { $createImageNode, ImageNode } from './image-node';
@@ -55,7 +56,7 @@ export const ImagesPlugin = (): React.ReactNode | null => {
 
 // InsertImageDialog component updated to use ImageUploadForm
 export function InsertImageDialog(props: {
-  activeEditor: any;
+  activeEditor: LexicalEditor;
   onClose: () => void;
 }): ReactNode {
   const [isOpen, setIsOpen] = useState(true);

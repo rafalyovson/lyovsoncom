@@ -2,7 +2,7 @@ import { PostTable } from '@/app/dungeon/ui/post-table';
 import { capitalize } from '@/lib/utils';
 import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
-const Categories = async ({ params }: { params: any }) => {
+const Categories = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
 
   const result = await postSelectFullAll();

@@ -30,10 +30,11 @@ import { PostFormTag } from './post-form-tag';
 import { PostFull } from '@/data/types';
 import { PostFormCategory } from '@/app/dungeon/ui/post-form/form/post-form-category';
 import { redirect } from 'next/navigation';
+import { postOneAction } from '@/data/types/post-types';
 
 type PostFormClientProps = {
   post?: PostFull;
-  action: any;
+  action: postOneAction;
   allCats: Category[];
   authors: User[];
 };
@@ -44,7 +45,7 @@ export function PostFormClient({
   allCats,
   authors,
 }: PostFormClientProps) {
-  const [content, setContent] = useState(post?.content || '');
+  const [content, setContent] = useState(post?.content || null); // Initialize content state
   const [imageModalOpen, setImageModalOpen] = useState(false);
   const [postTags, setPostTags] = useState((post?.tags as NewTag[]) || []);
   const [newTag, setNewTag] = useState('');
@@ -183,7 +184,7 @@ export function PostFormClient({
           </section>
         </section>
         <section className="flex flex-col gap-2 p-4 border rounded-md space-y-6 md:w-2/3 ">
-          <Editor state={content} setState={setContent} />
+          <Editor state={content || null} setStateAction={setContent} />
 
           <Button className="w-full" type="submit" disabled={isPending}>
             Submit

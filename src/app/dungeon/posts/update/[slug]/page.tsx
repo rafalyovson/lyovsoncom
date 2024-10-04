@@ -3,7 +3,7 @@ import { postUpdateAction } from '@/lib/actions/server-actions/post/post-update-
 import { redirect } from 'next/navigation';
 import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
 
-const Page = async ({ params }: { params: any }) => {
+const Page = async ({ params }: { params: { slug: string } }) => {
   const { slug } = params;
   if (!slug) {
     redirect('/dungeon');

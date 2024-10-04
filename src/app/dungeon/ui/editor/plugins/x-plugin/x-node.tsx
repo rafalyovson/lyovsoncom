@@ -11,24 +11,24 @@ import type {
   DOMConversionOutput,
   DOMExportOutput,
   ElementFormatType,
-  LexicalEditor,
   LexicalNode,
   NodeKey,
   Spread,
-} from "lexical";
+} from 'lexical';
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from '@/components/ui/card';
 import {
   DecoratorBlockNode,
   SerializedDecoratorBlockNode,
-} from "@lexical/react/LexicalDecoratorBlockNode";
-import { XEmbed } from "react-social-media-embed";
+} from '@lexical/react/LexicalDecoratorBlockNode';
+import { XEmbed } from 'react-social-media-embed';
+import { ReactElement } from 'react';
 
 function $convertTweetElement(
-  domNode: HTMLDivElement
+  domNode: HTMLDivElement,
 ): DOMConversionOutput | null {
-  const id = domNode.getAttribute("data-lexical-tweet-id");
-  const url = domNode.getAttribute("data-lexical-tweet-url");
+  const id = domNode.getAttribute('data-lexical-tweet-id');
+  const url = domNode.getAttribute('data-lexical-tweet-url');
   if (id && url) {
     const node = $createTweetNode(id, url);
     return { node };
@@ -48,7 +48,7 @@ export class TweetNode extends DecoratorBlockNode {
   __id: string;
   url: string;
   static getType(): string {
-    return "tweet";
+    return 'tweet';
   }
 
   static clone(node: TweetNode): TweetNode {
@@ -66,7 +66,7 @@ export class TweetNode extends DecoratorBlockNode {
       ...super.exportJSON(),
       id: this.getId(),
       url: this.url,
-      type: "tweet",
+      type: 'tweet',
       version: 1,
     };
   }
@@ -75,8 +75,8 @@ export class TweetNode extends DecoratorBlockNode {
     return {
       div: (domNode: HTMLDivElement) => {
         if (
-          !domNode.hasAttribute("data-lexical-tweet-id") ||
-          !domNode.hasAttribute("data-lexical-tweet-url")
+          !domNode.hasAttribute('data-lexical-tweet-id') ||
+          !domNode.hasAttribute('data-lexical-tweet-url')
         ) {
           return null;
         }
@@ -89,9 +89,9 @@ export class TweetNode extends DecoratorBlockNode {
   }
 
   exportDOM(): DOMExportOutput {
-    const element = document.createElement("div");
-    element.setAttribute("data-lexical-tweet-id", this.__id);
-    element.setAttribute("data-lexical-tweet-url", this.url);
+    const element = document.createElement('div');
+    element.setAttribute('data-lexical-tweet-id', this.__id);
+    element.setAttribute('data-lexical-tweet-url', this.url);
     const text = document.createTextNode(this.getTextContent());
     element.append(text);
     return { element };
@@ -101,7 +101,7 @@ export class TweetNode extends DecoratorBlockNode {
     id: string,
     url: string,
     format?: ElementFormatType,
-    key?: NodeKey
+    key?: NodeKey,
   ) {
     super(format, key);
     this.__id = id;
@@ -116,14 +116,11 @@ export class TweetNode extends DecoratorBlockNode {
     return this.url;
   }
 
-  getTextContent(
-    _includeInert?: boolean | undefined,
-    _includeDirectionless?: false | undefined
-  ): string {
+  getTextContent(): string {
     return `https://x.com/i/web/status/${this.__id}`;
   }
 
-  decorate(_editor: LexicalEditor): JSX.Element {
+  decorate(): ReactElement {
     if (!this.url) {
       return <></>;
     }
@@ -142,7 +139,7 @@ export function $createTweetNode(tweetID: string, tweetURL: string): TweetNode {
 }
 
 export function $isTweetNode(
-  node: TweetNode | LexicalNode | null | undefined
+  node: TweetNode | LexicalNode | null | undefined,
 ): node is TweetNode {
   return node instanceof TweetNode;
 }

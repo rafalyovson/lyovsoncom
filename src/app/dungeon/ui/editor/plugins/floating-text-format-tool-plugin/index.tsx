@@ -1,14 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { $isCodeHighlightNode } from "@lexical/code";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { $isCodeHighlightNode } from '@lexical/code';
 import {
   $createLinkNode,
   $isAutoLinkNode,
   $isLinkNode,
   TOGGLE_LINK_COMMAND,
-} from "@lexical/link";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $findMatchingParent, mergeRegister } from "@lexical/utils";
+} from '@lexical/link';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $findMatchingParent, mergeRegister } from '@lexical/utils';
 import {
   $getSelection,
   $isLineBreakNode,
@@ -24,7 +24,7 @@ import {
   KEY_ESCAPE_COMMAND,
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
-} from "lexical";
+} from 'lexical';
 import {
   Bold,
   CircleCheckBig,
@@ -38,8 +38,8 @@ import {
   Superscript,
   Trash2,
   Underline,
-} from "lucide-react";
-import * as React from "react";
+} from 'lucide-react';
+import * as React from 'react';
 import {
   Dispatch,
   useCallback,
@@ -47,12 +47,12 @@ import {
   useReducer,
   useRef,
   useState,
-} from "react";
-import { createPortal } from "react-dom";
-import { getDOMRangeRect } from "../../utils/get-dom-rect-range";
-import { getSelectedNode } from "../../utils/get-selected-node";
-import { sanitizeUrl } from "../../utils/url";
-import { setFloatingElemPosition } from "./set-floating-elem-position";
+} from 'react';
+import { createPortal } from 'react-dom';
+import { getDOMRangeRect } from '../../utils/get-dom-rect-range';
+import { getSelectedNode } from '../../utils/get-selected-node';
+import { sanitizeUrl } from '../../utils/url';
+import { setFloatingElemPosition } from './set-floating-elem-position';
 
 // Define the state type
 type ToolbarState = {
@@ -69,15 +69,15 @@ type ToolbarState = {
 
 // Define the action type
 type ToolbarAction =
-  | { type: "SET_IS_TEXT"; payload: boolean }
-  | { type: "SET_IS_LINK"; payload: boolean }
-  | { type: "SET_IS_BOLD"; payload: boolean }
-  | { type: "SET_IS_ITALIC"; payload: boolean }
-  | { type: "SET_IS_UNDERLINE"; payload: boolean }
-  | { type: "SET_IS_STRIKETHROUGH"; payload: boolean }
-  | { type: "SET_IS_SUBSCRIPT"; payload: boolean }
-  | { type: "SET_IS_SUPERSCRIPT"; payload: boolean }
-  | { type: "SET_IS_CODE"; payload: boolean };
+  | { type: 'SET_IS_TEXT'; payload: boolean }
+  | { type: 'SET_IS_LINK'; payload: boolean }
+  | { type: 'SET_IS_BOLD'; payload: boolean }
+  | { type: 'SET_IS_ITALIC'; payload: boolean }
+  | { type: 'SET_IS_UNDERLINE'; payload: boolean }
+  | { type: 'SET_IS_STRIKETHROUGH'; payload: boolean }
+  | { type: 'SET_IS_SUBSCRIPT'; payload: boolean }
+  | { type: 'SET_IS_SUPERSCRIPT'; payload: boolean }
+  | { type: 'SET_IS_CODE'; payload: boolean };
 
 // Initial state for the reducer
 const initialState: ToolbarState = {
@@ -95,26 +95,26 @@ const initialState: ToolbarState = {
 // Reducer function to manage the toolbar state
 const toolbarReducer = (
   state: ToolbarState,
-  action: ToolbarAction
+  action: ToolbarAction,
 ): ToolbarState => {
   switch (action.type) {
-    case "SET_IS_TEXT":
+    case 'SET_IS_TEXT':
       return { ...state, isText: action.payload };
-    case "SET_IS_LINK":
+    case 'SET_IS_LINK':
       return { ...state, isLink: action.payload };
-    case "SET_IS_BOLD":
+    case 'SET_IS_BOLD':
       return { ...state, isBold: action.payload };
-    case "SET_IS_ITALIC":
+    case 'SET_IS_ITALIC':
       return { ...state, isItalic: action.payload };
-    case "SET_IS_UNDERLINE":
+    case 'SET_IS_UNDERLINE':
       return { ...state, isUnderline: action.payload };
-    case "SET_IS_STRIKETHROUGH":
+    case 'SET_IS_STRIKETHROUGH':
       return { ...state, isStrikethrough: action.payload };
-    case "SET_IS_SUBSCRIPT":
+    case 'SET_IS_SUBSCRIPT':
       return { ...state, isSubscript: action.payload };
-    case "SET_IS_SUPERSCRIPT":
+    case 'SET_IS_SUPERSCRIPT':
       return { ...state, isSuperscript: action.payload };
-    case "SET_IS_CODE":
+    case 'SET_IS_CODE':
       return { ...state, isCode: action.payload };
     default:
       return state;
@@ -143,16 +143,16 @@ const TextFormatFloatingToolbar = ({
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [linkUrl, setLinkUrl] = useState("");
-  const [editedLinkUrl, setEditedLinkUrl] = useState("https://");
+  const [linkUrl, setLinkUrl] = useState('');
+  const [editedLinkUrl, setEditedLinkUrl] = useState('https://');
   const [lastSelection, setLastSelection] = useState<BaseSelection | null>(
-    null
+    null,
   );
 
   const insertLink = useCallback(() => {
     if (!state.isLink) {
       setIsLinkEditMode(true);
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, "https://");
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
     } else {
       setIsLinkEditMode(false);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
@@ -161,13 +161,13 @@ const TextFormatFloatingToolbar = ({
 
   function mouseMoveListener(e: MouseEvent) {
     if (editorRef?.current && (e.buttons === 1 || e.buttons === 3)) {
-      if (editorRef.current.style.pointerEvents !== "none") {
+      if (editorRef.current.style.pointerEvents !== 'none') {
         const x = e.clientX;
         const y = e.clientY;
         const elementUnderMouse = document.elementFromPoint(x, y);
 
         if (!editorRef.current.contains(elementUnderMouse)) {
-          editorRef.current.style.pointerEvents = "none";
+          editorRef.current.style.pointerEvents = 'none';
         }
       }
     }
@@ -175,20 +175,20 @@ const TextFormatFloatingToolbar = ({
 
   function mouseUpListener() {
     if (editorRef?.current) {
-      if (editorRef.current.style.pointerEvents !== "auto") {
-        editorRef.current.style.pointerEvents = "auto";
+      if (editorRef.current.style.pointerEvents !== 'auto') {
+        editorRef.current.style.pointerEvents = 'auto';
       }
     }
   }
 
   useEffect(() => {
     if (editorRef?.current) {
-      document.addEventListener("mousemove", mouseMoveListener);
-      document.addEventListener("mouseup", mouseUpListener);
+      document.addEventListener('mousemove', mouseMoveListener);
+      document.addEventListener('mouseup', mouseUpListener);
 
       return () => {
-        document.removeEventListener("mousemove", mouseMoveListener);
-        document.removeEventListener("mouseup", mouseUpListener);
+        document.removeEventListener('mousemove', mouseMoveListener);
+        document.removeEventListener('mouseup', mouseUpListener);
       };
     }
     return () => {};
@@ -206,7 +206,7 @@ const TextFormatFloatingToolbar = ({
       } else if ($isLinkNode(node)) {
         setLinkUrl(node.getURL());
       } else {
-        setLinkUrl("");
+        setLinkUrl('');
       }
       if (isLinkEditMode) {
         setEditedLinkUrl(linkUrl);
@@ -231,24 +231,17 @@ const TextFormatFloatingToolbar = ({
       editor.isEditable()
     ) {
       const rangeRect = getDOMRangeRect(nativeSelection, rootElement);
-      setFloatingElemPosition(rangeRect, editorElem, anchorElem, state.isLink);
+      setFloatingElemPosition(rangeRect, editorElem, anchorElem);
       setLastSelection(selection);
-    } else if (!activeElement || activeElement.className !== "link-input") {
+    } else if (!activeElement || activeElement.className !== 'link-input') {
       if (rootElement !== null) {
         setFloatingElemPosition(null, editorElem, anchorElem);
       }
       setLastSelection(null);
       setIsLinkEditMode(false);
-      setLinkUrl("");
+      setLinkUrl('');
     }
-  }, [
-    editor,
-    isLinkEditMode,
-    linkUrl,
-    anchorElem,
-    state.isLink,
-    setIsLinkEditMode,
-  ]);
+  }, [editor, isLinkEditMode, linkUrl, anchorElem, setIsLinkEditMode]);
 
   useEffect(() => {
     const scrollerElem = anchorElem.parentElement;
@@ -259,17 +252,17 @@ const TextFormatFloatingToolbar = ({
       });
     };
 
-    window.addEventListener("resize", update);
+    window.addEventListener('resize', update);
 
     if (scrollerElem) {
-      scrollerElem.addEventListener("scroll", update);
+      scrollerElem.addEventListener('scroll', update);
     }
 
     return () => {
-      window.removeEventListener("resize", update);
+      window.removeEventListener('resize', update);
 
       if (scrollerElem) {
-        scrollerElem.removeEventListener("scroll", update);
+        scrollerElem.removeEventListener('scroll', update);
       }
     };
   }, [editor, $updateTextFormatFloatingToolbar, anchorElem]);
@@ -291,19 +284,19 @@ const TextFormatFloatingToolbar = ({
           $updateTextFormatFloatingToolbar();
           return false;
         },
-        COMMAND_PRIORITY_LOW
+        COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand(
         KEY_ESCAPE_COMMAND,
         () => {
           if (state.isLink) {
-            dispatch({ type: "SET_IS_LINK", payload: false });
+            dispatch({ type: 'SET_IS_LINK', payload: false });
             return true;
           }
           return false;
         },
-        COMMAND_PRIORITY_HIGH
-      )
+        COMMAND_PRIORITY_HIGH,
+      ),
     );
   }, [editor, $updateTextFormatFloatingToolbar, state.isLink, dispatch]);
 
@@ -315,7 +308,7 @@ const TextFormatFloatingToolbar = ({
 
   const handleLinkSubmission = () => {
     if (lastSelection !== null) {
-      if (linkUrl !== "") {
+      if (linkUrl !== '') {
         editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(editedLinkUrl));
         editor.update(() => {
           const selection = $getSelection();
@@ -332,18 +325,18 @@ const TextFormatFloatingToolbar = ({
           }
         });
       }
-      setEditedLinkUrl("https://");
+      setEditedLinkUrl('https://');
       setIsLinkEditMode(false);
     }
   };
 
   const monitorInputInteraction = (
-    event: React.KeyboardEvent<HTMLInputElement>
+    event: React.KeyboardEvent<HTMLInputElement>,
   ) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       handleLinkSubmission();
-    } else if (event.key === "Escape") {
+    } else if (event.key === 'Escape') {
       event.preventDefault();
       setIsLinkEditMode(false);
     }
@@ -358,9 +351,9 @@ const TextFormatFloatingToolbar = ({
         <section className="flex justify-between gap-2 p-2 border-b">
           <Button
             size="icon"
-            variant={state.isBold ? "secondary" : "ghost"}
+            variant={state.isBold ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "bold");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
             }}
             aria-label="Format text as bold"
           >
@@ -368,9 +361,9 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isItalic ? "secondary" : "ghost"}
+            variant={state.isItalic ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "italic");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
             }}
             aria-label="Format text as italics"
           >
@@ -378,9 +371,9 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isUnderline ? "secondary" : "ghost"}
+            variant={state.isUnderline ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "underline");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
             aria-label="Format text to underlined"
           >
@@ -388,9 +381,9 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isStrikethrough ? "secondary" : "ghost"}
+            variant={state.isStrikethrough ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "strikethrough");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
             }}
             aria-label="Format text with a strikethrough"
           >
@@ -398,9 +391,9 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isSubscript ? "secondary" : "ghost"}
+            variant={state.isSubscript ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "subscript");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
             }}
             aria-label="Format Subscript"
           >
@@ -408,9 +401,9 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isSuperscript ? "secondary" : "ghost"}
+            variant={state.isSuperscript ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "superscript");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
             }}
             title="Superscript"
             aria-label="Format Superscript"
@@ -419,16 +412,16 @@ const TextFormatFloatingToolbar = ({
           </Button>
           <Button
             size="icon"
-            variant={state.isCode ? "secondary" : "ghost"}
+            variant={state.isCode ? 'secondary' : 'ghost'}
             onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, "code");
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
             }}
           >
             <Code className="h-4 w-4" />
           </Button>
           <Button
             size="icon"
-            variant={state.isLink ? "secondary" : "ghost"}
+            variant={state.isLink ? 'secondary' : 'ghost'}
             onClick={insertLink}
           >
             <Link className="h-4 w-4" />
@@ -453,7 +446,7 @@ const TextFormatFloatingToolbar = ({
           <section className="flex gap-2 justify-between flex-grow">
             <Button
               size="icon"
-              variant={"ghost"}
+              variant={'ghost'}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -465,7 +458,7 @@ const TextFormatFloatingToolbar = ({
 
             <Button
               size="icon"
-              variant={"ghost"}
+              variant={'ghost'}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -490,7 +483,7 @@ const TextFormatFloatingToolbar = ({
           <section className="flex gap-2">
             <Button
               size="icon"
-              variant={"ghost"}
+              variant={'ghost'}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -501,7 +494,7 @@ const TextFormatFloatingToolbar = ({
             </Button>
             <Button
               size="icon"
-              variant={"ghost"}
+              variant={'ghost'}
               tabIndex={0}
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
@@ -522,7 +515,7 @@ const useFloatingTextFormatToolbar = (
   editor: LexicalEditor,
   anchorElem: HTMLElement,
   isLinkEditMode: boolean,
-  setIsLinkEditMode: Dispatch<boolean>
+  setIsLinkEditMode: Dispatch<boolean>,
 ): JSX.Element | null => {
   const [state, dispatch] = useReducer(toolbarReducer, initialState);
 
@@ -541,7 +534,7 @@ const useFloatingTextFormatToolbar = (
           rootElement === null ||
           !rootElement.contains(nativeSelection.anchorNode))
       ) {
-        dispatch({ type: "SET_IS_TEXT", payload: false });
+        dispatch({ type: 'SET_IS_TEXT', payload: false });
         return;
       }
 
@@ -556,7 +549,7 @@ const useFloatingTextFormatToolbar = (
       const autoLinkNode = $findMatchingParent(node, $isAutoLinkNode);
 
       if (!(linkNode || autoLinkNode)) {
-        dispatch({ type: "SET_IS_LINK", payload: false });
+        dispatch({ type: 'SET_IS_LINK', payload: false });
       }
 
       const badNode = selection
@@ -574,67 +567,67 @@ const useFloatingTextFormatToolbar = (
         });
 
       if (!badNode) {
-        dispatch({ type: "SET_IS_LINK", payload: true });
+        dispatch({ type: 'SET_IS_LINK', payload: true });
       } else {
-        dispatch({ type: "SET_IS_LINK", payload: false });
+        dispatch({ type: 'SET_IS_LINK', payload: false });
       }
 
       // Update text format
-      dispatch({ type: "SET_IS_BOLD", payload: selection.hasFormat("bold") });
+      dispatch({ type: 'SET_IS_BOLD', payload: selection.hasFormat('bold') });
       dispatch({
-        type: "SET_IS_ITALIC",
-        payload: selection.hasFormat("italic"),
+        type: 'SET_IS_ITALIC',
+        payload: selection.hasFormat('italic'),
       });
       dispatch({
-        type: "SET_IS_UNDERLINE",
-        payload: selection.hasFormat("underline"),
+        type: 'SET_IS_UNDERLINE',
+        payload: selection.hasFormat('underline'),
       });
       dispatch({
-        type: "SET_IS_STRIKETHROUGH",
-        payload: selection.hasFormat("strikethrough"),
+        type: 'SET_IS_STRIKETHROUGH',
+        payload: selection.hasFormat('strikethrough'),
       });
       dispatch({
-        type: "SET_IS_SUBSCRIPT",
-        payload: selection.hasFormat("subscript"),
+        type: 'SET_IS_SUBSCRIPT',
+        payload: selection.hasFormat('subscript'),
       });
       dispatch({
-        type: "SET_IS_SUPERSCRIPT",
-        payload: selection.hasFormat("superscript"),
+        type: 'SET_IS_SUPERSCRIPT',
+        payload: selection.hasFormat('superscript'),
       });
-      dispatch({ type: "SET_IS_CODE", payload: selection.hasFormat("code") });
+      dispatch({ type: 'SET_IS_CODE', payload: selection.hasFormat('code') });
 
       // Update links
       const parent = node.getParent();
       if ($isLinkNode(parent) || $isLinkNode(node)) {
-        dispatch({ type: "SET_IS_LINK", payload: true });
+        dispatch({ type: 'SET_IS_LINK', payload: true });
       } else {
-        dispatch({ type: "SET_IS_LINK", payload: false });
+        dispatch({ type: 'SET_IS_LINK', payload: false });
       }
 
       if (
         !$isCodeHighlightNode(selection.anchor.getNode()) &&
-        selection.getTextContent() !== ""
+        selection.getTextContent() !== ''
       ) {
         dispatch({
-          type: "SET_IS_TEXT",
+          type: 'SET_IS_TEXT',
           payload: $isTextNode(node) || $isParagraphNode(node),
         });
       } else {
-        dispatch({ type: "SET_IS_TEXT", payload: false });
+        dispatch({ type: 'SET_IS_TEXT', payload: false });
       }
 
-      const rawTextContent = selection.getTextContent().replace(/\n/g, "");
-      if (!selection.isCollapsed() && rawTextContent === "") {
-        dispatch({ type: "SET_IS_TEXT", payload: false });
+      const rawTextContent = selection.getTextContent().replace(/\n/g, '');
+      if (!selection.isCollapsed() && rawTextContent === '') {
+        dispatch({ type: 'SET_IS_TEXT', payload: false });
         return;
       }
     });
   }, [editor]);
 
   useEffect(() => {
-    document.addEventListener("selectionchange", updatePopup);
+    document.addEventListener('selectionchange', updatePopup);
     return () => {
-      document.removeEventListener("selectionchange", updatePopup);
+      document.removeEventListener('selectionchange', updatePopup);
     };
   }, [updatePopup]);
 
@@ -645,17 +638,17 @@ const useFloatingTextFormatToolbar = (
       }),
       editor.registerRootListener(() => {
         if (editor.getRootElement() === null) {
-          dispatch({ type: "SET_IS_TEXT", payload: false });
+          dispatch({ type: 'SET_IS_TEXT', payload: false });
         }
       }),
 
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
-        (_payload) => {
+        () => {
           updatePopup();
           return false;
         },
-        COMMAND_PRIORITY_CRITICAL
+        COMMAND_PRIORITY_CRITICAL,
       ),
       editor.registerCommand(
         CLICK_COMMAND,
@@ -665,14 +658,14 @@ const useFloatingTextFormatToolbar = (
             const node = getSelectedNode(selection);
             const linkNode = $findMatchingParent(node, $isLinkNode);
             if ($isLinkNode(linkNode) && (payload.metaKey || payload.ctrlKey)) {
-              window.open(linkNode.getURL(), "_blank");
+              window.open(linkNode.getURL(), '_blank');
               return true;
             }
           }
           return false;
         },
-        COMMAND_PRIORITY_LOW
-      )
+        COMMAND_PRIORITY_LOW,
+      ),
     );
   }, [editor, updatePopup]);
 
@@ -685,7 +678,7 @@ const useFloatingTextFormatToolbar = (
       setIsLinkEditMode={setIsLinkEditMode}
       isLinkEditMode={isLinkEditMode}
     />,
-    anchorElem
+    anchorElem,
   );
 };
 
@@ -703,6 +696,6 @@ export const FloatingTextFormatToolbarPlugin = ({
     editor,
     anchorElem,
     isLinkEditMode,
-    setIsLinkEditMode
+    setIsLinkEditMode,
   );
 };

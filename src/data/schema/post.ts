@@ -2,7 +2,7 @@ import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import { boolean, json, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { PostType } from '../post-types';
+import { PostType } from '../types/post-types';
 import { images } from './image'; // Import the new images table
 import { users } from './user';
 

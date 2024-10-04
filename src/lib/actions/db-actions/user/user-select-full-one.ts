@@ -21,7 +21,7 @@ export async function userSelectFullOneByUsername(data: {
       return { success: false, user: null, message: 'User not found' };
     }
 
-    const user: UserFull = result.user;
+    const user = result.user as UserFull;
     user.avatar = result.image || undefined;
 
     return {
@@ -56,7 +56,7 @@ export async function userSelectFullOneById(data: {
       return { success: false, user: null, message: 'User not found' };
     }
 
-    const user: UserFull = result.user;
+    const user = result.user as UserFull;
     user.avatar = result.image || undefined;
 
     return {

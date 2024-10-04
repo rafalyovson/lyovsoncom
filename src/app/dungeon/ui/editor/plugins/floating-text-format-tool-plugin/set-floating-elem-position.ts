@@ -5,15 +5,14 @@ export const setFloatingElemPosition = (
   targetRect: DOMRect | null,
   floatingElem: HTMLElement,
   anchorElem: HTMLElement,
-  _isLink: boolean = false,
   verticalGap: number = VERTICAL_GAP,
-  horizontalOffset: number = HORIZONTAL_OFFSET
+  horizontalOffset: number = HORIZONTAL_OFFSET,
 ): void => {
   const scrollerElem = anchorElem.parentElement;
 
   if (targetRect === null || !scrollerElem) {
-    floatingElem.style.opacity = "0";
-    floatingElem.style.transform = "translate(-10000px, -10000px)";
+    floatingElem.style.opacity = '0';
+    floatingElem.style.transform = 'translate(-10000px, -10000px)';
     return;
   }
 
@@ -41,6 +40,6 @@ export const setFloatingElemPosition = (
     left = editorScrollerRect.left + horizontalOffset;
   }
 
-  floatingElem.style.opacity = "1";
+  floatingElem.style.opacity = '1';
   floatingElem.style.transform = `translate(${left}px, ${top}px)`;
 };
