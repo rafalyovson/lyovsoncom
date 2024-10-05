@@ -1,12 +1,17 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader } from '@/components/shadcn/ui/card';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/shadcn/ui/tabs';
 import { db } from '@/data/db';
-import { imageGroups } from '@/data/image-groups';
+import { imageGroups } from '@/data/misc/image-groups';
 import { Image as ImageType, images } from '@/data/schema';
 import { capitalize } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { PageHeader } from '../ui/page-header';
+import { PageHeader } from '@/components/dungeon/page-header';
 
 const ImageGrid = ({ images }: { images: ImageType[] }) => {
   return (

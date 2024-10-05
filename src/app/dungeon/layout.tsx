@@ -1,10 +1,11 @@
-import { Header } from './ui/header';
-import { Sidebar } from './ui/sidebar';
+import { Header } from '@/components/dungeon/header';
+import { Sidebar } from '@/components/dungeon/sidebar';
 import { auth } from '@/data/auth';
-import { userSelectFullOneById } from '@/lib/actions/db-actions/user/user-select-full-one';
+import { userSelectFullOneById } from '@/data/actions/db-actions/user/user-select-full-one';
 import { redirect } from 'next/navigation';
+import { ReactNode } from 'react';
 
-const Layout = async ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
   if (!session || !session.user) {
     redirect('/');

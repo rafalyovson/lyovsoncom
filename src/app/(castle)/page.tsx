@@ -1,6 +1,6 @@
-import { PostGrid } from '@/app/(castle)/ui/post-grid';
-import { About } from '@/app/(castle)/ui/About';
-import { postSelectFullAll } from '@/lib/actions/db-actions/post';
+import { PostGrid } from '@/components/castle/post-grid';
+import { About } from '@/components/castle/about';
+import { postSelectFullAll } from '@/data/actions/db-actions/post';
 
 export default async function HomePage() {
   const result = await postSelectFullAll();

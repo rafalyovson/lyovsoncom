@@ -4,15 +4,15 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from '@/components/shadcn/ui/dialog';
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from '@/components/ui/drawer';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+} from '@/components/shadcn/ui/drawer';
+import { useMediaQuery } from '@/lib/hooks/useMediaQuery';
 import { Dispatch, ReactNode } from 'react';
 
 export const ResponsiveModal = ({

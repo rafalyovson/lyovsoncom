@@ -1,7 +1,7 @@
-import { PostTable } from '@/app/dungeon/ui/post-table';
+import { PostTable } from '@/components/dungeon/post-table';
 import { capitalize } from '@/lib/utils';
 
-import { postSelectFullAll } from '@/lib/actions/db-actions/post';
+import { postSelectFullAll } from '@/data/actions/db-actions/post';
 
 const Tags = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;

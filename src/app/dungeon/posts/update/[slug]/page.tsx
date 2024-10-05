@@ -1,7 +1,7 @@
-import { PostForm } from '@/app/dungeon/ui/post-form';
-import { postUpdateAction } from '@/lib/actions/server-actions/post/post-update-action';
+import { PostForm } from '@/components/dungeon/post-form';
+import { postUpdateAction } from '@/data/actions/server-actions/post/post-update-action';
 import { redirect } from 'next/navigation';
-import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
+import { postSelectFullOneBySlug } from '@/data/actions/db-actions/post/post-select-full-one';
 
 const Page = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;

@@ -1,10 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/shadcn/ui/button';
 import { Category } from '@/data/schema';
-import { categoryDeleteAction } from '@/lib/actions/server-actions/category/category-delete-action';
+import { categoryDeleteAction } from '@/data/actions/server-actions/category/category-delete-action';
 import { Delete } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/shadcn/ui/input';
 import { useActionState } from 'react';
 import { toast } from 'sonner';
 

@@ -1,6 +1,6 @@
-import { parseLexicalJSON } from '../../ui/editor/data/serialize-deserialize';
+import { parseLexicalJSON } from '@/lib/utils';
 import Image from 'next/image';
-import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
+import { postSelectFullOneBySlug } from '@/data/actions/db-actions/post/post-select-full-one';
 import { redirect } from 'next/navigation';
 import { PostFull } from '@/data/types/post-full';
 

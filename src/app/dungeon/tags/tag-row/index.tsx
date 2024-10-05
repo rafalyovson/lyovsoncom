@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/shadcn/ui/button';
 import { Tag } from '@/data/schema';
-import { tagDeleteAction } from '@/lib/actions/server-actions/tag/tag-delete-action';
+import { tagDeleteAction } from '@/data/actions/server-actions/tag/tag-delete-action';
 import { Delete } from 'lucide-react';
 
 export const TagRow = ({ cat }: { cat: Tag }) => {

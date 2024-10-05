@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { imageSelectAll } from '@/lib/actions/db-actions/image';
+import { imageSelectAll } from '@/data/actions/db-actions/image';
 
 export async function GET(req: NextRequest) {
   try {

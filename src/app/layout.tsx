@@ -4,18 +4,19 @@ import {
   ThemeProvider,
   TooltipProvider,
 } from '@/components/providers';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from '@/components/shadcn/ui/sonner';
 import { auth } from '@/data/auth';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
+import { ReactNode } from 'react';
 
 export const metadata = {
   title: 'Lyovson.com',
   description: 'The official website of Mr and Mrs Lyovsons.',
 };
 
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
 
   return (

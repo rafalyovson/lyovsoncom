@@ -1,9 +1,9 @@
-import { categorySelectOneBySlug } from '@/lib/actions/db-actions/category';
+import { categorySelectOneBySlug } from '@/data/actions/db-actions/category';
 import { slugify } from '@/lib/utils/index';
 import {
   categoryPostDelete,
   categoryPostInsert,
-} from '@/lib/actions/db-actions/category-post';
+} from '@/data/actions/db-actions/category-post';
 
 export async function handlePostCats({
   formData,

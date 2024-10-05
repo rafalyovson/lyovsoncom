@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/shadcn/ui/button';
+import { Input } from '@/components/shadcn/ui/input';
+import { Label } from '@/components/shadcn/ui/label';
 import { useActionState } from 'react';
 import { toast } from 'sonner';
-import { TagOneResponse } from '@/lib/actions/db-actions/tag';
+import { TagOneResponse } from '@/data/actions/db-actions/tag';
 
 type TagFormProps = {
   action: (
