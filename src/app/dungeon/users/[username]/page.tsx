@@ -5,7 +5,8 @@ import { parseLexicalJSON } from '@/lib/utils';
 import { UserSocialMenu } from '@/components/user-soical-menu';
 import { UserFull } from '@/data/types/user-full';
 
-const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
+const Page = async (props: { params: Promise<{ username: string }> }) => {
+  const params = await props.params;
   const { username } = await params;
   const result = await userSelectFullOneByUsername({ username });
 

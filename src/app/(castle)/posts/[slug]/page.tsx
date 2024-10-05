@@ -85,7 +85,8 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
   );
 };
 
-const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const Page = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const { slug } = await params;
   const result = await postSelectFullOneBySlug({ slug });
 

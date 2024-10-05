@@ -3,7 +3,8 @@ import { capitalize } from '@/lib/utils';
 
 import { postSelectFullAll } from '@/data/actions/db-actions/post';
 
-const Tags = async ({ params }: { params: Promise<{ slug: string }> }) => {
+const Tags = async (props: { params: Promise<{ slug: string }> }) => {
+  const params = await props.params;
   const { slug } = await params;
 
   const result = await postSelectFullAll();

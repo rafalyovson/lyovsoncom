@@ -4,7 +4,8 @@ import UserForm from '@/components/dungeon/user-form';
 import { userSelectFullOneByUsername } from '@/data/actions/db-actions/user/user-select-full-one';
 import { imageSelectAll } from '@/data/actions/db-actions/image';
 
-const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
+const Page = async (props: { params: Promise<{ username: string }> }) => {
+  const params = await props.params;
   const { username } = await params;
 
   const userResult = await userSelectFullOneByUsername({ username });

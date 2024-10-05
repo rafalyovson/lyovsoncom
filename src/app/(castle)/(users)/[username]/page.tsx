@@ -4,7 +4,8 @@ import { userSelectByUsername } from '@/data/actions/db-actions/user/user-select
 import { redirect } from 'next/navigation';
 import { postSelectFullAll } from '@/data/actions/db-actions/post';
 
-const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
+const Page = async (props: { params: Promise<{ username: string }> }) => {
+  const params = await props.params;
   const { username } = await params;
   const userResult = await userSelectByUsername({ username });
 
