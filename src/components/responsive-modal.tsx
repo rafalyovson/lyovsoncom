@@ -12,7 +12,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from '@/components/ui/drawer';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useMediaQuery } from '@/lib/hooks/use-media-query';
 import { Dispatch, ReactNode } from 'react';
 
 export const ResponsiveModal = ({

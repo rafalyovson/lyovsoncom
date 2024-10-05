@@ -39,7 +39,11 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "tailwind.config.ts", "postcss.config.js", "src/app/dungeon/ui/editor/Editor.jsx", "src/app/dungeon/ui/editor/nodes/CustomParagraphNode.js", "src/app/dungeon/ui/editor/plugins/ToolbarPlugin.jsx",  ],
+, "tailwind.config.ts", "postcss.config.js",
+    "src/components/dungeon/editor/Editor.jsx",
+    "src/components/dungeon/editor/nodes/CustomParagraphNode.js",
+    "src/components/dungeon/editor/plugins/ToolbarPlugin.jsx"
+  ],
   "exclude": [
     "node_modules"
   ]

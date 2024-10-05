@@ -1,6 +1,6 @@
-import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize';
+import { parseLexicalJSON } from '@/lib/utils';
 import { PostFull } from '@/data/types/post-full';
-import { postSelectFullOneBySlug } from '@/lib/actions/db-actions/post/post-select-full-one';
+import { postSelectFullOneBySlug } from '@/data/actions/db-actions/post/post-select-full-one';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

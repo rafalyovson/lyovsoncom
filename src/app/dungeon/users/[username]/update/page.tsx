@@ -1,8 +1,8 @@
-import { userUpdateAction } from '@/lib/actions/server-actions/user/user-update-action';
+import { userUpdateAction } from '@/data/actions/server-actions/user/user-update-action';
 import { redirect } from 'next/navigation';
-import UserForm from '../../../ui/user-form';
-import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
-import { imageSelectAll } from '@/lib/actions/db-actions/image';
+import UserForm from '@/components/dungeon/user-form';
+import { userSelectFullOneByUsername } from '@/data/actions/db-actions/user/user-select-full-one';
+import { imageSelectAll } from '@/data/actions/db-actions/image';
 
 const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
   const { username } = await params;
