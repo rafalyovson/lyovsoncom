@@ -1,8 +1,8 @@
 import { PostFull } from '@/data/types/post-full';
-import { PostGrid } from '@/components/castle/post-grid';
-import { userSelectByUsername } from '@/data/actions/db-actions/user/user-select-one';
+import { PostGrid } from '../../ui/post-grid';
+import { userSelectByUsername } from '@/lib/actions/db-actions/user/user-select-one';
 import { redirect } from 'next/navigation';
-import { postSelectFullAll } from '@/data/actions/db-actions/post';
+import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
 const Page = async (props: { params: Promise<{ username: string }> }) => {
   const params = await props.params;

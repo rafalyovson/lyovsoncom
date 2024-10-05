@@ -1,9 +1,9 @@
 import {
   tagPostDelete,
   tagPostInsert,
-} from '@/data/actions/db-actions/tag-post';
+} from '@/lib/actions/db-actions/tag-post';
 import { capitalize, slugify } from '@/lib/utils/index';
-import { tagInsert, tagSelectOneBySlug } from '@/data/actions/db-actions/tag';
+import { tagInsert, tagSelectOneBySlug } from '@/lib/actions/db-actions/tag';
 
 export async function handlePostTags({
   formData,

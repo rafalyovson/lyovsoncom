@@ -1,4 +1,4 @@
-import { ImageForm } from '@/components/dungeon/image-form';
+import { ImageForm } from '../../ui/image-form';
 
 const ImageCreate = () => {
   return (

@@ -1,5 +1,5 @@
 import { SerializedEditorState } from 'lexical';
-import { PostOneResponse } from '@/data/actions/db-actions/post';
+import { PostOneResponse } from '@/lib/actions/db-actions/post';
 
 export enum PostType {
   Article = 'article',

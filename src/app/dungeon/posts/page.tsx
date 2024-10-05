@@ -1,7 +1,7 @@
-import { PostTable } from '@/components/dungeon/post-table';
-import { PageHeader } from '@/components/dungeon/page-header';
+import { PostTable } from '@/app/dungeon/ui/post-table';
+import { PageHeader } from '../ui/page-header';
 
-import { postSelectFullAll } from '@/data/actions/db-actions/post';
+import { postSelectFullAll } from '@/lib/actions/db-actions/post';
 
 const Posts = async () => {
   const result = await postSelectFullAll();

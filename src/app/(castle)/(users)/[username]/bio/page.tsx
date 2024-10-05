@@ -1,5 +1,5 @@
-import { parseLexicalJSON } from '@/lib/utils';
-import { userSelectFullOneByUsername } from '@/data/actions/db-actions/user/user-select-full-one';
+import { parseLexicalJSON } from '@/app/dungeon/ui/editor/data/serialize-deserialize';
+import { userSelectFullOneByUsername } from '@/lib/actions/db-actions/user/user-select-full-one';
 import { redirect } from 'next/navigation';
 import { SerializedEditorState } from 'lexical';
 

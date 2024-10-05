@@ -1,5 +1,5 @@
-import { PostForm } from '@/components/dungeon/post-form';
-import { postCreateAction } from '@/data/actions/server-actions/post/post-create-action';
+import { PostForm } from '@/app/dungeon/ui/post-form';
+import { postCreateAction } from '@/lib/actions/server-actions/post/post-create-action';
 
 const Page = async () => {
   return (

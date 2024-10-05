@@ -1,6 +1,6 @@
-import { PageHeader } from '@/components/dungeon/page-header';
-import { UserTable } from '@/components/dungeon/user-table';
-import { userSelectFullAll } from '@/data/actions/db-actions/user/user-select-full-all';
+import { PageHeader } from '../ui/page-header';
+import { UserTable } from '../ui/user-table';
+import { userSelectFullAll } from '@/lib/actions/db-actions/user/user-select-full-all';
 
 const Users = async () => {
   const result = await userSelectFullAll();

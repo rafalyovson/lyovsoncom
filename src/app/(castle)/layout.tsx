@@ -1,9 +1,8 @@
-import { Footer } from '@/components/castle/footer';
-import { Header } from '@/components/castle/header';
-import { Main } from '@/components/castle/main';
-import { ReactNode } from 'react';
+import { Footer } from './ui/footer';
+import { Header } from './ui/header';
+import { Main } from './ui/main';
 
-const Layout = async ({ children }: { children: ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <section className="min-h-screen flex flex-col">
       <Header />

@@ -1,5 +1,5 @@
-export { SessionProvider } from 'next-auth/react';
+export { SessionProvider } from "next-auth/react";
 
-export { ThemeProvider } from '@/components/providers/theme-provider';
+export { ThemeProvider } from "@/components/providers/ThemeProvider";
 
-export { TooltipProvider } from '@/components/ui/tooltip';
+export { TooltipProvider } from "@/components/ui/tooltip";

@@ -1,4 +1,4 @@
-import { ImageCard } from '@/components/dungeon/image-card/';
+import { ImageCard } from '@/app/dungeon/ui/image-card/';
 import { db } from '@/data/db';
 import { images } from '@/data/schema';
 import { eq } from 'drizzle-orm';

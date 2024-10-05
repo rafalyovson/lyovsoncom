@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useActionState } from 'react';
 import { toast } from 'sonner';
-import { TagOneResponse } from '@/data/actions/db-actions/tag';
+import { TagOneResponse } from '@/lib/actions/db-actions/tag';
 
 type TagFormProps = {
   action: (

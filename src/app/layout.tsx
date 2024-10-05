@@ -9,20 +9,19 @@ import { auth } from '@/data/auth';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
-import { ReactNode } from 'react';
 
 export const metadata = {
   title: 'Lyovson.com',
   description: 'The official website of Mr and Mrs Lyovsons.',
 };
 
-const RootLayout = async ({ children }: { children: ReactNode }) => {
+const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
   return (
     <html
       lang="en"
-      className={`relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
+      className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
     >
       <body
         className={`h-full overflow-auto relative  font-inter min-w-[375px]`}

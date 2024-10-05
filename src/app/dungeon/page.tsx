@@ -1,4 +1,4 @@
-import { PageHeader } from '@/components/dungeon/page-header';
+import { PageHeader } from '@/app/dungeon/ui/page-header';
 
 const DungeonHome = async () => {
   return (
