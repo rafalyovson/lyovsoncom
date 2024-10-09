@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Category, Tag } from '@/data/schema';
 import { Calendar, User } from 'lucide-react';
+import { Metadata } from 'next';
 
 const PostHeader = async ({ post }: { post: PostFull }) => {
   return (
@@ -86,6 +87,47 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
     </header>
   );
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
+  const result = await postSelectFullOneBySlug({ slug: params.slug });
+
+  if (!result.success || !result.post) {
+    return {
+      title: 'Post Not Found - Lyovson',
+      description: 'The requested post could not be found.',
+    };
+  }
+
+  const post = result.post;
+
+  return {
+    title: post.title || 'Lyovson',
+    description: post.title || 'Read this post on Lyovson.com.',
+    openGraph: {
+      title: post.title,
+      description: post.title || 'Read this post on Lyovson.com.',
+      url: `https://lyovson.com/posts/${params.slug}`,
+      images: [
+        {
+          url: post.featuredImage?.url || '/default-og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.title || 'Read this post on Lyovson.com.',
+      images: [post.featuredImage || '/default-twitter-image.jpg'],
+    },
+  };
+}
 
 const Page = async (props: { params: Promise<{ slug: string }> }) => {
   const params = await props.params;

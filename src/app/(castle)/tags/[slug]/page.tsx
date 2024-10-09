@@ -11,8 +11,7 @@ const Page = async (props: { params: Promise<{ slug: string }> }) => {
     return <div>{result.message}</div>;
   }
   const posts = result.posts.filter(
-    (post) =>
-      post.published && post.categories?.some((cat) => cat.slug === slug),
+    (post) => post.published && post.tags?.some((tag) => tag.slug === slug),
   );
 
   return (

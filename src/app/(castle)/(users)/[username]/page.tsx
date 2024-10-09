@@ -25,7 +25,7 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
 
   return (
     <main>
-      <h1 className={`text-2xl text-center`}>{userResult.user.name}</h1>
+      <h1 className={`text-3xl text-center mt-10`}>{userResult.user.name}</h1>
       <PostGrid posts={userPosts} />
     </main>
   );
