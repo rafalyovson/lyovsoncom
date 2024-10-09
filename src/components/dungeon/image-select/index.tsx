@@ -36,7 +36,7 @@ export function ImageSelect(props: ImageSelectProps) {
   const fetchImages = async (page: number, group: string | undefined) => {
     setLoading(true);
     try {
-      const result = await imageSelectAllAction(group, page, limit);
+      const result = await imageSelectAllAction({ page, limit, group });
       if (result.success && result.images) {
         setAllImages((prev) =>
           page === 1 ? [...result.images!] : [...prev, ...result.images!],

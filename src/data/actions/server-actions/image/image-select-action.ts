@@ -3,9 +3,15 @@
 import { imageSelectAll } from '@/data/actions/db-actions/image';
 
 export const imageSelectAllAction = async (
-  group: string | undefined,
-  page: number = 1,
-  limit: number = 20,
+  data: {
+    group: string | undefined;
+    page: number;
+    limit: number;
+  } = {
+    group: undefined,
+    page: 1,
+    limit: 20,
+  },
 ) => {
-  return await imageSelectAll(group, page, limit);
+  return await imageSelectAll(data);
 };

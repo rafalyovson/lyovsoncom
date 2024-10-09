@@ -4,10 +4,14 @@ import { ImageAllResponse } from '@/data/actions/db-actions/image/index';
 import { eq } from 'drizzle-orm';
 
 export async function imageSelectAll(
-  group?: string,
-  page: number = 1,
-  limit: number = 20,
+  data: {
+    group?: string;
+    page: number;
+    limit: number;
+  } = { group: undefined, page: 1, limit: 20 },
 ): Promise<ImageAllResponse> {
+  const { group, page, limit } = data;
+
   try {
     // Calculate offset for pagination
     const offset = (page - 1) * limit;

@@ -38,9 +38,11 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
             <User className="text-primary w-5 h-5" />
             <p className="text-lg">
               <span className="text-sm">by </span>
-              <span className="font-medium text-gray-800 dark:text-white">
-                {post.author!.name}
-              </span>
+              <Link href={{ pathname: `/${post.author!.username}` }}>
+                <span className="font-medium text-gray-800 dark:text-white">
+                  {post.author!.name}
+                </span>
+              </Link>
             </p>
           </div>
           {/* Date */}
@@ -60,7 +62,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
               <Link
                 className="text-sm font-semibold px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                 key={category.id}
-                href={{ pathname: `/posts/categories/${category.slug}` }}
+                href={{ pathname: `/categories/${category.slug}` }}
               >
                 {`@${category.name}`}
               </Link>
@@ -74,7 +76,7 @@ const PostHeader = async ({ post }: { post: PostFull }) => {
             <Link
               className={`py-1 px-4 rounded-full text-sm font-semibold text-gray-800 dark:text-gray-100 bg-yellow-200 dark:bg-yellow-700 hover:bg-yellow-300 dark:hover:bg-yellow-600 transition-colors shadow-md`}
               key={tag.id}
-              href={{ pathname: `/posts/tags/${tag.slug}` }}
+              href={{ pathname: `/tags/${tag.slug}` }}
             >
               {`#${tag.name}`}
             </Link>

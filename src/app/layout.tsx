@@ -21,13 +21,14 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <html
+      suppressHydrationWarning
       lang="en"
-      className={`  relative h-full overflow-hidden ${inter?.variable} ${lusitana?.variable}`}
+      className={`relative h-full overflow-hidden ${inter.variable} ${lusitana.variable} `}
     >
       <body
         className={`h-full overflow-auto relative  font-inter min-w-[375px]`}
       >
-        <SessionProvider session={session}>
+        <SessionProvider session={session} basePath={'/bridge/auth'}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

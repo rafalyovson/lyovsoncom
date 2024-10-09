@@ -17,7 +17,7 @@
     "migrate": "drizzle-kit migrate"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^1.5.3",
+    "@auth/drizzle-adapter": "^1.7.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
@@ -33,7 +33,7 @@
     "@lexical/selection": "^0.18.0",
     "@lexical/table": "^0.18.0",
     "@lexical/utils": "^0.18.0",
-    "@next/env": "^14.2.14",
+    "@next/env": "^14.2.15",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -84,12 +84,12 @@
     "input-otp": "^1.2.4",
     "lexical": "^0.18.0",
     "lucide-react": "^0.379.0",
-    "next": "15.0.0-canary.179",
+    "next": "15.0.0-canary.181",
     "next-auth": "5.0.0-beta.19",
     "next-themes": "^0.2.1",
-    "react": "19.0.0-rc-1460d67c-20241003",
+    "react": "19.0.0-rc-ed966dac-20241007",
     "react-day-picker": "^8.10.1",
-    "react-dom": "19.0.0-rc-1460d67c-20241003",
+    "react-dom": "19.0.0-rc-ed966dac-20241007",
     "react-hook-form": "^7.53.0",
     "react-player": "3.0.0-canary.4",
     "react-resizable-panels": "^2.1.4",
@@ -103,7 +103,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.7.5",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -111,13 +111,13 @@
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.21.4",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.14",
+    "eslint-config-next": "^14.2.15",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
-  "packageManager": "pnpm@9.12.0+sha256.a61b67ff6cc97af864564f4442556c22a04f2e5a7714fbee76a1011361d9b726"
+  "packageManager": "pnpm@9.12.1+sha256.91452fdfa46234ae447d46d5c4fc4e7e0a7058f90495c4b6f77f8beebbb154e3"
 }
