@@ -21,13 +21,13 @@ export const ImageCard: React.FC<ImageCardProps> = ({
   return (
     <Card
       className={clsx(
-        'overflow-hidden rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-[1.02] hover:shadow-lg',
+        'overflow-hidden rounded-lg shadow-md  hover:shadow-lg',
         className,
       )}
     >
       <CardContent className="relative aspect-w-16 aspect-h-9">
         <Image
-          className="object-cover w-full h-auto transform transition-transform duration-500 hover:scale-105"
+          className="object-cover w-full h-auto "
           src={src}
           alt={alt}
           width={1920}
@@ -39,9 +39,7 @@ export const ImageCard: React.FC<ImageCardProps> = ({
         />
       </CardContent>
       {caption && (
-        <CardFooter className="p-4 text-sm 300 bg-gradient-to-r from-[#1c1c1e] to-[#121212] ">
-          {caption}
-        </CardFooter>
+        <CardFooter className="px-4 text-sm italic ">{caption}</CardFooter>
       )}
     </Card>
   );

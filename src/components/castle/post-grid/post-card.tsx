@@ -14,7 +14,7 @@ import Link from 'next/link';
 
 export const PostCard = ({ post }: { post: Post }) => {
   return (
-    <Card className="bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] text-gray-800 dark:text-gray-200 rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105">
+    <Card className="bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] text-gray-800 dark:text-gray-200 rounded-lg  overflow-hidden shadow-md  hover:shadow-lg">
       <Link href={`/posts/${post.slug}`}>
         <CardHeader className="p-0">
           <Image

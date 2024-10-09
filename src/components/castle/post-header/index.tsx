@@ -6,15 +6,15 @@ import { Category, Tag } from '@/data/schema';
 
 export const PostHeader = async ({ post }: { post: PostFull }) => {
   return (
-    <header className="flex flex-col lg:flex-row gap-8 p-6 bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] rounded-xl shadow-xl">
+    <header className="flex flex-col lg:flex-row gap-8 p-6 bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] rounded-xl shadow-xl ">
       {/* Featured Image */}
-      <section className="flex justify-center w-full lg:w-1/2">
+      <section className="flex justify-center w-full lg:w-1/2 shadow-md  hover:shadow-lg">
         <Image
           src={post.featuredImage?.url || '/placeholder-image.jpg'}
           alt={post.featuredImage?.altText || 'Featured image'}
           width={600}
           height={600}
-          className="rounded-lg shadow-lg object-cover w-full h-auto max-h-96 lg:max-h-full transform transition-transform duration-500 hover:scale-105"
+          className="rounded-lg shadow-lg object-cover w-full h-auto max-h-96 lg:max-h-full "
           priority
           placeholder="blur"
           blurDataURL="/placeholder-image.jpg"
@@ -22,9 +22,9 @@ export const PostHeader = async ({ post }: { post: PostFull }) => {
       </section>
 
       {/* Post Details */}
-      <section className="flex flex-col gap-6 lg:w-1/2 p-6 bg-[#f5f5f5] dark:bg-[#1a1a1c] rounded-lg shadow-md">
+      <section className="flex flex-col gap-6 lg:w-1/2 p-6 bg-[#f5f5f5] dark:bg-[#1a1a1c] rounded-lg shadow-md hover:shadow-lg">
         {/* Post Title */}
-        <h1 className="text-4xl font-bold text-center lg:text-left leading-tight text-gray-800 dark:text-white">
+        <h1 className="text-2xl font-bold text-center lg:text-left leading-tight text-gray-800 dark:text-white">
           {post.title}
         </h1>
 
