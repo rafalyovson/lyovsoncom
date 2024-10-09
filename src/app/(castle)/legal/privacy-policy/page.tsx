@@ -6,7 +6,7 @@ export const metadata = {
 
 const PrivacyPolicyPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="dark:prose-invert prose mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
       <p>Effective Date: October 2024</p>
 
@@ -160,13 +160,21 @@ const PrivacyPolicyPage = () => {
       </section>
 
       <section className="my-6">
-        <h2 className="text-xl font-semibold mb-2">11. Contact Us</h2>
+        <h2 className="text-xl font-semibold mb-2">12. Contact Us</h2>
         <p>
-          If you have any questions or concerns about this Privacy Policy or how
-          we handle your personal information, please contact us at:
+          If you have any questions about this Privacy Policy, please contact us
+          at:
         </p>
-        <p>Email: privacy@lyovson.com</p>
-        <p>Mailing Address: Lyovson.com, [Your Company Address]</p>
+        <p>
+          Email:{' '}
+          <a href="mailto:rafa@lyovson.com" className="text-blue-500 underline">
+            rafa@lyovson.com
+          </a>
+        </p>
+        <p>
+          Mailing Address: Lyovson.com, 0065, 14 Sebastia street, apartment 6,
+          Yerevan, Armenia
+        </p>
       </section>
     </div>
   );

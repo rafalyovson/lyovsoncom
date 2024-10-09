@@ -7,7 +7,7 @@ export const metadata = {
 
 const TermsOfServicePage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className=" mx-auto px-4 py-8 prose dark:prose-invert">
       <h1 className="text-3xl font-bold mb-4">Terms of Service</h1>
       <p>Effective Date: October 2024</p>
 
@@ -187,14 +187,14 @@ const TermsOfServicePage = () => {
         </p>
         <p>
           Email:{' '}
-          <a
-            href="mailto:support@lyovson.com"
-            className="text-blue-500 underline"
-          >
-            support@lyovson.com
+          <a href="mailto:rafa@lyovson.com" className="text-blue-500 underline">
+            rafa@lyovson.com
           </a>
         </p>
-        <p>Mailing Address: Lyovson.com, [Your Company Address]</p>
+        <p>
+          Mailing Address: Lyovson.com, 0065, 14 Sebastia street, apartment 6,
+          Yerevan, Armenia
+        </p>
       </section>
     </div>
   );
