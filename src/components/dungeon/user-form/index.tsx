@@ -9,6 +9,8 @@ import { ImageUploadForm } from '@/components/dungeon/image-uplaod-form';
 import { UserFull } from '@/data/types/user-full';
 import { Editor } from '@/components/lexical/Editor';
 import { userOneAction } from '@/data/types/user-types';
+import { toast } from 'sonner';
+import { redirect } from 'next/navigation';
 
 type UserFormProps = {
   action: userOneAction;
@@ -20,12 +22,16 @@ export const UserForm = ({ action, user }: UserFormProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [avatar, setAvatar] = useState(user?.avatar || null);
   const actionWithBio = action.bind(null, longBio);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_state, formAction, isPending] = useActionState(actionWithBio, {
+  const [state, formAction, isPending] = useActionState(actionWithBio, {
     message: '',
     success: false,
     user: user || null,
   });
+
+  if (state.success && state.user && state.message !== '') {
+    toast.success(state.message);
+    redirect(`/${state.user.username}`);
+  }
 
   return (
     <form

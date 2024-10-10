@@ -18,7 +18,7 @@ export const About = () => (
           <a
             target="_blank"
             rel="noopener"
-            className="underline text-jess hover:text-pink-400 mx-1 text-pink-600"
+            className="underline  hover:text-pink-400 mx-1 text-pink-600"
             href="https://x.com/jesslyovson"
           >
             @jesslyovson
@@ -29,7 +29,7 @@ export const About = () => (
           <a
             target="_blank"
             rel="noopener"
-            className="underline text-rafa hover:text-indigo-400 text-indigo-600"
+            className="underline  hover:text-indigo-400 text-indigo-600"
             href="https://x.com/lyovson"
           >
             @lyovson

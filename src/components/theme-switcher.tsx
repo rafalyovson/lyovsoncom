@@ -1,8 +1,6 @@
 'use client';
 
 import { Button } from '@/components/shadcn/ui/button';
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from 'next-themes';
 
 const ThemeSwitch = () => {
@@ -20,10 +18,11 @@ const ThemeSwitch = () => {
       variant={'secondary'}
       size={'icon'}
     >
-      <FontAwesomeIcon
-        icon={theme === 'light' ? faMoon : faSun}
-        className="rounded-full"
-      />
+      {theme === 'light' ? (
+        <span className={`text-lg`}>🌒</span>
+      ) : (
+        <span className={`text-lg`}>🌞</span>
+      )}
     </Button>
   );
 };
