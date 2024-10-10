@@ -23,6 +23,7 @@ export async function generateMetadata(props: {
     title: post.title || 'Lyovson',
     description: post.title || 'Read this post on Lyovson.com.',
     openGraph: {
+      siteName: 'Lyovson.com',
       title: post.title,
       description: post.title || 'Read this post on Lyovson.com.',
       url: `https://lyovson.com/posts/${slug}`,
