@@ -28,6 +28,10 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
     username: userResult.user.username!,
   });
 
+  if (!user || !user.avatar) {
+    redirect(`/`);
+  }
+
   const result = await postSelectFullAll();
 
   if (!result.success || !result.posts) {
@@ -43,7 +47,7 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
       <article
         className={`flex gap-2 mx-auto container flex-wrap lg:flex-nowrap justify-center my-8`}
       >
-        <ImageCard image={user?.avatar!} className={` min-w-[400px]`} />
+        <ImageCard image={user.avatar} className={` min-w-[400px]`} />
         <Card className={` min-w-[400px]`}>
           <CardHeader>
             <h1 className={`text-3xl text-center my-10`}>
@@ -61,7 +65,7 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
                 variant={'secondary'}
                 aria-label="Full Bio"
               >
-                <Link href={`/${user?.username}/bio`} className={`text-xl`}>
+                <Link href={`/${user.username}/bio`} className={`text-xl`}>
                   📇
                 </Link>
               </Button>
@@ -72,13 +76,13 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
                 aria-label="Portfolio"
               >
                 <Link
-                  href={`/${user?.username}/portfolio`}
+                  href={`/${user.username}/portfolio`}
                   className={`text-xl`}
                 >
                   💼
                 </Link>
               </Button>
-              <UserSocialMenu user={user!} />
+              <UserSocialMenu user={user} />
             </nav>
           </CardFooter>
         </Card>
