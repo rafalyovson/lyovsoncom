@@ -51,8 +51,6 @@ export const FooterMenu = () => {
             </Link>
           </Button>
 
-          <ThemeSwitch />
-
           <Button
             size="icon"
             variant={'secondary'}

@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/components/shadcn/ui/button';
 import { useTheme } from 'next-themes';
+import { Moon, Sun } from 'lucide-react';
 
 const ThemeSwitch = () => {
   const { theme, setTheme } = useTheme();
@@ -11,19 +11,13 @@ const ThemeSwitch = () => {
   };
 
   return (
-    <Button
-      aria-label="Toggle Theme"
+    <div
+      className={`cursor-pointer h-full w-full flex justify-center items-center gap-2 flex-col`}
       onClick={toggleTheme}
-      title="Toggle Theme"
-      variant={'secondary'}
-      size={'icon'}
     >
-      {theme === 'light' ? (
-        <span className={`text-lg`}>🌒</span>
-      ) : (
-        <span className={`text-lg`}>🌞</span>
-      )}
-    </Button>
+      {theme === 'light' ? <Moon w-7 h-7 /> : <Sun w-7 h-7 />}
+      <span>{theme === 'light' ? 'Dark Side' : 'Light Side'}</span>
+    </div>
   );
 };
 

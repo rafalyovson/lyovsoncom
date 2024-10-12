@@ -2,7 +2,8 @@ import { parseLexicalJSON } from '@/lib/utils';
 import { postSelectFullOneBySlug } from '@/data/actions/db-actions/post/post-select-full-one';
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { PostHeader } from '@/components/castle/post-header';
+import { GridCardNav } from '@/components/grid/grid-card-nav';
+import { GridCardPost } from '@/components/grid/grid-card-post';
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
@@ -56,12 +57,12 @@ const Page = async (props: { params: Promise<{ slug: string }> }) => {
   }
 
   return (
-    <article className="flex flex-col w-full max-w-screen-lg gap-12 mx-auto p-6 sm:p-8 md:p-10 rounded-xl shadow-xl bg-[#f0f0f0] dark:bg-[#09090B]">
-      {/* Post Header */}
-      <PostHeader post={result.post} />
-
-      {/* Post Content */}
-      <div className="max-w-2xl mx-auto mt-8 text-gray-800 dark:text-gray-300 leading-relaxed text-lg">
+    <article className=" grid min-[420px]:grid-cols-1 max-[840px]:grid-cols-1 min-[840px]:grid-cols-2 max-w-[1260px] mx-auto gap-8 justify-center items-center min-[840px]:items-start">
+      <header className={`flex flex-col gap-4 max-w-[400px] w-full mx-auto `}>
+        <GridCardNav />
+        <GridCardPost post={result.post} />
+      </header>
+      <div className=" max-w-[600px] p-4 mx-auto">
         {parseLexicalJSON(result.post.content)}
       </div>
     </article>
