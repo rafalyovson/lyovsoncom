@@ -42,7 +42,7 @@ export const GridCardNav = async () => {
   const user = session?.user;
   return (
     <GridCard>
-      <GridCardNavItem>
+      <GridCardNavItem link="/jess">
         <User className="w-7 h-7" />
         <span>Jess</span>
       </GridCardNavItem>

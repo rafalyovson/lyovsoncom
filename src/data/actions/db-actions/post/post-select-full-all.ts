@@ -10,13 +10,92 @@ import {
   users,
 } from '@/data/schema';
 import { PostFull } from '@/data/types/post-full';
-import { eq } from 'drizzle-orm';
+import { and, eq, exists, gte, inArray, lte } from 'drizzle-orm';
 import { UserFull } from '@/data/types/user-full';
 import { SerializedEditorState } from 'lexical';
 
-export async function postSelectFullAll(): Promise<PostFullAllResponse> {
+// Default pagination values
+const DEFAULT_PAGE = 1;
+const DEFAULT_LIMIT = 20;
+
+// Helper function to build filter conditions
+function buildFilters(data: {
+  author?: string;
+  published?: boolean;
+  featured?: boolean;
+  categoryIds?: string[];
+  startDate?: Date;
+  endDate?: Date;
+}) {
+  const { author, published, featured, categoryIds, startDate, endDate } = data;
+  const filters = [];
+
+  if (published !== undefined) {
+    filters.push(eq(posts.published, published));
+  }
+
+  if (featured !== undefined) {
+    filters.push(eq(posts.featured, featured));
+  }
+
+  if (author) {
+    filters.push(eq(posts.authorId, author));
+  }
+
+  if (categoryIds && categoryIds.length > 0) {
+    filters.push(
+      exists(
+        db
+          .select()
+          .from(categoryPost)
+          .where(
+            and(
+              eq(categoryPost.postId, posts.id),
+              inArray(categoryPost.categoryId, categoryIds),
+            ),
+          ),
+      ),
+    );
+  }
+
+  // Date range filtering
+  if (startDate) {
+    filters.push(gte(posts.createdAt, startDate));
+  }
+
+  if (endDate) {
+    filters.push(lte(posts.createdAt, endDate));
+  }
+
+  return filters.length > 0 ? and(...filters) : undefined;
+}
+
+export async function postSelectFullAll(
+  data: {
+    page?: number;
+    limit?: number;
+    author?: string;
+    published?: boolean;
+    featured?: boolean;
+    categoryIds?: string[];
+    tagIds?: string[];
+    startDate?: Date;
+    endDate?: Date;
+  } = {},
+): Promise<PostFullAllResponse> {
+  const {
+    page = DEFAULT_PAGE,
+    limit = DEFAULT_LIMIT,
+    tagIds,
+    ...filterData
+  } = data;
+
   try {
-    const results = await db
+    const offset = (page - 1) * limit;
+    const filters = buildFilters(filterData);
+
+    // Build the main query
+    const query = db
       .select({
         post: posts,
         author: users,
@@ -30,15 +109,45 @@ export async function postSelectFullAll(): Promise<PostFullAllResponse> {
       .leftJoin(categoryPost, eq(posts.id, categoryPost.postId))
       .leftJoin(categories, eq(categoryPost.categoryId, categories.id))
       .leftJoin(tagPost, eq(posts.id, tagPost.postId))
-      .leftJoin(tags, eq(tagPost.tagId, tags.id));
+      .leftJoin(tags, eq(tagPost.tagId, tags.id))
+      .where(() => {
+        const conditions = [];
+
+        if (filters) {
+          conditions.push(filters);
+        }
+
+        if (tagIds && tagIds.length > 0) {
+          conditions.push(
+            exists(
+              db
+                .select()
+                .from(tagPost)
+                .where(
+                  and(
+                    eq(tagPost.postId, posts.id),
+                    inArray(tagPost.tagId, tagIds),
+                  ),
+                ),
+            ),
+          );
+        }
+
+        return and(...conditions);
+      })
+      .limit(limit)
+      .offset(offset);
+
+    const results = await query;
 
     if (results.length === 0) {
       return { message: 'No posts found', success: false, posts: null };
     }
 
+    // Map posts efficiently
     const postMap = new Map<string, PostFull>();
 
-    results.forEach((result) => {
+    for (const result of results) {
       const postId = result.post.id as string;
 
       if (!postMap.has(postId)) {
@@ -54,6 +163,7 @@ export async function postSelectFullAll(): Promise<PostFullAllResponse> {
 
       const post = postMap.get(postId)!;
 
+      // Add categories
       if (
         result.category &&
         !post.categories?.some((cat) => cat.id === result.category.id)
@@ -61,21 +171,22 @@ export async function postSelectFullAll(): Promise<PostFullAllResponse> {
         post.categories?.push(result.category);
       }
 
-      if (result.tag && !post.tags?.some((tag) => tag.id === result.tag!.id)) {
+      // Add tags
+      if (result.tag && !post.tags?.some((tag) => tag.id === result.tag?.id)) {
         post.tags?.push(result.tag);
       }
-    });
-
-    const allPosts = Array.from(postMap.values());
+    }
 
     return {
       message: 'Posts selected successfully',
       success: true,
-      posts: allPosts,
+      posts: Array.from(postMap.values()),
     };
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
     return {
-      message: 'Failed to select posts',
+      message: `Failed to select posts: ${errorMessage}`,
       success: false,
       posts: null,
       error,

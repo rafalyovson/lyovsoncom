@@ -1,26 +1,32 @@
 import { postSelectFullAll } from '@/data/actions/db-actions/post';
-import { PostGrid } from '@/components/castle/post-grid';
-import { capitalize } from '@/lib/utils';
+import { Grid } from '@/components/grid';
+import { GridCardPost } from '@/components/grid/grid-card-post';
+import { GridCardHero } from '@/components/grid/grid-card-hero';
+import { GridCardNav } from '@/components/grid/grid-card-nav';
+import { categorySelectOneBySlug } from '@/data/actions/db-actions/category';
 
-const Page = async (props: { params: Promise<{ slug: string }> }) => {
-  const params = await props.params;
+const page = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  const result = await postSelectFullAll();
+  const categoryOneResponse = await categorySelectOneBySlug({
+    slug: slug,
+  });
+  const categoryId = categoryOneResponse.category?.id;
+  const result = await postSelectFullAll({ categoryIds: [categoryId] });
   if (!result.success || !result.posts) {
     return <div>{result.message}</div>;
   }
-  const posts = result.posts.filter(
-    (post) =>
-      post.published && post.categories?.some((cat) => cat.slug === slug),
-  );
+  const { posts } = result;
 
   return (
-    <>
-      <h1 className={`text-3xl text-center mt-10`}>{capitalize(slug)}</h1>
-      <PostGrid posts={posts} />;
-    </>
+    <Grid>
+      <GridCardHero />
+      <GridCardNav />
+      {posts.map((post) => (
+        <GridCardPost key={post.id} post={post} />
+      ))}
+    </Grid>
   );
 };
 
-export default Page;
+export default page;
