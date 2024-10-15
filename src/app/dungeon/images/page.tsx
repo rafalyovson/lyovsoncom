@@ -16,7 +16,7 @@ import { capitalize } from '@/lib/utils';
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { page?: string; group?: string };
+  searchParams: Promise<{ page?: string; group?: string }>;
 }) {
   const params = await searchParams;
   const page = Number(params?.page) || 1;
