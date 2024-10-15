@@ -1,10 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Image } from '@/data/schema';
+import { useEffect, useReducer } from 'react';
 import { Button } from '@/components/shadcn/ui/button';
 import { imageSelectAllAction } from '@/data/actions/server-actions/image/image-select-action';
-import { ImageCard } from '../image-card';
 import {
   Select,
   SelectContent,
@@ -12,43 +10,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/shadcn/ui/select';
-import { Spinner } from '@/components/spinner'; // Assuming you have a spinner component
+import { Spinner } from '@/components/spinner';
+import { ImageGrid } from '@/components/dungeon/image-select/image-grid'; // Assuming you have a spinner component
+import { ImageSelectProps, State } from './image-select-types';
+import { ImageSelectReducer } from './image-select-reducer';
 
-type ImageSelectProps = {
-  setImage: (image: Image | null) => void;
-  setIsOpen: (isOpen: boolean) => void;
-  group?: string;
+const initialState: State = {
+  selectedImage: null,
+  allImages: [],
+  loading: true,
+  error: null,
+  currentPage: 1,
+  selectedGroup: 'all',
+  isMoreAvailable: true,
 };
 
 export function ImageSelect(props: ImageSelectProps) {
-  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
-  const [allImages, setAllImages] = useState<Image[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedGroup, setSelectedGroup] = useState<string | undefined>(
-    props.group || 'all',
-  );
-  const [isMoreAvailable, setIsMoreAvailable] = useState(true);
-  const limit = 5; // Set the limit for the number of images per page
+  const [state, dispatch] = useReducer(ImageSelectReducer, {
+    ...initialState,
+    selectedGroup: props.group || 'all',
+  });
+
+  const {
+    selectedImage,
+    allImages,
+    loading,
+    error,
+    currentPage,
+    selectedGroup,
+    isMoreAvailable,
+  } = state;
+
+  const limit = 10; // Set the limit for the number of images per page
 
   // Fetch images with pagination and group filter
   const fetchImages = async (page: number, group: string | undefined) => {
-    setLoading(true);
+    dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const result = await imageSelectAllAction({ page, limit, group });
       if (result.success && result.images) {
-        setAllImages((prev) =>
-          page === 1 ? [...result.images!] : [...prev, ...result.images!],
-        );
-        setIsMoreAvailable(result.images.length === limit); // Check if more images are available
+        dispatch({ type: 'SET_ALL_IMAGES', payload: result.images });
+        dispatch({
+          type: 'SET_IS_MORE_AVAILABLE',
+          payload: result.images.length === limit,
+        });
       } else {
-        setError('Failed to fetch images');
+        dispatch({ type: 'SET_ERROR', payload: 'Failed to fetch images' });
       }
     } catch (err) {
-      setError('An error occurred while fetching images');
+      dispatch({
+        type: 'SET_ERROR',
+        payload: 'An error occurred while fetching images',
+      });
     } finally {
-      setLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
@@ -60,8 +75,7 @@ export function ImageSelect(props: ImageSelectProps) {
   }, [currentPage, selectedGroup]);
 
   const handleGroupChange = (group: string) => {
-    setSelectedGroup(group);
-    setCurrentPage(1); // Reset to page 1 on group change
+    dispatch({ type: 'SET_SELECTED_GROUP', payload: group });
   };
 
   if (loading && currentPage === 1)
@@ -91,27 +105,20 @@ export function ImageSelect(props: ImageSelectProps) {
       </Select>
 
       {/* Image Grid */}
-      <main className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-full mx-auto">
-        {allImages.map((image) => (
-          <article
-            className={`cursor-pointer flex flex-col gap-2 border rounded-lg overflow-hidden ${
-              selectedImage?.id === image.id ? 'border-primary shadow-md' : ''
-            }`}
-            key={image.id}
-            onClick={() => setSelectedImage(image)}
-            style={{ width: '150px', height: '150px' }}
-          >
-            <ImageCard image={image} />
-          </article>
-        ))}
-      </main>
+      <ImageGrid
+        dispatch={dispatch}
+        images={allImages}
+        selectedImage={selectedImage || undefined}
+      />
 
       {/* Load More Button */}
       {isMoreAvailable && (
         <Button
           variant="outline"
           className="mx-auto mt-4 w-full"
-          onClick={() => setCurrentPage((prev) => prev + 1)}
+          onClick={() =>
+            dispatch({ type: 'SET_CURRENT_PAGE', payload: currentPage + 1 })
+          }
         >
           Load More
         </Button>

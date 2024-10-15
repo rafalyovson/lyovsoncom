@@ -1,75 +1,145 @@
-import { Card, CardContent, CardHeader } from '@/components/shadcn/ui/card';
+import { imageSelectAll } from '@/data/actions/db-actions/image';
+import { Image } from '@/data/schema';
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/shadcn/ui/tabs';
-import { db } from '@/data/db';
-import { imageGroups } from '@/data/misc/image-groups';
-import { Image as ImageType, images } from '@/data/schema';
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/shadcn/ui/pagination';
+import { imageCount } from '@/data/actions/db-actions/image/image-select-all';
+import { ImageCard } from '@/components/dungeon/image-card';
 import { capitalize } from '@/lib/utils';
-import Image from 'next/image';
-import Link from 'next/link';
-import { PageHeader } from '@/components/dungeon/page-header';
 
-const ImageGrid = ({ images }: { images: ImageType[] }) => {
-  return (
-    <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mx-auto max-w-[1200px] gap-4 place-items-center ">
-      {images.map((image: ImageType) => (
-        <section className="flex flex-col gap-2" key={image.url}>
-          <Link href={`/dungeon/images/${image.slug}`}>
-            <Card>
-              <CardHeader>
-                <Image
-                  className="aspect-square object-cover rounded-lg shadow-lg"
-                  src={image.url}
-                  alt={image.altText!}
-                  width={200}
-                  height={200}
-                />
-              </CardHeader>
-              <CardContent>
-                <p>{`${image.caption}`}</p>
-              </CardContent>
-            </Card>
-          </Link>
-        </section>
-      ))}
-    </section>
-  );
-};
-
-const Page = async () => {
-  const allImages: ImageType[] = await db.select().from(images);
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: { page?: string; group?: string };
+}) {
+  const params = await searchParams;
+  const page = Number(params?.page) || 1;
+  const group = params?.group;
+  const limit = 5;
+  const result = await imageSelectAll({
+    page: Number(page),
+    limit: limit,
+    group: group,
+  });
+  if (!result.success || !result.images) {
+    return <h1>No images</h1>;
+  }
+  const pageNumber = Math.ceil((await imageCount({ group: group })) / limit);
 
   return (
     <>
-      <PageHeader title="Images" link="/dungeon/images/create" />
-      <Tabs className="max-w-[600px] mx-auto " defaultValue="all">
-        <TabsList>
-          <TabsTrigger value="all">All Images</TabsTrigger>
-          {imageGroups.map((group: string) => (
-            <TabsTrigger key={group} value={group}>
-              {`${capitalize(group)} Images`}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="all">
-          <ImageGrid images={allImages} />
-        </TabsContent>
-        {imageGroups.map((group: string) => (
-          <TabsContent value={group} key={group}>
-            <ImageGrid
-              images={allImages.filter(
-                (image: ImageType) => image.group === group,
-              )}
-            />
-          </TabsContent>
+      <h1>{group ? capitalize(group) + ' Images' : 'All Images'}</h1>
+      <main className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 max-w-full mx-auto">
+        {result.images.map((image: Image) => (
+          <ImageCard key={image.id} image={image} />
         ))}
-      </Tabs>
+      </main>
+      <Pagination>
+        <PaginationContent>
+          {page > 1 && (
+            <PaginationItem>
+              <PaginationPrevious
+                href={{
+                  pathname: '/dungeon/images',
+                  query: {
+                    page: page > 1 ? page - 1 : 1,
+                    group: params?.group,
+                  },
+                }}
+              />
+            </PaginationItem>
+          )}
+
+          {page > 2 && (
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+
+          <PaginationItem>
+            <PaginationLink
+              href={{
+                pathname: '/dungeon/images',
+                query: {
+                  page:
+                    page < 2 ? 1 : page === pageNumber ? page - 2 : page - 1,
+                  group: params?.group,
+                },
+              }}
+              className={page === 1 ? 'underline' : ''}
+            >
+              {page < 2 ? 1 : page === pageNumber ? page - 2 : page - 1}
+            </PaginationLink>
+          </PaginationItem>
+          {pageNumber > 1 && (
+            <PaginationItem>
+              <PaginationLink
+                href={{
+                  pathname: '/dungeon/images',
+                  query: {
+                    page:
+                      page === 1 ? 2 : page === pageNumber ? page - 1 : page,
+                    group: params?.group,
+                  },
+                }}
+                className={page !== 1 && page !== pageNumber ? 'underline' : ''}
+              >
+                {page === 1 ? 2 : page === pageNumber ? page - 1 : page}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+          {pageNumber > 2 && (
+            <PaginationItem>
+              <PaginationLink
+                href={{
+                  pathname: '/dungeon/images',
+                  query: {
+                    page:
+                      page === pageNumber
+                        ? pageNumber
+                        : page === 1
+                          ? page + 2
+                          : page + 1,
+                    group: params?.group,
+                  },
+                }}
+                className={page === pageNumber ? 'underline' : ''}
+              >
+                {page === pageNumber
+                  ? pageNumber
+                  : page === 1
+                    ? page + 2
+                    : page + 1}
+              </PaginationLink>
+            </PaginationItem>
+          )}
+
+          {page < pageNumber - 1 && (
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+          )}
+          {page < pageNumber && (
+            <PaginationItem>
+              <PaginationNext
+                href={{
+                  pathname: '/dungeon/images',
+                  query: {
+                    page: page < pageNumber ? page + 1 : pageNumber,
+                    group: params?.group,
+                  },
+                }}
+              />
+            </PaginationItem>
+          )}
+        </PaginationContent>
+      </Pagination>
     </>
   );
-};
-
-export default Page;
+}

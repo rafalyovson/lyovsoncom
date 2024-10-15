@@ -1,7 +1,7 @@
 import { images } from '@/data/schema';
 import { db } from '@/data/db';
 import { ImageAllResponse } from '@/data/actions/db-actions/image/index';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 
 export async function imageSelectAll(
   data: {
@@ -36,5 +36,18 @@ export async function imageSelectAll(
       message: 'Failed to select images',
       error,
     };
+  }
+}
+
+export async function imageCount(data: { group?: string }): Promise<number> {
+  try {
+    const { group } = data;
+    const result = await db
+      .select({ count: count() })
+      .from(images)
+      .where(group ? eq(images.group, group) : undefined);
+    return result[0].count;
+  } catch (error) {
+    return 0;
   }
 }
