@@ -3,8 +3,7 @@ import { userSelectFullOneByUsername } from '@/data/actions/db-actions/user/user
 import { redirect } from 'next/navigation';
 import { SerializedEditorState } from 'lexical';
 
-const Page = async (props: { params: Promise<{ username: string }> }) => {
-  const params = await props.params;
+const Page = async ({ params }: { params: Promise<{ username: string }> }) => {
   const { username } = await params;
   const result = await userSelectFullOneByUsername({
     username,
@@ -13,13 +12,13 @@ const Page = async (props: { params: Promise<{ username: string }> }) => {
   if (!result.success || !result.user) {
     redirect('/');
   }
-
+  const { user } = result;
   return (
     <>
-      <title>{`${result.user.name}'s Bio | Lyovson.com`}</title>
+      <title>{`${user.name}'s Bio | Lyovson.com`}</title>
       <article className="p-8 mx-auto prose dark:prose-invert lg:prose-xl">
-        <h1 className="text-2xl">{`${result.user.name}'s Bio`}</h1>
-        {parseLexicalJSON(result.user.longBio as SerializedEditorState)}
+        <h1 className="text-2xl">{`${user.name}'s Bio`}</h1>
+        {parseLexicalJSON(user.longBio as SerializedEditorState)}
       </article>
     </>
   );
