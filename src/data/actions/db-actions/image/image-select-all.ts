@@ -48,6 +48,7 @@ export async function imageCount(data: { group?: string }): Promise<number> {
       .where(group ? eq(images.group, group) : undefined);
     return result[0].count;
   } catch (error) {
+    console.error('Failed to count images:', error);
     return 0;
   }
 }

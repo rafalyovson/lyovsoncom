@@ -17,7 +17,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { EditorState, SerializedEditorState } from 'lexical';
-import { Dispatch, SetStateAction, useCallback, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { AutoEmbedPlugin } from './plugins/auto-embed-plugin';
 import { AutoLinkPlugin } from './plugins/auto-link-plugin';
 import { CodeHighlightPlugin } from './plugins/code-highlight-plugin';
@@ -67,12 +67,9 @@ export const Editor = ({ state, setStateAction, name }: EditorProps) => {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
-  const debouncedOnChange = useCallback(
-    debounce((editorState: EditorState) => {
-      setStateAction(editorState.toJSON());
-    }, 1000),
-    [],
-  );
+  const debouncedOnChange = debounce((editorState: EditorState) => {
+    setStateAction(editorState.toJSON());
+  }, 1000);
 
   const onChange = (editorState: EditorState) => {
     debouncedOnChange(editorState);

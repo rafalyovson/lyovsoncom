@@ -58,6 +58,7 @@ export function ImageSelect(props: ImageSelectProps) {
         dispatch({ type: 'SET_ERROR', payload: 'Failed to fetch images' });
       }
     } catch (err) {
+      console.error('Failed to fetch images:', err);
       dispatch({
         type: 'SET_ERROR',
         payload: 'An error occurred while fetching images',

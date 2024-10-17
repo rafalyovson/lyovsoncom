@@ -34,6 +34,7 @@ export const ImageForm = ({
 
   if (setImage && state.image) {
     setImage(state.image);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     setIsOpen && setIsOpen(false);
   }
 
