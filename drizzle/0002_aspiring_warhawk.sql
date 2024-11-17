@@ -1,1 +1,0 @@
-ALTER TABLE "image" ADD COLUMN "slug" text NOT NULL;
