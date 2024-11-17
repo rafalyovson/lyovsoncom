@@ -44,7 +44,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   if (!post) return <PayloadRedirects url={url} />
 
   return (
-    <article className="pt-16 pb-16">
+    <article className="pt-16 pb-16 ">
       <PageClient />
 
       {/* Allows redirects for valid pages too */}
@@ -57,7 +57,7 @@ export default async function Post({ params: paramsPromise }: Args) {
           <RichText
             className="lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[1fr]"
             content={post.content}
-            enableGutter={false}
+            enableGutter={true}
           />
         </div>
 
