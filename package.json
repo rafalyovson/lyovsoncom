@@ -113,7 +113,7 @@
     "eslint": "^9.15.0",
     "eslint-config-next": "^15.0.3",
     "eslint-plugin-drizzle": "^0.2.3",
-    "eslint-plugin-react-compiler": "0.0.0-experimental-42acc6a-20241001",
+    "eslint-plugin-react-compiler": "19.0.0-beta-a7bf2bd-20241110",
     "eslint-plugin-react-hooks": "^5.0.0",
     "postcss": "^8.4.49",
     "prettier": "^3.3.3",
