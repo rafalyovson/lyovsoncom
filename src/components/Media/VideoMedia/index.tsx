@@ -9,20 +9,21 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
   const { onClick, resource, videoClassName } = props
 
   const videoRef = useRef<HTMLVideoElement>(null)
-  // const [showFallback] = useState<boolean>()
 
   useEffect(() => {
     const { current: video } = videoRef
     if (video) {
       video.addEventListener('suspend', () => {
-        // setShowFallback(true);
-        // console.warn('Video was suspended, rendering fallback image.')
+        // Handle suspend event if needed
       })
     }
   }, [])
 
   if (resource && typeof resource === 'object') {
-    const { filename } = resource
+    // Use the full URL from the resource if available, otherwise construct it
+    const videoUrl = resource.url
+      ? `${process.env.NEXT_PUBLIC_SERVER_URL}/${resource.url}`
+      : `${process.env.NEXT_PUBLIC_SERVER_URL}/api/media/${resource.filename}`
 
     return (
       <video
@@ -35,7 +36,7 @@ export const VideoMedia: React.FC<MediaProps> = (props) => {
         playsInline
         ref={videoRef}
       >
-        <source src={`${process.env.NEXT_PUBLIC_SERVER_URL}/media/${filename}`} />
+        <source src={videoUrl} type={resource.mimeType || 'video/mp4'} />
       </video>
     )
   }
