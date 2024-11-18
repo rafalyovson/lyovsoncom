@@ -8,14 +8,15 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { Categories } from './collections/Categories'
-import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
-import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
-import { plugins } from './plugins'
+import { Categories } from '@/collections/Categories'
+import { Tags } from '@/collections/Tags'
+import { Media } from '@/collections/Media'
+import { Pages } from '@/collections/Pages'
+import { Posts } from '@/collections/Posts'
+import { Users } from '@/collections/Users'
+import { Footer } from '@/Footer/config'
+import { Header } from '@/Header/config'
+import { plugins } from '@/plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 
 const filename = fileURLToPath(import.meta.url)
@@ -58,7 +59,7 @@ export default buildConfig({
       connectionString: process.env.POSTGRES_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Tags, Users],
   cors: [process.env.NEXT_PUBLIC_SERVER_URL || ''].filter(Boolean),
   endpoints: [],
   globals: [Header, Footer],

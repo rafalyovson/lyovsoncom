@@ -1,5 +1,5 @@
-import { GridCard } from '@/components/grid/grid-card';
-import Link from 'next/link';
+import { GridCard } from '@/components/grid/grid-card'
+import Link from 'next/link'
 
 export const GridCardHero = async () => {
   return (
@@ -16,5 +16,5 @@ export const GridCardHero = async () => {
         The official site of Mr and Mrs Lyovsons.
       </div>
     </GridCard>
-  );
-};
+  )
+}

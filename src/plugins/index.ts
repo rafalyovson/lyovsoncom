@@ -88,8 +88,5 @@ export const plugins: Plugin[] = [
       },
     },
   }),
-  payloadCloudPlugin({
-    email: false,
-    storage: false,
-  }),
+  payloadCloudPlugin(),
 ]

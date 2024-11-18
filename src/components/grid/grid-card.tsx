@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from 'react'
 
 export const GridCard = ({ children }: { children: ReactNode }) => {
   return (
@@ -7,5 +7,5 @@ export const GridCard = ({ children }: { children: ReactNode }) => {
     >
       {children}
     </article>
-  );
-};
+  )
+}

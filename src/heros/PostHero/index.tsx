@@ -17,9 +17,9 @@ export const PostHero: React.FC<{
           <div className="uppercase text-sm mb-6">
             {categories?.map((category, index) => {
               if (typeof category === 'object' && category !== null) {
-                const { title: categoryTitle } = category
+                const { name: categoryName } = category
 
-                const titleToUse = categoryTitle || 'Untitled category'
+                const titleToUse = categoryName || 'Untitled category'
 
                 const isLast = index === categories.length - 1
 
