@@ -1,26 +1,32 @@
-import { Grid, GridCardHero, GridCardNav, GridCardPost } from '@/components/grid'
-import { getPayloadHMR } from '@payloadcms/next/utilities'
+import { GridCardPost } from '@/components/grid'
+import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 import type { Metadata } from 'next/types'
+import { Suspense } from 'react'
 
-export default async function PlaygroundGrid() {
-  const payload = await getPayloadHMR({ config: configPromise })
+const getPosts = async () => {
+  'use cache'
+  console.log('🐙')
+  const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
+  return payload.find({
     collection: 'posts',
     limit: 12,
   })
+}
+
+export default async function PlaygroundGrid() {
+  const posts = await getPosts()
 
   return (
-    <Grid>
-      <GridCardHero />
-      <GridCardNav />
-      {posts.docs.map((post) => (
-        <GridCardPost key={post.slug} post={post} />
-        // <div key={post.slug}>{post.title}</div>
-      ))}
-    </Grid>
+    <>
+      <Suspense fallback={<div>Loading...</div>}>
+        {posts.docs.map((post) => (
+          <GridCardPost key={post.slug} post={post} />
+        ))}
+      </Suspense>
+    </>
   )
 }
 

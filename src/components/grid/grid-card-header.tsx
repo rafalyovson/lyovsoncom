@@ -18,9 +18,16 @@ const GridCardNavItem = ({ children, link }: { children: ReactNode; link?: strin
   )
 }
 
-export const GridCardNav = async ({ className }: { className?: string }) => {
+export const GridCardHeader = async ({ className }: { className?: string }) => {
   return (
-    <GridCard className={`${className}`}>
+    <GridCard className={`col-start-1 col-end-2 row-start-1 row-end-2 ${className}`}>
+      <Link
+        className={`border row-start-1 row-end-3 col-start-1 col-end-4 flex flex-col justify-center items-center p-2 bg-gradient-to-r from-[#f0f0f0] to-[#e0e0e0] dark:from-[#1c1c1e] dark:to-[#121212] rounded-lg shadow-md hover:shadow-lg `}
+        href="/"
+      >
+        <h1 className={`text-3xl text-center my-10`}>Lyovson.com</h1>
+      </Link>
+
       <GridCardNavItem link="/jess">
         <User className="w-7 h-7" />
         <span>Jess</span>
@@ -33,14 +40,14 @@ export const GridCardNav = async ({ className }: { className?: string }) => {
         <User className="w-7 h-7" />
         <span>Rafa</span>
       </GridCardNavItem>
-      <GridCardNavItem link="/posts">
+      {/* <GridCardNavItem link="/posts">
         <Newspaper className="w-7 h-7" />
         <span>Posts</span>
       </GridCardNavItem>
       <GridCardNavItem link="/contact">
         <Contact className="w-7 h-7" />
         <span>Contact</span>
-      </GridCardNavItem>
+      </GridCardNavItem> */}
     </GridCard>
   )
 }

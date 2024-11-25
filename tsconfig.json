@@ -2,16 +2,22 @@
   "compilerOptions": {
     "baseUrl": ".",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "ESNext",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": false,
+    "checkJs": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
     "strictNullChecks": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "incremental": true,
@@ -43,7 +49,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "redirects.js",
-    "next.config.js"
+    "next.config.ts",
+    "tailwind.config.ts"
   ],
   "exclude": [
     "node_modules"

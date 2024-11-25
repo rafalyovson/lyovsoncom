@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-const config = {
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -22,24 +23,35 @@ const config = {
     'bg-success/30',
     'border-warning',
     'bg-warning/30',
+    'g2:grid-cols-2',
+    'g3:grid-cols-3',
+    'g4:grid-cols-4',
+    'g5:grid-cols-5',
+    'g6:grid-cols-6',
   ],
   theme: {
+    screens: {
+      g1: '420px',
+      g2: '840px',
+      g3: '1260px',
+      g4: '1680px',
+      g5: '2100px',
+      g6: '2520px',
+      sm: '40rem',
+      md: '48rem',
+      lg: '64rem',
+      xl: '80rem',
+      '2xl': '86rem',
+    },
     container: {
       center: true,
       padding: {
-        '2xl': '2rem',
         DEFAULT: '1rem',
-        lg: '2rem',
-        md: '2rem',
         sm: '1rem',
+        md: '2rem',
+        lg: '2rem',
         xl: '2rem',
-      },
-      screens: {
-        '2xl': '86rem',
-        lg: '64rem',
-        md: '48rem',
-        sm: '40rem',
-        xl: '80rem',
+        '2xl': '2rem',
       },
     },
     extend: {
@@ -104,7 +116,7 @@ const config = {
           to: { height: '0' },
         },
       },
-      typography: ({ theme }) => ({
+      typography: () => ({
         DEFAULT: {
           css: {
             '--tw-prose-body': 'var(--text)',
