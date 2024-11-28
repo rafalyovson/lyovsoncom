@@ -10,6 +10,7 @@ const config: Config = {
   darkMode: ['selector', '[data-theme="dark"]'],
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
   prefix: '',
+  // @ts-ignore -- Tailwind types are incomplete but this is valid config
   safelist: [
     'lg:col-span-4',
     'lg:col-span-6',

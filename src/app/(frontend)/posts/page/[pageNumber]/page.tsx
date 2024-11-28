@@ -1,5 +1,4 @@
 import type { Metadata } from 'next/types'
-
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
@@ -8,8 +7,6 @@ import { getPayload } from 'payload'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
-
-export const revalidate = 600
 
 type Args = {
   params: Promise<{

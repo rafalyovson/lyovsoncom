@@ -1,18 +1,20 @@
-import { GridCardPost } from '@/components/grid'
-import { getPayload } from 'payload'
+import { GridCardHeader, GridCardPost } from '@/components/grid'
 import configPromise from '@payload-config'
-
 import type { Metadata } from 'next/types'
+import { getPayload } from 'payload'
 import { Suspense } from 'react'
+import { unstable_cacheLife as cacheLife } from 'next/cache'
 
 const getPosts = async () => {
   'use cache'
-  console.log('🐙')
+  cacheLife('minutes')
   const payload = await getPayload({ config: configPromise })
 
-  return payload.find({
+  return await payload.find({
     collection: 'posts',
+    depth: 1,
     limit: 12,
+    overrideAccess: false,
   })
 }
 
@@ -21,6 +23,7 @@ export default async function PlaygroundGrid() {
 
   return (
     <>
+      <GridCardHeader className={``} />
       <Suspense fallback={<div>Loading...</div>}>
         {posts.docs.map((post) => (
           <GridCardPost key={post.slug} post={post} />

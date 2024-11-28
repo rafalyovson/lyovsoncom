@@ -25,7 +25,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     src: srcFromProps,
   } = props
 
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [_isLoading, setIsLoading] = React.useState(true)
 
   let width: number | undefined
   let height: number | undefined
@@ -35,7 +35,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   if (!src && resource && typeof resource === 'object') {
     const {
       alt: altFromResource,
-      filename: fullFilename,
+      filename: _fullFilename,
       height: fullHeight,
       url,
       width: fullWidth,

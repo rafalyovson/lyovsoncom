@@ -1,19 +1,16 @@
-import type { Metadata } from 'next'
-
-import { cn } from 'src/utilities/cn'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
-import React, { Suspense } from 'react'
-
 import { AdminBar } from '@/components/AdminBar'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import type { Metadata } from 'next'
 import { draftMode } from 'next/headers'
-
+import React, { Suspense } from 'react'
+import { cn } from 'src/utilities/cn'
 import './globals.css'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -47,10 +44,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'https://payloadcms.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL),
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@payloadcms',
+    creator: '@lyovson',
   },
 }

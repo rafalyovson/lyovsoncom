@@ -3,7 +3,11 @@ import React from 'react'
 
 import { Width } from '../Width'
 
-export const Message: React.FC = ({ message }: { message: Record<string, any> }) => {
+type MessageProps = {
+  message: Record<string, any>
+}
+
+export const Message: React.FC<MessageProps> = ({ message }) => {
   return (
     <Width className="my-12" width="100">
       {message && <RichText content={message} />}
