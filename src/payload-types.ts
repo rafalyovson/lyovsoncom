@@ -15,6 +15,7 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
+    tags: Tag;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -30,6 +31,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -348,7 +350,9 @@ export interface ArchiveBlock {
  */
 export interface Category {
   id: number;
-  title: string;
+  name: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -385,6 +389,7 @@ export interface Post {
   };
   relatedPosts?: (number | Post)[] | null;
   categories?: (number | Category)[] | null;
+  tags?: (number | Tag)[] | null;
   meta?: {
     title?: string | null;
     image?: (number | null) | Media;
@@ -406,11 +411,24 @@ export interface Post {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  name: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
   name?: string | null;
+  username?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -704,6 +722,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'tags';
+        value: number | Tag;
+      } | null)
+    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -894,6 +916,7 @@ export interface PostsSelect<T extends boolean = true> {
   content?: T;
   relatedPosts?: T;
   categories?: T;
+  tags?: T;
   meta?:
     | T
     | {
@@ -1003,7 +1026,9 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
+  name?: T;
+  slug?: T;
+  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1018,10 +1043,22 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  username?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

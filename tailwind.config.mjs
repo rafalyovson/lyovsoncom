@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   content: [
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
@@ -24,6 +24,14 @@ export default {
     'bg-warning/30',
   ],
   theme: {
+    screens: {
+      g1: '420px',
+      g2: '840px',
+      g3: '1260px',
+      g4: '1680px',
+      g5: '2100px',
+      g6: '2520px',
+    },
     container: {
       center: true,
       padding: {
@@ -120,3 +128,5 @@ export default {
     },
   },
 }
+
+export default config
