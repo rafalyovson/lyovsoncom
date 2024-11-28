@@ -15,7 +15,6 @@ export interface Config {
     posts: Post;
     media: Media;
     categories: Category;
-    tags: Tag;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -31,7 +30,6 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -140,7 +138,7 @@ export interface Page {
  */
 export interface Media {
   id: number;
-  alt: string;
+  alt?: string | null;
   caption?: {
     root: {
       type: string;
@@ -305,7 +303,6 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  position?: ('default' | 'fullscreen') | null;
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
@@ -333,9 +330,7 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
-  authors?: (number | User)[] | null;
   categories?: (number | Category)[] | null;
-  tags?: (number | Tag)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
@@ -349,33 +344,11 @@ export interface ArchiveBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  username?: string | null;
-  role?: ('lyovson' | 'user') | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
   id: number;
-  name: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  title: string;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -385,18 +358,6 @@ export interface Category {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
- */
-export interface Tag {
-  id: number;
-  name: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -424,7 +385,6 @@ export interface Post {
   };
   relatedPosts?: (number | Post)[] | null;
   categories?: (number | Category)[] | null;
-  tags?: (number | Tag)[] | null;
   meta?: {
     title?: string | null;
     image?: (number | null) | Media;
@@ -443,6 +403,24 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -726,10 +704,6 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
-        relationTo: 'tags';
-        value: number | Tag;
-      } | null)
-    | ({
         relationTo: 'users';
         value: number | User;
       } | null)
@@ -871,7 +845,6 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?:
           | T
           | {
-              position?: T;
               media?: T;
               id?: T;
               blockName?: T;
@@ -882,9 +855,7 @@ export interface PagesSelect<T extends boolean = true> {
               introContent?: T;
               populateBy?: T;
               relationTo?: T;
-              authors?: T;
               categories?: T;
-              tags?: T;
               limit?: T;
               selectedDocs?: T;
               id?: T;
@@ -903,11 +874,9 @@ export interface PagesSelect<T extends boolean = true> {
   meta?:
     | T
     | {
-        overview?: T;
         title?: T;
         image?: T;
         description?: T;
-        preview?: T;
       };
   publishedAt?: T;
   slug?: T;
@@ -925,15 +894,12 @@ export interface PostsSelect<T extends boolean = true> {
   content?: T;
   relatedPosts?: T;
   categories?: T;
-  tags?: T;
   meta?:
     | T
     | {
-        overview?: T;
         title?: T;
         image?: T;
         description?: T;
-        preview?: T;
       };
   publishedAt?: T;
   authors?: T;
@@ -1037,9 +1003,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  slugLock?: T;
+  title?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1054,23 +1018,10 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags_select".
- */
-export interface TagsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
-  username?: T;
-  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1253,7 +1204,6 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
-  docUrl?: T;
   slug?: T;
   meta?:
     | T

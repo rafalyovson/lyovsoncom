@@ -55,7 +55,7 @@ const columnFields: Field[] = [
   link({
     overrides: {
       admin: {
-        condition: (_: unknown, { enableLink }: { enableLink: string }) => Boolean(enableLink),
+        condition: (_, { enableLink }) => Boolean(enableLink),
       },
     },
   }),

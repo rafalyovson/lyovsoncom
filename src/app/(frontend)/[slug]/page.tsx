@@ -5,6 +5,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
+import { homeStatic } from '@/endpoints/seed/home-static'
 
 import type { Page as PageType } from '@/payload-types'
 
@@ -20,15 +21,20 @@ export async function generateStaticParams() {
     draft: false,
     limit: 1000,
     overrideAccess: false,
+    select: {
+      slug: true,
+    },
   })
 
-  return pages.docs
+  const params = pages.docs
     ?.filter((doc) => {
       return doc.slug !== 'home'
     })
     .map(({ slug }) => {
       return { slug }
     })
+
+  return params
 }
 
 type Args = {
@@ -46,6 +52,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   page = await queryPageBySlug({
     slug,
   })
+
+  // Remove this code once your website is seeded
+  if (!page && slug === 'home') {
+    page = homeStatic
+  }
 
   if (!page) {
     return <PayloadRedirects url={url} />
@@ -65,7 +76,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   )
 }
 
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }): Promise<Metadata> {
   const { slug = 'home' } = await paramsPromise
   const page = await queryPageBySlug({
     slug,
@@ -83,6 +94,7 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     collection: 'pages',
     draft,
     limit: 1,
+    pagination: false,
     overrideAccess: draft,
     where: {
       slug: {

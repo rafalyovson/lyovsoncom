@@ -5,7 +5,7 @@ const defaultLabels = {
   singular: 'Doc',
 }
 
-const defaultCollectionLabels: Record<string, { plural: string; singular: string }> = {
+const defaultCollectionLabels = {
   posts: {
     plural: 'Posts',
     singular: 'Post',

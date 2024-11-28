@@ -9,14 +9,14 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { authenticated } from '@/access/authenticated'
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { Banner } from '@/blocks/Banner/config'
-import { Code } from '@/blocks/Code/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import { populateAuthors } from '@/collections/Posts/hooks/populateAuthors'
-import { revalidatePost } from '@/collections/Posts/hooks/revalidatePost'
+import { authenticated } from '../../access/authenticated'
+import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { Banner } from '../../blocks/Banner/config'
+import { Code } from '../../blocks/Code/config'
+import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { populateAuthors } from './hooks/populateAuthors'
+import { revalidatePost } from './hooks/revalidatePost'
 
 import {
   MetaDescriptionField,
@@ -26,14 +26,27 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { getServerSideURL } from '@/utilities/getURL'
 
-export const Posts: CollectionConfig = {
+export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   access: {
     create: authenticated,
     delete: authenticated,
     read: authenticatedOrPublished,
     update: authenticated,
+  },
+  // This config controls what's populated by default when a post is referenced
+  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
+  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>
+  defaultPopulate: {
+    title: true,
+    slug: true,
+    categories: true,
+    meta: {
+      image: true,
+      description: true,
+    },
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -44,7 +57,7 @@ export const Posts: CollectionConfig = {
           collection: 'posts',
         })
 
-        return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
+        return `${getServerSideURL()}${path}`
       },
     },
     preview: (data) => {
@@ -53,7 +66,7 @@ export const Posts: CollectionConfig = {
         collection: 'posts',
       })
 
-      return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`
+      return `${getServerSideURL()}${path}`
     },
     useAsTitle: 'title',
   },
@@ -115,15 +128,6 @@ export const Posts: CollectionConfig = {
               },
               hasMany: true,
               relationTo: 'categories',
-            },
-            {
-              name: 'tags',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              hasMany: true,
-              relationTo: 'tags',
             },
           ],
           label: 'Meta',

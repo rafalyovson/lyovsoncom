@@ -57,16 +57,6 @@ export const Archive: Block = {
       ],
     },
     {
-      name: 'authors',
-      type: 'relationship',
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
-      },
-      hasMany: true,
-      label: 'Authors To Show',
-      relationTo: 'users',
-    },
-    {
       name: 'categories',
       type: 'relationship',
       admin: {
@@ -75,16 +65,6 @@ export const Archive: Block = {
       hasMany: true,
       label: 'Categories To Show',
       relationTo: 'categories',
-    },
-    {
-      name: 'tags',
-      type: 'relationship',
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
-      },
-      hasMany: true,
-      label: 'Tags To Show',
-      relationTo: 'tags',
     },
     {
       name: 'limit',

@@ -17,9 +17,9 @@ export const PostHero: React.FC<{
           <div className="uppercase text-sm mb-6">
             {categories?.map((category, index) => {
               if (typeof category === 'object' && category !== null) {
-                const { name: categoryName } = category
+                const { title: categoryTitle } = category
 
-                const titleToUse = categoryName || 'Untitled category'
+                const titleToUse = categoryTitle || 'Untitled category'
 
                 const isLast = index === categories.length - 1
 
@@ -79,9 +79,15 @@ export const PostHero: React.FC<{
       </div>
       <div className="min-h-[80vh] select-none">
         {metaImage && typeof metaImage !== 'string' && (
-          <Media fill imgClassName="-z-10 object-cover" resource={metaImage} />
+          <Media
+            fill
+            priority={false}
+            loading="lazy"
+            imgClassName="-z-10 object-cover"
+            resource={metaImage}
+          />
         )}
-        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-linear-to-t from-black to-transparent" />
+        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
       </div>
     </div>
   )

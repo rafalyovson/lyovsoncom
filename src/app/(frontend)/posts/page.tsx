@@ -1,15 +1,17 @@
 import type { Metadata } from 'next/types'
+
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import React from 'react'
 import PageClient from './page.client'
-import { unstable_cacheLife as cacheLife } from 'next/cache'
+
+export const dynamic = 'force-static'
+export const revalidate = 600
 
 export default async function Page() {
-  'use cache'
-  cacheLife('minutes')
   const payload = await getPayload({ config: configPromise })
 
   const posts = await payload.find({
@@ -17,6 +19,12 @@ export default async function Page() {
     depth: 1,
     limit: 12,
     overrideAccess: false,
+    select: {
+      title: true,
+      slug: true,
+      categories: true,
+      meta: true,
+    },
   })
 
   return (
@@ -48,7 +56,7 @@ export default async function Page() {
   )
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return {
     title: `Payload Website Template Posts`,
   }

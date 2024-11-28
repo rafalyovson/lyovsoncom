@@ -1,9 +1,9 @@
-import type { ArchiveBlock as ArchiveBlockProps, Post } from '@/payload-types'
+import type { Post, ArchiveBlock as ArchiveBlockProps } from '@/payload-types'
 
-import RichText from '@/components/RichText'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
+import RichText from '@/components/RichText'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 
@@ -12,16 +12,7 @@ export const ArchiveBlock: React.FC<
     id?: string
   }
 > = async (props) => {
-  const {
-    id,
-    categories,
-    tags,
-    authors,
-    introContent,
-    limit: limitFromProps,
-    populateBy,
-    selectedDocs,
-  } = props
+  const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
 
   const limit = limitFromProps || 3
 
@@ -33,16 +24,6 @@ export const ArchiveBlock: React.FC<
     const flattenedCategories = categories?.map((category) => {
       if (typeof category === 'object') return category.id
       else return category
-    })
-
-    const flattenedTags = tags?.map((tag) => {
-      if (typeof tag === 'object') return tag.id
-      else return tag
-    })
-
-    const flattenedAuthors = authors?.map((author) => {
-      if (typeof author === 'object') return author.id
-      else return author
     })
 
     const fetchedPosts = await payload.find({
@@ -58,35 +39,14 @@ export const ArchiveBlock: React.FC<
             },
           }
         : {}),
-      ...(flattenedTags && flattenedTags.length > 0
-        ? {
-            where: {
-              tags: {
-                in: flattenedTags,
-              },
-            },
-          }
-        : {}),
-      ...(flattenedAuthors && flattenedAuthors.length > 0
-        ? {
-            where: {
-              authors: {
-                in: flattenedAuthors,
-              },
-            },
-          }
-        : {}),
     })
 
     posts = fetchedPosts.docs
   } else {
     if (selectedDocs?.length) {
-      const filteredSelectedPosts = selectedDocs
-        .map((post) => {
-          if (typeof post.value === 'object') return post.value
-          return null
-        })
-        .filter(Boolean) as Post[]
+      const filteredSelectedPosts = selectedDocs.map((post) => {
+        if (typeof post.value === 'object') return post.value
+      }) as Post[]
 
       posts = filteredSelectedPosts
     }
