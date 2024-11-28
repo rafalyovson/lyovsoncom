@@ -1428,7 +1428,7 @@ export interface BannerBlock {
  * via the `definition` "CodeBlock".
  */
 export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css' | 'html' | 'json' | 'markdown' | 'ocaml' | 'python') | null;
+  language?: ('typescript' | 'javascript' | 'css') | null;
   code: string;
   id?: string | null;
   blockName?: string | null;
