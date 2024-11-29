@@ -7,7 +7,7 @@ import { Media } from '@/components/Media'
 export const GridCardHero = async ({ className, post }: { className?: string; post: Post }) => {
   const metaImage = post.meta?.image
   return (
-    <GridCard className={`${className} `}>
+    <GridCard className={`${className}`}>
       {metaImage && typeof metaImage !== 'string' && (
         <Media
           imgClassName="-z-10 object-cover"

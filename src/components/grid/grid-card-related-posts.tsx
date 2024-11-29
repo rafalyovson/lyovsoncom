@@ -30,7 +30,7 @@ export const GridCardRelatedPosts = ({
             )}
             <article
               key={post.id}
-              className={`row-start-1 row-end-2 col-start-1 col-end-2 border p-4 grid justify-center items-center bg-black/50`}
+              className={`row-start-1 row-end-2 col-start-1 col-end-2 border p-4 grid justify-center items-center dark:bg-black/50 bg-white/50 h-1/2 self-end`}
             >
               <h1>{post.title}</h1>
             </article>

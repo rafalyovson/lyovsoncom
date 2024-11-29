@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import './globals.css'
 import { Grid } from '@/components/grid'
+import { Providers } from '@/providers'
 
 export default async function PlaygroundLayout({ children }: { children: ReactNode }) {
   return (
@@ -18,8 +19,10 @@ export default async function PlaygroundLayout({ children }: { children: ReactNo
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
-      <body>
-        <Grid>{children}</Grid>
+      <body className="bg-background text-foreground">
+        <Providers>
+          <Grid>{children}</Grid>
+        </Providers>
       </body>
     </html>
   )

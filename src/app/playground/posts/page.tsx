@@ -32,7 +32,7 @@ export default async function PlaygroundGrid() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts`,
-    description: `A collection of posts from the Payload Website Template`,
+    title: `Lyovson.com`,
+    description: `The official website of Rafa and Jess Lyovsons`,
   }
 }
