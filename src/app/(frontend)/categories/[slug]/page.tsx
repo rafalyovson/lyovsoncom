@@ -11,10 +11,10 @@ import configPromise from '@payload-config'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-type Props = {
-  params: {
+interface PageProps {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateStaticParams() {
@@ -29,7 +29,8 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function Page({ params: { slug } }: Props) {
+export default async function Page({ params: paramsPromise }: PageProps) {
+  const { slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
   // Get category for metadata
@@ -62,7 +63,8 @@ export default async function Page({ params: { slug } }: Props) {
   )
 }
 
-export async function generateMetadata({ params: { slug } }: Props): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
+  const { slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
   const category = await payload.find({
     collection: 'categories',
