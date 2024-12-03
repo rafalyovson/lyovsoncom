@@ -9,7 +9,7 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
   const {
     categories,
     tags,
-    authors,
+    populatedAuthors,
     meta: { image: metaImage } = {},
     publishedAt,
     title,
@@ -54,8 +54,8 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
       <section
         className={`row-start-2 row-end-3 col-start-3 col-end-4 p-2 flex flex-col gap-2 justify-evenly border rounded-lg  `}
       >
-        {authors &&
-          authors.map((author) => {
+        {populatedAuthors &&
+          populatedAuthors.map((author) => {
             if (typeof author !== 'object') return null
             return (
               <Link

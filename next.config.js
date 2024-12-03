@@ -18,6 +18,10 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      {
+        hostname: 'img.youtube.com',
+        protocol: 'https',
+      },
     ],
   },
   reactStrictMode: true,

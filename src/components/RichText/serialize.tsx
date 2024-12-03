@@ -19,11 +19,22 @@ import {
 import type {
   CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
+  YouTubeBlock as YouTubeBlockProps,
+  XPostBlock as XPostBlockProps,
 } from '@/payload-types'
+import { YouTubeBlock } from '@/blocks/YouTube/Component'
+import { XPostBlock } from '@/blocks/XPost/Component'
 
 export type NodeTypes =
   | DefaultNodeTypes
-  | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>
+  | SerializedBlockNode<
+      | CTABlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | YouTubeBlockProps
+      | XPostBlockProps
+    >
 
 type Props = {
   nodes: NodeTypes[]
@@ -122,6 +133,10 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               return <BannerBlock className="col-start-2 mb-4" key={index} {...block} />
             case 'code':
               return <CodeBlock className="col-start-2" key={index} {...block} />
+            case 'youtube':
+              return <YouTubeBlock key={index} {...block} />
+            case 'xpost':
+              return <XPostBlock key={index} {...block} />
             default:
               return null
           }
