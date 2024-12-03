@@ -1,29 +1,20 @@
 import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import React from 'react'
 import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { getAuthorPosts } from '@/utilities/get-author-posts'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
 
 export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
-
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    overrideAccess: false,
-  })
+  const posts = await getAuthorPosts('jess')
 
   return (
     <>
       <GridCardHeader />
       <CollectionArchive posts={posts.docs} />
-
       <div className="container">
         {posts.totalPages > 1 && posts.page && (
           <Pagination page={posts.page} totalPages={posts.totalPages} />
@@ -35,7 +26,7 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Lyovson.com | Posts`,
+    title: `Lyovson.com | Jess's Posts`,
     description: 'Official website of Rafa and Jess Lyovsons',
   }
 }
