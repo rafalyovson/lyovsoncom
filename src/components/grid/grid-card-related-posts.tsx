@@ -25,9 +25,10 @@ export const GridCardRelatedPosts = ({
             {metaImage && typeof metaImage !== 'string' && (
               <GridCardSection className={`row-start-1 row-end-2 col-start-1 col-end-2 `}>
                 <Media
-                  imgClassName="-z-10 object-cover"
+                  imgClassName="-z-10 object-cover h-full"
                   resource={metaImage}
-                  className={` overflow-hidden`}
+                  className={` overflow-hidden h-full`}
+                  pictureClassName="h-full"
                 />
               </GridCardSection>
             )}

@@ -21,7 +21,12 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
     <GridCard className={className}>
       {metaImage && typeof metaImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
-          <Media imgClassName="-z-10 object-cover" resource={metaImage} className="  " />
+          <Media
+            imgClassName="-z-10 object-cover h-full"
+            resource={metaImage}
+            pictureClassName="h-full"
+            className="h-full"
+          />
         </GridCardSection>
       )}
       <GridCardSection

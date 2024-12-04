@@ -14,9 +14,10 @@ export const GridCardHero = async ({ className, post }: { className?: string; po
       {metaImage && typeof metaImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4 g3:row-end-4`}>
           <Media
-            imgClassName="-z-10 object-cover"
+            imgClassName="-z-10 object-cover h-full"
             resource={metaImage}
             className="h-full flex justify-center items-center overflow-hidden"
+            pictureClassName="h-full"
           />
         </GridCardSection>
       )}
