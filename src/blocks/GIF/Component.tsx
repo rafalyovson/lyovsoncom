@@ -1,15 +1,15 @@
 'use client'
 
 import React, { useEffect } from 'react'
-import type { XPostBlock as XPostBlockType } from '@/payload-types'
+import type { GIFBlock as GIFBlockType } from './types'
 import RichText from '@/components/RichText'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
-export const XPostBlock: React.FC<XPostBlockType> = ({ postId, caption }) => {
+export const GIFBlock: React.FC<GIFBlockType> = ({ embedCode, caption }) => {
   useEffect(() => {
-    // Load Twitter widgets script
+    // Load Tenor embed script
     const script = document.createElement('script')
-    script.src = 'https://platform.twitter.com/widgets.js'
+    script.src = 'https://tenor.com/embed.js'
     script.async = true
     document.body.appendChild(script)
 
@@ -18,14 +18,18 @@ export const XPostBlock: React.FC<XPostBlockType> = ({ postId, caption }) => {
     }
   }, [])
 
-  if (!postId) return null
+  if (!embedCode?.postId) return null
 
   return (
-    <Card className="">
-      <CardContent className="pt-6 flex justify-center">
-        <blockquote className="twitter-tweet" data-conversation="none">
-          <a href={`https://twitter.com/x/status/${postId}`}></a>
-        </blockquote>
+    <Card>
+      <CardContent className="pt-6">
+        <div
+          className="tenor-gif-embed"
+          data-postid={embedCode.postId}
+          data-share-method="host"
+          data-aspect-ratio={embedCode.aspectRatio}
+          data-width="100%"
+        />
       </CardContent>
 
       {caption && (

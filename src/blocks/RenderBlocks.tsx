@@ -3,11 +3,13 @@ import React, { Fragment } from 'react'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { YouTubeBlock } from '@/blocks/YouTube/Component'
+import { GIFBlock } from '@/blocks/GIF/Component'
 
 const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   youtube: YouTubeBlock,
+  gif: GIFBlock,
 }
 
 export const RenderBlocks = (props) => {

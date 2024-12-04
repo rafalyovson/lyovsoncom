@@ -19,6 +19,8 @@ import { populateAuthors } from './hooks/populateAuthors'
 import { revalidatePost } from './hooks/revalidatePost'
 import { YouTube } from '@/blocks/YouTube/config'
 import { XPost } from '@/blocks/XPost/config'
+import { Quote } from '@/blocks/Quote/config'
+import { GIF } from '@/blocks/GIF/config'
 
 import {
   MetaDescriptionField,
@@ -91,7 +93,9 @@ export const Posts: CollectionConfig<'posts'> = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, YouTube, XPost] }),
+                    BlocksFeature({
+                      blocks: [Banner, Code, MediaBlock, YouTube, XPost, Quote, GIF],
+                    }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),

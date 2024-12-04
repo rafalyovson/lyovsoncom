@@ -5,6 +5,7 @@ import React, { Fragment, JSX } from 'react'
 import { CMSLink } from '@/components/Link'
 import { DefaultNodeTypes, SerializedBlockNode } from '@payloadcms/richtext-lexical'
 import type { BannerBlock as BannerBlockProps } from '@/payload-types'
+import type { GIFBlock as GIFBlockProps } from '@/blocks/GIF/types'
 
 import {
   IS_BOLD,
@@ -19,14 +20,23 @@ import type {
   MediaBlock as MediaBlockProps,
   YouTubeBlock as YouTubeBlockProps,
   XPostBlock as XPostBlockProps,
+  QuoteBlock as QuoteBlockProps,
 } from '@/payload-types'
 import { YouTubeBlock } from '@/blocks/YouTube/Component'
 import { XPostBlock } from '@/blocks/XPost/Component'
+import { QuoteBlock } from '@/blocks/Quote/Component'
+import { GIFBlock } from '@/blocks/GIF/Component'
 
 export type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      MediaBlockProps | BannerBlockProps | CodeBlockProps | YouTubeBlockProps | XPostBlockProps
+      | MediaBlockProps
+      | BannerBlockProps
+      | CodeBlockProps
+      | YouTubeBlockProps
+      | XPostBlockProps
+      | QuoteBlockProps
+      | GIFBlockProps
     >
 
 type Props = {
@@ -128,6 +138,10 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               return <YouTubeBlock key={index} {...block} />
             case 'xpost':
               return <XPostBlock key={index} {...block} />
+            case 'quote':
+              return <QuoteBlock className="col-start-2" key={index} {...block} />
+            case 'gif':
+              return <GIFBlock key={index} {...block} />
             default:
               return null
           }

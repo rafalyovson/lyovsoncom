@@ -5,6 +5,7 @@ import type { YouTubeBlock as YouTubeBlockType } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/cn'
 import Image from 'next/image'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
 const getAspectRatioClass = (ratio: string) => {
   switch (ratio) {
@@ -39,55 +40,53 @@ export const YouTubeBlock: React.FC<YouTubeBlockType> = ({
   const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
 
   return (
-    <div className="container my-12">
-      <div className="group relative">
-        <div
-          className={cn(
-            'w-full relative overflow-hidden rounded-xl shadow-lg transition-all duration-300',
-            getAspectRatioClass(aspectRatio!),
-          )}
-        >
-          {!isLoaded ? (
-            <button
-              onClick={() => setIsLoaded(true)}
-              className="w-full h-full relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              aria-label="Play video"
-            >
-              {/* Dark overlay that appears on hover */}
-              <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/20 z-10" />
-
-              {/* Thumbnail image */}
-              <div className="absolute inset-0">
-                <Image
-                  src={thumbnailUrl}
-                  alt="Video thumbnail"
-                  fill
-                  className="object-cover"
-                  loading="lazy"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                />
-              </div>
-
-              {/* Play button */}
-              <PlayButton />
-            </button>
-          ) : (
-            <iframe
-              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
-              title="YouTube video player"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 w-full h-full"
-            />
-          )}
-        </div>
-
-        {caption && (
-          <div className="mt-4 text-sm text-muted-foreground">
-            <RichText content={caption} />
-          </div>
+    <Card className="">
+      <CardContent
+        className={cn(
+          'w-full relative overflow-hidden rounded-xl shadow-lg transition-all duration-300',
+          getAspectRatioClass(aspectRatio!),
         )}
-      </div>
-    </div>
+      >
+        {!isLoaded ? (
+          <button
+            onClick={() => setIsLoaded(true)}
+            className="w-full h-full relative block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="Play video"
+          >
+            {/* Dark overlay that appears on hover */}
+            <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/20 z-10" />
+
+            {/* Thumbnail image */}
+            <div className="absolute inset-0">
+              <Image
+                src={thumbnailUrl}
+                alt="Video thumbnail"
+                fill
+                className="object-cover"
+                loading="lazy"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+              />
+            </div>
+
+            {/* Play button */}
+            <PlayButton />
+          </button>
+        ) : (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 w-full h-full"
+          />
+        )}
+      </CardContent>
+
+      {caption && (
+        <CardFooter className="mt-6">
+          <RichText content={caption} />
+        </CardFooter>
+      )}
+    </Card>
   )
 }

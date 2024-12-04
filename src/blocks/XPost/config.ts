@@ -6,11 +6,16 @@ import {
 } from '@payloadcms/richtext-lexical'
 
 // Improved X post ID/URL extraction function
-const extractXPostID = (url: string): string => {
-  if (!url) return ''
+const extractXPostID = (input: string): string => {
+  if (!input) return ''
+
+  // If it's already a numeric ID, return it
+  if (/^\d+$/.test(input)) {
+    return input
+  }
 
   try {
-    const urlObj = new URL(url)
+    const urlObj = new URL(input)
 
     // Normalize hostname
     const hostname = urlObj.hostname.replace('www.', '')
@@ -24,8 +29,11 @@ const extractXPostID = (url: string): string => {
       }
     }
   } catch (e) {
-    // Invalid URL, return empty string
-    return ''
+    // Not a URL, check if it's a full path
+    const pathMatches = input.match(/\/status\/(\d+)/)
+    if (pathMatches && pathMatches[1]) {
+      return pathMatches[1]
+    }
   }
 
   return ''
@@ -39,10 +47,10 @@ export const XPost: Block = {
       name: 'postId',
       type: 'text',
       required: true,
-      label: 'X Post URL',
+      label: 'X Post URL or ID',
       admin: {
         description:
-          'Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789)',
+          'Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789) or post ID',
       },
       hooks: {
         beforeChange: [
@@ -50,7 +58,9 @@ export const XPost: Block = {
             if (!value) return value
             const postId = extractXPostID(value)
             if (!postId) {
-              throw new Error('Invalid X post URL. Please enter a valid X (Twitter) post URL.')
+              throw new Error(
+                'Invalid X post URL or ID. Please enter a valid X (Twitter) post URL or ID.',
+              )
             }
             return postId
           },

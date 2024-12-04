@@ -7,6 +7,7 @@ import RichText from '@/components/RichText'
 import type { MediaBlock as MediaBlockProps } from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
 type Props = MediaBlockProps & {
   breakout?: boolean
@@ -33,33 +34,19 @@ export const MediaBlock: React.FC<Props> = (props) => {
   if (media && typeof media === 'object') caption = media.caption
 
   return (
-    <div
-      className={cn(
-        '',
-        {
-          container: enableGutter,
-        },
-        className,
-      )}
-    >
-      <Media
-        imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
-        resource={media}
-        src={staticImage}
-      />
+    <Card>
+      <CardContent>
+        <Media
+          imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
+          resource={media}
+          src={staticImage}
+        />
+      </CardContent>
       {caption && (
-        <div
-          className={cn(
-            'mt-6',
-            {
-              container: !disableInnerContainer,
-            },
-            captionClassName,
-          )}
-        >
-          <RichText content={caption} enableGutter={false} />
-        </div>
+        <CardFooter className="">
+          <RichText content={caption} enableGutter={false} className={`italic`} />
+        </CardFooter>
       )}
-    </div>
+    </Card>
   )
 }
