@@ -1,5 +1,4 @@
 import { BannerBlock } from '@/blocks/Banner/Component'
-import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import React, { Fragment, JSX } from 'react'
@@ -17,7 +16,6 @@ import {
   IS_UNDERLINE,
 } from './nodeFormat'
 import type {
-  CallToActionBlock as CTABlockProps,
   MediaBlock as MediaBlockProps,
   YouTubeBlock as YouTubeBlockProps,
   XPostBlock as XPostBlockProps,
@@ -28,12 +26,7 @@ import { XPostBlock } from '@/blocks/XPost/Component'
 export type NodeTypes =
   | DefaultNodeTypes
   | SerializedBlockNode<
-      | CTABlockProps
-      | MediaBlockProps
-      | BannerBlockProps
-      | CodeBlockProps
-      | YouTubeBlockProps
-      | XPostBlockProps
+      MediaBlockProps | BannerBlockProps | CodeBlockProps | YouTubeBlockProps | XPostBlockProps
     >
 
 type Props = {
@@ -115,8 +108,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
           }
 
           switch (blockType) {
-            case 'cta':
-              return <CallToActionBlock key={index} {...block} />
             case 'mediaBlock':
               return (
                 <MediaBlock

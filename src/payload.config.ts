@@ -9,11 +9,8 @@ import { resendAdapter } from '@payloadcms/email-resend'
 import { Categories } from '@/collections/Categories'
 import { Tags } from '@/collections/Tags'
 import { Media } from '@/collections/Media'
-import { Pages } from '@/collections/Pages'
 import { Posts } from '@/collections/Posts'
 import { Users } from '@/collections/Users'
-import { Footer } from '@/Footer/config'
-import { Header } from '@/Header/config'
 import { plugins } from '@/plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -57,9 +54,9 @@ export default buildConfig({
       connectionString: process.env.POSTGRES_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Tags, Users],
+  collections: [Posts, Media, Categories, Tags, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [],
   plugins: [
     ...plugins,
     vercelBlobStorage({

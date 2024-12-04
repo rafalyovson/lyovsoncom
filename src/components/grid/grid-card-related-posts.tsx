@@ -1,6 +1,7 @@
 import { GridCard } from '@/components/grid'
 import { Post } from '@/payload-types'
 import { Media } from '../Media'
+import { GridCardSection } from './grid-card-section'
 
 export const GridCardRelatedPosts = ({
   posts,
@@ -17,24 +18,26 @@ export const GridCardRelatedPosts = ({
         }
         const metaImage = post.meta?.image
         return (
-          <article
+          <GridCardSection
             key={post.id}
-            className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} grid grid-cols-1 grid-rows-1`}
+            className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} grid grid-cols-subgrid grid-rows-1`}
           >
             {metaImage && typeof metaImage !== 'string' && (
-              <Media
-                imgClassName="-z-10 object-cover"
-                resource={metaImage}
-                className={`row-start-1 row-end-2 col-start-1 col-end-2 overflow-hidden`}
-              />
+              <GridCardSection className={`row-start-1 row-end-2 col-start-1 col-end-2 `}>
+                <Media
+                  imgClassName="-z-10 object-cover"
+                  resource={metaImage}
+                  className={` overflow-hidden`}
+                />
+              </GridCardSection>
             )}
-            <article
+            <GridCardSection
               key={post.id}
-              className={`row-start-1 row-end-2 col-start-1 col-end-2 border p-4 grid justify-center items-center dark:bg-black/50 bg-white/50 h-1/2 self-end`}
+              className={`row-start-1 row-end-2 col-start-2 col-end-4 grid justify-center items-center`}
             >
               <h1>{post.title}</h1>
-            </article>
-          </article>
+            </GridCardSection>
+          </GridCardSection>
         )
       })}
     </GridCard>

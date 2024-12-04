@@ -69,17 +69,6 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
 
   const linkTypes: Field[] = [
     {
-      name: 'reference',
-      type: 'relationship',
-      admin: {
-        condition: (_, siblingData) => siblingData?.type === 'reference',
-      },
-      label: 'Document to link to',
-      maxDepth: 1,
-      relationTo: ['pages'],
-      required: true,
-    },
-    {
       name: 'url',
       type: 'text',
       admin: {

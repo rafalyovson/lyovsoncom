@@ -1,22 +1,7 @@
 import { GridCard } from '@/components/grid/grid-card'
-import Link from 'next/link'
 import { Contact, Home, Newspaper, User } from 'lucide-react'
-import React, { ReactNode } from 'react'
-
-const GridCardNavItem = ({ children, link }: { children: ReactNode; link?: string }) => {
-  if (link) {
-    return (
-      <Link href={link} className="border flex flex-col gap-2 items-center justify-center h-full">
-        {children}
-      </Link>
-    )
-  }
-  return (
-    <div className="border flex flex-col gap-2 items-center justify-center h-full cursor-pointer ">
-      {children}
-    </div>
-  )
-}
+import React from 'react'
+import { GridCardNavItem } from './grid-card-nav-item'
 
 export const GridCardNav = async ({ className }: { className?: string }) => {
   return (

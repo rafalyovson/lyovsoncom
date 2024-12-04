@@ -16,10 +16,6 @@ import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 const baseClass = 'admin-bar'
 
 const collectionLabels = {
-  pages: {
-    plural: 'Pages',
-    singular: 'Page',
-  },
   posts: {
     plural: 'Posts',
     singular: 'Post',
@@ -38,7 +34,7 @@ export const AdminBar: React.FC<{
   const { adminBarProps } = props || {}
   const segments = useSelectedLayoutSegments()
   const [show, setShow] = useState(false)
-  const collection = collectionLabels?.[segments?.[1]] ? segments?.[1] : 'pages'
+  const collection = segments?.[1]
   const router = useRouter()
 
   const onAuthChange = React.useCallback((user) => {
@@ -64,8 +60,8 @@ export const AdminBar: React.FC<{
           cmsURL={getClientSideURL()}
           collection={collection}
           collectionLabels={{
-            plural: collectionLabels[collection]?.plural || 'Pages',
-            singular: collectionLabels[collection]?.singular || 'Page',
+            plural: collectionLabels[collection]?.plural,
+            singular: collectionLabels[collection]?.singular,
           }}
           logo={<Title />}
           onAuthChange={onAuthChange}

@@ -49,7 +49,7 @@ export default async function Post({ params: paramsPromise }: Args) {
       />
       <GridCardHero
         post={post}
-        className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2  border g4:self-start  g3:col-start-2 g3:col-end-4 g3:w-[800px] g3:h-[400px] overflow-hidden g3:grid-cols-6`}
+        className={` g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2  g3:col-start-2 g3:col-end-4  g4:self-start `}
       />
 
       <div className=" g2:col-start-2 g2:col-end-4 g2:row-start-2 g2:row-auto">

@@ -5,7 +5,8 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import { Search } from '@/search/Component'
-import PageClient from './page.client'
+import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { Pagination } from '@/components/Pagination'
 
 type Args = {
   searchParams: Promise<{
@@ -54,21 +55,16 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   })
 
   return (
-    <div className="pt-24 pb-24">
-      <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none">
-          <h1 className="sr-only">Search</h1>
-          <Search />
-        </div>
+    <>
+      <GridCardHeader />
+      <Search />
+      <CollectionArchive posts={posts.docs} />
+      <div className="container">
+        {posts.totalPages > 1 && posts.page && (
+          <Pagination page={posts.page} totalPages={posts.totalPages} />
+        )}
       </div>
-
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs} />
-      ) : (
-        <div className="container">No results found.</div>
-      )}
-    </div>
+    </>
   )
 }
 

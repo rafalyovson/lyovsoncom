@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Post } from '@/payload-types'
 import { Boxes, Calendar, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
+import { GridCardSection } from './grid-card-section'
 
 export const GridCardPost = ({ post, className }: { post: Post; className?: string }) => {
   const {
@@ -19,22 +20,20 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
   return (
     <GridCard className={className}>
       {metaImage && typeof metaImage !== 'string' && (
-        <Media
-          imgClassName="-z-10 object-cover"
-          resource={metaImage}
-          className=" row-start-1 row-end-3 col-start-1 col-end-3"
-        />
+        <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
+          <Media imgClassName="-z-10 object-cover" resource={metaImage} className="  " />
+        </GridCardSection>
       )}
-
-      <Link
-        href={{ pathname: `/posts/${slug}` }}
-        className={`row-start-3 row-end-4 col-start-1 col-end-4 p-2   h-full flex flex-col justify-center  border rounded-lg `}
+      <GridCardSection
+        className={`row-start-3 row-end-4 col-start-1 col-end-4   h-full flex flex-col justify-center   `}
       >
-        <h1 className={`text-xl text-bold text-center `}>{title}</h1>
-      </Link>
+        <Link href={{ pathname: `/posts/${slug}` }}>
+          <h1 className={`text-xl text-bold text-center `}>{title}</h1>
+        </Link>
+      </GridCardSection>
 
-      <section
-        className={`row-start-1 row-end-2 col-start-3 col-end-4   flex flex-col gap-2 p-2 justify-center border rounded-lg`}
+      <GridCardSection
+        className={`row-start-1 row-end-2 col-start-3 col-end-4   flex flex-col gap-2 justify-center `}
       >
         {tags &&
           tags.map((tag) => {
@@ -49,10 +48,10 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
               </Link>
             )
           })}
-      </section>
+      </GridCardSection>
 
-      <section
-        className={`row-start-2 row-end-3 col-start-3 col-end-4 p-2 flex flex-col gap-2 justify-evenly border rounded-lg  `}
+      <GridCardSection
+        className={`row-start-2 row-end-3 col-start-3 col-end-4 flex flex-col gap-2 justify-evenly   `}
       >
         {populatedAuthors &&
           populatedAuthors.map((author) => {
@@ -95,7 +94,7 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
               </Link>
             )
           })}
-      </section>
+      </GridCardSection>
     </GridCard>
   )
 }
