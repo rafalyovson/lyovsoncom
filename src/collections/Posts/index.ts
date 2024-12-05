@@ -16,7 +16,7 @@ import { Code } from '@/blocks/Code/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
-import { revalidatePost } from './hooks/revalidatePost'
+import { revalidatePost, revalidateDelete } from './hooks/revalidatePost'
 import { YouTube } from '@/blocks/YouTube/config'
 import { XPost } from '@/blocks/XPost/config'
 import { Quote } from '@/blocks/Quote/config'
@@ -238,6 +238,7 @@ export const Posts: CollectionConfig<'posts'> = {
   hooks: {
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
+    afterDelete: [revalidateDelete],
   },
   versions: {
     drafts: {
