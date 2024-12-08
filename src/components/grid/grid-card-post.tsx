@@ -38,7 +38,7 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
       </GridCardSection>
 
       <GridCardSection
-        className={`row-start-1 row-end-2 col-start-3 col-end-4   flex flex-col gap-2 justify-center `}
+        className={`row-start-2 row-end-3 col-start-3 col-end-4   flex flex-col gap-2 justify-center `}
       >
         {tags &&
           tags.map((tag) => {
@@ -56,7 +56,7 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
       </GridCardSection>
 
       <GridCardSection
-        className={`row-start-2 row-end-3 col-start-3 col-end-4 flex flex-col gap-2 justify-evenly   `}
+        className={`row-start-1 row-end-2 col-start-3 col-end-4 flex flex-col gap-2 justify-evenly   `}
       >
         {populatedAuthors &&
           populatedAuthors.map((author) => {

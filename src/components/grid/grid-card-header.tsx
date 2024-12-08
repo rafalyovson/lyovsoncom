@@ -1,7 +1,7 @@
 import { GridCard } from '@/components/grid/grid-card'
 import Link from 'next/link'
 import { Home, User } from 'lucide-react'
-import { GridCardNavItem } from './grid-card-nav-item'
+import { GridCardNavItem } from './grid-card-nav/grid-card-nav-item'
 import { GridCardSection } from './grid-card-section'
 
 export const GridCardHeader = async ({ className }: { className?: string }) => {

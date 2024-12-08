@@ -2,24 +2,30 @@
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import React, { useState, useEffect } from 'react'
-import { useDebounce } from '@/utilities/useDebounce'
+// import { useDebounce } from '@/utilities/useDebounce'
 import { useRouter } from 'next/navigation'
 
 export const Search: React.FC = () => {
   const [value, setValue] = useState('')
   const router = useRouter()
 
-  const debouncedValue = useDebounce(value)
+  // const debouncedValue = useDebounce(value)
 
-  useEffect(() => {
-    router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
-  }, [debouncedValue, router])
+  // useEffect(() => {
+  //   router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
+  // }, [debouncedValue, router])
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    router.push(`/search?q=${value}`)
+  }
 
   return (
     <div>
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          handleSubmit(e)
         }}
       >
         <Label htmlFor="search" className="sr-only">
