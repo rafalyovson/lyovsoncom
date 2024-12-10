@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-
+import { Analytics } from '@vercel/analytics/next'
 import { cn } from 'src/utilities/cn'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
@@ -36,6 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
           <Grid>{children}</Grid>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
