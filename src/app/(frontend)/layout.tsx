@@ -4,7 +4,6 @@ import { cn } from 'src/utilities/cn'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
-
 import { AdminBar } from '@/components/AdminBar'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Providers } from '@/providers'
@@ -33,7 +32,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
           <LivePreviewListener />
-
           <Grid>{children}</Grid>
         </Providers>
         <Analytics />
