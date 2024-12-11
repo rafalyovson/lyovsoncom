@@ -15,7 +15,9 @@ import { Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const generateTitle: GenerateTitle<Post> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Lyovson.com` : 'Lyovson.com'
+  return doc?.title && typeof doc?.project === 'object'
+    ? `${doc.title} | ${doc?.project?.name} | Lyovson.com`
+    : 'Lyovson.com'
 }
 
 const generateURL: GenerateURL<Post> = ({ doc }) => {
@@ -48,7 +50,7 @@ export const plugins: Plugin[] = [
     },
   }),
   nestedDocsPlugin({
-    collections: ['categories'],
+    collections: ['topics'],
   }),
   seoPlugin({
     generateTitle,

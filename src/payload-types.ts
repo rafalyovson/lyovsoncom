@@ -13,8 +13,9 @@ export interface Config {
   collections: {
     posts: Post;
     media: Media;
-    categories: Category;
-    tags: Tag;
+    types: Type;
+    topics: Topic;
+    projects: Project;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -28,8 +29,9 @@ export interface Config {
   collectionsSelect: {
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    tags: TagsSelect<false> | TagsSelect<true>;
+    types: TypesSelect<false> | TypesSelect<true>;
+    topics: TopicsSelect<false> | TopicsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -93,9 +95,10 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  type: number | Type;
+  topics?: (number | Topic)[] | null;
+  project?: (number | null) | Project;
   relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
-  tags?: (number | Tag)[] | null;
   meta?: {
     title?: string | null;
     image?: (number | null) | Media;
@@ -118,17 +121,32 @@ export interface Post {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
+ * via the `definition` "types".
  */
-export interface Category {
+export interface Type {
   id: number;
   name: string;
+  description?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
-  parent?: (number | null) | Category;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  description?: string | null;
+  color?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (number | null) | Topic;
   breadcrumbs?:
     | {
-        doc?: (number | null) | Category;
+        doc?: (number | null) | Topic;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -139,11 +157,13 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags".
+ * via the `definition` "projects".
  */
-export interface Tag {
+export interface Project {
   id: number;
   name: string;
+  description?: string | null;
+  image?: (number | null) | Media;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -469,7 +489,7 @@ export interface Search {
     description?: string | null;
     image?: (number | null) | Media;
   };
-  categories?:
+  topics?:
     | {
         relationTo?: string | null;
         id?: string | null;
@@ -495,12 +515,16 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'categories';
-        value: number | Category;
+        relationTo: 'types';
+        value: number | Type;
       } | null)
     | ({
-        relationTo: 'tags';
-        value: number | Tag;
+        relationTo: 'topics';
+        value: number | Topic;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
       } | null)
     | ({
         relationTo: 'users';
@@ -571,9 +595,10 @@ export interface PayloadMigration {
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
   content?: T;
+  type?: T;
+  topics?: T;
+  project?: T;
   relatedPosts?: T;
-  categories?: T;
-  tags?: T;
   meta?:
     | T
     | {
@@ -681,10 +706,24 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
+ * via the `definition` "types_select".
  */
-export interface CategoriesSelect<T extends boolean = true> {
+export interface TypesSelect<T extends boolean = true> {
   name?: T;
+  description?: T;
+  slug?: T;
+  slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics_select".
+ */
+export interface TopicsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  color?: T;
   slug?: T;
   slugLock?: T;
   parent?: T;
@@ -701,10 +740,12 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags_select".
+ * via the `definition` "projects_select".
  */
-export interface TagsSelect<T extends boolean = true> {
+export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
+  description?: T;
+  image?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -907,7 +948,7 @@ export interface SearchSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
-  categories?:
+  topics?:
     | T
     | {
         relationTo?: T;

@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { GridCardHeader } from '@/components/grid/grid-card-header'
-import { getTagPosts } from '@/utilities/get-tag-posts'
+import { getProjectPosts } from '@/utilities/get-project-posts'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
@@ -13,42 +13,17 @@ export const revalidate = 600
 
 interface PageProps {
   params: Promise<{
-    slug: string
+    project: string
   }>
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const tags = await payload.find({
-    collection: 'tags',
-    limit: 1000,
-  })
-
-  return tags.docs.map(({ slug }) => ({
-    slug,
-  }))
-}
-
 export default async function Page({ params: paramsPromise }: PageProps) {
-  const { slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
+  const { project: projectSlug } = await paramsPromise
+  const posts = await getProjectPosts(projectSlug)
 
-  // Get tag for metadata
-  const tag = await payload.find({
-    collection: 'tags',
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  })
-
-  if (!tag.docs[0]) {
+  if (!posts.docs.length) {
     return notFound()
   }
-
-  const posts = await getTagPosts(slug)
 
   return (
     <>
@@ -64,22 +39,35 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
-  const { slug } = await paramsPromise
+  const { project: projectSlug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
-  const tag = await payload.find({
-    collection: 'tags',
+
+  const project = await payload.find({
+    collection: 'projects',
     where: {
       slug: {
-        equals: slug,
+        equals: projectSlug,
       },
     },
     limit: 1,
   })
 
-  const tagName = tag.docs[0]?.name || slug
+  const projectName = project.docs[0]?.name || projectSlug
 
   return {
-    title: `Lyovson.com | Posts Tagged ${tagName}`,
-    description: `Posts tagged with ${tagName} on Lyovson.com`,
+    title: `Lyovson.com | ${projectName}`,
+    description: project.docs[0]?.description || `Posts from ${projectName}`,
   }
+}
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const projects = await payload.find({
+    collection: 'projects',
+    limit: 1000,
+  })
+
+  return projects.docs.map(({ slug }) => ({
+    project: slug,
+  }))
 }

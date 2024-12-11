@@ -46,7 +46,9 @@ export const Posts: CollectionConfig<'posts'> = {
   defaultPopulate: {
     title: true,
     slug: true,
-    categories: true,
+    topics: true,
+    project: true,
+    type: true,
     meta: {
       image: true,
       description: true,
@@ -68,6 +70,7 @@ export const Posts: CollectionConfig<'posts'> = {
       const path = generatePreviewPath({
         slug: typeof data?.slug === 'string' ? data.slug : '',
         collection: 'posts',
+        project: data?.project,
       })
 
       return `${getServerSideURL()}${path}`
@@ -111,6 +114,32 @@ export const Posts: CollectionConfig<'posts'> = {
         {
           fields: [
             {
+              name: 'type',
+              type: 'relationship',
+              relationTo: 'types',
+              required: true,
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'topics',
+              type: 'relationship',
+              relationTo: 'topics',
+              hasMany: true,
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'project',
+              type: 'relationship',
+              relationTo: 'projects',
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
               name: 'relatedPosts',
               type: 'relationship',
               admin: {
@@ -125,24 +154,6 @@ export const Posts: CollectionConfig<'posts'> = {
               },
               hasMany: true,
               relationTo: 'posts',
-            },
-            {
-              name: 'categories',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              hasMany: true,
-              relationTo: 'categories',
-            },
-            {
-              name: 'tags',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              hasMany: true,
-              relationTo: 'tags',
             },
           ],
           label: 'Meta',
@@ -249,3 +260,7 @@ export const Posts: CollectionConfig<'posts'> = {
     maxPerDoc: 50,
   },
 }
+
+// NOTE: In [DATE] we migrated from categories/tags to types/topics/projects
+// Backup of the old structure can be found in ./taxonomy-backup.json
+// Migration script: ./src/migrations/taxonomyMigration.ts

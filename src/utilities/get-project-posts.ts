@@ -1,12 +1,11 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
-export async function getTagPosts(slug: string) {
+export async function getProjectPosts(slug: string) {
   const payload = await getPayload({ config: configPromise })
 
-  // First get the tag ID
-  const tag = await payload.find({
-    collection: 'tags',
+  const project = await payload.find({
+    collection: 'projects',
     where: {
       slug: {
         equals: slug,
@@ -15,16 +14,15 @@ export async function getTagPosts(slug: string) {
     limit: 1,
   })
 
-  const tagId = tag.docs[0]?.id
+  const projectId = project.docs[0]?.id
 
-  // Then query posts using the tag ID
   return await payload.find({
     collection: 'posts',
     depth: 1,
     limit: 12,
     where: {
-      tags: {
-        contains: tagId,
+      project: {
+        equals: projectId,
       },
     },
     overrideAccess: false,

@@ -7,22 +7,16 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
 type Props = {
   collection: keyof typeof collectionPrefixMap
   slug: string
+  project?: any
 }
 
-export const generatePreviewPath = ({ collection, slug }: Props) => {
-  const path = `${collectionPrefixMap[collection]}/${slug}`
-
-  const params = {
-    slug,
-    collection,
-    path,
+export const generatePreviewPath = ({ collection, slug, project }: Props) => {
+  if (collection === 'posts') {
+    if (project && typeof project === 'object') {
+      return `/${project.slug}/${slug}`
+    }
+    return `/posts/${slug}` // fallback if no project
   }
 
-  const encodedParams = new URLSearchParams()
-
-  Object.entries(params).forEach(([key, value]) => {
-    encodedParams.append(key, value)
-  })
-
-  return `/next/preview?${encodedParams.toString()}`
+  return `/${collection}/${slug}`
 }

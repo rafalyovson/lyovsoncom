@@ -3,7 +3,7 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { GridCardHeader } from '@/components/grid/grid-card-header'
-import { getCategoryPosts } from '@/utilities/get-category-posts'
+import { getTopicPosts } from '@/utilities/get-topic-posts'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
@@ -19,12 +19,12 @@ interface PageProps {
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
-  const categories = await payload.find({
-    collection: 'categories',
+  const topics = await payload.find({
+    collection: 'topics',
     limit: 1000,
   })
 
-  return categories.docs.map(({ slug }) => ({
+  return topics.docs.map(({ slug }) => ({
     slug,
   }))
 }
@@ -33,9 +33,9 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   const { slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  // Get category for metadata
-  const category = await payload.find({
-    collection: 'categories',
+  // Get topic for metadata
+  const topic = await payload.find({
+    collection: 'topics',
     where: {
       slug: {
         equals: slug,
@@ -44,11 +44,11 @@ export default async function Page({ params: paramsPromise }: PageProps) {
     limit: 1,
   })
 
-  if (!category.docs[0]) {
+  if (!topic.docs[0]) {
     return notFound()
   }
 
-  const posts = await getCategoryPosts(slug)
+  const posts = await getTopicPosts(slug)
 
   return (
     <>
@@ -66,8 +66,9 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
   const { slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
-  const category = await payload.find({
-    collection: 'categories',
+
+  const topic = await payload.find({
+    collection: 'topics',
     where: {
       slug: {
         equals: slug,
@@ -76,10 +77,10 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  const categoryName = category.docs[0]?.name || slug
+  const topicName = topic.docs[0]?.name || slug
 
   return {
-    title: `Lyovson.com | ${categoryName} Posts`,
-    description: `Posts in the ${categoryName} category on Lyovson.com`,
+    title: `Lyovson.com | ${topicName}`,
+    description: topic.docs[0]?.description || `Posts about ${topicName}`,
   }
 }

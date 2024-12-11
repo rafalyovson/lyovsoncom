@@ -37,8 +37,8 @@ export const searchFields: Field[] = [
     ],
   },
   {
-    label: 'Categories',
-    name: 'categories',
+    label: 'Topics',
+    name: 'topics',
     type: 'array',
     admin: {
       readOnly: true,
