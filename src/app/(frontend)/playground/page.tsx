@@ -1,22 +1,28 @@
-import { GridCardEmailSubscribe, GridCardNav } from '@/components/grid'
+import { GridCardSubscribe, GridCardNav } from '@/components/grid'
+import { createContactAction } from '@/actions/create-contact-action'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-
 export default async function Playground() {
   const payload = await getPayload({ config: configPromise })
-  const form = await payload.findByID({
-    collection: 'forms',
-    id: '2',
+  const project = await payload.find({
+    collection: 'projects',
+    where: {
+      slug: {
+        equals: 'media-musings',
+      },
+    },
   })
 
-  console.log(form)
+  const projectId = project.docs[0].id
   return (
     <>
       <GridCardNav />
-      <GridCardEmailSubscribe
+      <GridCardSubscribe
         title="Media Musings"
         description="Join our journney through all kinds of media and ideas."
         emoji="👩"
+        handleSubmit={createContactAction}
+        projectId={projectId}
       />
     </>
   )

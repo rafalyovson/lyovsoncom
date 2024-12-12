@@ -1,24 +1,36 @@
-import { Input } from '@/components/ui/input'
-import { GridCard } from './grid-card'
-import { GridCardSection } from './grid-card-section'
-import { cn } from '@/utilities/cn'
-import { Button } from '@/components/ui/button'
+'use client'
 
-type GridCardEmailSubscribeProps = {
+import { GridCard } from '../grid-card'
+import { GridCardSection } from '../grid-card-section'
+import { cn } from '@/utilities/cn'
+import { SubscribeForm } from './subscribe-form'
+import { ActionResponse } from '@/actions/create-contact-action'
+import { useActionState } from 'react'
+
+type GridCardSubscribeProps = {
   title?: string
   description?: string
   buttonText?: string
   emoji?: string
   className?: string
+  projectId: number
+  handleSubmit: (prevState: ActionResponse, formData: FormData) => Promise<ActionResponse>
 }
 
-export const GridCardEmailSubscribe = ({
+export const GridCardSubscribe = ({
   title = 'Subscribe to my newsletter',
   description = 'Subscribe to my newsletter to stay up to date with my latest posts and projects.',
   buttonText = 'Subscribe',
   emoji = '👋',
   className,
-}: GridCardEmailSubscribeProps) => {
+  handleSubmit,
+  projectId,
+}: GridCardSubscribeProps) => {
+  const [state, formAction] = useActionState(handleSubmit, {
+    success: false,
+    message: '',
+  })
+
   return (
     <GridCard className={cn('col-start-1 col-end-2 row-start-2 row-end-3', className)}>
       <GridCardSection
@@ -29,11 +41,13 @@ export const GridCardEmailSubscribe = ({
         <p className={cn('text-sm text-gray-500')}>{description}</p>
       </GridCardSection>
 
-      <GridCardSection
-        className={`row-start-3 row-end-4 col-start-1 col-end-4 flex items-center justify-center gap-2`}
-      >
-        <Input className={cn('')} placeholder="Email" />
-        <Button className={cn('')}>{buttonText}</Button>
+      <GridCardSection className={`row-start-3 row-end-4 col-start-1 col-end-4 `}>
+        <SubscribeForm
+          buttonText={buttonText}
+          action={formAction}
+          state={state}
+          projectId={projectId}
+        />
       </GridCardSection>
     </GridCard>
   )

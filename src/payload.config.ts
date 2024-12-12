@@ -15,6 +15,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { Types } from '@/collections/Types'
 import { Topics } from '@/collections/Topics'
 import { Projects } from '@/collections/Projects'
+import { Contacts } from '@/collections/Contacts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -55,7 +56,7 @@ export default buildConfig({
       connectionString: process.env.POSTGRES_URL || '',
     },
   }),
-  collections: [Posts, Media, Types, Topics, Projects, Users],
+  collections: [Posts, Media, Types, Topics, Projects, Users, Contacts],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
   plugins: [
@@ -68,8 +69,8 @@ export default buildConfig({
     }),
   ],
   email: resendAdapter({
-    defaultFromAddress: 'dev@payloadcms.com',
-    defaultFromName: 'Payload CMS',
+    defaultFromAddress: 'notifications@mail.lyovson.com',
+    defaultFromName: 'Lyovsons',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
   secret: process.env.PAYLOAD_SECRET,

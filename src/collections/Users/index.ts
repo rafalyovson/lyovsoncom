@@ -24,6 +24,7 @@ export const Users: CollectionConfig = {
     {
       name: 'username',
       type: 'text',
+      unique: true,
     },
   ],
   timestamps: true,

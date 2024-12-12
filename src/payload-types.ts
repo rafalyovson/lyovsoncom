@@ -17,6 +17,7 @@ export interface Config {
     topics: Topic;
     projects: Project;
     users: User;
+    contacts: Contact;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -33,6 +34,7 @@ export interface Config {
     topics: TopicsSelect<false> | TopicsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    contacts: ContactsSelect<false> | ContactsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -164,6 +166,8 @@ export interface Project {
   name: string;
   description?: string | null;
   image?: (number | null) | Media;
+  resendAudienceId?: string | null;
+  contacts?: (number | Contact)[] | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -252,6 +256,26 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts".
+ */
+export interface Contact {
+  id: number;
+  email: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  confirmationToken?: string | null;
+  confirmationExpiry?: string | null;
+  unsubscribed?: boolean | null;
+  status?: ('pending' | 'active' | 'unsubscribed') | null;
+  project: number | Project;
+  resendContactId?: string | null;
+  subscribedAt?: string | null;
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -531,6 +555,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'contacts';
+        value: number | Contact;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -746,6 +774,8 @@ export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   image?: T;
+  resendAudienceId?: T;
+  contacts?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -767,6 +797,25 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contacts_select".
+ */
+export interface ContactsSelect<T extends boolean = true> {
+  email?: T;
+  firstName?: T;
+  lastName?: T;
+  confirmationToken?: T;
+  confirmationExpiry?: T;
+  unsubscribed?: T;
+  status?: T;
+  project?: T;
+  resendContactId?: T;
+  subscribedAt?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

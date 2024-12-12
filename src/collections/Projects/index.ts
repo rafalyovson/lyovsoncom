@@ -13,7 +13,7 @@ export const Projects: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'slug'],
+    defaultColumns: ['name', 'slug', 'resendAudienceId'],
   },
   fields: [
     {
@@ -29,6 +29,24 @@ export const Projects: CollectionConfig = {
       name: 'image',
       type: 'upload',
       relationTo: 'media',
+    },
+    {
+      name: 'resendAudienceId',
+      type: 'text',
+      label: 'Resend Audience ID',
+      defaultValue: process.env.RESEND_AUDIENCE_ID,
+      admin: {
+        description: 'The Audience ID from Resend for managing newsletter subscriptions.',
+      },
+    },
+    {
+      name: 'contacts',
+      type: 'relationship',
+      relationTo: 'contacts',
+      hasMany: true,
+      admin: {
+        description: 'List of contacts associated with this project.',
+      },
     },
     ...slugField('name'),
   ],

@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation'
 import './index.scss'
 
 import { getClientSideURL } from '@/utilities/getURL'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 
 const baseClass = 'admin-bar'
 
@@ -79,7 +78,6 @@ export const AdminBar: React.FC<{
           }}
         />
       </div>
-      <ThemeSelector />
     </div>
   )
 }
