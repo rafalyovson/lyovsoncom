@@ -24,7 +24,7 @@ export const GridCardHero = async ({ className, post }: { className?: string; po
       <GridCardSection
         className={`row-start-3 row-end-4 col-start-1 col-end-4 g3:row-start-1 g3:row-end-4 g3:col-start-4 g3:col-end-8`}
       >
-        <Link className=" flex flex-col justify-center items-center h-full" href="/public">
+        <Link className=" flex flex-col justify-center items-center h-full" href="/">
           <h1 className={`text-xl text-center`}>{post.title}</h1>
         </Link>
       </GridCardSection>
