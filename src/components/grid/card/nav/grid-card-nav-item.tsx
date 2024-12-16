@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { GridCardSection } from '../grid-card-section'
+import { GridCardSection } from '../section'
 import { ReactNode } from 'react'
 
 type GridCardNavItemProps = {

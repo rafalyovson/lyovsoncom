@@ -4,9 +4,9 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
-import { GridCardHero } from '@/components/grid/grid-card-hero'
-import { GridCardRelatedPosts } from '@/components/grid/grid-card-related-posts'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHero } from 'src/components/grid/card/hero'
+import { GridCardRelatedPosts } from '@/components/grid/card/related'
+import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
 
 type Args = {

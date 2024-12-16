@@ -3,7 +3,7 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { notFound } from 'next/navigation'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 

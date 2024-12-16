@@ -1,10 +1,10 @@
-import { GridCard } from '@/components/grid'
+import { GridCard, GridCardSection } from '@/components/grid'
 import { Media } from '@/components/Media'
 import { Badge } from '@/components/ui/badge'
 import { Post } from '@/payload-types'
 import { BriefcaseBusiness, Calendar, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
-import { GridCardSection } from './grid-card-section'
+
 
 export const GridCardPost = ({ post, className }: { post: Post; className?: string }) => {
   const {

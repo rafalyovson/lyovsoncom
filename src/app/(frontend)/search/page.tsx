@@ -5,7 +5,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import { Search } from '@/search/Component'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 import { Pagination } from '@/components/Pagination'
 
 type Args = {

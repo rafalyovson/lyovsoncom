@@ -6,7 +6,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import { notFound } from 'next/navigation'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 
 export const revalidate = 600
 

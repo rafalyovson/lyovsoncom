@@ -1,4 +1,4 @@
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 
 export default function PrivacyPolicy() {
   return (

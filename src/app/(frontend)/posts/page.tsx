@@ -4,7 +4,7 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 
 export const dynamic = 'force-static'
 export const revalidate = 600

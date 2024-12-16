@@ -2,7 +2,7 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import React from 'react'
-import { GridCardHeader } from '@/components/grid/grid-card-header'
+import { GridCardHeader } from 'src/components/grid/card/header'
 import { getAuthorPosts } from '@/utilities/get-author-posts'
 
 export const dynamic = 'force-static'

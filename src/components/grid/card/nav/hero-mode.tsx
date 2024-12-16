@@ -1,7 +1,7 @@
 import { LucideMenu, Search } from 'lucide-react'
 
 import Link from 'next/link'
-import { GridCardSection } from '../grid-card-section'
+import { GridCardSection } from '../section'
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
 import { ThemeSwitcher } from './theme-switcher'
@@ -10,7 +10,7 @@ export const HeroMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType
   return (
     <>
       <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4`}>
-        <Link className={` flex flex-col h-full justify-center items-center`} href="/">
+        <Link className={` flex flex-col h-full justify-center items-center`} href="/public">
           <h1 className={`text-3xl text-center`}>Lyovson.com</h1>
         </Link>
       </GridCardSection>

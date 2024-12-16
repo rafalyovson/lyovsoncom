@@ -1,7 +1,7 @@
 'use client'
 
-import { GridCard } from '../grid-card'
-import { GridCardSection } from '../grid-card-section'
+import { GridCard } from '@/components/grid/'
+import { GridCardSection } from '../section'
 import { cn } from '@/utilities/cn'
 import { SubscribeForm } from './subscribe-form'
 import { ActionResponse } from '@/actions/create-contact-action'
@@ -34,12 +34,30 @@ export const GridCardSubscribe = ({
   return (
     <GridCard className={cn('col-start-1 col-end-2 row-start-2 row-end-3', className)}>
       <GridCardSection
-        className={`row-start-1 row-end-3 col-start-1 col-end-4 flex flex-col gap-2 items-center justify-center`}
+        className={`row-start-1 ${state.message ? 'row-end-2' : 'row-end-3'} col-start-1 col-end-4 flex flex-col gap-2 items-center justify-center`}
       >
         <div className={cn('text-2xl font-bold')}>{emoji}</div>
-        <h1 className={cn('text-2xl font-bold')}>{title}</h1>
+        <h2 className={cn('text-2xl font-bold')}>{title}</h2>
         <p className={cn('text-sm text-gray-500')}>{description}</p>
       </GridCardSection>
+      {state.message && (
+        <GridCardSection
+          className={cn(
+            'row-start-2 row-end-3 col-start-1 col-end-4 flex justify-center items-center',
+          )}
+        >
+          {state.success && (
+            <section className={cn('text-2xl font-bold')}>
+              <p>✅ {state.message}</p>
+            </section>
+          )}
+          {!state.success && (
+            <section className={cn('text-2xl font-bold text-center')}>
+              <p>⛔️ {state.message}</p>
+            </section>
+          )}
+        </GridCardSection>
+      )}
 
       <GridCardSection className={`row-start-3 row-end-4 col-start-1 col-end-4 `}>
         <SubscribeForm

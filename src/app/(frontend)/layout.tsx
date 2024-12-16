@@ -13,6 +13,7 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { Grid } from '@/components/grid'
+import { Toaster } from '@/components/ui/sonner'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -33,6 +34,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
           <LivePreviewListener />
           <Grid>{children}</Grid>
+          <Toaster />
         </Providers>
         <Analytics />
       </body>
