@@ -19,12 +19,18 @@ interface PageProps {
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
-  const topics = await payload.find({
+  const topicsResponse = await payload.find({
     collection: 'topics',
     limit: 1000,
   })
 
-  return topics.docs.map(({ slug }) => ({
+  if (!topicsResponse) {
+    return []
+  }
+
+  const { docs } = topicsResponse
+
+  return docs.map(({ slug }) => ({
     slug,
   }))
 }
@@ -34,7 +40,7 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   const payload = await getPayload({ config: configPromise })
 
   // Get topic for metadata
-  const topic = await payload.find({
+  const topicResponse = await payload.find({
     collection: 'topics',
     where: {
       slug: {
@@ -44,20 +50,28 @@ export default async function Page({ params: paramsPromise }: PageProps) {
     limit: 1,
   })
 
-  if (!topic.docs[0]) {
+  if (!topicResponse) {
     return notFound()
   }
 
-  const posts = await getTopicPosts(slug)
+  const { docs } = topicResponse
+
+  const topicName = docs[0]?.name || slug
+
+  const response = await getTopicPosts(slug)
+
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs: posts, totalPages, page } = response
 
   return (
     <>
       <GridCardHeader />
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={posts} />
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
     </>
   )
@@ -67,7 +81,7 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
   const { slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const topic = await payload.find({
+  const response = await payload.find({
     collection: 'topics',
     where: {
       slug: {
@@ -77,10 +91,16 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  const topicName = topic.docs[0]?.name || slug
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs } = response
+
+  const topicName = docs[0]?.name || slug
 
   return {
-    title: `Lyovson.com | ${topicName}`,
-    description: topic.docs[0]?.description || `Posts about ${topicName}`,
+    title: `${topicName} | Lyovson.com`,
+    description: docs[0]?.description || `Posts about ${topicName}`,
   }
 }

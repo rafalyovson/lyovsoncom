@@ -4,7 +4,7 @@ import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { GridCardHeader } from 'src/components/grid/card/header'
 import { getProjectPosts } from '@/utilities/get-project-posts'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
@@ -19,20 +19,24 @@ interface PageProps {
 
 export default async function Page({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise
-  const posts = await getProjectPosts(projectSlug)
+  const response = await getProjectPosts(projectSlug)
 
-  if (!posts.docs.length) {
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs, totalPages, page } = response
+
+  if (!docs.length) {
     return notFound()
   }
 
   return (
     <>
       <GridCardHeader />
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={docs} />
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
     </>
   )
@@ -42,7 +46,7 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
   const { project: projectSlug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const project = await payload.find({
+  const response = await payload.find({
     collection: 'projects',
     where: {
       slug: {
@@ -52,22 +56,34 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  const projectName = project.docs[0]?.name || projectSlug
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs } = response
+
+  const projectName = docs[0]?.name || projectSlug
 
   return {
-    title: `Lyovson.com | ${projectName}`,
-    description: project.docs[0]?.description || `Posts from ${projectName}`,
+    title: `${projectName} | Lyovson.com`,
+    description: docs[0]?.description || `Posts from ${projectName}`,
   }
 }
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
-  const projects = await payload.find({
+  const response = await payload.find({
     collection: 'projects',
     limit: 1000,
   })
 
-  return projects.docs.map(({ slug }) => ({
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs } = response
+
+  return docs.map(({ slug }) => ({
     project: slug,
   }))
 }

@@ -23,7 +23,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const sanitizedPageNumber = Number(pageNumber)
   if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
-  const project = await payload.find({
+  const projectResponse = await payload.find({
     collection: 'projects',
     where: {
       slug: {
@@ -33,10 +33,17 @@ export default async function Page({ params: paramsPromise }: Args) {
     limit: 1,
   })
 
-  const projectId = project.docs[0]?.id
+  if (!projectResponse) {
+    return notFound()
+  }
+
+  const { docs } = projectResponse
+
+  const projectId = docs[0].id
+
   if (!projectId) notFound()
 
-  const posts = await payload.find({
+  const postsResponse = await payload.find({
     collection: 'posts',
     depth: 1,
     limit: 12,
@@ -49,14 +56,18 @@ export default async function Page({ params: paramsPromise }: Args) {
     overrideAccess: false,
   })
 
+  if (!postsResponse) {
+    return notFound()
+  }
+
+  const { docs: posts, totalPages, page } = postsResponse
+
   return (
     <>
       <GridCardHeader />
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={posts} />
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
     </>
   )
@@ -66,7 +77,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { project: projectSlug, pageNumber } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const project = await payload.find({
+  const projectResponse = await payload.find({
     collection: 'projects',
     where: {
       slug: {
@@ -76,10 +87,16 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     limit: 1,
   })
 
-  const projectName = project.docs[0]?.name || projectSlug
+  if (!projectResponse) {
+    return notFound()
+  }
+
+  const { docs } = projectResponse
+
+  const projectName = docs[0]?.name || projectSlug
 
   return {
-    title: `${projectName} Posts Page ${pageNumber}`,
-    description: project.docs[0]?.description || `Posts from ${projectName}`,
+    title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
+    description: docs[0]?.description || `Posts from ${projectName}`,
   }
 }

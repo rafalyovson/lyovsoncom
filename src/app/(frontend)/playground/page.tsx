@@ -2,6 +2,7 @@ import { GridCardSubscribe, GridCardNav } from '@/components/grid'
 import { createContactAction } from '@/actions/create-contact-action'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { Metadata } from 'next'
 export default async function Playground() {
   const payload = await getPayload({ config: configPromise })
   const project = await payload.find({
@@ -26,4 +27,10 @@ export default async function Playground() {
       />
     </>
   )
+}
+
+export function generateMetadata(): Metadata {
+  return {
+    title: `Playground | Lyovson.com`,
+  }
 }

@@ -7,6 +7,7 @@ import React from 'react'
 import { Search } from '@/search/Component'
 import { GridCardHeader } from 'src/components/grid/card/header'
 import { Pagination } from '@/components/Pagination'
+import { notFound } from 'next/navigation'
 
 type Args = {
   searchParams: Promise<{
@@ -17,7 +18,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
+  const response = await payload.find({
     collection: 'search',
     depth: 1,
     limit: 12,
@@ -54,15 +55,19 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       : {}),
   })
 
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs, totalPages, page } = response
+
   return (
     <>
       <GridCardHeader />
       <Search />
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={docs} />
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
     </>
   )
@@ -70,6 +75,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Lyovson.com Search`,
+    title: `Search |Lyovson.com`,
   }
 }

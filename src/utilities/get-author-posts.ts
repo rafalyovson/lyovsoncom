@@ -16,6 +16,10 @@ export async function getAuthorPosts(username: string) {
     limit: 1,
   })
 
+  if (!user || !user.docs || !user.docs[0]) {
+    return null
+  }
+
   const authorId = user.docs[0]?.id
 
   // Then query posts using the author ID

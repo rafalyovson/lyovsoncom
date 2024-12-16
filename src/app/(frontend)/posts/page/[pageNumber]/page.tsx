@@ -1,5 +1,4 @@
 import type { Metadata } from 'next/types'
-
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
@@ -24,7 +23,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
-  const posts = await payload.find({
+  const response = await payload.find({
     collection: 'posts',
     depth: 1,
     limit: 12,
@@ -32,15 +31,19 @@ export default async function Page({ params: paramsPromise }: Args) {
     overrideAccess: false,
   })
 
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs, totalPages, page } = response
+
   return (
     <>
       <GridCardHeader />
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={docs} />
 
       <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Pagination page={posts.page} totalPages={posts.totalPages} />
-        )}
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
     </>
   )
@@ -49,7 +52,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
   return {
-    title: `Lyovson.com Posts Page ${pageNumber || ''}`,
+    title: `Posts Page ${pageNumber || ''} | Lyovson.com`,
   }
 }
 

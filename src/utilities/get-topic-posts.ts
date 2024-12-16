@@ -16,6 +16,10 @@ export async function getTopicPosts(slug: string) {
 
   const topicId = topic.docs[0]?.id
 
+  if (!topicId) {
+    return null
+  }
+
   return await payload.find({
     collection: 'posts',
     depth: 1,

@@ -1,3 +1,4 @@
+import { Metadata } from 'next'
 import { GridCardHeader } from 'src/components/grid/card/header'
 
 export default function PrivacyPolicy() {
@@ -228,4 +229,11 @@ export default function PrivacyPolicy() {
       </article>
     </>
   )
+}
+
+export function generateMetadata(): Metadata {
+  return {
+    title: 'Privacy Policy | Lyovson.com',
+    description: 'Privacy Policy for Lyovson.com',
+  }
 }

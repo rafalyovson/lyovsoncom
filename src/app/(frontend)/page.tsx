@@ -35,7 +35,7 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Lyovson.com`,
+    title: 'Lyovson.com',
     description: 'Official website of Rafa and Jess Lyovsons',
   }
 }

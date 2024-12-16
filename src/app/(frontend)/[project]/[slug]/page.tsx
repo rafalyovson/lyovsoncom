@@ -20,7 +20,7 @@ export default async function Post({ params: paramsPromise }: Args) {
   const { project: projectSlug, slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const post = await payload.find({
+  const response = await payload.find({
     collection: 'posts',
     depth: 2,
     where: {
@@ -39,9 +39,11 @@ export default async function Post({ params: paramsPromise }: Args) {
     },
   })
 
-  if (!post.docs[0]) {
+  if (!response) {
     return notFound()
   }
+
+  const { docs } = response
 
   return (
     <>
@@ -49,18 +51,18 @@ export default async function Post({ params: paramsPromise }: Args) {
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-1 g2:row-end-2 g4:h-[400px] g4:self-start`}
       />
       <GridCardHero
-        post={post.docs[0]}
+        post={docs[0]}
         className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2 g3:col-start-2 g3:col-end-4 g4:self-start`}
       />
 
       <div className="g2:col-start-2 g2:col-end-4 g2:row-start-2 g2:row-auto">
-        <RichText className="h-full" content={post.docs[0].content} enableGutter={true} />
+        <RichText className="h-full" content={docs[0].content} enableGutter={true} />
       </div>
       <div
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2`}
       >
-        {post.docs[0].relatedPosts && post.docs[0].relatedPosts.length > 0 && (
-          <GridCardRelatedPosts posts={post.docs[0].relatedPosts} />
+        {docs[0].relatedPosts && docs[0].relatedPosts.length > 0 && (
+          <GridCardRelatedPosts posts={docs[0].relatedPosts} />
         )}
       </div>
     </>
@@ -71,7 +73,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { project: projectSlug, slug } = await paramsPromise
   const payload = await getPayload({ config: configPromise })
 
-  const post = await payload.find({
+  const response = await payload.find({
     collection: 'posts',
     depth: 1,
     where: {
@@ -90,10 +92,16 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
   })
 
-  if (!post.docs[0]) return {}
+  if (!response) {
+    return notFound()
+  }
+
+  const { docs } = response
+
+  if (!docs[0]) return {}
 
   return {
-    title: `${post.docs[0].meta?.title || post.docs[0].title}`,
-    description: post.docs[0].meta?.description,
+    title: `${docs[0].meta?.title || docs[0].title} | Lyovson.com`,
+    description: docs[0].meta?.description,
   }
 }

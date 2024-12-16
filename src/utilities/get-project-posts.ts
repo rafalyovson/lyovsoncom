@@ -14,7 +14,11 @@ export async function getProjectPosts(slug: string) {
     limit: 1,
   })
 
-  const projectId = project.docs[0]?.id
+  if (!project || !project.docs || !project.docs[0]) {
+    return null
+  }
+
+  const projectId = project.docs[0].id
 
   return await payload.find({
     collection: 'posts',
