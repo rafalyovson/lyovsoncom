@@ -25,7 +25,7 @@ export const GridCardRelatedPosts = ({
             className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} `}
           >
             <GridCardSection className={`grid grid-cols-3 grid-rows-1 gap-2 h-full`}>
-              {metaImage && typeof metaImage !== 'string' && (
+              {metaImage && (
                 <Media
                   imgClassName="-z-10 object-cover h-full rounded-lg"
                   resource={metaImage}
