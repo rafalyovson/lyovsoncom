@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
 import { slugField } from '@/fields/slug'
+import { revalidateTag } from 'next/cache'
 
 export const Topics: CollectionConfig = {
   slug: 'topics',
@@ -48,6 +49,16 @@ export const Topics: CollectionConfig = {
           }
         }
         return data
+      },
+    ],
+    afterChange: [
+      async () => {
+        revalidateTag('sitemap')
+      },
+    ],
+    afterDelete: [
+      async () => {
+        revalidateTag('sitemap')
       },
     ],
   },
