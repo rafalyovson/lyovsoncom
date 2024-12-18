@@ -9,7 +9,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { getProject } from '@/utilities/get-project'
 
-export const dynamic = 'force-static'
+export const dynamicParams = false
 export const revalidate = 600
 
 interface PageProps {
@@ -21,77 +21,40 @@ interface PageProps {
 export default async function Page({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise
 
-  const project = await getProject(projectSlug)
-  if (!project) {
+  const response = await getProjectPosts(projectSlug)
+
+  if (!response) {
     return notFound()
   }
 
-  try {
-    const payload = await getPayload({ config: configPromise })
-    const projectResponse = await payload.find({
-      collection: 'projects',
-      where: {
-        slug: {
-          equals: projectSlug,
-        },
-      },
-      limit: 1,
-    })
+  const { docs, totalPages, page } = response
 
-    if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
-      return notFound()
-    }
-
-    const response = await getProjectPosts(projectSlug)
-
-    if (!response) {
-      return notFound()
-    }
-
-    const { docs, totalPages, page } = response
-
-    return (
-      <>
-        <GridCardHeader />
-        <CollectionArchive posts={docs} />
-        <div className="container">
-          {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
-        </div>
-      </>
-    )
-  } catch (error) {
-    console.error('Error fetching project:', error)
-    return notFound()
-  }
+  return (
+    <>
+      <GridCardHeader />
+      <CollectionArchive posts={docs} />
+      <div className="container">
+        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
+      </div>
+    </>
+  )
 }
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
   const { project: projectSlug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const response = await payload.find({
-    collection: 'projects',
-    where: {
-      slug: {
-        equals: projectSlug,
-      },
-    },
-    limit: 1,
-  })
-
-  if (!response || !response.docs || response.docs.length === 0) {
+  const project = await getProject(projectSlug)
+  if (!project) {
     return {
       title: 'Not Found | Lyovson.com',
       description: 'The requested project could not be found',
     }
   }
-
-  const { docs } = response
-  const projectName = docs[0]?.name || projectSlug
+  const projectName = project.name || projectSlug
 
   return {
     title: `${projectName} | Lyovson.com`,
-    description: docs[0]?.description || `Posts from ${projectName}`,
+    description: project.description || `Posts from ${projectName}`,
   }
 }
 

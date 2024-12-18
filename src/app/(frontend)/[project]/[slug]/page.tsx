@@ -16,6 +16,43 @@ type Args = {
   }>
 }
 
+export const dynamicParams = false
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const projects = await payload.find({
+    collection: 'projects',
+    limit: 1000,
+  })
+
+  const paths: { project: string; slug: string }[] = []
+
+  for (const project of projects.docs) {
+    if (project.slug) {
+      const posts = await payload.find({
+        collection: 'posts',
+        where: {
+          'project.id': {
+            equals: project.id,
+          },
+        },
+        limit: 1000,
+      })
+
+      for (const post of posts.docs) {
+        if (post.slug) {
+          paths.push({
+            project: project.slug,
+            slug: post.slug,
+          })
+        }
+      }
+    }
+  }
+
+  return paths
+}
+
 export default async function Post({ params: paramsPromise }: Args) {
   const { project: projectSlug, slug } = await paramsPromise
 

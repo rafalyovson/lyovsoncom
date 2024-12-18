@@ -9,6 +9,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export const revalidate = 600
+export const dynamicParams = false
 
 type Args = {
   params: Promise<{
@@ -64,28 +65,38 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { project: projectSlug, pageNumber } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const projectResponse = await payload.find({
-    collection: 'projects',
-    where: {
-      slug: {
-        equals: projectSlug,
-      },
-    },
-    limit: 1,
-  })
-
-  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+  const project = await getProject(projectSlug)
+  if (!project) {
     return notFound()
   }
 
-  const { docs } = projectResponse
-
-  const projectName = docs[0]?.name || projectSlug
+  const projectName = project.name || projectSlug
 
   return {
     title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
-    description: docs[0]?.description || `Posts from ${projectName}`,
+    description: project.description || `Posts from ${projectName}`,
   }
+}
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const projects = await payload.find({
+    collection: 'projects',
+    limit: 1000,
+  })
+
+  const paths: { project: string; pageNumber: string }[] = []
+
+  for (const project of projects.docs) {
+    if (project.slug) {
+      // Generate first page for each project
+      paths.push({
+        project: project.slug,
+        pageNumber: '1',
+      })
+    }
+  }
+
+  return paths
 }
