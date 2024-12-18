@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import React from 'react'
 import RichText from '@/components/RichText'
 import { GridCardHero } from 'src/components/grid/card/hero'
 import { GridCardRelatedPosts } from '@/components/grid/card/related'
 import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
+import { getProject } from '@/utilities/get-project'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 
 type Args = {
   params: Promise<{
@@ -17,8 +18,13 @@ type Args = {
 
 export default async function Post({ params: paramsPromise }: Args) {
   const { project: projectSlug, slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
+  const project = await getProject(projectSlug)
+  if (!project) {
+    return notFound()
+  }
+
+  const payload = await getPayload({ config: configPromise })
   const response = await payload.find({
     collection: 'posts',
     depth: 2,
@@ -43,7 +49,6 @@ export default async function Post({ params: paramsPromise }: Args) {
   }
 
   const post = response.docs[0]
-
   if (!post || !post.content) {
     return notFound()
   }
@@ -57,7 +62,6 @@ export default async function Post({ params: paramsPromise }: Args) {
         post={post}
         className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2 g3:col-start-2 g3:col-end-4 g4:self-start`}
       />
-
       <div className="g2:col-start-2 g2:col-end-4 g2:row-start-2 g2:row-auto">
         <RichText className="h-full" content={post.content} enableGutter={true} />
       </div>

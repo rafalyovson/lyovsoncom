@@ -7,6 +7,7 @@ import { getProjectPosts } from '@/utilities/get-project-posts'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { getProject } from '@/utilities/get-project'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -20,39 +21,48 @@ interface PageProps {
 export default async function Page({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise
 
-  // First check if project exists
-  const payload = await getPayload({ config: configPromise })
-  const projectResponse = await payload.find({
-    collection: 'projects',
-    where: {
-      slug: {
-        equals: projectSlug,
+  const project = await getProject(projectSlug)
+  if (!project) {
+    return notFound()
+  }
+
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const projectResponse = await payload.find({
+      collection: 'projects',
+      where: {
+        slug: {
+          equals: projectSlug,
+        },
       },
-    },
-    limit: 1,
-  })
+      limit: 1,
+    })
 
-  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+    if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+      return notFound()
+    }
+
+    const response = await getProjectPosts(projectSlug)
+
+    if (!response) {
+      return notFound()
+    }
+
+    const { docs, totalPages, page } = response
+
+    return (
+      <>
+        <GridCardHeader />
+        <CollectionArchive posts={docs} />
+        <div className="container">
+          {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
+        </div>
+      </>
+    )
+  } catch (error) {
+    console.error('Error fetching project:', error)
     return notFound()
   }
-
-  const response = await getProjectPosts(projectSlug)
-
-  if (!response) {
-    return notFound()
-  }
-
-  const { docs, totalPages, page } = response
-
-  return (
-    <>
-      <GridCardHeader />
-      <CollectionArchive posts={docs} />
-      <div className="container">
-        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
-      </div>
-    </>
-  )
 }
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {

@@ -4,6 +4,7 @@ import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { notFound } from 'next/navigation'
 import { GridCardHeader } from 'src/components/grid/card/header'
+import { getProject } from '@/utilities/get-project'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
@@ -18,30 +19,18 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { project: projectSlug, pageNumber } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const sanitizedPageNumber = Number(pageNumber)
-  if (!Number.isInteger(sanitizedPageNumber)) notFound()
-
-  const projectResponse = await payload.find({
-    collection: 'projects',
-    where: {
-      slug: {
-        equals: projectSlug,
-      },
-    },
-    limit: 1,
-  })
-
-  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+  const project = await getProject(projectSlug)
+  if (!project) {
     return notFound()
   }
 
-  const { docs } = projectResponse
+  const sanitizedPageNumber = Number(pageNumber)
+  if (!Number.isInteger(sanitizedPageNumber)) {
+    return notFound()
+  }
 
-  const projectId = docs[0].id
-
-  if (!projectId) notFound()
+  const payload = await getPayload({ config: configPromise })
 
   const postsResponse = await payload.find({
     collection: 'posts',
@@ -50,7 +39,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     page: sanitizedPageNumber,
     where: {
       project: {
-        equals: projectId,
+        equals: project.id,
       },
     },
     overrideAccess: false,
