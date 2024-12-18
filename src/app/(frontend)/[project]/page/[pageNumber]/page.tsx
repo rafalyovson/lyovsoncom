@@ -87,10 +87,6 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     limit: 1,
   })
 
-  if (!projectResponse) {
-    return notFound()
-  }
-
   const { docs } = projectResponse
 
   const projectName = docs[0]?.name || projectSlug

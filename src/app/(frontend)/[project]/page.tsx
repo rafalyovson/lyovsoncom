@@ -27,7 +27,7 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 
   const { docs, totalPages, page } = response
 
-  if (!docs.length) {
+  if (!docs || docs.length === 0) {
     return notFound()
   }
 
@@ -56,10 +56,6 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  if (!response) {
-    return notFound()
-  }
-
   const { docs } = response
 
   const projectName = docs[0]?.name || projectSlug
@@ -76,10 +72,6 @@ export async function generateStaticParams() {
     collection: 'projects',
     limit: 1000,
   })
-
-  if (!response) {
-    return notFound()
-  }
 
   const { docs } = response
 

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -39,11 +38,15 @@ export default async function Post({ params: paramsPromise }: Args) {
     },
   })
 
-  if (!response) {
+  if (!response || !response.docs || response.docs.length === 0) {
     return notFound()
   }
 
-  const { docs } = response
+  const post = response.docs[0]
+
+  if (!post || !post.content) {
+    return notFound()
+  }
 
   return (
     <>
@@ -51,18 +54,18 @@ export default async function Post({ params: paramsPromise }: Args) {
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-1 g2:row-end-2 g4:h-[400px] g4:self-start`}
       />
       <GridCardHero
-        post={docs[0]}
+        post={post}
         className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2 g3:col-start-2 g3:col-end-4 g4:self-start`}
       />
 
       <div className="g2:col-start-2 g2:col-end-4 g2:row-start-2 g2:row-auto">
-        <RichText className="h-full" content={docs[0].content} enableGutter={true} />
+        <RichText className="h-full" content={post.content} enableGutter={true} />
       </div>
       <div
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2`}
       >
-        {docs[0].relatedPosts && docs[0].relatedPosts.length > 0 && (
-          <GridCardRelatedPosts posts={docs[0].relatedPosts} />
+        {post.relatedPosts && post.relatedPosts.length > 0 && (
+          <GridCardRelatedPosts posts={post.relatedPosts} />
         )}
       </div>
     </>
@@ -92,13 +95,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
   })
 
-  if (!response) {
-    return notFound()
-  }
-
   const { docs } = response
-
-  if (!docs[0]) return {}
 
   return {
     title: `${docs[0].meta?.title || docs[0].title} | Lyovson.com`,
