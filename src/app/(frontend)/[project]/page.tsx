@@ -4,12 +4,13 @@ import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { GridCardHeader } from 'src/components/grid/card/header'
 import { getProjectPosts } from '@/utilities/get-project-posts'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
+export const dynamicParams = false
 
 interface PageProps {
   params: Promise<{
@@ -19,6 +20,25 @@ interface PageProps {
 
 export default async function Page({ params: paramsPromise }: PageProps) {
   const { project: projectSlug } = await paramsPromise
+
+  // First check if project exists
+  const payload = await getPayload({ config: configPromise })
+  const projectResponse = await payload.find({
+    collection: 'projects',
+    where: {
+      slug: {
+        equals: projectSlug,
+      },
+    },
+    limit: 1,
+  })
+
+  // If project doesn't exist, return 404 immediately
+  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+    return notFound()
+  }
+
+  // Only fetch posts if project exists
   const response = await getProjectPosts(projectSlug)
 
   if (!response) {
@@ -26,10 +46,6 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   }
 
   const { docs, totalPages, page } = response
-
-  if (!docs || docs.length === 0) {
-    return notFound()
-  }
 
   return (
     <>
@@ -56,8 +72,15 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  const { docs } = response
+  // Handle non-existent projects in metadata
+  if (!response || !response.docs || response.docs.length === 0) {
+    return {
+      title: 'Not Found | Lyovson.com',
+      description: 'The requested project could not be found',
+    }
+  }
 
+  const { docs } = response
   const projectName = docs[0]?.name || projectSlug
 
   return {
