@@ -73,8 +73,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
   )
 }
 
-export function generateMetadata(): Metadata {
-  return {
-    title: `Search |Lyovson.com`,
-  }
+export const metadata: Metadata = {
+  title: `Search |Lyovson.com`,
+  description: 'Search for posts on Lyovson.com',
 }

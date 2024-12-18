@@ -1,5 +1,6 @@
 import { GridCardHeader } from '@/components/grid'
 import { GridCardSubscribeConfirmed } from '@/components/grid'
+import { Metadata } from 'next'
 
 export default function SubscriptionConfirmed() {
   return (
@@ -8,4 +9,9 @@ export default function SubscriptionConfirmed() {
       <GridCardSubscribeConfirmed />
     </>
   )
+}
+
+export const metadata: Metadata = {
+  title: 'Subscription Confirmed | Lyovson.com',
+  description: 'Subscription Confirmed for Lyovson.com',
 }

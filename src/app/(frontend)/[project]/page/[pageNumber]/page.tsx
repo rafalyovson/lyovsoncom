@@ -33,7 +33,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     limit: 1,
   })
 
-  if (!projectResponse) {
+  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
     return notFound()
   }
 
@@ -86,6 +86,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
     limit: 1,
   })
+
+  if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
+    return notFound()
+  }
 
   const { docs } = projectResponse
 

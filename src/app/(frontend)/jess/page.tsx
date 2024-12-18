@@ -29,9 +29,7 @@ export default async function Page() {
   )
 }
 
-export function generateMetadata(): Metadata {
-  return {
-    title: `Jess's Posts | Lyovson.com`,
-    description: 'Official website of Rafa and Jess Lyovsons',
-  }
+export const metadata: Metadata = {
+  title: `Jess's Posts | Lyovson.com`,
+  description: 'Official website of Rafa and Jess Lyovsons',
 }

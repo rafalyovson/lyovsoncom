@@ -231,9 +231,7 @@ export default function PrivacyPolicy() {
   )
 }
 
-export function generateMetadata(): Metadata {
-  return {
-    title: 'Privacy Policy | Lyovson.com',
-    description: 'Privacy Policy for Lyovson.com',
-  }
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Lyovson.com',
+  description: 'Privacy Policy for Lyovson.com',
 }

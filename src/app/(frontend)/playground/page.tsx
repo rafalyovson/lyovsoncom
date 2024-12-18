@@ -29,8 +29,6 @@ export default async function Playground() {
   )
 }
 
-export function generateMetadata(): Metadata {
-  return {
-    title: `Playground | Lyovson.com`,
-  }
+export const metadata: Metadata = {
+  title: `Playground | Lyovson.com`,
 }

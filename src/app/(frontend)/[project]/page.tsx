@@ -10,7 +10,6 @@ import configPromise from '@payload-config'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
-export const dynamicParams = false
 
 interface PageProps {
   params: Promise<{
@@ -33,12 +32,10 @@ export default async function Page({ params: paramsPromise }: PageProps) {
     limit: 1,
   })
 
-  // If project doesn't exist, return 404 immediately
   if (!projectResponse || !projectResponse.docs || projectResponse.docs.length === 0) {
     return notFound()
   }
 
-  // Only fetch posts if project exists
   const response = await getProjectPosts(projectSlug)
 
   if (!response) {
@@ -72,7 +69,6 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     limit: 1,
   })
 
-  // Handle non-existent projects in metadata
   if (!response || !response.docs || response.docs.length === 0) {
     return {
       title: 'Not Found | Lyovson.com',

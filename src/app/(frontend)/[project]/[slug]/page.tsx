@@ -95,6 +95,13 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
   })
 
+  if (!response || !response.docs || response.docs.length === 0) {
+    return {
+      title: 'Not Found | Lyovson.com',
+      description: 'The requested project could not be found',
+    }
+  }
+
   const { docs } = response
 
   return {
