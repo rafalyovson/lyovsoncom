@@ -1,8 +1,9 @@
+import Link from 'next/link'
+
 import { GridCardSection, GridCard } from '@/components/grid'
 import { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 
-import Link from 'next/link'
 
 export const GridCardRelatedPosts = ({
   posts,

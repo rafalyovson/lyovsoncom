@@ -1,4 +1,5 @@
 import React from 'react'
+
 import type { QuoteBlock as QuoteBlockType } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/cn'

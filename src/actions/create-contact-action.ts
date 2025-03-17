@@ -1,9 +1,10 @@
 'use server'
 
-import { Contact } from '@/payload-types'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { z } from 'zod'
+
+import { Contact } from '@/payload-types'
 import { generateToken } from '@/utilities/generateToken'
 import { getSubscriptionConfirmationEmail } from '@/emails/subscription-confirmation'
 

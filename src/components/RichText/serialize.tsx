@@ -1,11 +1,5 @@
-import { BannerBlock } from '@/blocks/Banner/Component'
-import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
-import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import React, { Fragment, JSX } from 'react'
-import { CMSLink } from '@/components/Link'
 import { DefaultNodeTypes, SerializedBlockNode } from '@payloadcms/richtext-lexical'
-import type { BannerBlock as BannerBlockProps } from '@/payload-types'
-import type { GIFBlock as GIFBlockProps } from '@/blocks/GIF/types'
 
 import {
   IS_BOLD,
@@ -16,6 +10,13 @@ import {
   IS_SUPERSCRIPT,
   IS_UNDERLINE,
 } from './nodeFormat'
+
+import { BannerBlock } from '@/blocks/Banner/Component'
+import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
+import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { CMSLink } from '@/components/Link'
+import type { BannerBlock as BannerBlockProps } from '@/payload-types'
+import type { GIFBlock as GIFBlockProps } from '@/blocks/GIF/types'
 import type {
   MediaBlock as MediaBlockProps,
   YouTubeBlock as YouTubeBlockProps,
@@ -180,7 +181,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                     aria-checked={node.checked ? 'true' : 'false'}
                     className={` ${node.checked ? '' : ''}`}
                     key={index}
-                    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+                     
                     role="checkbox"
                     tabIndex={-1}
                     value={node?.value}

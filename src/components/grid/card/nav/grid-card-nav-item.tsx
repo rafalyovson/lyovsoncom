@@ -1,6 +1,7 @@
 import Link from 'next/link'
-import { GridCardSection } from '../section'
 import { ReactNode } from 'react'
+
+import { GridCardSection } from '../section'
 
 type GridCardNavItemProps = {
   children: ReactNode

@@ -1,7 +1,7 @@
 import { Newspaper } from 'lucide-react'
-
 import { User } from 'lucide-react'
 import { X } from 'lucide-react'
+
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
 

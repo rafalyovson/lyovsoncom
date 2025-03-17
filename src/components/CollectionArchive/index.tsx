@@ -1,4 +1,5 @@
 import React from 'react'
+
 import type { Post, Search } from '@/payload-types'
 import { GridCardPost } from '@/components/grid'
 

@@ -1,11 +1,15 @@
 'use client'
 
-import { GridCard } from '@/components/grid/'
-import { GridCardSection } from '../section'
-import { cn } from '@/utilities/cn'
-import { SubscribeForm } from './subscribe-form'
-import { ActionResponse } from '@/actions/create-contact-action'
 import { useActionState } from 'react'
+
+import { GridCardSection } from '../section'
+
+import { SubscribeForm } from './subscribe-form'
+
+import { GridCard } from '@/components/grid/'
+import { cn } from '@/utilities/cn'
+import { ActionResponse } from '@/actions/create-contact-action'
+
 
 type GridCardSubscribeProps = {
   title?: string

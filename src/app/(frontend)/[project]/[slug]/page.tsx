@@ -1,13 +1,14 @@
 import type { Metadata } from 'next'
 import React from 'react'
-import RichText from '@/components/RichText'
 import { GridCardHero } from 'src/components/grid/card/hero'
-import { GridCardRelatedPosts } from '@/components/grid/card/related'
 import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
-import { getProject } from '@/utilities/get-project'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+
+import { getProject } from '@/utilities/get-project'
+import { GridCardRelatedPosts } from '@/components/grid/card/related'
+import RichText from '@/components/RichText'
 
 type Args = {
   params: Promise<{

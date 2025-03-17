@@ -1,0 +1,443 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@plugin @tailwindcss/typography;
+
+/* Base theme variables - Light mode */
+:root {
+  /* Core colors */
+  --background: hsl(0 0% 100%);
+  --background-rgb: 255, 255, 255;
+  --foreground: hsl(0 0% 3.9%);
+  --foreground-rgb: 10, 10, 10;
+
+  /* Gold palette */
+  --gold: hsl(39.3deg 37.2% 52.5%);
+  --gold-rgb: 179, 148, 89;
+  --gold-dark: hsl(42.6deg 33% 41%);
+  --gold-dark-rgb: 139, 115, 69;
+  --gold-light: hsl(39deg 40% 65%);
+  --gold-light-rgb: 204, 178, 128;
+
+  /* Red carpet palette */
+  --red-carpet: hsl(350 65% 40%);
+  --red-carpet-rgb: 163, 36, 57;
+  --red-carpet-dark: hsl(350 65% 30%);
+  --red-carpet-dark-rgb: 122, 27, 43;
+  --red-carpet-light: hsl(350 65% 50%);
+  --red-carpet-light-rgb: 204, 45, 71;
+
+  /* Neutral gray scale */
+  --gray-100: hsl(0 0% 96.1%);
+  --gray-200: hsl(0 0% 89.8%);
+  --gray-300: hsl(0 0% 83.7%);
+  --gray-400: hsl(0 0% 63.9%);
+  --gray-500: hsl(0 0% 45.1%);
+  --gray-600: hsl(0 0% 32.2%);
+  --gray-700: hsl(0 0% 23%);
+  --gray-800: hsl(0 0% 14.9%);
+  --gray-900: hsl(0 0% 9%);
+
+  /* UI elements - ShadcnUI compatibility */
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--gold);
+  --radius: 0.5rem;
+
+  /* Semantic colors - ShadcnUI compatibility */
+  --primary: var(--gold);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--gray-900);
+  --accent: var(--gray-100);
+  --accent-foreground: var(--gray-900);
+  --destructive: hsl(0 84.2% 60.2%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --success: hsl(142.1 76.2% 36.3%);
+  --success-foreground: hsl(0 0% 98%);
+  --warning: hsl(38 92.7% 50.2%);
+  --warning-foreground: hsl(0 0% 98%);
+  --info: hsl(221.2 83.2% 53.3%);
+  --info-foreground: hsl(0 0% 98%);
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-500);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: var(--foreground);
+  --card: hsl(0 0% 100%);
+  --card-foreground: var(--foreground);
+
+  /* Sidebar specific */
+  --sidebar: hsl(0 0% 98%);
+  --sidebar-foreground: hsl(240 5.3% 26.1%);
+  --sidebar-primary: hsl(240 5.9% 10%);
+  --sidebar-primary-foreground: hsl(0 0% 98%);
+  --sidebar-accent: hsl(240 4.8% 95.9%);
+  --sidebar-accent-foreground: hsl(240 5.9% 10%);
+  --sidebar-border: hsl(220 13% 91%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Gold shadows */
+  --shadow-gold-sm:
+    0 1px 3px 0 rgba(var(--gold-rgb), 0.1), 0 1px 2px -1px rgba(var(--gold-rgb), 0.1);
+  --shadow-gold-md:
+    0 4px 6px -1px rgba(var(--gold-rgb), 0.1), 0 2px 4px -2px rgba(var(--gold-rgb), 0.1);
+  --shadow-gold-lg:
+    0 10px 15px -3px rgba(var(--gold-rgb), 0.1), 0 4px 6px -4px rgba(var(--gold-rgb), 0.1);
+
+  /* Animation */
+  --transition-fast: 150ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-emphasis: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ShadcnUI compatibility - Animation */
+  --ring-offset-shadow: 0 0 #0000;
+  --ring-shadow: 0 0 #0000;
+  --shadow-color: 0 0 #0000;
+  --shadow: var(--shadow);
+
+  /* ShadcnUI compatibility - Component specific */
+  --card-foreground-rgb: var(--foreground-rgb);
+  --card-border-rgb: var(--border);
+  --popover-foreground-rgb: var(--foreground-rgb);
+  --input-placeholder: var(--muted-foreground);
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+/* Dark theme overrides */
+.dark {
+  /* Core colors */
+  --background: hsl(0 0% 3.9%);
+  --background-rgb: 10, 10, 10;
+  --foreground: hsl(0 0% 98%);
+  --foreground-rgb: 250, 250, 250;
+
+  /* Gold palette - consistent across themes */
+  --gold: hsl(39.3deg 37.2% 52.5%);
+  --gold-rgb: 179, 148, 89;
+  --gold-dark: hsl(42.6deg 33% 41%);
+  --gold-dark-rgb: 139, 115, 69;
+  --gold-light: hsl(39deg 40% 65%);
+  --gold-light-rgb: 204, 178, 128;
+
+  /* Red carpet palette - consistent across themes */
+  --red-carpet: hsl(350 65% 40%);
+  --red-carpet-rgb: 163, 36, 57;
+  --red-carpet-dark: hsl(350 65% 30%);
+  --red-carpet-dark-rgb: 122, 27, 43;
+  --red-carpet-light: hsl(350 65% 50%);
+  --red-carpet-light-rgb: 204, 45, 71;
+
+  /* UI elements */
+  --border: var(--gray-800);
+  --input: var(--gray-800);
+  --ring: var(--gold);
+
+  /* Semantic colors */
+  --primary: var(--gold);
+  --primary-foreground: hsl(0 0% 98%);
+  --secondary: var(--gray-800);
+  --secondary-foreground: hsl(0 0% 98%);
+  --accent: var(--gray-800);
+  --accent-foreground: hsl(0 0% 98%);
+  --destructive: hsl(0 62.8% 30.6%);
+  --destructive-foreground: hsl(0 0% 98%);
+  --success: hsl(142.1 70.6% 29.2%);
+  --success-foreground: hsl(0 0% 98%);
+  --warning: hsl(38 92.7% 40.2%);
+  --warning-foreground: hsl(0 0% 98%);
+  --info: hsl(221.2 83.2% 43.3%);
+  --info-foreground: hsl(0 0% 98%);
+  --muted: var(--gray-800);
+  --muted-foreground: var(--gray-400);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+
+  /* Sidebar specific */
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+
+  /* Shadows - darker in dark mode */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.15);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.2);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.2), 0 8px 10px -6px rgb(0 0 0 / 0.2);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.35);
+
+  /* Gold shadows - more intense in dark mode */
+  --shadow-gold-sm:
+    0 1px 3px 0 rgba(var(--gold-rgb), 0.15), 0 1px 2px -1px rgba(var(--gold-rgb), 0.15);
+  --shadow-gold-md:
+    0 4px 6px -1px rgba(var(--gold-rgb), 0.15), 0 2px 4px -2px rgba(var(--gold-rgb), 0.15);
+  --shadow-gold-lg:
+    0 10px 15px -3px rgba(var(--gold-rgb), 0.15), 0 4px 6px -4px rgba(var(--gold-rgb), 0.15);
+
+  /* ShadcnUI compatibility - Component specific */
+  --card-foreground-rgb: var(--foreground-rgb);
+  --card-border-rgb: var(--border);
+  --popover-foreground-rgb: var(--foreground-rgb);
+  --input-placeholder: var(--muted-foreground);
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-gold: var(--gold);
+  --color-gold-dark: var(--gold-dark);
+  --color-gold-light: var(--gold-light);
+  --color-border: var(--border);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-in-up {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slide-in-down {
+    from {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes gold-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(var(--gold-rgb), 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(var(--gold-rgb), 0);
+    }
+  }
+}
+
+/* Safe area utilities for iOS devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 1rem);
+}
+
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 1rem);
+}
+
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 1rem);
+}
+
+/* Animation utility classes */
+.animate-fade-in {
+  animation: fade-in var(--transition-normal) var(--ease-standard) forwards;
+}
+
+.animate-slide-in-up {
+  animation: slide-in-up var(--transition-normal) var(--ease-standard) forwards;
+}
+
+.animate-slide-in-down {
+  animation: slide-in-down var(--transition-normal) var(--ease-standard) forwards;
+}
+
+.animate-gold-pulse {
+  animation: gold-pulse 2s infinite;
+}
+
+/* Gold effect utilities */
+.gold-glow-sm {
+  box-shadow: 0 0 5px rgba(var(--gold-rgb), 0.3);
+}
+
+.gold-glow-md {
+  box-shadow:
+    0 0 10px rgba(var(--gold-rgb), 0.4),
+    0 0 5px rgba(var(--gold-rgb), 0.2);
+}
+
+.gold-glow-lg {
+  box-shadow:
+    0 0 15px rgba(var(--gold-rgb), 0.5),
+    0 0 10px rgba(var(--gold-rgb), 0.3);
+}
+
+.text-gold-glow {
+  text-shadow: 0 0 8px rgba(var(--gold-rgb), 0.3);
+}
+
+/* Backdrop blur utilities */
+.backdrop-blur-xs {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.backdrop-blur-sm {
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.backdrop-blur-md {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+.backdrop-blur-lg {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Red carpet effect utilities */
+.red-carpet-glow-sm {
+  box-shadow:
+    0 1px 3px 0 rgba(var(--red-carpet-rgb), 0.1),
+    0 1px 2px -1px rgba(var(--red-carpet-rgb), 0.1);
+}
+
+.red-carpet-glow-md {
+  box-shadow:
+    0 4px 6px -1px rgba(var(--red-carpet-rgb), 0.1),
+    0 2px 4px -2px rgba(var(--red-carpet-rgb), 0.1);
+}
+
+.red-carpet-glow-lg {
+  box-shadow:
+    0 10px 15px -3px rgba(var(--red-carpet-rgb), 0.1),
+    0 4px 6px -4px rgba(var(--red-carpet-rgb), 0.1);
+}
+
+.text-red-carpet-glow {
+  text-shadow: 0 0 8px rgba(var(--red-carpet-rgb), 0.3);
+}
+
+/* ShadcnUI component overrides */
+/* These overrides enhance ShadcnUI components with our design language */
+
+/* Button - Gold variant */
+.btn-gold,
+.btn-gold:where(.btn):where(:not(.btn-outline)) {
+  background-color: var(--gold);
+  color: var(--primary-foreground);
+  border: none;
+}
+
+.btn-gold:hover,
+.btn-gold:where(.btn):where(:not(.btn-outline)):hover {
+  background-color: var(--gold-dark);
+}
+
+.btn-gold:focus-visible {
+  background-color: var(--gold-dark);
+  box-shadow: 0 0 0 2px rgba(var(--gold-rgb), 0.1);
+}
+
+/* Input focus states */
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+/* Checkbox and radio - checked state */
+.checkbox:checked,
+.radio:checked {
+  background-color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* Switch - checked state */
+.switch[aria-checked='true'] {
+  background-color: var(--gold);
+}
+
+/* Card with gold accent */
+.card-gold {
+  border-color: var(--gold);
+  border-left-width: 4px;
+}
+
+/* Toast with gold accent */
+.toast-gold {
+  border-color: var(--gold);
+}

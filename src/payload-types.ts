@@ -6,10 +6,65 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     posts: Post;
     media: Media;
@@ -103,6 +158,9 @@ export interface Post {
   relatedPosts?: (number | Post)[] | null;
   meta?: {
     title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
     image?: (number | null) | Media;
     description?: string | null;
   };
@@ -142,6 +200,9 @@ export interface Topic {
   id: number;
   name: string;
   description?: string | null;
+  /**
+   * Hex color code (e.g. #FF0000). Leave empty to inherit from parent.
+   */
   color?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -166,7 +227,13 @@ export interface Project {
   name: string;
   description?: string | null;
   image?: (number | null) | Media;
+  /**
+   * The Audience ID from Resend for managing newsletter subscriptions.
+   */
   resendAudienceId?: string | null;
+  /**
+   * List of contacts associated with this project.
+   */
   contacts?: (number | Contact)[] | null;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -266,13 +333,34 @@ export interface Contact {
   email: string;
   firstName?: string | null;
   lastName?: string | null;
+  /**
+   * Token used for email confirmation
+   */
   confirmationToken?: string | null;
+  /**
+   * When the confirmation token expires
+   */
   confirmationExpiry?: string | null;
+  /**
+   * Indicates if the contact has unsubscribed.
+   */
   unsubscribed?: boolean | null;
   status?: ('pending' | 'active' | 'unsubscribed') | null;
+  /**
+   * The project this contact is associated with.
+   */
   project: number | Project;
+  /**
+   * The unique Contact ID from Resend.
+   */
   resendContactId?: string | null;
+  /**
+   * The date and time the contact subscribed.
+   */
   subscribedAt?: string | null;
+  /**
+   * Optional notes about the contact.
+   */
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -302,6 +390,9 @@ export interface User {
  */
 export interface Redirect {
   id: number;
+  /**
+   * You will need to rebuild the website when changing this field.
+   */
   from: string;
   to?: {
     type?: ('reference' | 'custom') | null;
@@ -430,6 +521,9 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
+  /**
+   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
+   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -449,6 +543,9 @@ export interface Form {
   redirect?: {
     url: string;
   };
+  /**
+   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
+   */
   emails?:
     | {
         emailTo?: string | null;
@@ -457,6 +554,9 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
+        /**
+         * Enter the message that should be sent in this email.
+         */
         message?: {
           root: {
             type: string;
@@ -496,6 +596,8 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
+ * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search".
  */
@@ -1090,6 +1192,9 @@ export interface MediaBlock {
  * via the `definition` "YouTubeBlock".
  */
 export interface YouTubeBlock {
+  /**
+   * Enter a YouTube URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ) or video ID
+   */
   videoId: string;
   caption?: {
     root: {
@@ -1116,6 +1221,9 @@ export interface YouTubeBlock {
  * via the `definition` "XPostBlock".
  */
 export interface XPostBlock {
+  /**
+   * Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789) or post ID
+   */
   postId: string;
   caption?: {
     root: {
@@ -1167,6 +1275,9 @@ export interface QuoteBlock {
  */
 export interface GIFBlock {
   embedCode: {
+    /**
+     * Paste the full embed code from Tenor (click Share > Embed)
+     */
     raw: string;
     postId?: string | null;
     aspectRatio?: string | null;

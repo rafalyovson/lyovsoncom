@@ -1,11 +1,13 @@
 // storage-adapter-import-placeholder
+import path from 'path'
+import { fileURLToPath } from 'url'
+
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import sharp from 'sharp' // sharp-import
-import path from 'path'
 import { buildConfig } from 'payload'
-import { fileURLToPath } from 'url'
 import { resendAdapter } from '@payloadcms/email-resend'
+
 import { Media } from '@/collections/Media'
 import { Posts } from '@/collections/Posts'
 import { Users } from '@/collections/Users'

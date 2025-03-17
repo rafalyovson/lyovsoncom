@@ -1,7 +1,13 @@
 import type { CountryField } from '@payloadcms/plugin-form-builder/types'
 import type { Control, FieldErrorsImpl, FieldValues } from 'react-hook-form'
+import React from 'react'
+import { Controller } from 'react-hook-form'
 
-import { Label } from '@/components/ui/label'
+import { Error } from '../Error'
+import { Width } from '../Width'
+
+import { countryOptions } from './options'
+
 import {
   Select,
   SelectContent,
@@ -9,12 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import React from 'react'
-import { Controller } from 'react-hook-form'
-
-import { Error } from '../Error'
-import { Width } from '../Width'
-import { countryOptions } from './options'
+import { Label } from '@/components/ui/label'
 
 export const Country: React.FC<
   CountryField & {

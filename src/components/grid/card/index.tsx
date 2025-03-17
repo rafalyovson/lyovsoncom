@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react'
+
 import { Card } from '../../ui/card'
+
 import { cn } from '@/utilities/cn'
 
 export const GridCard = ({ children, className }: { children: ReactNode; className?: string }) => {

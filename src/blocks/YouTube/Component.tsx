@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
+
 import type { YouTubeBlock as YouTubeBlockType } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { cn } from '@/utilities/cn'
-import Image from 'next/image'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 
 const getAspectRatioClass = (ratio: string) => {

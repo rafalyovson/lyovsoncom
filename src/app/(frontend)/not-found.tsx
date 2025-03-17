@@ -1,6 +1,7 @@
 import React from 'react'
-import { GridCardNotFound, GridCardHeader } from '@/components/grid'
 import { Metadata } from 'next/types'
+
+import { GridCardNotFound, GridCardHeader } from '@/components/grid'
 
 export default function NotFound() {
   return (

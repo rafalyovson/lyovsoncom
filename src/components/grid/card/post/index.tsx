@@ -1,9 +1,10 @@
+import { BriefcaseBusiness, Calendar, User as UserIcon } from 'lucide-react'
+import Link from 'next/link'
+
 import { GridCard, GridCardSection } from '@/components/grid'
 import { Media } from '@/components/Media'
 import { Badge } from '@/components/ui/badge'
 import { Post } from '@/payload-types'
-import { BriefcaseBusiness, Calendar, User as UserIcon } from 'lucide-react'
-import Link from 'next/link'
 
 
 export const GridCardPost = ({ post, className }: { post: Post; className?: string }) => {

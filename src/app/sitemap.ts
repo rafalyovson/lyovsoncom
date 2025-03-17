@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+
 import type { Post, Project, Topic } from '@/payload-types'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

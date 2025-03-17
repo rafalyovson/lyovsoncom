@@ -1,5 +1,6 @@
-import { cn } from '@/utilities/cn'
 import { ReactNode } from 'react'
+
+import { cn } from '@/utilities/cn'
 
 export const GridCardSection = ({
   children,

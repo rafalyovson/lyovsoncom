@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect } from 'react'
+
 import type { XPostBlock as XPostBlockType } from '@/payload-types'
 import RichText from '@/components/RichText'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'

@@ -1,7 +1,8 @@
 import { LucideMenu, Search } from 'lucide-react'
-
 import Link from 'next/link'
+
 import { GridCardSection } from '../section'
+
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
 import { ThemeSwitcher } from './theme-switcher'

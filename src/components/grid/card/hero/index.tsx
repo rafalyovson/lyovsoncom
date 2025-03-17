@@ -1,9 +1,11 @@
-import { GridCard } from '@/components/grid'
-import { Post } from '@/payload-types'
 import Link from 'next/link'
 
-import { Media } from '@/components/Media'
 import { GridCardSection } from '../section'
+
+import { GridCard } from '@/components/grid'
+import { Post } from '@/payload-types'
+import { Media } from '@/components/Media'
+
 
 export const GridCardHero = async ({ className, post }: { className?: string; post: Post }) => {
   const metaImage = post.meta?.image

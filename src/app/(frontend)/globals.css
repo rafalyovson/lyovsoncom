@@ -45,7 +45,7 @@
     --error: 10 100% 86%;
   }
 
-  [data-theme='dark'] {
+  .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --card: 222.2 84% 4.9%;
@@ -84,13 +84,4 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-html {
-  opacity: 0;
-}
-
-html[data-theme='dark'],
-html[data-theme='light'] {
-  opacity: initial;
 }

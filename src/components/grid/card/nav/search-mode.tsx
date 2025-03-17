@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
 import { SearchInput } from './search-input'

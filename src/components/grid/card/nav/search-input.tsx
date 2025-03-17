@@ -1,5 +1,6 @@
-import { Input } from '@/components/ui/input'
 import { GridCardNavItem } from './grid-card-nav-item'
+
+import { Input } from '@/components/ui/input'
 import { Search } from '@/search/Component'
 
 export const SearchInput = () => {

@@ -1,8 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import { revalidateTag } from 'next/cache'
+
 import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
 import { slugField } from '@/fields/slug'
-import { revalidateTag } from 'next/cache'
 
 export const Projects: CollectionConfig = {
   slug: 'projects',

@@ -1,6 +1,7 @@
+import { Metadata } from 'next'
+
 import { GridCardHeader } from '@/components/grid'
 import { GridCardSubscribeConfirmed } from '@/components/grid'
-import { Metadata } from 'next'
 
 export default function SubscriptionConfirmed() {
   return (

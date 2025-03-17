@@ -1,7 +1,9 @@
 'use client'
 
 import React, { useEffect } from 'react'
+
 import type { GIFBlock as GIFBlockType } from './types'
+
 import RichText from '@/components/RichText'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 

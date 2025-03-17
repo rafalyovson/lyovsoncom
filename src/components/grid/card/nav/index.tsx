@@ -1,11 +1,13 @@
 'use client'
 
-import { GridCard } from '@/components/grid'
 import { useState } from 'react'
+
 import { MenuModeType } from './types'
 import { HeroMode } from './hero-mode'
 import { SearchMode } from './search-mode'
 import { MenuMode } from './menu-mode'
+
+import { GridCard } from '@/components/grid'
 export const GridCardNav = ({ className }: { className?: string }) => {
   const [menuMode, setMenuMode] = useState<MenuModeType>('hero')
   return (

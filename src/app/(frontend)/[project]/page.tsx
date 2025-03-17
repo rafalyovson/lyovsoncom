@@ -1,12 +1,13 @@
 import type { Metadata } from 'next/types'
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { Pagination } from '@/components/Pagination'
 import React from 'react'
 import { GridCardHeader } from 'src/components/grid/card/header'
-import { getProjectPosts } from '@/utilities/get-project-posts'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+
+import { getProjectPosts } from '@/utilities/get-project-posts'
+import { Pagination } from '@/components/Pagination'
+import { CollectionArchive } from '@/components/CollectionArchive'
 import { getProject } from '@/utilities/get-project'
 
 export const dynamicParams = false

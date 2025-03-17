@@ -1,10 +1,11 @@
 import type { Metadata } from 'next/types'
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import { GridCardHeader } from 'src/components/grid/card/header'
+
+import { Pagination } from '@/components/Pagination'
+import { CollectionArchive } from '@/components/CollectionArchive'
 
 export const dynamic = 'force-static'
 export const revalidate = 600

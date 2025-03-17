@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-
 import {
   BlocksFeature,
   FixedToolbarFeature,
@@ -8,20 +7,6 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-
-import { authenticated } from '@/access/authenticated'
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { Banner } from '@/blocks/Banner/config'
-import { Code } from '@/blocks/Code/config'
-import { MediaBlock } from '@/blocks/MediaBlock/config'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import { populateAuthors } from './hooks/populateAuthors'
-import { revalidatePost, revalidateDelete } from './hooks/revalidatePost'
-import { YouTube } from '@/blocks/YouTube/config'
-import { XPost } from '@/blocks/XPost/config'
-import { Quote } from '@/blocks/Quote/config'
-import { GIF } from '@/blocks/GIF/config'
-
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -29,6 +14,20 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+
+import { populateAuthors } from './hooks/populateAuthors'
+import { revalidatePost, revalidateDelete } from './hooks/revalidatePost'
+
+import { authenticated } from '@/access/authenticated'
+import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { Banner } from '@/blocks/Banner/config'
+import { Code } from '@/blocks/Code/config'
+import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { generatePreviewPath } from '@/utilities/generatePreviewPath'
+import { YouTube } from '@/blocks/YouTube/config'
+import { XPost } from '@/blocks/XPost/config'
+import { Quote } from '@/blocks/Quote/config'
+import { GIF } from '@/blocks/GIF/config'
 import { slugField } from '@/fields/slug'
 import { getServerSideURL } from '@/utilities/getURL'
 
