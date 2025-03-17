@@ -2,15 +2,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "esModuleInterop": true,
-    "target": "ES2022",
+    "target": "ESNext",
     "lib": [
       "DOM",
       "DOM.Iterable",
-      "ES2022"
+      "ESNext"
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,

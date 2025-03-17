@@ -181,7 +181,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                     aria-checked={node.checked ? 'true' : 'false'}
                     className={` ${node.checked ? '' : ''}`}
                     key={index}
-                     
                     role="checkbox"
                     tabIndex={-1}
                     value={node?.value}

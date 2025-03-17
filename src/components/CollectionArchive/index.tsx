@@ -1,10 +1,10 @@
 import React from 'react'
 
-import type { Post, Search } from '@/payload-types'
+import type { Post } from '@/payload-types'
 import { GridCardPost } from '@/components/grid'
 
 export type Props = {
-  posts: Post[] | Search[]
+  posts: Post[]
 }
 
 export const CollectionArchive: React.FC<Props> = (props) => {

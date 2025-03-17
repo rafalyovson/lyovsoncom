@@ -17,7 +17,7 @@ const eslintConfig = [
       'src/payload-types.ts',
     ],
   },
-  ...compat.extends('next', 'next/core-web-vitals', 'next/typescript', 'prettier'),
+  ...compat.extends('next', 'next/core-web-vitals', 'prettier'),
 ]
 
 export default eslintConfig

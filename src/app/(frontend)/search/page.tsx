@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation'
 import { Search } from '@/search/Component'
 import { Pagination } from '@/components/Pagination'
 import { CollectionArchive } from '@/components/CollectionArchive'
+import type { Post } from '@/payload-types'
 
 type Args = {
   searchParams: Promise<{
@@ -65,7 +66,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     <>
       <GridCardHeader />
       <Search />
-      <CollectionArchive posts={docs} />
+      <CollectionArchive posts={docs as unknown as Post[]} />
       <div className="container">
         {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>

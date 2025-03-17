@@ -1,18 +1,23 @@
 import React, { Fragment } from 'react'
 
-import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { YouTubeBlock } from '@/blocks/YouTube/Component'
 import { GIFBlock } from '@/blocks/GIF/Component'
 
+type BlockType = 'mediaBlock' | 'youtube' | 'gif'
+
+interface BlockWithType {
+  blockType: BlockType
+  [key: string]: any
+}
+
 const blockComponents = {
-  formBlock: FormBlock,
   mediaBlock: MediaBlock,
   youtube: YouTubeBlock,
   gif: GIFBlock,
 }
 
-export const RenderBlocks = (props) => {
+export const RenderBlocks = (props: { blocks: BlockWithType[] }) => {
   const { blocks } = props
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
@@ -24,15 +29,13 @@ export const RenderBlocks = (props) => {
           const { blockType } = block
 
           if (blockType && blockType in blockComponents) {
-            const Block = blockComponents[blockType]
-
-            if (Block) {
-              return (
-                <div className="my-16" key={index}>
-                  <Block {...block} />
-                </div>
-              )
-            }
+            return (
+              <div className="my-16" key={index}>
+                {blockType === 'mediaBlock' && <MediaBlock {...(block as any)} />}
+                {blockType === 'youtube' && <YouTubeBlock {...(block as any)} />}
+                {blockType === 'gif' && <GIFBlock {...(block as any)} />}
+              </div>
+            )
           }
           return null
         })}

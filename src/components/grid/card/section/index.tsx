@@ -14,7 +14,7 @@ export const GridCardSection = ({
   return (
     <section
       onClick={onClick}
-      className={cn('rounded-lg border bg-card text-card-foreground shadow-sm p-2', className)}
+      className={cn('rounded-lg border bg-card text-card-foreground shadow-2xs p-2', className)}
     >
       {children}
     </section>

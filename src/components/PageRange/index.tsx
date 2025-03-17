@@ -12,6 +12,13 @@ const defaultCollectionLabels = {
   },
 }
 
+// Type guard to check if a collection exists in defaultCollectionLabels
+function isValidCollection(
+  collection: string | undefined,
+): collection is keyof typeof defaultCollectionLabels {
+  return !!collection && collection in defaultCollectionLabels
+}
+
 export const PageRange: React.FC<{
   className?: string
   collection?: string
@@ -39,7 +46,9 @@ export const PageRange: React.FC<{
   if (totalDocs && indexEnd > totalDocs) indexEnd = totalDocs
 
   const { plural, singular } =
-    collectionLabelsFromProps || defaultCollectionLabels[collection || ''] || defaultLabels || {}
+    collectionLabelsFromProps ||
+    (isValidCollection(collection) ? defaultCollectionLabels[collection] : defaultLabels) ||
+    {}
 
   return (
     <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
