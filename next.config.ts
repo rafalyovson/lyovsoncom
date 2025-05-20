@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
         hostname: 'img.youtube.com',
         protocol: 'https',
       },
+      {
+        hostname: 'dev.lyovson.com',
+        protocol: 'https',
+      },
     ],
   },
   reactStrictMode: true,
