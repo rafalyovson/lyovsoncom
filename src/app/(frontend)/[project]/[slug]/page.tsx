@@ -19,7 +19,7 @@ type Args = {
 
 export const dynamicParams = false
 
-export function SchemaArticle({ post, url }: { post: any; url: string }) {
+function SchemaArticle({ post, url }: { post: any; url: string }) {
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
