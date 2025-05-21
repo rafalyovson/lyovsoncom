@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { cn } from 'src/utilities/cn'
 import { GeistMono } from 'geist/font/mono'
@@ -72,17 +72,7 @@ export const metadata: Metadata = {
     { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/favicon-16x16.png' },
     { rel: 'shortcut icon', url: '/favicon.ico' },
   ],
-  // Use hex equivalents of your theme colors for better compatibility
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' }, // Light mode background
-    { media: '(prefers-color-scheme: dark)', color: '#121212' }, // Dark mode background
-  ],
-  colorScheme: 'light dark',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 2,
-  },
+
   openGraph: mergeOpenGraph({
     type: 'website',
     locale: 'en_US',
@@ -103,4 +93,15 @@ export const metadata: Metadata = {
       'application/rss+xml': `${getServerSideURL()}/feed.xml`,
     },
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#121212' },
+  ],
+  colorScheme: 'light dark',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 2,
 }
