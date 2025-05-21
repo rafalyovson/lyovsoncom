@@ -19,6 +19,32 @@ type Args = {
 
 export const dynamicParams = false
 
+export function SchemaArticle({ post, url }: { post: any; url: string }) {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.meta?.title || post.title,
+    description: post.meta?.description || '',
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    author:
+      post.populatedAuthors?.map((a: any) => ({
+        '@type': 'Person',
+        name: a.name,
+        url: `https://lyovson.com/${a.username}`,
+      })) || [],
+    image: post.meta?.image?.url,
+    url,
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+    />
+  )
+}
+
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
   const projects = await payload.find({
@@ -93,6 +119,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   return (
     <>
+      <SchemaArticle post={post} url={`https://lyovson.com/${projectSlug}/${slug}`} />
       <GridCardNav
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-1 g2:row-end-2 g4:h-[400px] g4:self-start`}
       />
@@ -120,34 +147,81 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const response = await payload.find({
     collection: 'posts',
-    depth: 1,
+    depth: 2,
     where: {
-      AND: [
-        {
-          slug: {
-            equals: slug,
-          },
-        },
-        {
-          'project.slug': {
-            equals: projectSlug,
-          },
-        },
-      ],
+      AND: [{ slug: { equals: slug } }, { 'project.slug': { equals: projectSlug } }],
     },
   })
 
-  if (!response || !response.docs || response.docs.length === 0) {
+  if (!response?.docs?.length) {
     return {
       title: 'Not Found | Lyovson.com',
       description: 'The requested project could not be found',
     }
   }
 
-  const { docs } = response
+  const post = response.docs[0]
+  const title = post.meta?.title || post.title
+  const description = post.meta?.description || ''
+
+  // Handle both cases: when image is a media object or just an ID
+  const metaImage = post.meta?.image && typeof post.meta.image === 'object' ? post.meta.image : null
+
+  // Keep URLs relative since metadataBase is set in layout
+  let imageUrl: string | null = null
+  if (metaImage?.url) {
+    // If URL starts with http, keep it absolute, otherwise keep just the path
+    imageUrl = metaImage.url.startsWith('http') ? metaImage.url : metaImage.url
+  }
+
+  const ogImageAlt = metaImage?.alt || title
+
+  // Fix the topic mapping
+  const keywords = post.topics
+    ?.map((topic) => {
+      if (typeof topic === 'object' && topic !== null) {
+        return topic.name || topic.slug || ''
+      }
+      return ''
+    })
+    .filter(Boolean)
+
+  // Relative URL path - metadataBase will be prepended automatically
+  const canonicalUrl = `/${projectSlug}/${slug}`
 
   return {
-    title: `${docs[0].meta?.title || docs[0].title} | Lyovson.com`,
-    description: docs[0].meta?.description,
+    title: `${title} | Lyovson.com`,
+    description,
+    keywords: keywords?.join(', '),
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl, // Let metadataBase handle the domain
+      siteName: 'Lyovson.com',
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl, // Relative URL since metadataBase is set
+              width: 1200,
+              height: 630,
+              alt: ogImageAlt || '',
+            },
+          ]
+        : undefined,
+      locale: 'en_US',
+      type: 'article',
+      publishedTime: post.publishedAt || undefined,
+      modifiedTime: post.updatedAt || undefined,
+      authors: post.populatedAuthors?.map((author) => `/${author.username}`) || [], // Make author URLs relative
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: imageUrl ? [imageUrl] : undefined,
+    },
   }
 }
