@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import React from 'react'
 import { GridCardHero } from 'src/components/grid/card/hero'
-import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
@@ -9,6 +8,7 @@ import configPromise from '@payload-config'
 import { getProject } from '@/utilities/get-project'
 import { GridCardRelatedPosts } from '@/components/grid/card/related'
 import RichText from '@/components/RichText'
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 type Args = {
   params: Promise<{
@@ -93,7 +93,7 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   return (
     <>
-      <GridCardHeader
+      <GridCardNav
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-1 g2:row-end-2 g4:h-[400px] g4:self-start`}
       />
       <GridCardHero

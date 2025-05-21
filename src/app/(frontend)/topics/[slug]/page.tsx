@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import React from 'react'
-import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 import { getTopicPosts } from '@/utilities/get-topic-posts'
 import { Pagination } from '@/components/Pagination'
@@ -69,7 +69,7 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 
   return (
     <>
-      <GridCardHeader />
+      <GridCardNav />
       <CollectionArchive posts={posts} />
       <div className="container">
         {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}

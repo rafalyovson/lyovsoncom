@@ -2,13 +2,13 @@ import type { Metadata } from 'next/types'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
-import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
 
 import { Search } from '@/search/Component'
 import { Pagination } from '@/components/Pagination'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import type { Post } from '@/payload-types'
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 type Args = {
   searchParams: Promise<{
@@ -64,7 +64,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
   return (
     <>
-      <GridCardHeader />
+      <GridCardNav />
       <Search />
       <CollectionArchive posts={docs as unknown as Post[]} />
       <div className="container">

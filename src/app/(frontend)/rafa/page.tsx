@@ -1,12 +1,11 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import { GridCardHeader } from 'src/components/grid/card/header'
 import { notFound } from 'next/navigation'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { getAuthorPosts } from '@/utilities/get-author-posts'
-
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -22,7 +21,7 @@ export default async function Page() {
 
   return (
     <>
-      <GridCardHeader />
+      <GridCardNav />
       <CollectionArchive posts={docs} />
       <div className="container">
         {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}

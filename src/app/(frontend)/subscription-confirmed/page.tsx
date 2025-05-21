@@ -1,12 +1,12 @@
 import { Metadata } from 'next'
 
-import { GridCardHeader } from '@/components/grid'
 import { GridCardSubscribeConfirmed } from '@/components/grid'
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 export default function SubscriptionConfirmed() {
   return (
     <>
-      <GridCardHeader />
+      <GridCardNav />
       <GridCardSubscribeConfirmed />
     </>
   )
