@@ -87,7 +87,7 @@
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^3.25.7"
+    "zod": "^3.25.17"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -95,8 +95,8 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/escape-html": "^1.0.4",
     "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.20",
-    "@types/react": "^19.1.4",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",
     "copyfiles": "^2.4.1",
     "eslint": "^9.27.0",

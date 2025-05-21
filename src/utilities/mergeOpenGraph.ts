@@ -7,7 +7,7 @@ const defaultOpenGraph: Metadata['openGraph'] = {
   description: 'The official website of Rafa and Jess Lyovsons.',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: `${getServerSideURL()}/lyovsoncom-og-image.webp`,
     },
   ],
   siteName: 'Lyovson.com',

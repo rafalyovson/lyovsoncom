@@ -18,10 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
-      <head>
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
-      </head>
+      <head>{/* Icon and manifest links are now managed by the metadata object below */}</head>
       <body>
         <Providers>
           <LivePreviewListener />
@@ -36,6 +33,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  manifest: '/site.webmanifest',
+  icons: [
+    { rel: 'apple-touch-icon', sizes: '180x180', url: '/apple-touch-icon.png' },
+    { rel: 'icon', type: 'image/png', sizes: '32x32', url: '/favicon-32x32.png' },
+    { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/favicon-16x16.png' },
+    { rel: 'shortcut icon', url: '/favicon.ico' },
+  ],
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
