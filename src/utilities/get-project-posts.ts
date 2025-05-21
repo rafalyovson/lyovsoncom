@@ -12,6 +12,7 @@ export async function getProjectPosts(slug: string) {
       },
     },
     limit: 1,
+    sort: 'createdAt:desc',
   })
 
   if (!project || !project.docs || !project.docs[0]) {

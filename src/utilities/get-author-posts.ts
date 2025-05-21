@@ -14,6 +14,7 @@ export async function getAuthorPosts(username: string) {
       },
     },
     limit: 1,
+    sort: 'createdAt:desc',
   })
 
   if (!user || !user.docs || !user.docs[0]) {
