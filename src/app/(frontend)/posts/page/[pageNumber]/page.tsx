@@ -3,7 +3,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
 import { notFound } from 'next/navigation'
-import { GridCardHeader } from 'src/components/grid/card/header'
+import { GridCardNav } from 'src/components/grid/card/nav'
 
 import { Pagination } from '@/components/Pagination'
 import { CollectionArchive } from '@/components/CollectionArchive'
@@ -40,7 +40,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   return (
     <>
-      <GridCardHeader />
+      <GridCardNav />
       <CollectionArchive posts={docs} />
 
       <div className="container">

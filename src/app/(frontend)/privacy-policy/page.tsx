@@ -1,10 +1,9 @@
 import { Metadata } from 'next'
-import { GridCardHeader } from 'src/components/grid/card/header'
-
+import { GridCardNav } from 'src/components/grid/card/nav'
 export default function PrivacyPolicy() {
   return (
     <>
-      <GridCardHeader className={`self-start col-start-1 col-end-2 row-start-1 row-end-2  `} />
+      <GridCardNav className={`self-start col-start-1 col-end-2 row-start-1 row-end-2  `} />
       <article className="prose prose-invert mx-auto max-w-4xl p-6 space-y-8 g3:col-start-2 g3:col-end-4">
         <h1>Privacy Policy for Lyovson.com</h1>
 
