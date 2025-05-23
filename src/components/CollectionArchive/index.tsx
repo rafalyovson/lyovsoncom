@@ -14,7 +14,17 @@ export const CollectionArchive: React.FC<Props> = (props) => {
     <>
       {posts?.map((result, index) => {
         if (typeof result === 'object' && result !== null) {
-          return <GridCardPost key={result.slug} post={result} />
+          return (
+            <GridCardPost
+              key={result.slug}
+              post={result}
+              {...(index === 0 && {
+                loading: 'eager',
+                fetchPriority: 'high',
+                priority: true,
+              })}
+            />
+          )
         }
 
         return null

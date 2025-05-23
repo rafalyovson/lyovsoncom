@@ -1,83 +1,23 @@
+import configPromise from '@payload-config'
 import type { Metadata } from 'next'
-import React from 'react'
-import { GridCardHero } from 'src/components/grid/card/hero'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { Suspense } from 'react'
+import { GridCardHero } from 'src/components/grid/card/hero'
 
-import { getProject } from '@/utilities/get-project'
 import { GridCardRelatedPosts } from '@/components/grid/card/related'
 import RichText from '@/components/RichText'
+import { Skeleton } from '@/components/ui/skeleton'
+import { getProject } from '@/utilities/get-project'
 import { GridCardNav } from 'src/components/grid/card/nav'
+
+export const experimental_ppr = true
 
 type Args = {
   params: Promise<{
     project: string
     slug: string
   }>
-}
-
-export const dynamicParams = false
-
-function SchemaArticle({ post, url }: { post: any; url: string }) {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: post.meta?.title || post.title,
-    description: post.meta?.description || '',
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    author:
-      post.populatedAuthors?.map((a: any) => ({
-        '@type': 'Person',
-        name: a.name,
-        url: `https://lyovson.com/${a.username}`,
-      })) || [],
-    image: post.meta?.image?.url,
-    url,
-  }
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-    />
-  )
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const projects = await payload.find({
-    collection: 'projects',
-    limit: 1000,
-  })
-
-  const paths: { project: string; slug: string }[] = []
-
-  for (const project of projects.docs) {
-    if (project.slug) {
-      const posts = await payload.find({
-        collection: 'posts',
-        where: {
-          'project.id': {
-            equals: project.id,
-          },
-        },
-        limit: 1000,
-      })
-
-      for (const post of posts.docs) {
-        if (post.slug) {
-          paths.push({
-            project: project.slug,
-            slug: post.slug,
-          })
-        }
-      }
-    }
-  }
-
-  return paths
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
@@ -134,11 +74,48 @@ export default async function Post({ params: paramsPromise }: Args) {
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2`}
       >
         {post.relatedPosts && post.relatedPosts.length > 0 && (
-          <GridCardRelatedPosts posts={post.relatedPosts} />
+          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+            <GridCardRelatedPosts posts={post.relatedPosts} />
+          </Suspense>
         )}
       </div>
     </>
   )
+}
+
+export async function generateStaticParams() {
+  const payload = await getPayload({ config: configPromise })
+  const projects = await payload.find({
+    collection: 'projects',
+    limit: 1000,
+  })
+
+  const paths: { project: string; slug: string }[] = []
+
+  for (const project of projects.docs) {
+    if (project.slug) {
+      const posts = await payload.find({
+        collection: 'posts',
+        where: {
+          'project.id': {
+            equals: project.id,
+          },
+        },
+        limit: 1000,
+      })
+
+      for (const post of posts.docs) {
+        if (post.slug) {
+          paths.push({
+            project: project.slug,
+            slug: post.slug,
+          })
+        }
+      }
+    }
+  }
+
+  return paths
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
@@ -224,4 +201,30 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       images: imageUrl ? [imageUrl] : undefined,
     },
   }
+}
+
+function SchemaArticle({ post, url }: { post: any; url: string }) {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.meta?.title || post.title,
+    description: post.meta?.description || '',
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt,
+    author:
+      post.populatedAuthors?.map((a: any) => ({
+        '@type': 'Person',
+        name: a.name,
+        url: `https://lyovson.com/${a.username}`,
+      })) || [],
+    image: post.meta?.image?.url,
+    url,
+  }
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+    />
+  )
 }

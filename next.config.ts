@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   redirects,
   experimental: {
     reactCompiler: true,
+    ppr: 'incremental',
   },
 }
 

@@ -1,15 +1,18 @@
+import configPromise from '@payload-config'
 import type { Metadata } from 'next'
-import React from 'react'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
 
-import { getTopicPosts } from '@/utilities/get-topic-posts'
-import { Pagination } from '@/components/Pagination'
 import { CollectionArchive } from '@/components/CollectionArchive'
+import { Pagination } from '@/components/Pagination'
+import { SkeletonGrid } from '@/components/grid/skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
+import { getTopicPosts } from '@/utilities/get-topic-posts'
 
-export const dynamic = 'force-static'
+export const experimental_ppr = true
+export const dynamicParams = true
 export const revalidate = 600
 
 interface PageProps {
@@ -70,9 +73,15 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   return (
     <>
       <GridCardNav />
-      <CollectionArchive posts={posts} />
+      <Suspense fallback={<SkeletonGrid />}>
+        <CollectionArchive posts={posts} />
+      </Suspense>
       <div className="container">
-        {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
+        {totalPages > 1 && page && (
+          <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
+            <Pagination page={page} totalPages={totalPages} />
+          </Suspense>
+        )}
       </div>
     </>
   )

@@ -6,8 +6,21 @@ import { Media } from '@/components/Media'
 import { Badge } from '@/components/ui/badge'
 import { Post } from '@/payload-types'
 
+export type GridCardPostProps = {
+  post: Post
+  className?: string
+  loading?: 'lazy' | 'eager'
+  fetchPriority?: 'high' | 'low' | 'auto'
+  priority?: boolean
+}
 
-export const GridCardPost = ({ post, className }: { post: Post; className?: string }) => {
+export const GridCardPost = ({
+  post,
+  className,
+  loading,
+  fetchPriority,
+  priority,
+}: GridCardPostProps) => {
   const {
     type,
     topics,
@@ -28,6 +41,9 @@ export const GridCardPost = ({ post, className }: { post: Post; className?: stri
             resource={metaImage}
             pictureClassName="h-full"
             className="h-full"
+            {...(loading ? { loading } : {})}
+            {...(fetchPriority ? { fetchPriority } : {})}
+            {...(priority ? { priority } : {})}
           />
         </GridCardSection>
       )}
