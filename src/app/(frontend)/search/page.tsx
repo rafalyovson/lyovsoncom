@@ -24,7 +24,7 @@ export default async function SuspendedSearchPage({ searchParams: searchParamsPr
   )
 }
 
-export async function SearchPage({ searchParams: searchParamsPromise }: Args) {
+async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
