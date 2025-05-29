@@ -1,21 +1,21 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 import { Metadata } from 'next'
-
 import { createContactAction } from '@/actions/create-contact-action'
 import { GridCardSubscribe, GridCardNav } from '@/components/grid'
-export default async function Playground() {
-  const payload = await getPayload({ config: configPromise })
-  const project = await payload.find({
-    collection: 'projects',
-    where: {
-      slug: {
-        equals: 'media-musings',
-      },
-    },
-  })
+import { getCachedProjectBySlug } from '@/utilities/get-project'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
-  const projectId = project.docs[0].id
+export default async function Playground() {
+  'use cache'
+  cacheTag('playground')
+  cacheTag('projects')
+  cacheLife('static') // Playground page doesn't change often
+
+  const project = await getCachedProjectBySlug('media-musings')
+
+  if (!project) {
+    throw new Error('Media Musings project not found')
+  }
+
   return (
     <>
       <GridCardNav />
@@ -24,7 +24,7 @@ export default async function Playground() {
         description="Join our journney through all kinds of media and ideas."
         emoji="👩"
         handleSubmit={createContactAction}
-        projectId={projectId}
+        projectId={project.id}
       />
     </>
   )
@@ -32,4 +32,8 @@ export default async function Playground() {
 
 export const metadata: Metadata = {
   title: `Playground | Lyovson.com`,
+  description: 'Test and explore features on Lyovson.com playground',
+  alternates: {
+    canonical: '/playground',
+  },
 }

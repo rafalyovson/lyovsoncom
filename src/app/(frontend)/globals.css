@@ -48,6 +48,20 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* ADD: Grid system enhancements (preserve 400px philosophy) */
+  --grid-card-size: 400px;
+  --grid-gap: 1rem;
+  --grid-internal-cols: 3;
+  --grid-internal-rows: 3;
+
+  /* ADD: Enhanced animations */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ADD: Performance hints */
+  --cache-transition-duration: 150ms;
+  --optimistic-transition: 200ms;
 }
 
 /*
@@ -166,6 +180,67 @@
 /*
   ---break---
 */
+
+/* ADD: Enhanced grid card styles */
+@layer components {
+  .enhanced-grid-card {
+    /* Keep exact 400px sizing */
+    width: var(--grid-card-size);
+    height: var(--grid-card-size);
+    aspect-ratio: 1;
+
+    /* Keep existing grid structure */
+    display: grid;
+    grid-template-columns: repeat(var(--grid-internal-cols), 1fr);
+    grid-template-rows: repeat(var(--grid-internal-rows), 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem;
+
+    /* ADD: Modern enhancements */
+    container-type: inline-size;
+
+    /* ADD: Starting style animations */
+    @starting-style {
+      opacity: 0;
+      transform: scale(0.95) translateY(8px);
+    }
+
+    /* ADD: Enhanced transitions */
+    transition: all var(--cache-transition-duration) var(--ease-smooth);
+
+    /* ADD: Better hover effects */
+    &:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px color-mix(in oklch, var(--color-primary) 15%, transparent);
+    }
+
+    /* ADD: Optimistic state styling */
+    &[data-optimistic='true'] {
+      opacity: 0.8;
+      background: color-mix(in oklch, var(--background) 90%, var(--color-primary) 10%);
+    }
+  }
+
+  .enhanced-grid-section {
+    /* Keep existing section styling */
+    border-radius: calc(var(--radius) - 4px);
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 0.5rem;
+
+    /* ADD: Container query support */
+    container-type: inline-size;
+
+    /* ADD: Content-aware styling */
+    @container (min-width: 120px) {
+      padding: 0.75rem;
+    }
+
+    @container (min-width: 160px) {
+      padding: 1rem;
+    }
+  }
+}
 
 @layer base {
   * {

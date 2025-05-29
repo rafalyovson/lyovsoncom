@@ -54,13 +54,27 @@ export const Projects: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async () => {
+      async ({ doc, req }) => {
+        req.payload.logger.info(`Revalidating project: ${doc.slug}`)
+
+        // Revalidate project-related cache tags
+        revalidateTag('projects')
+        revalidateTag(`project-${doc.slug}`)
+        revalidateTag('posts') // Posts may reference this project
         revalidateTag('sitemap')
+        revalidateTag('playground') // Playground uses project data
       },
     ],
     afterDelete: [
-      async () => {
+      async ({ doc, req }) => {
+        req.payload.logger.info(`Revalidating after project deletion: ${doc?.slug}`)
+
+        // Revalidate project-related cache tags
+        revalidateTag('projects')
+        revalidateTag(`project-${doc?.slug}`)
+        revalidateTag('posts') // Posts may reference this project
         revalidateTag('sitemap')
+        revalidateTag('playground') // Playground uses project data
       },
     ],
   },

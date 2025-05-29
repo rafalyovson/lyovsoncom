@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { getPayload } from 'payload'
 import { Suspense } from 'react'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
@@ -12,10 +13,6 @@ import { getProject } from '@/utilities/get-project'
 import { getProjectPosts } from '@/utilities/get-project-posts'
 import { GridCardNav } from 'src/components/grid/card/nav'
 
-export const experimental_ppr = true
-export const dynamicParams = true
-export const revalidate = 600
-
 interface PageProps {
   params: Promise<{
     project: string
@@ -23,7 +20,15 @@ interface PageProps {
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
+  'use cache'
+
   const { project: projectSlug } = await paramsPromise
+
+  // Add cache tags for this project
+  cacheTag('posts')
+  cacheTag('projects')
+  cacheTag(`project-${projectSlug}`)
+  cacheLife('posts')
 
   const response = await getProjectPosts(projectSlug)
 
@@ -51,24 +56,38 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
+  'use cache'
+
   const { project: projectSlug } = await paramsPromise
 
+  // Add cache tags for metadata
+  cacheTag('projects')
+  cacheTag(`project-${projectSlug}`)
+  cacheLife('static') // Project metadata changes less frequently
+
   const project = await getProject(projectSlug)
+
   if (!project) {
     return {
-      title: 'Not Found | Lyovson.com',
+      title: 'Project Not Found | Lyovson.com',
       description: 'The requested project could not be found',
     }
   }
-  const projectName = project.name || projectSlug
 
   return {
-    title: `${projectName} | Lyovson.com`,
-    description: project.description || `Posts from ${projectName}`,
+    title: `${project.name} | Lyovson.com`,
+    description: project.description || `Posts and content from the ${project.name} project`,
+    alternates: {
+      canonical: `/${projectSlug}`,
+    },
   }
 }
 
 export async function generateStaticParams() {
+  'use cache'
+  cacheTag('projects')
+  cacheLife('static') // Build-time data doesn't change often
+
   const payload = await getPayload({ config: configPromise })
   const response = await payload.find({
     collection: 'projects',

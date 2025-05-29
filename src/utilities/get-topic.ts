@@ -1,17 +1,16 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import type { Topic } from '@/payload-types'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
-export async function getTopicPosts(slug: string) {
+export async function getTopic(slug: string): Promise<Topic | null> {
   'use cache'
-  cacheTag('posts')
   cacheTag('topics')
   cacheTag(`topic-${slug}`)
-  cacheLife('posts')
+  cacheLife('topics')
 
   const payload = await getPayload({ config: configPromise })
-
-  const topic = await payload.find({
+  const response = await payload.find({
     collection: 'topics',
     where: {
       slug: {
@@ -21,22 +20,18 @@ export async function getTopicPosts(slug: string) {
     limit: 1,
   })
 
-  const topicId = topic.docs[0]?.id
+  return response.docs[0] || null
+}
 
-  if (!topicId) {
-    return null
-  }
+export async function getAllTopics() {
+  'use cache'
+  cacheTag('topics')
+  cacheLife('topics')
 
+  const payload = await getPayload({ config: configPromise })
   return await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    where: {
-      topics: {
-        contains: topicId,
-      },
-    },
-    overrideAccess: false,
-    sort: 'createdAt:desc',
+    collection: 'topics',
+    limit: 1000,
+    sort: 'name:asc',
   })
 }

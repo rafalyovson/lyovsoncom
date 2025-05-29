@@ -11,6 +11,7 @@
 ## Prerequisites & Setup
 
 ### Development Environment
+
 ```bash
 # Required versions
 node --version # 18.17+ or 20.9+
@@ -22,6 +23,7 @@ pnpm --version # 8.0+ (faster than npm)
 ```
 
 ### Repository Setup
+
 ```bash
 # Clone existing repository
 cd lyovsoncom
@@ -39,6 +41,7 @@ cat next.config.ts # Check current configuration
 ### Day 1-2: Upgrade Core Dependencies
 
 #### Step 1: Install React 19 & Next.js Canary
+
 ```bash
 # Remove old versions
 pnpm remove react react-dom next
@@ -51,6 +54,7 @@ pnpm list next react react-dom
 ```
 
 #### Step 2: Install Tailwind CSS 4.x
+
 ```bash
 # Remove Tailwind 3.x and related packages
 pnpm remove tailwindcss @tailwindcss/typography autoprefixer
@@ -62,6 +66,7 @@ pnpm add tailwindcss@next @tailwindcss/postcss@next
 #### Step 3: Update Configuration Files
 
 **Update `next.config.ts`:**
+
 ```typescript
 import type { NextConfig } from 'next'
 
@@ -118,6 +123,7 @@ export default nextConfig
 ```
 
 **Update `postcss.config.js`:**
+
 ```javascript
 module.exports = {
   plugins: {
@@ -130,6 +136,7 @@ module.exports = {
 #### Step 4: Create New Global Styles
 
 **Replace `src/styles/globals.css`:**
+
 ```css
 @import "tailwindcss";
 
@@ -270,6 +277,7 @@ module.exports = {
 #### Step 1: Create Grid Types
 
 **Create `src/types/grid.ts`:**
+
 ```typescript
 export type GridSpan = 
   | '1x1' | '2x1' | '3x1' | '4x1' | '6x1' | '8x1' | '12x1'
@@ -325,6 +333,7 @@ export interface PerformanceMetrics {
 ```
 
 #### Step 2: Validation Commands
+
 ```bash
 # Test new configuration
 pnpm dev
@@ -344,6 +353,7 @@ pnpm build
 #### Step 1: Create Grid Container
 
 **Create `src/components/grid/grid-container.tsx`:**
+
 ```typescript
 'use client'
 
@@ -387,6 +397,7 @@ export function GridContainer({
 #### Step 2: Create Base Grid Card
 
 **Create `src/components/grid/grid-card.tsx`:**
+
 ```typescript
 'use client'
 
@@ -473,6 +484,7 @@ function getAnimationConfig(animate: string, enableStartingStyle: boolean) {
 #### Step 3: Create Grid Card Skeleton
 
 **Create `src/components/grid/grid-card-skeleton.tsx`:**
+
 ```typescript
 import { Skeleton } from '@/components/ui/skeleton'
 import { GridCard } from './grid-card'
@@ -515,6 +527,7 @@ export function GridCardSkeleton({
 #### Step 4: Create Grid Index
 
 **Create `src/components/grid/index.ts`:**
+
 ```typescript
 export { GridContainer } from './grid-container'
 export { GridCard } from './grid-card'
@@ -531,6 +544,7 @@ export type { GridCardProps } from '@/types/grid'
 #### Step 1: Create Enhanced Navigation
 
 **Create `src/components/cards/navigation-card.tsx`:**
+
 ```typescript
 'use cache'
 
@@ -606,6 +620,7 @@ async function fetchNavigation() {
 #### Step 1: Create Enhanced Post Card
 
 **Create `src/components/cards/post-card.tsx`:**
+
 ```typescript
 'use cache'
 
@@ -725,6 +740,7 @@ export function PostCard({
 #### Step 1: Create Optimistic Subscribe Form
 
 **Create `src/components/cards/subscribe-card.tsx`:**
+
 ```typescript
 'use client'
 
@@ -845,6 +861,7 @@ export function SubscribeCard() {
 #### Step 1: Update Homepage with Grid System
 
 **Update `src/app/(frontend)/page.tsx`:**
+
 ```typescript
 'use cache'
 
@@ -937,6 +954,7 @@ export function generateMetadata(): Metadata {
 #### Step 1: Create Enhanced Contact Action
 
 **Create `src/actions/enhanced-contact-action.ts`:**
+
 ```typescript
 'use server'
 
@@ -1070,6 +1088,7 @@ async function notifyTeam(message: string) {
 #### Step 1: Create Enhanced Search
 
 **Create `src/components/cards/search-card.tsx`:**
+
 ```typescript
 'use client'
 
@@ -1185,6 +1204,7 @@ export function SearchCard({ initialQuery }: { initialQuery?: string }) {
 #### Step 1: Create Performance Hooks
 
 **Create `src/hooks/use-performance.ts`:**
+
 ```typescript
 'use client'
 
@@ -1265,6 +1285,7 @@ export function usePerformanceMonitoring() {
 #### Step 2: Add Performance Dashboard (Development)
 
 **Create `src/components/dev/performance-dashboard.tsx`:**
+
 ```typescript
 'use client'
 
@@ -1301,6 +1322,7 @@ export function PerformanceDashboard() {
 #### Step 1: Create Cache Management
 
 **Create `src/lib/cache-manager.ts`:**
+
 ```typescript
 import { revalidateTag, revalidatePath } from 'next/cache'
 
@@ -1348,6 +1370,7 @@ export class CacheManager {
 #### Step 1: Create Validation Script
 
 **Create `scripts/validate-system.ts`:**
+
 ```typescript
 import { execSync } from 'child_process'
 
@@ -1397,6 +1420,7 @@ validateSystem()
 ```
 
 #### Step 2: Run Validation
+
 ```bash
 # Run validation script
 pnpm tsx scripts/validate-system.ts
@@ -1412,6 +1436,7 @@ pnpm dev
 ```
 
 #### Step 3: Production Deployment
+
 ```bash
 # Final build
 pnpm build
@@ -1428,6 +1453,7 @@ vercel --prod
 ## Success Validation Checklist
 
 ### ✅ Technical Validation
+
 - [ ] React 19 canary features working (`'use cache'`, `useActionState`, `useOptimistic`)
 - [ ] Next.js canary features enabled (PPR, DynamicIO, `unstable_after`)
 - [ ] Tailwind CSS 4.x working (container queries, @starting-style, P3 colors)
@@ -1437,6 +1463,7 @@ vercel --prod
 - [ ] Cache invalidation working correctly
 
 ### ✅ Performance Validation  
+
 - [ ] Build time < 15 seconds (down from ~45s)
 - [ ] Dev server start < 1 second
 - [ ] Hot reload < 100ms
@@ -1446,6 +1473,7 @@ vercel --prod
 - [ ] Cache hit rate > 85%
 
 ### ✅ User Experience Validation
+
 - [ ] Smooth animations and interactions
 - [ ] Instant form feedback with optimistic updates
 - [ ] Fast navigation between pages
@@ -1454,6 +1482,7 @@ vercel --prod
 - [ ] Search functionality working
 
 ### ✅ Code Quality Validation
+
 - [ ] Zero TypeScript errors
 - [ ] Zero ESLint violations
 - [ ] All components properly typed
@@ -1465,6 +1494,7 @@ vercel --prod
 ## Troubleshooting Common Issues
 
 ### React 19 Issues
+
 ```bash
 # If React 19 features not working
 pnpm list react react-dom
@@ -1476,6 +1506,7 @@ pnpm dev
 ```
 
 ### Tailwind 4.x Issues
+
 ```bash
 # If container queries not working
 # Check PostCSS config
@@ -1487,6 +1518,7 @@ pnpm list tailwindcss
 ```
 
 ### Cache Issues
+
 ```bash
 # Clear Next.js cache
 rm -rf .next
@@ -1499,6 +1531,7 @@ pnpm dev
 ```
 
 ### Performance Issues
+
 ```bash
 # Analyze bundle
 pnpm run build:analyze
@@ -1510,4 +1543,4 @@ pnpm ls --depth=0
 # Use browser dev tools Performance tab
 ```
 
-This implementation guide provides a complete roadmap for building the lyovson.com system with all the modern technologies and patterns defined in the architecture and design documents. 
+This implementation guide provides a complete roadmap for building the lyovson.com system with all the modern technologies and patterns defined in the architecture and design documents.

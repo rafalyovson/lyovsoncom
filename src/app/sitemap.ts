@@ -1,40 +1,20 @@
 import { MetadataRoute } from 'next'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-
 import type { Post, Project, Topic } from '@/payload-types'
+import { getSitemapData } from '@/utilities/get-sitemap-data'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const payload = await getPayload({ config })
+  'use cache'
+  cacheTag('sitemap')
+  cacheTag('posts')
+  cacheTag('projects')
+  cacheTag('topics')
+  cacheLife('sitemap') // Use sitemap-specific cache life
+
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://lyovson.com'
 
-  // Fetch all content with specific fields to optimize query
-  const [posts, projects, topics] = await Promise.all([
-    payload.find({
-      collection: 'posts',
-      where: { _status: { equals: 'published' } },
-      depth: 1,
-      select: {
-        slug: true,
-        updatedAt: true,
-        project: true,
-      },
-    }),
-    payload.find({
-      collection: 'projects',
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    }),
-    payload.find({
-      collection: 'topics',
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    }),
-  ])
+  // Get all cached sitemap data
+  const { posts, projects, topics } = await getSitemapData()
 
   const routes: MetadataRoute.Sitemap = [
     {
@@ -46,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   // Add posts
-  posts.docs
+  posts
     .filter((post): post is Post & { project: Project } =>
       Boolean(
         post?.slug && post?.project && typeof post.project === 'object' && 'slug' in post.project,
@@ -62,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
 
   // Add projects
-  projects.docs
+  projects
     .filter((project): project is Project => Boolean(project?.slug))
     .forEach((project) => {
       routes.push({
@@ -74,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
 
   // Add topics
-  topics.docs
+  topics
     .filter((topic): topic is Topic => Boolean(topic?.slug))
     .forEach((topic) => {
       routes.push({

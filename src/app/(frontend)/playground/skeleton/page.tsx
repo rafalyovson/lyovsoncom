@@ -1,8 +1,14 @@
 import { GridCardNav } from '@/components/grid'
 import { SkeletonCard, SkeletonGrid } from '@/components/grid/skeleton'
 import type { Metadata } from 'next'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
-export default function SkeletonPlayground() {
+export default async function SkeletonPlayground() {
+  'use cache'
+  cacheTag('playground')
+  cacheTag('skeleton-playground')
+  cacheLife('static') // Static testing page
+
   return (
     <>
       <GridCardNav />
@@ -32,4 +38,7 @@ export default function SkeletonPlayground() {
 export const metadata: Metadata = {
   title: 'Skeleton Playground | Lyovson.com',
   description: 'Test page for skeleton loading components',
+  alternates: {
+    canonical: '/playground/skeleton',
+  },
 }

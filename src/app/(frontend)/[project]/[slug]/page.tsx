@@ -4,14 +4,14 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardHero } from 'src/components/grid/card/hero'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { GridCardRelatedPosts } from '@/components/grid/card/related'
 import RichText from '@/components/RichText'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getProject } from '@/utilities/get-project'
+import { getPostByProjectAndSlug } from '@/utilities/get-post'
 import { GridCardNav } from 'src/components/grid/card/nav'
-
-export const experimental_ppr = true
 
 type Args = {
   params: Promise<{
@@ -21,38 +21,22 @@ type Args = {
 }
 
 export default async function Post({ params: paramsPromise }: Args) {
+  'use cache'
+
   const { project: projectSlug, slug } = await paramsPromise
+
+  // Add cache tags for this specific post and project
+  cacheTag('posts')
+  cacheTag(`post-${slug}`)
+  cacheTag(`project-${projectSlug}`)
+  cacheLife('posts')
 
   const project = await getProject(projectSlug)
   if (!project) {
     return notFound()
   }
 
-  const payload = await getPayload({ config: configPromise })
-  const response = await payload.find({
-    collection: 'posts',
-    depth: 2,
-    where: {
-      AND: [
-        {
-          slug: {
-            equals: slug,
-          },
-        },
-        {
-          'project.slug': {
-            equals: projectSlug,
-          },
-        },
-      ],
-    },
-  })
-
-  if (!response || !response.docs || response.docs.length === 0) {
-    return notFound()
-  }
-
-  const post = response.docs[0]
+  const post = await getPostByProjectAndSlug(projectSlug, slug)
   if (!post || !post.content) {
     return notFound()
   }
@@ -84,6 +68,11 @@ export default async function Post({ params: paramsPromise }: Args) {
 }
 
 export async function generateStaticParams() {
+  'use cache'
+  cacheTag('posts')
+  cacheTag('projects')
+  cacheLife('static') // Build-time data doesn't change often
+
   const payload = await getPayload({ config: configPromise })
   const projects = await payload.find({
     collection: 'projects',
@@ -119,25 +108,24 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  'use cache'
+
   const { project: projectSlug, slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const response = await payload.find({
-    collection: 'posts',
-    depth: 2,
-    where: {
-      AND: [{ slug: { equals: slug } }, { 'project.slug': { equals: projectSlug } }],
-    },
-  })
+  // Add cache tags for metadata
+  cacheTag('posts')
+  cacheTag(`post-${slug}`)
+  cacheTag(`project-${projectSlug}`)
+  cacheLife('posts')
 
-  if (!response?.docs?.length) {
+  const post = await getPostByProjectAndSlug(projectSlug, slug)
+  if (!post) {
     return {
       title: 'Not Found | Lyovson.com',
       description: 'The requested project could not be found',
     }
   }
 
-  const post = response.docs[0]
   const title = post.meta?.title || post.title
   const description = post.meta?.description || ''
 

@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { Suspense } from 'react'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
@@ -9,10 +10,15 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getAuthorPosts } from '@/utilities/get-author-posts'
 import { GridCardNav } from 'src/components/grid/card/nav'
 
-export const experimental_ppr = true
-export const revalidate = 600
-
 export default async function Page() {
+  'use cache'
+
+  // Add cache tags for Rafa's posts
+  cacheTag('posts')
+  cacheTag('users')
+  cacheTag('author-rafa')
+  cacheLife('authors')
+
   const response = await getAuthorPosts('rafa')
 
   if (!response) {
@@ -40,5 +46,8 @@ export default async function Page() {
 
 export const metadata: Metadata = {
   title: `Rafa's Posts | Lyovson.com`,
-  description: 'Official website of Rafa and Jess Lyovsons',
+  description: 'Posts and writings by Rafa Lyovson',
+  alternates: {
+    canonical: '/rafa',
+  },
 }

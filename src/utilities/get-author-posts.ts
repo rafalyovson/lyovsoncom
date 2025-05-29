@@ -1,8 +1,14 @@
 import { getPayload } from 'payload'
-import type { Payload } from 'payload'
 import configPromise from '@payload-config'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 export async function getAuthorPosts(username: string) {
+  'use cache'
+  cacheTag('posts')
+  cacheTag('users')
+  cacheTag(`author-${username}`)
+  cacheLife('posts')
+
   const payload = await getPayload({ config: configPromise })
 
   // First get the user ID
@@ -34,5 +40,6 @@ export async function getAuthorPosts(username: string) {
       },
     },
     overrideAccess: false,
+    sort: 'createdAt:desc',
   })
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next/types'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 
 import { Search } from '@/search/Component'
@@ -15,7 +15,16 @@ type Args = {
     q: string
   }>
 }
-export default async function Page({ searchParams: searchParamsPromise }: Args) {
+
+export default async function SuspendedSearchPage({ searchParams: searchParamsPromise }: Args) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchPage searchParams={searchParamsPromise} />
+    </Suspense>
+  )
+}
+
+export async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 

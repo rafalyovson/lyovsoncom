@@ -1,28 +1,24 @@
-import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
-import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
-
-export const experimental_ppr = true
-export const dynamicParams = true
-export const revalidate = 600
+import { getLatestPosts } from '@/utilities/get-post'
 
 export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
+  'use cache'
 
-  const response = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    overrideAccess: false,
-  })
+  // Add cache tags for posts page
+  cacheTag('posts')
+  cacheTag('posts-page')
+  cacheLife('posts')
+
+  const response = await getLatestPosts(12)
 
   if (!response) {
     return notFound()
@@ -50,5 +46,8 @@ export default async function Page() {
 
 export const metadata: Metadata = {
   title: `Posts | Lyovson.com`,
-  description: 'Official website of Rafa and Jess Lyovsons',
+  description: 'All posts and articles from Lyovson.com',
+  alternates: {
+    canonical: '/posts',
+  },
 }

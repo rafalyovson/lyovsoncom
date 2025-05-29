@@ -53,12 +53,24 @@ export const Topics: CollectionConfig = {
       },
     ],
     afterChange: [
-      async () => {
+      async ({ doc, req }) => {
+        req.payload.logger.info(`Revalidating topic: ${doc.slug}`)
+
+        // Revalidate topic-related cache tags
+        revalidateTag('topics')
+        revalidateTag(`topic-${doc.slug}`)
+        revalidateTag('posts') // Posts may reference this topic
         revalidateTag('sitemap')
       },
     ],
     afterDelete: [
-      async () => {
+      async ({ doc, req }) => {
+        req.payload.logger.info(`Revalidating after topic deletion: ${doc?.slug}`)
+
+        // Revalidate topic-related cache tags
+        revalidateTag('topics')
+        revalidateTag(`topic-${doc?.slug}`)
+        revalidateTag('posts') // Posts may reference this topic
         revalidateTag('sitemap')
       },
     ],

@@ -1,6 +1,12 @@
 import { Metadata } from 'next'
 import { GridCardNav } from 'src/components/grid/card/nav'
-export default function PrivacyPolicy() {
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+
+export default async function PrivacyPolicy() {
+  'use cache'
+  cacheTag('privacy-policy')
+  cacheLife('static') // Static content changes very rarely
+
   return (
     <>
       <GridCardNav className={`self-start col-start-1 col-end-2 row-start-1 row-end-2  `} />
@@ -233,4 +239,7 @@ export default function PrivacyPolicy() {
 export const metadata: Metadata = {
   title: 'Privacy Policy | Lyovson.com',
   description: 'Privacy Policy for Lyovson.com',
+  alternates: {
+    canonical: '/privacy-policy',
+  },
 }

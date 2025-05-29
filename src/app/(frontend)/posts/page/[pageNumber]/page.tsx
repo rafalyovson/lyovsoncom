@@ -1,18 +1,14 @@
-import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
-import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
-
-export const experimental_ppr = true
-export const dynamicParams = true
-export const revalidate = 600
+import { getPaginatedPosts, getPostCount } from '@/utilities/get-post'
 
 type Args = {
   params: Promise<{
@@ -21,20 +17,19 @@ type Args = {
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
-  const { pageNumber } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
+  'use cache'
 
+  const { pageNumber } = await paramsPromise
   const sanitizedPageNumber = Number(pageNumber)
+
+  // Add cache tags for this specific posts page
+  cacheTag('posts')
+  cacheTag(`posts-page-${pageNumber}`)
+  cacheLife('posts')
 
   if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
-  const response = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    page: sanitizedPageNumber,
-    overrideAccess: false,
-  })
+  const response = await getPaginatedPosts(sanitizedPageNumber, 12)
 
   if (!response) {
     return notFound()
@@ -61,20 +56,30 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  'use cache'
+
   const { pageNumber } = await paramsPromise
+
+  // Add cache tags for metadata
+  cacheTag('posts')
+  cacheLife('static')
+
   return {
     title: `Posts Page ${pageNumber || ''} | Lyovson.com`,
+    description: `Posts and articles from Lyovson.com - Page ${pageNumber}`,
+    alternates: {
+      canonical: `/posts/page/${pageNumber}`,
+    },
   }
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'posts',
-    overrideAccess: false,
-  })
+  'use cache'
+  cacheTag('posts')
+  cacheLife('static') // Build-time data doesn't change often
 
-  const totalPages = Math.ceil(totalDocs / 10)
+  const { totalDocs } = await getPostCount()
+  const totalPages = Math.ceil(totalDocs / 12)
 
   const pages: { pageNumber: string }[] = []
 

@@ -3,16 +3,12 @@ import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getProject } from '@/utilities/get-project'
-import configPromise from '@payload-config'
+import { getPaginatedProjectPosts } from '@/utilities/get-project-posts'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
-import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
-
-export const experimental_ppr = true
-export const revalidate = 600
-export const dynamicParams = true
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 type Args = {
   params: Promise<{
@@ -22,7 +18,16 @@ type Args = {
 }
 
 export default async function Page({ params: paramsPromise }: Args) {
+  'use cache'
+
   const { project: projectSlug, pageNumber } = await paramsPromise
+
+  // Add cache tags for this specific project page
+  cacheTag('posts')
+  cacheTag('projects')
+  cacheTag(`project-${projectSlug}`)
+  cacheTag(`project-${projectSlug}-page-${pageNumber}`)
+  cacheLife('posts')
 
   const project = await getProject(projectSlug)
   if (!project) {
@@ -34,20 +39,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     return notFound()
   }
 
-  const payload = await getPayload({ config: configPromise })
-
-  const postsResponse = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    page: sanitizedPageNumber,
-    where: {
-      project: {
-        equals: project.id,
-      },
-    },
-    overrideAccess: false,
-  })
+  const postsResponse = await getPaginatedProjectPosts(projectSlug, sanitizedPageNumber, 12)
 
   if (!postsResponse) {
     return notFound()
@@ -73,11 +65,21 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
+  'use cache'
+
   const { project: projectSlug, pageNumber } = await paramsPromise
+
+  // Add cache tags for metadata
+  cacheTag('projects')
+  cacheTag(`project-${projectSlug}`)
+  cacheLife('static') // Project metadata changes less frequently
 
   const project = await getProject(projectSlug)
   if (!project) {
-    return notFound()
+    return {
+      title: 'Project Not Found | Lyovson.com',
+      description: 'The requested project could not be found',
+    }
   }
 
   const projectName = project.name || projectSlug
@@ -85,10 +87,21 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   return {
     title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
     description: project.description || `Posts from ${projectName}`,
+    alternates: {
+      canonical: `/${projectSlug}/page/${pageNumber}`,
+    },
   }
 }
 
 export async function generateStaticParams() {
+  'use cache'
+  cacheTag('projects')
+  cacheLife('static') // Build-time data doesn't change often
+
+  // Could be enhanced with centralized utility in the future
+  const configPromise = (await import('@payload-config')).default
+  const { getPayload } = await import('payload')
+
   const payload = await getPayload({ config: configPromise })
   const projects = await payload.find({
     collection: 'projects',

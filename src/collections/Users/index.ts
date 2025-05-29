@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload'
+import { revalidateTag } from 'next/cache'
 
 import { authenticated } from '@/access/authenticated'
 
@@ -27,5 +28,31 @@ export const Users: CollectionConfig = {
       unique: true,
     },
   ],
+  hooks: {
+    afterChange: [
+      async ({ doc, req }) => {
+        if (doc.username) {
+          req.payload.logger.info(`Revalidating author: ${doc.username}`)
+
+          // Revalidate user-related cache tags
+          revalidateTag('users')
+          revalidateTag(`author-${doc.username}`)
+          revalidateTag('posts') // Posts may reference this author
+        }
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        if (doc?.username) {
+          req.payload.logger.info(`Revalidating after user deletion: ${doc.username}`)
+
+          // Revalidate user-related cache tags
+          revalidateTag('users')
+          revalidateTag(`author-${doc.username}`)
+          revalidateTag('posts') // Posts may reference this author
+        }
+      },
+    ],
+  },
   timestamps: true,
 }

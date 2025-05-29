@@ -1,19 +1,15 @@
-import configPromise from '@payload-config'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getTopicPosts } from '@/utilities/get-topic-posts'
-
-export const experimental_ppr = true
-export const dynamicParams = true
-export const revalidate = 600
+import { getTopic, getAllTopics } from '@/utilities/get-topic'
 
 interface PageProps {
   params: Promise<{
@@ -22,11 +18,11 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const topicsResponse = await payload.find({
-    collection: 'topics',
-    limit: 1000,
-  })
+  'use cache'
+  cacheTag('topics')
+  cacheLife('static') // Build-time data doesn't change often
+
+  const topicsResponse = await getAllTopics()
 
   if (!topicsResponse) {
     return []
@@ -40,27 +36,24 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
+  'use cache'
+
   const { slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
+
+  // Add cache tags for this specific topic
+  cacheTag('posts')
+  cacheTag('topics')
+  cacheTag(`topic-${slug}`)
+  cacheLife('posts')
 
   // Get topic for metadata
-  const topicResponse = await payload.find({
-    collection: 'topics',
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  })
+  const topic = await getTopic(slug)
 
-  if (!topicResponse) {
+  if (!topic) {
     return notFound()
   }
 
-  const { docs } = topicResponse
-
-  const topicName = docs[0]?.name || slug
+  const topicName = topic.name || slug
 
   const response = await getTopicPosts(slug)
 
@@ -88,29 +81,31 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
+  'use cache'
+
   const { slug } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const response = await payload.find({
-    collection: 'topics',
-    where: {
-      slug: {
-        equals: slug,
-      },
-    },
-    limit: 1,
-  })
+  // Add cache tags for metadata
+  cacheTag('topics')
+  cacheTag(`topic-${slug}`)
+  cacheLife('topics')
 
-  if (!response) {
-    return notFound()
+  const topic = await getTopic(slug)
+
+  if (!topic) {
+    return {
+      title: 'Topic Not Found | Lyovson.com',
+      description: 'The requested topic could not be found',
+    }
   }
 
-  const { docs } = response
-
-  const topicName = docs[0]?.name || slug
+  const topicName = topic.name || slug
 
   return {
     title: `${topicName} | Lyovson.com`,
-    description: docs[0]?.description || `Posts about ${topicName}`,
+    description: topic.description || `Posts about ${topicName}`,
+    alternates: {
+      canonical: `/topics/${slug}`,
+    },
   }
 }

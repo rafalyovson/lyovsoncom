@@ -2,25 +2,19 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
-import configPromise from '@payload-config'
+import { getLatestPosts } from '@/utilities/get-post'
 import type { Metadata } from 'next/types'
-import { getPayload } from 'payload'
 import { Suspense } from 'react'
 import { GridCardNav } from 'src/components/grid/card/nav'
-
-export const experimental_ppr = true
-export const revalidate = 600
+import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
+  'use cache'
+  cacheTag('homepage')
+  cacheTag('posts')
+  cacheLife('posts')
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 12,
-    overrideAccess: false,
-    sort: 'createdAt:desc',
-  })
+  const posts = await getLatestPosts(12)
 
   return (
     <>

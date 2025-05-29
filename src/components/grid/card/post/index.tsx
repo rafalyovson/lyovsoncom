@@ -106,7 +106,7 @@ export const GridCardPost = ({
                 key={author.id}
               >
                 <UserIcon className="w-5 h-5" />
-                <span className="font-medium text-xs">{author.name}</span>
+                <span className="font-medium text-xs">{author.name?.replace(' Lyovson', '')}</span>
               </Link>
             )
           })}
