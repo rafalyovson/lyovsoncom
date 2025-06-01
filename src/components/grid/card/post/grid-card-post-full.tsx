@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Calendar, User as UserIcon } from 'lucide-react'
+import { Atom, BriefcaseBusiness, Calendar, Flower, PenTool, User as UserIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import { GridCard, GridCardSection } from '@/components/grid'
@@ -36,15 +36,24 @@ export const GridCardPostFull = ({
     <GridCard className={className}>
       {metaImage && typeof metaImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
-          <Media
-            imgClassName="-z-10 object-cover h-full"
-            resource={metaImage}
-            pictureClassName="h-full"
-            className="h-full"
-            {...(loading ? { loading } : {})}
-            {...(fetchPriority ? { fetchPriority } : {})}
-            {...(priority ? { priority } : {})}
-          />
+          <Link
+            href={{
+              pathname:
+                project && typeof project === 'object'
+                  ? `/${project.slug}/${slug}`
+                  : `/posts/${slug}`,
+            }}
+          >
+            <Media
+              imgClassName="-z-10 object-cover h-full"
+              resource={metaImage}
+              pictureClassName="h-full"
+              className="h-full"
+              {...(loading ? { loading } : {})}
+              {...(fetchPriority ? { fetchPriority } : {})}
+              {...(priority ? { priority } : {})}
+            />
+          </Link>
         </GridCardSection>
       )}
       <GridCardSection
@@ -105,7 +114,12 @@ export const GridCardPostFull = ({
                 className="flex items-center gap-2"
                 key={author.id}
               >
-                <UserIcon className="w-5 h-5" />
+                {/* {author.name?.replace(' Lyovson', '') === 'Jess' ? (
+                  <Flower className="w-5 h-5" />
+                ) : (
+                  <Atom className="w-5 h-5" />
+                )} */}
+                <PenTool className="w-5 h-5" />
                 <span className="font-medium text-xs">{author.name?.replace(' Lyovson', '')}</span>
               </Link>
             )

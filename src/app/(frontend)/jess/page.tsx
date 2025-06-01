@@ -9,6 +9,7 @@ import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getAuthorPosts } from '@/utilities/get-author-posts'
 import { GridCardNav } from 'src/components/grid/card/nav'
+import { GridCardJess } from '@/components/grid/card/user'
 
 export default async function Page() {
   'use cache'
@@ -30,6 +31,7 @@ export default async function Page() {
   return (
     <>
       <GridCardNav />
+      <GridCardJess className="" />
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>

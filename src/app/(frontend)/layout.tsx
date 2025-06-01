@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { cn } from 'src/utilities/cn'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 import { draftMode } from 'next/headers'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -12,12 +10,65 @@ import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { Grid } from '@/components/grid'
 import { Toaster } from '@/components/ui/sonner'
+import { IBM_Plex_Mono, IBM_Plex_Serif, IBM_Plex_Sans } from 'next/font/google'
+
+const fontMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  fallback: [
+    'ui-monospace',
+    'SFMono-Regular',
+    'Monaco',
+    'Consolas',
+    'Liberation Mono',
+    'Courier New',
+    'monospace',
+  ],
+  preload: true,
+  adjustFontFallback: true,
+})
+
+const fontSerif = IBM_Plex_Serif({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  fallback: ['ui-serif', 'Georgia', 'Cambria', 'Times New Roman', 'Times', 'serif'],
+  preload: true,
+  adjustFontFallback: true,
+})
+
+const fontSans = IBM_Plex_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  fallback: [
+    'ui-sans-serif',
+    'system-ui',
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Helvetica Neue',
+    'Arial',
+    'sans-serif',
+  ],
+  preload: true,
+  adjustFontFallback: true,
+})
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html
+      className={cn(fontMono.variable, fontSerif.variable, fontSans.variable)}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>{/* Icon and manifest links are now managed by the metadata object below */}</head>
       <body>
         <Providers>

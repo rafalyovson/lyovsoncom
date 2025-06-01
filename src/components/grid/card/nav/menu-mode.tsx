@@ -1,4 +1,4 @@
-import { Newspaper } from 'lucide-react'
+import { Atom, Flower, Newspaper } from 'lucide-react'
 import { User } from 'lucide-react'
 import { X } from 'lucide-react'
 
@@ -16,7 +16,7 @@ export const MenuMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType
         <span>Posts</span>
       </GridCardNavItem>
       <GridCardNavItem link="/jess" className="row-start-2 row-end-3 col-start-1 col-end-2">
-        <User className="w-7 h-7" />
+        <Flower className="w-7 h-7" />
         <span>Jess</span>
       </GridCardNavItem>
       <GridCardNavItem
@@ -27,7 +27,7 @@ export const MenuMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType
         <span>Close</span>
       </GridCardNavItem>
       <GridCardNavItem link="/rafa" className="row-start-2 row-end-3 col-start-3 col-end-4">
-        <User className="w-7 h-7" />
+        <Atom className="w-7 h-7" />
         <span>Rafa</span>
       </GridCardNavItem>
     </>

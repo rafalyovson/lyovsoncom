@@ -1,6 +1,12 @@
 import { Metadata } from 'next'
 import { createContactAction } from '@/actions/create-contact-action'
-import { GridCardSubscribe, GridCardNav } from '@/components/grid'
+import {
+  GridCardSubscribe,
+  GridCardNav,
+  GridCardUserSocial,
+  GridCardRafa,
+  GridCardJess,
+} from '@/components/grid'
 import { getCachedProjectBySlug } from '@/utilities/get-project'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
@@ -26,6 +32,9 @@ export default async function Playground() {
         handleSubmit={createContactAction}
         projectId={project.id}
       />
+      <GridCardJess />
+      <GridCardRafa />
+      <GridCardUserSocial />
     </>
   )
 }
