@@ -32,19 +32,19 @@ export const MediaBlock: React.FC<Props> = (props) => {
   if (media && typeof media === 'object') caption = media.caption
 
   return (
-    <Card>
-      <CardContent>
+    <article className=" border rounded-lg p-2  flex flex-col gap-2 bg-card">
+      <section className="p-2 border rounded-lg">
         <Media
-          imgClassName={cn('border border-border rounded-[0.8rem]', imgClassName)}
+          imgClassName={cn('border border-border rounded-lg ', imgClassName)}
           resource={media}
           src={staticImage}
         />
-      </CardContent>
+      </section>
       {caption && (
-        <CardFooter className="">
+        <section className="border rounded-lg p-2">
           <RichText content={caption} enableGutter={false} className={`italic`} />
-        </CardFooter>
+        </section>
       )}
-    </Card>
+    </article>
   )
 }

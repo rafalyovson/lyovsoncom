@@ -51,8 +51,13 @@ export default async function Post({ params: paramsPromise }: Args) {
         post={post}
         className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2 g3:col-start-2 g3:col-end-4 g4:self-start`}
       />
-      <div className="g2:col-start-2 g2:col-end-4 g2:row-start-2 g2:row-auto">
-        <RichText className="h-full" content={post.content} enableGutter={true} />
+      <div className="g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-auto w-[400px] g3:w-[800px] g3:col-end-4 border p-4 rounded-lg">
+        <RichText
+          className="h-full "
+          content={post.content}
+          enableGutter={false}
+          enableProse={true}
+        />
       </div>
       <div
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2`}

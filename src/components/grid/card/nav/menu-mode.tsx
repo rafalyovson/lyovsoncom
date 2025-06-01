@@ -20,7 +20,7 @@ export const MenuMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType
         <span>Jess</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className={`col-start-2 col-end-3 row-start-2 row-end-3`}
+        className={`col-start-2 col-end-3 row-start-3 row-end-4`}
         onClick={() => setMenuMode('hero')}
       >
         <X className="w-7 h-7" />

@@ -9,6 +9,7 @@ import { Pagination } from '@/components/Pagination'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import type { Post } from '@/payload-types'
 import { GridCardNav } from 'src/components/grid/card/nav'
+import { SkeletonCard } from '@/components/grid'
 
 type Args = {
   searchParams: Promise<{
@@ -18,9 +19,12 @@ type Args = {
 
 export default async function SuspendedSearchPage({ searchParams: searchParamsPromise }: Args) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <SearchPage searchParams={searchParamsPromise} />
-    </Suspense>
+    <>
+      <GridCardNav />
+      <Suspense fallback={<SkeletonCard />}>
+        <SearchPage searchParams={searchParamsPromise} />
+      </Suspense>
+    </>
   )
 }
 
@@ -74,8 +78,7 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   return (
     <>
       <GridCardNav />
-      <Search />
-      <CollectionArchive posts={docs as unknown as Post[]} />
+      <CollectionArchive posts={docs as unknown as Post[]} search />
       <div className="container">
         {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}
       </div>
