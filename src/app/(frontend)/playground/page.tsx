@@ -24,7 +24,6 @@ export default async function Playground() {
 
   return (
     <>
-      <GridCardNav />
       <GridCardSubscribe
         title="Media Musings"
         description="Join our journney through all kinds of media and ideas."

@@ -20,7 +20,6 @@ type Args = {
 export default async function SuspendedSearchPage({ searchParams: searchParamsPromise }: Args) {
   return (
     <>
-      <GridCardNav />
       <Suspense fallback={<SkeletonCard />}>
         <SearchPage searchParams={searchParamsPromise} />
       </Suspense>
@@ -77,7 +76,6 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
 
   return (
     <>
-      <GridCardNav />
       <CollectionArchive posts={docs as unknown as Post[]} search />
       <div className="container">
         {totalPages > 1 && page && <Pagination page={page} totalPages={totalPages} />}

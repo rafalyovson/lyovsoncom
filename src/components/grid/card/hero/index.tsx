@@ -6,12 +6,11 @@ import { GridCard } from '@/components/grid'
 import { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 
-
 export const GridCardHero = async ({ className, post }: { className?: string; post: Post }) => {
   const metaImage = post.meta?.image
   return (
     <GridCard
-      className={`g3:w-[800px] g3:h-[400px] overflow-hidden g3:grid-cols-6 border ${className}`}
+      className={`g3:w-[816px] g3:h-[400px] overflow-hidden g3:grid-cols-6 border ${className}`}
     >
       {metaImage && typeof metaImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4 g3:row-end-4`}>

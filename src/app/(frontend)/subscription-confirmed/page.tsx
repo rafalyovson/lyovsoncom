@@ -11,7 +11,6 @@ export default async function SubscriptionConfirmed() {
 
   return (
     <>
-      <GridCardNav />
       <GridCardSubscribeConfirmed />
     </>
   )

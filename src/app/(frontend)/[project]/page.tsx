@@ -40,7 +40,6 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 
   return (
     <>
-      <GridCardNav />
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>

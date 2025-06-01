@@ -30,7 +30,6 @@ export default async function Page() {
 
   return (
     <>
-      <GridCardNav />
       <GridCardRafa />
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />

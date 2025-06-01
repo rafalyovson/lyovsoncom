@@ -11,8 +11,6 @@ export default async function SkeletonPlayground() {
 
   return (
     <>
-      <GridCardNav />
-
       {/* Single Skeleton Card */}
       <SkeletonCard />
 

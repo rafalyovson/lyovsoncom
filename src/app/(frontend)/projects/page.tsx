@@ -1,52 +1,46 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next/types'
 import { Suspense } from 'react'
-import { GridCardNav } from 'src/components/grid/card/nav'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getLatestPosts } from '@/utilities/get-post'
+import { GridCardJess } from '@/components/grid/card/user'
+import { getProjects } from '@/utilities/get-projects'
+import { GridCardProject } from '@/components/grid/card/project'
 
 export default async function Page() {
   'use cache'
 
-  // Add cache tags for posts page
+  // Add cache tags for Jess's posts
   cacheTag('posts')
-  cacheTag('posts-page')
-  cacheLife('posts')
+  cacheTag('users')
+  cacheTag('author-jess')
+  cacheLife('authors')
 
-  const response = await getLatestPosts(12)
+  const response = await getProjects()
 
   if (!response) {
     return notFound()
   }
 
-  const { docs, totalPages, page } = response
-
   return (
     <>
       <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={docs} />
+        {response.map((project) => (
+          <GridCardProject key={project.id} project={project} />
+        ))}
       </Suspense>
-
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
-            <Pagination page={page} totalPages={totalPages} />
-          </Suspense>
-        )}
-      </div>
     </>
   )
 }
 
 export const metadata: Metadata = {
-  title: `Posts | Lyovson.com`,
-  description: 'All posts and articles from Lyovson.com',
+  title: `Projects | Lyovson.com`,
+  description: 'Projects by Jess and Rafa Lyovson',
   alternates: {
-    canonical: '/posts',
+    canonical: '/projects',
   },
 }

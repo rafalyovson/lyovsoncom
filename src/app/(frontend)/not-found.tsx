@@ -6,7 +6,6 @@ import { GridCardNotFound, GridCardNav } from '@/components/grid'
 export default function NotFound() {
   return (
     <>
-      <GridCardNav />
       <GridCardNotFound />
     </>
   )
