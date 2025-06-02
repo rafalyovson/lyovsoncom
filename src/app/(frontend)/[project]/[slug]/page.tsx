@@ -195,9 +195,35 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     },
     twitter: {
       card: 'summary_large_image',
+      site: '@lyovson',
+      creator: post.populatedAuthors?.[0]?.username
+        ? `@${post.populatedAuthors[0].username}`
+        : '@lyovson',
       title,
       description,
-      images: imageUrl ? [imageUrl] : undefined,
+      images: imageUrl
+        ? [
+            {
+              url: imageUrl,
+              alt: ogImageAlt || '',
+              width: 1200,
+              height: 630,
+            },
+          ]
+        : undefined,
+    },
+    other: {
+      // Only include defined values to satisfy TypeScript
+      ...(process.env.FACEBOOK_APP_ID ? { 'fb:app_id': process.env.FACEBOOK_APP_ID } : {}),
+      ...(post.populatedAuthors?.length
+        ? { 'article:author': post.populatedAuthors.map((author) => author.name).join(', ') }
+        : {}),
+      ...(post.publishedAt ? { 'article:published_time': post.publishedAt } : {}),
+      ...(post.updatedAt ? { 'article:modified_time': post.updatedAt } : {}),
+      ...(post.project && typeof post.project === 'object' && post.project.slug
+        ? { 'article:section': post.project.slug }
+        : {}),
+      ...(keywords?.length ? { 'article:tag': keywords.join(', ') } : {}),
     },
   }
 }
@@ -215,9 +241,63 @@ function SchemaArticle({ post, url }: { post: any; url: string }) {
         '@type': 'Person',
         name: a.name,
         url: `https://lyovson.com/${a.username}`,
+        sameAs: a.socialLinks ? Object.values(a.socialLinks).filter(Boolean) : undefined,
       })) || [],
-    image: post.meta?.image?.url,
+    publisher: {
+      '@type': 'Organization',
+      name: 'Lyovson.com',
+      url: 'https://lyovson.com',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://lyovson.com/logo-black.png',
+        width: 600,
+        height: 60,
+      },
+      sameAs: ['https://twitter.com/lyovson', 'https://github.com/lyovson'],
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+    image: post.meta?.image?.url
+      ? {
+          '@type': 'ImageObject',
+          url: post.meta.image.url,
+          width: 1200,
+          height: 630,
+          alt: post.meta.image.alt || post.title,
+        }
+      : undefined,
     url,
+    inLanguage: 'en-US',
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'Lyovson.com',
+      url: 'https://lyovson.com',
+    },
+    about:
+      post.topics
+        ?.map((topic: any) => (typeof topic === 'object' ? topic.name || topic.slug : topic))
+        .filter(Boolean)
+        .map((name: string) => ({
+          '@type': 'Thing',
+          name,
+        })) || undefined,
+    keywords:
+      post.topics
+        ?.map((topic: any) => (typeof topic === 'object' ? topic.name || topic.slug : topic))
+        .filter(Boolean)
+        .join(', ') || undefined,
+    articleSection:
+      post.project && typeof post.project === 'object' ? post.project.slug : undefined,
+    ...(post.content && {
+      wordCount: post.content.length ? Math.ceil(post.content.length / 5) : undefined,
+    }),
+    ...(post.content && {
+      timeRequired: post.content.length
+        ? `PT${Math.max(1, Math.ceil(post.content.length / 5 / 200))}M`
+        : undefined,
+    }),
   }
 
   return (

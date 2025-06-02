@@ -13,12 +13,35 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/api/*', '/admin/*'],
+        disallow: [
+          '/api/*',
+          '/admin/*',
+          '/_next/*',
+          '/next/*',
+          '*.json',
+          '/private/*',
+          '/temp/*',
+          '/drafts/*',
+        ],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
         crawlDelay: 1,
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: '/',
+        crawlDelay: 1,
+      },
+      {
+        userAgent: ['GPTBot', 'Google-Extended', 'CCBot', 'ChatGPT-User', 'Claude-Web'],
+        disallow: '/',
+      },
+      {
+        userAgent: ['facebookexternalhit', 'Twitterbot', 'LinkedInBot'],
+        allow: '/',
+        crawlDelay: 2,
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

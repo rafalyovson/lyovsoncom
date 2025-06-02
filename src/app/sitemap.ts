@@ -17,15 +17,67 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { posts, projects, topics } = await getSitemapData()
 
   const routes: MetadataRoute.Sitemap = [
+    // Homepage - highest priority
     {
       url: SITE_URL,
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 1,
     },
+    // Main section pages - high priority
+    {
+      url: `${SITE_URL}/posts`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/projects`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    // Author pages - high priority for personal branding
+    {
+      url: `${SITE_URL}/rafa`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/jess`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    // Utility pages - medium priority
+    {
+      url: `${SITE_URL}/search`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    },
+    {
+      url: `${SITE_URL}/playground`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    },
+    {
+      url: `${SITE_URL}/privacy-policy`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${SITE_URL}/subscription-confirmed`,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.2,
+    },
   ]
 
-  // Add posts
+  // Add posts with enhanced metadata
   posts
     .filter((post): post is Post & { project: Project } =>
       Boolean(
@@ -36,12 +88,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       routes.push({
         url: `${SITE_URL}/${post.project.slug}/${post.slug}`,
         lastModified: new Date(post.updatedAt),
-        changeFrequency: 'daily',
+        changeFrequency: 'monthly', // Articles change less frequently after publication
         priority: 0.8,
       })
     })
 
-  // Add projects
+  // Add projects with better change frequency
   projects
     .filter((project): project is Project => Boolean(project?.slug))
     .forEach((project) => {
@@ -53,7 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     })
 
-  // Add topics
+  // Add topics with appropriate priority
   topics
     .filter((topic): topic is Topic => Boolean(topic?.slug))
     .forEach((topic) => {

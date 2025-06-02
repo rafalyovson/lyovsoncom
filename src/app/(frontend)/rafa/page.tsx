@@ -46,9 +46,46 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  title: `Rafa's Posts | Lyovson.com`,
-  description: 'Posts and writings by Rafa Lyovson',
+  title: `Rafa Lyovson - Posts & Programming | Lyovson.com`,
+  description:
+    'Posts, articles, and programming insights by Rafa Lyovson. Explore thoughts on technology, software development, and research projects.',
+  keywords: [
+    'Rafa Lyovson',
+    'programming',
+    'software development',
+    'technology',
+    'research',
+    'articles',
+    'blog posts',
+    'coding',
+  ],
   alternates: {
     canonical: '/rafa',
+  },
+  openGraph: {
+    title: 'Rafa Lyovson - Posts & Programming',
+    description:
+      'Posts, articles, and programming insights by Rafa Lyovson on technology, software development, and research.',
+    type: 'profile',
+    url: '/rafa',
+    // Profile information for structured data
+    firstName: 'Rafa',
+    lastName: 'Lyovson',
+    username: 'rafa',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Rafa Lyovson - Posts & Programming',
+    description:
+      'Posts, articles, and programming insights by Rafa Lyovson on technology and software development.',
+    creator: '@lyovson',
+    site: '@lyovson',
+  },
+  other: {
+    // Hint for Person structured data
+    'profile:first_name': 'Rafa',
+    'profile:last_name': 'Lyovson',
+    'profile:username': 'rafa',
+    'article:author': 'Rafa Lyovson',
   },
 }

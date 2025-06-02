@@ -84,7 +84,37 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   )
 }
 
-export const metadata: Metadata = {
-  title: `Search |Lyovson.com`,
-  description: 'Search for posts on Lyovson.com',
+export async function generateMetadata({
+  searchParams: searchParamsPromise,
+}: Args): Promise<Metadata> {
+  const { q: query } = await searchParamsPromise
+
+  const title = query ? `Search results for "${query}" | Lyovson.com` : 'Search | Lyovson.com'
+
+  const description = query
+    ? `Find posts, articles, and content related to "${query}" on Lyovson.com`
+    : 'Search for posts, articles, and content on Lyovson.com'
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: query ? `/search?q=${encodeURIComponent(query)}` : '/search',
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: query ? `/search?q=${encodeURIComponent(query)}` : '/search',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
+    robots: {
+      index: !query, // Don't index search result pages, only the main search page
+      follow: true,
+    },
+  }
 }

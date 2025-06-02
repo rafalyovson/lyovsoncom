@@ -79,6 +79,11 @@ const nextConfig: NextConfig = {
         revalidate: 1200, // 20 minutes revalidate
         expire: 3600, // 1 hour max
       },
+      rss: {
+        stale: 3600, // 1 hour stale
+        revalidate: 7200, // 2 hours revalidate
+        expire: 86400, // 24 hours max
+      },
     },
   },
   webpack: (config, { dev, isServer }) => {

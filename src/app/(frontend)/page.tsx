@@ -36,6 +36,40 @@ export default async function Page() {
 export function generateMetadata(): Metadata {
   return {
     title: 'Lyovson.com',
-    description: 'Official website of Rafa and Jess Lyovsons',
+    description:
+      'Official website of Rafa and Jess Lyovson — featuring writing, projects, and research on programming, design, philosophy, and technology.',
+    keywords: [
+      'Rafa Lyovson',
+      'Jess Lyovson',
+      'programming',
+      'writing',
+      'design',
+      'philosophy',
+      'research',
+      'projects',
+      'technology',
+      'blog',
+    ],
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: 'Lyovson.com - Writing, Projects & Research',
+      description:
+        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
+      type: 'website',
+      url: '/',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Lyovson.com - Writing, Projects & Research',
+      description:
+        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research.',
+      creator: '@lyovson',
+      site: '@lyovson',
+    },
+    other: {
+      'article:author': 'Rafa Lyovson, Jess Lyovson',
+    },
   }
 }

@@ -39,9 +39,29 @@ export default async function Playground() {
 }
 
 export const metadata: Metadata = {
-  title: `Playground | Lyovson.com`,
-  description: 'Test and explore features on Lyovson.com playground',
+  title: `Playground - Interactive Demos | Lyovson.com`,
+  description:
+    'Explore interactive demos, experiments, and test features on the Lyovson.com playground. Try out new components and functionality.',
+  keywords: ['playground', 'interactive demos', 'experiments', 'test features', 'web development'],
   alternates: {
     canonical: '/playground',
+  },
+  openGraph: {
+    title: 'Playground - Interactive Demos',
+    description:
+      'Explore interactive demos, experiments, and test features on the Lyovson.com playground.',
+    type: 'website',
+    url: '/playground',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Playground - Interactive Demos',
+    description: 'Explore interactive demos and experiments on Lyovson.com.',
+    creator: '@lyovson',
+    site: '@lyovson',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }

@@ -58,16 +58,47 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   'use cache'
 
   const { pageNumber } = await paramsPromise
+  const pageNum = Number(pageNumber)
 
   // Add cache tags for metadata
   cacheTag('posts')
   cacheLife('static')
 
+  const isFirstPage = pageNum === 1
+  const title = isFirstPage
+    ? `All Posts & Articles | Lyovson.com`
+    : `Posts Page ${pageNumber} | Lyovson.com`
+
+  const description = isFirstPage
+    ? 'Browse all posts and articles from Lyovson.com covering programming, design, philosophy, and technology.'
+    : `Posts and articles from Lyovson.com - Page ${pageNumber}. Continue browsing our content on programming, design, and technology.`
+
   return {
-    title: `Posts Page ${pageNumber || ''} | Lyovson.com`,
-    description: `Posts and articles from Lyovson.com - Page ${pageNumber}`,
+    title,
+    description,
     alternates: {
       canonical: `/posts/page/${pageNumber}`,
+      ...(pageNum > 1 && {
+        prev: pageNum === 2 ? '/posts' : `/posts/page/${pageNum - 1}`,
+      }),
+      // Note: We'd need to know total pages to set 'next', but this is handled by Pagination component
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `/posts/page/${pageNumber}`,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+      site: '@lyovson',
+    },
+    robots: {
+      index: pageNum <= 3, // Only index first 3 pages to avoid duplicate content issues
+      follow: true,
+      noarchive: pageNum > 1, // Don't archive pagination pages
     },
   }
 }

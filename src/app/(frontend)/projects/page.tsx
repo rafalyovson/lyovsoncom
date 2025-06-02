@@ -38,9 +38,39 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  title: `Projects | Lyovson.com`,
-  description: 'Projects by Jess and Rafa Lyovson',
+  title: `Projects & Research | Lyovson.com`,
+  description:
+    'Explore projects and research by Rafa and Jess Lyovson covering technology, programming, design, and creative endeavors.',
+  keywords: [
+    'projects',
+    'research',
+    'technology',
+    'programming',
+    'design',
+    'creative projects',
+    'Rafa Lyovson',
+    'Jess Lyovson',
+  ],
   alternates: {
     canonical: '/projects',
+  },
+  openGraph: {
+    title: 'Projects & Research - Lyovson.com',
+    description:
+      'Explore projects and research covering technology, programming, design, and creative endeavors.',
+    type: 'website',
+    url: '/projects',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Projects & Research - Lyovson.com',
+    description:
+      'Explore projects and research covering technology, programming, design, and creative endeavors.',
+    creator: '@lyovson',
+    site: '@lyovson',
+  },
+  other: {
+    'article:section': 'Projects',
+    'article:author': 'Rafa Lyovson, Jess Lyovson',
   },
 }

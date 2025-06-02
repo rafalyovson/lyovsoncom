@@ -237,8 +237,40 @@ export default async function PrivacyPolicy() {
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Lyovson.com',
-  description: 'Privacy Policy for Lyovson.com',
+  description:
+    'Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information. GDPR and CCPA compliant.',
+  keywords: [
+    'privacy policy',
+    'data protection',
+    'GDPR',
+    'CCPA',
+    'personal information',
+    'cookies',
+    'terms',
+  ],
   alternates: {
     canonical: '/privacy-policy',
+  },
+  openGraph: {
+    title: 'Privacy Policy - Lyovson.com',
+    description:
+      'Privacy Policy for Lyovson.com - Learn how we collect, use, and protect your personal information.',
+    type: 'website',
+    url: '/privacy-policy',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Privacy Policy - Lyovson.com',
+    description: 'Privacy Policy for Lyovson.com - Data protection and privacy information.',
+    site: '@lyovson',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  other: {
+    'document:type': 'legal',
+    'document:category': 'privacy-policy',
+    'document:last-updated': '2024-03-19',
   },
 }

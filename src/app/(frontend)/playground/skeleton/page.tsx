@@ -34,9 +34,28 @@ export default async function SkeletonPlayground() {
 }
 
 export const metadata: Metadata = {
-  title: 'Skeleton Playground | Lyovson.com',
-  description: 'Test page for skeleton loading components',
+  title: 'Skeleton Loading Demo | Lyovson.com',
+  description:
+    'Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.',
+  keywords: ['skeleton loading', 'loading animations', 'UI components', 'demo', 'web development'],
   alternates: {
     canonical: '/playground/skeleton',
+  },
+  openGraph: {
+    title: 'Skeleton Loading Demo',
+    description: 'Interactive demo showcasing skeleton loading components and animations.',
+    type: 'website',
+    url: '/playground/skeleton',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Skeleton Loading Demo',
+    description: 'Interactive demo of skeleton loading components.',
+    site: '@lyovson',
+  },
+  robots: {
+    index: false, // Don't index demo/test pages
+    follow: true,
+    noarchive: true,
   },
 }

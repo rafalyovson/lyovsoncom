@@ -44,9 +44,39 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  title: `Posts | Lyovson.com`,
-  description: 'All posts and articles from Lyovson.com',
+  title: `All Posts & Articles | Lyovson.com`,
+  description:
+    'Browse all posts and articles from Lyovson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyovson.',
+  keywords: [
+    'blog posts',
+    'articles',
+    'programming',
+    'design',
+    'philosophy',
+    'technology',
+    'Rafa Lyovson',
+    'Jess Lyovson',
+  ],
   alternates: {
     canonical: '/posts',
+  },
+  openGraph: {
+    title: 'All Posts & Articles - Lyovson.com',
+    description:
+      'Browse all posts and articles covering programming, design, philosophy, technology, and creative projects.',
+    type: 'website',
+    url: '/posts',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'All Posts & Articles - Lyovson.com',
+    description:
+      'Browse all posts and articles covering programming, design, philosophy, and technology.',
+    creator: '@lyovson',
+    site: '@lyovson',
+  },
+  other: {
+    'article:section': 'Blog',
+    'article:author': 'Rafa Lyovson, Jess Lyovson',
   },
 }

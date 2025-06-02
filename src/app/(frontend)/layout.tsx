@@ -70,7 +70,58 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       lang="en"
       suppressHydrationWarning
     >
-      <head>{/* Icon and manifest links are now managed by the metadata object below */}</head>
+      <head>
+        {/* Icon and manifest links are now managed by the metadata object below */}
+        {/* Site-wide Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Lyovson.com',
+              url: getServerSideURL(),
+              description:
+                'Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research.',
+              inLanguage: 'en-US',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: `${getServerSideURL()}/search?q={search_term_string}`,
+                'query-input': 'required name=search_term_string',
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'Lyovson.com',
+                url: getServerSideURL(),
+                logo: {
+                  '@type': 'ImageObject',
+                  url: `${getServerSideURL()}/logo-black.png`,
+                  width: 600,
+                  height: 60,
+                },
+                sameAs: ['https://twitter.com/lyovson', 'https://github.com/lyovson'],
+              },
+              author: [
+                {
+                  '@type': 'Person',
+                  name: 'Rafa Lyovson',
+                  url: `${getServerSideURL()}/rafa`,
+                },
+                {
+                  '@type': 'Person',
+                  name: 'Jess Lyovson',
+                  url: `${getServerSideURL()}/jess`,
+                },
+              ],
+            }),
+          }}
+        />
+        {/* Performance hints */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="dns-prefetch" href="//vercel.live" />
+        <link rel="dns-prefetch" href="//vitals.vercel-insights.com" />
+      </head>
       <body>
         <Providers>
           <LivePreviewListener />
@@ -84,6 +135,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </body>
     </html>
   )
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
+  ],
 }
 
 export const metadata: Metadata = {
@@ -109,7 +171,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  manifest: '/site.webmanifest',
+  manifest: '/manifest.json',
   robots: {
     index: true,
     follow: true,
@@ -127,6 +189,9 @@ export const metadata: Metadata = {
     { rel: 'icon', type: 'image/png', sizes: '16x16', url: '/favicon-16x16.png' },
     { rel: 'shortcut icon', url: '/favicon.ico' },
   ],
+  classification: 'Blog, Technology, Personal Website',
+  category: 'Technology',
+  bookmarks: [`${getServerSideURL()}/posts`],
 
   openGraph: mergeOpenGraph({
     type: 'website',
@@ -145,18 +210,19 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
     types: {
-      'application/rss+xml': `${getServerSideURL()}/feed.xml`,
+      'application/rss+xml': [
+        { url: `${getServerSideURL()}/feed.xml`, title: 'Lyovson.com RSS Feed' },
+      ],
     },
   },
-}
-
-export const viewport: Viewport = {
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#121212' },
-  ],
-  colorScheme: 'light dark',
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 2,
+  other: {
+    'google-site-verification': process.env.GOOGLE_SITE_VERIFICATION || '',
+    'msvalidate.01': process.env.BING_SITE_VERIFICATION || '',
+    'facebook-domain-verification': process.env.FACEBOOK_DOMAIN_VERIFICATION || '',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+    'mobile-web-app-capable': 'yes',
+    HandheldFriendly: 'true',
+    MobileOptimized: '320',
+  },
 }
