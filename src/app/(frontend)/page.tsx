@@ -18,7 +18,7 @@ export default async function Page() {
 
   return (
     <>
-      <PWAInstall />
+      {/* <PWAInstall /> */}
 
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts.docs} />

@@ -86,7 +86,7 @@ export const GridCardPostFull = ({
                   variant="default"
                   style={{
                     backgroundColor: topic.color || 'var(--glass-bg)',
-                    color: topic.color ? 'white' : 'var(--glass-text)',
+                    color: 'var(--glass-text)',
                   }}
                   className="w-full glass-badge glass-text shadow-md"
                 >

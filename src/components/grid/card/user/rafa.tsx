@@ -48,7 +48,7 @@ export const GridCardRafa = ({ className }: Props) => {
         <a
           href={`https://x.com/lyovson`}
           target="_blank"
-          aria-label={`Rafa Lyovson on X`}
+          aria-label={`Rafa Lyovson on X.com`}
           className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiX size={24} className="text-current" />
