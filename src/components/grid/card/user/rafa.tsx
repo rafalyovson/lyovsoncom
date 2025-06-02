@@ -26,7 +26,7 @@ export const GridCardRafa = ({ className }: Props) => {
           alt={'Rafa Lyovson'}
           width={400}
           height={400}
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full rounded-md"
         />
       </GridCardSection>
 
@@ -36,8 +36,8 @@ export const GridCardRafa = ({ className }: Props) => {
           'g3:row-start-1 g3:row-end-2 g3:col-start-4 g3:col-end-8',
         )}
       >
-        <h1 className={`text-2xl text-bold text-center`}>Rafa Lyovson</h1>
-        <p className={`text-sm text-center italic`}>Common sense guardian</p>
+        <h1 className={`text-2xl font-bold text-center glass-text`}>Rafa Lyovson</h1>
+        <p className={`text-sm text-center italic glass-text-secondary`}>Common sense guardian</p>
       </GridCardSection>
       <GridCardNavItem
         className={cn(
@@ -46,13 +46,13 @@ export const GridCardRafa = ({ className }: Props) => {
         )}
       >
         <a
-          href={`https://x.com/rafalyovson`}
+          href={`https://x.com/lyovson`}
           target="_blank"
           aria-label={`Rafa Lyovson on X`}
-          className=" flex flex-col items-center gap-2 justify-center"
+          className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiX size={24} className="text-current" />
-          <span className="">x.com</span>
+          <span className="text-sm">x.com</span>
         </a>
       </GridCardNavItem>
       <GridCardNavItem
@@ -62,13 +62,13 @@ export const GridCardRafa = ({ className }: Props) => {
         )}
       >
         <a
-          href={`https://github.com/rafalyovson`}
+          href={`https://github.com/lyovson`}
           target="_blank"
           aria-label={`Rafa Lyovson on GitHub`}
-          className=" flex flex-col items-center gap-2 justify-center"
+          className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiGithub size={24} className="text-current" />
-          <span className="">GitHub</span>
+          <span className="text-sm">GitHub</span>
         </a>
       </GridCardNavItem>
     </GridCard>

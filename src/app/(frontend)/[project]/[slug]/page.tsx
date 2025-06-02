@@ -11,7 +11,6 @@ import RichText from '@/components/RichText'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getProject } from '@/utilities/get-project'
 import { getPostByProjectAndSlug } from '@/utilities/get-post'
-import { GridCardNav } from 'src/components/grid/card/nav'
 
 type Args = {
   params: Promise<{
@@ -44,30 +43,37 @@ export default async function Post({ params: paramsPromise }: Args) {
   return (
     <>
       <SchemaArticle post={post} url={`https://lyovson.com/${projectSlug}/${slug}`} />
-      <GridCardNav
-        className={`g2:col-start-1 g2:col-end-2 g2:row-start-1 g2:row-end-2 g4:h-[400px] g4:self-start`}
-      />
+
       <GridCardHero
         post={post}
         className={`g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-2 g3:col-start-2 g3:col-end-4 g4:self-start`}
       />
-      <div className="g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-auto w-[400px] g3:w-[816px] g3:col-end-4 border p-4 rounded-lg">
-        <RichText
-          className="h-full "
-          content={post.content}
-          enableGutter={false}
-          enableProse={true}
-        />
-      </div>
-      <div
+      <article className="g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-auto w-[400px] g3:w-[816px] g3:col-end-4 glass-card glass-interactive p-6  rounded-lg ">
+        <div className="prose prose-lg max-w-none glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary">
+          <RichText
+            className="h-full"
+            content={post.content}
+            enableGutter={false}
+            enableProse={true}
+          />
+        </div>
+      </article>
+
+      <aside
         className={`g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2`}
       >
         {post.relatedPosts && post.relatedPosts.length > 0 && (
-          <Suspense fallback={<Skeleton className="h-64 w-full" />}>
+          <Suspense
+            fallback={
+              <div className="glass-section glass-loading w-[400px] h-[400px] rounded-xl animate-pulse">
+                <Skeleton className="h-full w-full glass-badge" />
+              </div>
+            }
+          >
             <GridCardRelatedPosts posts={post.relatedPosts} />
           </Suspense>
         )}
-      </div>
+      </aside>
     </>
   )
 }

@@ -27,9 +27,12 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   }
 
   return (
-    <GridCardNavItem onClick={toggleTheme} className={className}>
+    <GridCardNavItem
+      onClick={toggleTheme}
+      className={`row-start-3 row-end-4 col-start-3 col-end-4 ${className}`}
+    >
       <SunMoon className="w-7 h-7" />
-      <span>Theme</span>
+      <span className="text-sm font-medium">Theme</span>
     </GridCardNavItem>
   )
 }

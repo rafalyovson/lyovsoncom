@@ -13,8 +13,11 @@ type GridCardNavItemProps = {
 export const GridCardNavItem = ({ children, link, onClick, className }: GridCardNavItemProps) => {
   if (link) {
     return (
-      <GridCardSection onClick={onClick} className={className}>
-        <Link href={link} className={` flex flex-col gap-2 items-center justify-center h-full `}>
+      <GridCardSection interactive className={`group glass-interactive ${className}`}>
+        <Link
+          href={link}
+          className="flex flex-col gap-2 items-center justify-center h-full glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
+        >
           {children}
         </Link>
       </GridCardSection>
@@ -23,7 +26,8 @@ export const GridCardNavItem = ({ children, link, onClick, className }: GridCard
   return (
     <GridCardSection
       onClick={onClick}
-      className={` flex flex-col gap-2 items-center justify-center h-full cursor-pointer ${className}`}
+      interactive
+      className={`flex flex-col gap-2 items-center justify-center h-full cursor-pointer glass-interactive glass-text ${className}`}
     >
       {children}
     </GridCardSection>

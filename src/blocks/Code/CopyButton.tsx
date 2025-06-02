@@ -17,18 +17,18 @@ export function CopyButton({ code }: { code: string }) {
   }
 
   return (
-    <div className="flex justify-end align-middle">
+    <div className="absolute top-3 right-3">
       <Button
-        className="flex gap-1"
-        variant={'secondary'}
+        className="glass-badge glass-interactive flex gap-2 transition-all duration-300 hover:glass-text-secondary  glass-badge px-2 py-1 text-xs font-medium rounded"
+        variant="ghost"
+        size="sm"
         onClick={async () => {
           await navigator.clipboard.writeText(code)
           updateCopyStatus()
         }}
       >
-        <p>{text}</p>
-
-        <div className="w-6 h-6 dark:invert">
+        <span className="glass-text sr-only">{text}</span>
+        <div className="w-4 h-4 glass-text">
           <CopyIcon />
         </div>
       </Button>

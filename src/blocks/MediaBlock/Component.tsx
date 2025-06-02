@@ -32,19 +32,40 @@ export const MediaBlock: React.FC<Props> = (props) => {
   if (media && typeof media === 'object') caption = media.caption
 
   return (
-    <article className=" border rounded-lg p-2  flex flex-col gap-2 bg-card">
-      <section className="p-2 border rounded-lg">
+    <Card
+      className={cn(
+        'glass-interactive glass-stagger-1 transition-all duration-300 ',
+
+        className,
+      )}
+    >
+      <CardContent className={cn('p-0', className)}>
         <Media
-          imgClassName={cn('border border-border rounded-lg ', imgClassName)}
+          imgClassName={cn('object-cover h-full ', imgClassName)}
           resource={media}
           src={staticImage}
+          className="h-full  flex justify-center items-center"
+          pictureClassName="mt-0 mb-0"
         />
-      </section>
+      </CardContent>
       {caption && (
-        <section className="border rounded-lg p-2">
-          <RichText content={caption} enableGutter={false} className={`italic`} />
-        </section>
+        <CardFooter
+          className={cn(
+            'glass-section rounded-lg p-2 transition-all duration-300',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2',
+            'hover:shadow-md',
+          )}
+        >
+          <RichText
+            content={caption}
+            enableGutter={false}
+            className={cn(
+              'text-sm italic text-center w-full glass-text-secondary',
+              captionClassName,
+            )}
+          />
+        </CardFooter>
       )}
-    </article>
+    </Card>
   )
 }

@@ -4,7 +4,6 @@ import { GridCardSection, GridCard } from '@/components/grid'
 import { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 
-
 export const GridCardRelatedPosts = ({
   posts,
   className,
@@ -23,23 +22,26 @@ export const GridCardRelatedPosts = ({
           <Link
             key={post.id}
             href={`/posts/${post.slug}`}
-            className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} `}
+            className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} group glass-interactive glass-stagger-${Math.min(index + 1, 6)}`}
+            aria-label={`Read related post: ${post.title}`}
           >
             <GridCardSection className={`grid grid-cols-3 grid-rows-1 gap-2 h-full`}>
               {metaImage && (
                 <Media
-                  imgClassName="-z-10 object-cover h-full rounded-lg"
+                  imgClassName="object-cover h-full"
                   resource={metaImage}
-                  className={` overflow-hidden h-full`}
-                  pictureClassName=" row-start-1 row-end-2 col-start-1 col-end-2 h-full "
+                  className="glass-media h-full flex justify-center items-center"
+                  pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                 />
               )}
-              <section
+              <div
                 key={post.id}
                 className={`row-start-1 row-end-2 col-start-2 col-end-4 grid items-center`}
               >
-                <h1>{post.title}</h1>
-              </section>
+                <h1 className="glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300 font-medium">
+                  {post.title}
+                </h1>
+              </div>
             </GridCardSection>
           </Link>
         )

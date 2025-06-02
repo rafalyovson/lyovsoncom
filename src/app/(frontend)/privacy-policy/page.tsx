@@ -9,7 +9,6 @@ export default async function PrivacyPolicy() {
 
   return (
     <>
-      <GridCardNav className={`self-start col-start-1 col-end-2 row-start-1 row-end-2  `} />
       <article className="prose prose-invert mx-auto max-w-4xl p-6 space-y-8 g3:col-start-2 g3:col-end-4">
         <h1>Privacy Policy for Lyovson.com</h1>
 

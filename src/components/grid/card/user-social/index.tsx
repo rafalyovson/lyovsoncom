@@ -106,19 +106,28 @@ export function GridCardUserSocial({ className }: { className?: string }) {
         const IconComponent = link.icon
 
         return (
-          <GridCardNavItem key={link.name} className={cn(gridPositions[index], '')}>
+          <GridCardNavItem
+            key={link.name}
+            className={cn(gridPositions[index], `glass-stagger-${Math.min(index + 1, 6)}`)}
+          >
             <a
               href={link.url}
-              aria-label={link.name}
-              className="transition-transform hover:scale-110"
+              aria-label={`Visit ${link.name} profile`}
+              className="glass-interactive group"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {link.iconType === 'simple' ? (
                 <IconComponent
                   size={32}
                   color={link.useDefaultColor ? 'default' : 'currentColor'}
+                  className="glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
                 />
               ) : (
-                <IconComponent size={32} className="text-current" />
+                <IconComponent
+                  size={32}
+                  className="glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
+                />
               )}
             </a>
           </GridCardNavItem>

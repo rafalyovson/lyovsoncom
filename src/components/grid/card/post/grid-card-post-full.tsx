@@ -32,23 +32,23 @@ export const GridCardPostFull = ({
     slug,
   } = post
 
+  const postUrl =
+    project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`
+
   return (
     <GridCard className={className}>
       {metaImage && typeof metaImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
           <Link
-            href={{
-              pathname:
-                project && typeof project === 'object'
-                  ? `/${project.slug}/${slug}`
-                  : `/posts/${slug}`,
-            }}
+            href={postUrl}
+            className="block h-full group overflow-hidden rounded-lg"
+            aria-label={`Read "${title}"`}
           >
             <Media
-              imgClassName="-z-10 object-cover h-full"
+              imgClassName="object-cover h-full"
               resource={metaImage}
               pictureClassName="h-full"
-              className="h-full"
+              className="glass-media h-full flex justify-center items-center"
               {...(loading ? { loading } : {})}
               {...(fetchPriority ? { fetchPriority } : {})}
               {...(priority ? { priority } : {})}
@@ -56,47 +56,42 @@ export const GridCardPostFull = ({
           </Link>
         </GridCardSection>
       )}
+
       <GridCardSection
-        className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center`}
+        className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center glass-interactive`}
       >
-        <Link
-          href={{
-            pathname:
-              project && typeof project === 'object'
-                ? `/${project.slug}/${slug}`
-                : `/posts/${slug}`,
-          }}
-        >
-          <h1 className={`text-xl text-bold text-center`}>{title}</h1>
+        <Link href={postUrl} className="block group">
+          <h1
+            className={`text-xl font-bold text-center glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300`}
+          >
+            {title}
+          </h1>
         </Link>
       </GridCardSection>
 
       <GridCardSection
         className={`row-start-1 row-end-2 col-start-3 col-end-4 flex flex-col gap-2 justify-end items-center`}
       >
-        {/* {type && typeof type === 'object' && (
-          <Link className={`text-xs font-semibold`} href={{ pathname: `/types/${type.slug}` }}>
-            <Badge variant="outline">{type.name}</Badge>
-          </Link>
-        )} */}
-
-        {/* {project && typeof project === 'object' && (
-          <Link className={`text-xs font-semibold`} href={{ pathname: `/${project.slug}` }}>
-            <Badge variant="secondary">{project.name}</Badge>
-          </Link>
-        )} */}
-
         {topics &&
-          topics.map((topic) => {
+          topics.map((topic, index) => {
             if (typeof topic !== 'object') return null
-            const style = topic.color ? { backgroundColor: topic.color } : {}
             return (
               <Link
-                className={`text-xs font-semibold w-full`}
+                className={`text-xs font-semibold w-full glass-stagger-${Math.min(index + 1, 6)}`}
                 key={topic.id}
                 href={{ pathname: `/topics/${topic.slug}` }}
+                aria-label={`View posts about ${topic.name}`}
               >
-                <Badge variant="default" style={style} className="w-full">{`${topic.name}`}</Badge>
+                <Badge
+                  variant="default"
+                  style={{
+                    backgroundColor: topic.color || 'var(--glass-bg)',
+                    color: topic.color ? 'white' : 'var(--glass-text)',
+                  }}
+                  className="w-full glass-badge glass-text shadow-md"
+                >
+                  {topic.name}
+                </Badge>
               </Link>
             )
           })}
@@ -106,46 +101,41 @@ export const GridCardPostFull = ({
         className={`row-start-2 row-end-3 col-start-3 col-end-4 flex flex-col gap-2 justify-evenly`}
       >
         {populatedAuthors &&
-          populatedAuthors.map((author) => {
+          populatedAuthors.map((author, index) => {
             if (typeof author !== 'object') return null
             return (
               <Link
                 href={{ pathname: `/${author.username}` }}
-                className="flex items-center gap-2"
+                className={`flex items-center gap-2 glass-text hover:text-[var(--glass-text-secondary)] transition-colors duration-300 glass-interactive glass-stagger-${Math.min(index + 1, 6)}`}
                 key={author.id}
+                aria-label={`View ${author.name}'s profile`}
               >
-                {/* {author.name?.replace(' Lyovson', '') === 'Jess' ? (
-                  <Flower className="w-5 h-5" />
-                ) : (
-                  <Atom className="w-5 h-5" />
-                )} */}
-                <PenTool className="w-5 h-5" />
+                <PenTool className="w-5 h-5" aria-hidden="true" />
                 <span className="font-medium text-xs">{author.name?.replace(' Lyovson', '')}</span>
               </Link>
             )
           })}
 
-        <p className="text-xs flex items-center gap-2">
-          <Calendar className="w-5 h-5" />
-          <span>
+        <div className="text-xs flex items-center gap-2 glass-text-secondary">
+          <Calendar className="w-5 h-5" aria-hidden="true" />
+          <time dateTime={publishedAt || undefined}>
             {publishedAt &&
               new Date(publishedAt).toLocaleDateString('en-GB', {
                 year: '2-digit',
                 month: 'short',
                 day: '2-digit',
               })}
-          </span>
-        </p>
+          </time>
+        </div>
+
         {project && typeof project === 'object' && (
-          // <Link className={`text-xs font-semibold`} href={{ pathname: `/${project.slug}` }}>
-          //   <Badge variant="secondary">{project.name}</Badge>
-          // </Link>
           <Link
             href={{ pathname: `/${project.slug}` }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 glass-text hover:text-[var(--glass-text-secondary)] transition-colors duration-300 glass-interactive"
             key={project.id}
+            aria-label={`View ${project.name} project`}
           >
-            <BriefcaseBusiness className="w-5 h-5" />
+            <BriefcaseBusiness className="w-5 h-5" aria-hidden="true" />
             <span className="font-medium text-xs">{project.name}</span>
           </Link>
         )}

@@ -13,22 +13,33 @@ export const Code: React.FC<Props> = ({ code, language = '' }) => {
   if (!code) return null
 
   return (
-    <Highlight code={code} language={language} theme={themes.vsDark}>
-      {({ getLineProps, getTokenProps, tokens }) => (
-        <pre className="bg-black p-4 border text-xs border-border rounded overflow-x-auto">
-          {tokens.map((line, i) => (
-            <div key={i} {...getLineProps({ className: 'table-row', line })}>
-              <span className="table-cell select-none text-right text-white/25">{i + 1}</span>
-              <span className="table-cell pl-4">
-                {line.map((token, key) => (
-                  <span key={key} {...getTokenProps({ token })} />
-                ))}
-              </span>
-            </div>
-          ))}
-          <CopyButton code={code} />
-        </pre>
-      )}
-    </Highlight>
+    <div className="glass-section glass-premium relative">
+      <Highlight code={code} language={language} theme={themes.vsDark}>
+        {({ getLineProps, getTokenProps, tokens }) => (
+          <pre className="glass-bg glass-text p-6 border border-glass-border rounded-lg overflow-x-auto backdrop-blur-md text-sm font-mono leading-relaxed">
+            {/* Language indicator */}
+            {language && (
+              <div className="absolute top-3 right-15 glass-badge px-2 py-1 text-xs font-medium rounded">
+                {language.toUpperCase()}
+              </div>
+            )}
+
+            {tokens.map((line, i) => (
+              <div key={i} {...getLineProps({ className: 'table-row', line })}>
+                <span className="table-cell select-none text-right glass-text-secondary opacity-50 pr-4 min-w-[3rem]">
+                  {i + 1}
+                </span>
+                <span className="table-cell">
+                  {line.map((token, key) => (
+                    <span key={key} {...getTokenProps({ token })} />
+                  ))}
+                </span>
+              </div>
+            ))}
+            <CopyButton code={code} />
+          </pre>
+        )}
+      </Highlight>
+    </div>
   )
 }

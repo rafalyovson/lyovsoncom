@@ -21,21 +21,19 @@ export const GridCardPostSearch = ({
 }: GridCardPostProps) => {
   const { project, meta: { image: metaImage } = {}, title, slug } = post
 
+  const postUrl =
+    project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`
+
   return (
-    <Link
-      href={{
-        pathname:
-          project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`,
-      }}
-    >
+    <Link href={postUrl} className="group glass-interactive">
       <GridCard className={className}>
         {metaImage && typeof metaImage !== 'string' && (
           <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4`}>
             <Media
-              imgClassName="-z-10 object-cover h-full"
+              imgClassName="object-cover h-full"
               resource={metaImage}
               pictureClassName="h-full"
-              className="h-full"
+              className="glass-media h-full flex justify-center items-center"
               {...(loading ? { loading } : {})}
               {...(fetchPriority ? { fetchPriority } : {})}
               {...(priority ? { priority } : {})}
@@ -45,7 +43,11 @@ export const GridCardPostSearch = ({
         <GridCardSection
           className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center`}
         >
-          <h1 className={`text-xl text-bold text-center`}>{title}</h1>
+          <h1
+            className={`text-xl font-bold text-center glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300`}
+          >
+            {title}
+          </h1>
         </GridCardSection>
       </GridCard>
     </Link>

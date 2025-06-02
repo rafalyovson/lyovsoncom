@@ -26,7 +26,7 @@ export const GridCardJess = ({ className }: Props) => {
           alt={'Jess Lyovson'}
           width={400}
           height={400}
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full rounded-md"
         />
       </GridCardSection>
 
@@ -36,8 +36,10 @@ export const GridCardJess = ({ className }: Props) => {
           'g3:row-start-1 g3:row-end-2 g3:col-start-4 g3:col-end-8',
         )}
       >
-        <h1 className={`text-2xl text-bold text-center`}>Jess Lyovson</h1>
-        <p className={`text-sm text-center italic`}>Storyteller, creator, and maker of things</p>
+        <h1 className={`text-2xl font-bold text-center glass-text`}>Jess Lyovson</h1>
+        <p className={`text-sm text-center italic glass-text-secondary`}>
+          Storyteller, creator, and maker of things
+        </p>
       </GridCardSection>
       <GridCardNavItem
         className={cn(
@@ -49,10 +51,10 @@ export const GridCardJess = ({ className }: Props) => {
           href={`https://x.com/jesslyovson`}
           target="_blank"
           aria-label={`Jess Lyovson on X`}
-          className=" flex flex-col items-center gap-2 justify-center"
+          className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiX size={24} className="text-current" />
-          <span className="">x.com</span>
+          <span className="text-sm">x.com</span>
         </a>
       </GridCardNavItem>
       <GridCardNavItem
@@ -65,10 +67,10 @@ export const GridCardJess = ({ className }: Props) => {
           href={`https://www.youtube.com/@hasmikkhachunts1741`}
           target="_blank"
           aria-label={`Jess Lyovson on YouTube`}
-          className=" flex flex-col items-center gap-2 justify-center"
+          className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiYoutube size={24} className="text-current" />
-          <span className="">YouTube</span>
+          <span className="text-sm">YouTube</span>
         </a>
       </GridCardNavItem>
     </GridCard>

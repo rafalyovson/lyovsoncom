@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import type { Props } from './types'
 import { ImageMedia } from './ImageMedia'
 import { VideoMedia } from './VideoMedia'
+import { cn } from '@/lib/utils'
 
 export const Media: React.FC<Props> = (props) => {
   const { className, htmlElement = 'div', resource } = props
@@ -14,7 +15,7 @@ export const Media: React.FC<Props> = (props) => {
     <Tag
       {...(htmlElement !== null
         ? {
-            className,
+            className: cn(className, 'contents'),
           }
         : {})}
     >

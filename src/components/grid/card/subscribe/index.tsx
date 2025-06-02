@@ -10,7 +10,6 @@ import { GridCard } from '@/components/grid/'
 import { cn } from '@/utilities/cn'
 import { ActionResponse } from '@/actions/create-contact-action'
 
-
 type GridCardSubscribeProps = {
   title?: string
   description?: string
@@ -38,32 +37,34 @@ export const GridCardSubscribe = ({
   return (
     <GridCard className={cn('col-start-1 col-end-2 row-start-2 row-end-3', className)}>
       <GridCardSection
-        className={`row-start-1 ${state.message ? 'row-end-2' : 'row-end-3'} col-start-1 col-end-4 flex flex-col gap-2 items-center justify-center`}
+        className={`row-start-1 ${state.message ? 'row-end-2' : 'row-end-3'} col-start-1 col-end-4 flex flex-col gap-2 items-center justify-center text-center`}
       >
-        <div className={cn('text-2xl font-bold')}>{emoji}</div>
-        <h2 className={cn('text-2xl font-bold')}>{title}</h2>
-        <p className={cn('text-sm text-gray-500')}>{description}</p>
+        <div className={cn('text-2xl font-bold')} role="img" aria-label="Greeting">
+          {emoji}
+        </div>
+        <h2 className={cn('text-2xl font-bold glass-text')}>{title}</h2>
+        <p className={cn('text-sm glass-text-secondary')}>{description}</p>
       </GridCardSection>
       {state.message && (
         <GridCardSection
           className={cn(
-            'row-start-2 row-end-3 col-start-1 col-end-4 flex justify-center items-center',
+            'row-start-2 row-end-3 col-start-1 col-end-4 flex justify-center items-center glass-interactive',
           )}
         >
           {state.success && (
-            <section className={cn('text-2xl font-bold')}>
+            <div className={cn('text-2xl font-bold glass-text text-center')}>
               <p>✅ {state.message}</p>
-            </section>
+            </div>
           )}
           {!state.success && (
-            <section className={cn('text-2xl font-bold text-center')}>
+            <div className={cn('text-2xl font-bold text-center glass-text')}>
               <p>⛔️ {state.message}</p>
-            </section>
+            </div>
           )}
         </GridCardSection>
       )}
 
-      <GridCardSection className={`row-start-3 row-end-4 col-start-1 col-end-4 `}>
+      <GridCardSection className={`row-start-3 row-end-4 col-start-1 col-end-4 glass-interactive`}>
         <SubscribeForm
           buttonText={buttonText}
           action={formAction}

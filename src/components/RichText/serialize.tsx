@@ -62,20 +62,24 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
           }
           if (node.format & IS_STRIKETHROUGH) {
             text = (
-              <span key={index} style={{ textDecoration: 'line-through' }}>
+              <span key={index} className="line-through">
                 {text}
               </span>
             )
           }
           if (node.format & IS_UNDERLINE) {
             text = (
-              <span key={index} style={{ textDecoration: 'underline' }}>
+              <span key={index} className="underline">
                 {text}
               </span>
             )
           }
           if (node.format & IS_CODE) {
-            text = <code key={index}>{node.text}</code>
+            text = (
+              <code key={index} className="px-1 py-0.5 text-sm font-mono rounded bg-muted">
+                {node.text}
+              </code>
+            )
           }
           if (node.format & IS_SUBSCRIPT) {
             text = <sub key={index}>{text}</sub>
@@ -121,28 +125,62 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
           switch (blockType) {
             case 'mediaBlock':
               return (
-                <MediaBlock
-                  className="col-start-1 col-span-3 "
-                  imgClassName="m-0 w-full"
-                  key={index}
-                  {...block}
-                  captionClassName="mx-auto max-w-[48rem]"
-                  enableGutter={false}
-                  disableInnerContainer={true}
-                />
+                <div key={index} className="col-start-1 col-span-3 glass-stagger-1">
+                  <MediaBlock
+                    className="glass-section"
+                    imgClassName="m-0 w-full rounded-lg"
+                    {...block}
+                    captionClassName="mx-auto max-w-[48rem] mt-4 glass-text-secondary text-center"
+                    enableGutter={false}
+                    disableInnerContainer={true}
+                  />
+                </div>
               )
             case 'banner':
-              return <BannerBlock className="col-start-2 mb-4" key={index} {...block} />
+              return (
+                <div key={index} className="col-start-2 mb-6 glass-stagger-2">
+                  <BannerBlock className="glass-section glass-interactive" {...block} />
+                </div>
+              )
             case 'code':
-              return <CodeBlock className="col-start-2" key={index} {...block} />
+              return (
+                <div key={index} className="col-start-2 glass-stagger-2">
+                  <CodeBlock className="glass-section font-mono" {...block} />
+                </div>
+              )
             case 'youtube':
-              return <YouTubeBlock key={index} {...block} />
+              return (
+                <div
+                  key={index}
+                  className="col-start-1 col-span-3 glass-stagger-1 glass-section rounded-lg overflow-hidden"
+                >
+                  <YouTubeBlock {...block} />
+                </div>
+              )
             case 'xpost':
-              return <XPostBlock key={index} {...block} />
+              return (
+                <div
+                  key={index}
+                  className="col-start-2 glass-stagger-2 glass-section glass-interactive"
+                >
+                  <XPostBlock {...block} />
+                </div>
+              )
             case 'quote':
-              return <QuoteBlock className="col-start-2" key={index} {...block} />
+              return (
+                <div key={index} className="col-start-2 glass-stagger-2">
+                  <QuoteBlock className="glass-section glass-premium" {...block} />
+                </div>
+              )
             case 'gif':
-              return <GIFBlock key={index} {...block} />
+              return (
+                <div
+                  key={index}
+                  className="col-start-1 col-span-3 glass-stagger-1 glass-section rounded-lg overflow-hidden"
+                >
+                  <GIFBlock {...block} />
+                </div>
+              )
             default:
               return null
           }
@@ -169,7 +207,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             case 'list': {
               const Tag = node?.tag
               return (
-                <Tag className="list col-start-2" key={index}>
+                <Tag className="col-start-2" key={index}>
                   {serializedChildren}
                 </Tag>
               )
@@ -179,12 +217,13 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                 return (
                   <li
                     aria-checked={node.checked ? 'true' : 'false'}
-                    className={` ${node.checked ? '' : ''}`}
+                    className={`${node.checked ? 'line-through opacity-60' : ''}`}
                     key={index}
                     role="checkbox"
                     tabIndex={-1}
                     value={node?.value}
                   >
+                    <span className="mr-2">{node.checked ? '✅' : '☐'}</span>
                     {serializedChildren}
                   </li>
                 )
@@ -213,6 +252,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                   reference={fields.doc as any}
                   type={fields.linkType === 'internal' ? 'reference' : 'custom'}
                   url={fields.url}
+                  className="underline hover:no-underline transition-colors duration-300"
                 >
                   {serializedChildren}
                 </CMSLink>
