@@ -1,6 +1,9 @@
 import { MetadataRoute } from 'next'
+import { getServerSideURL } from '@/utilities/getURL'
 
 export default function manifest(): MetadataRoute.Manifest {
+  const siteUrl = getServerSideURL()
+
   return {
     name: 'Lyovson.com - Writing, Projects & Research',
     short_name: 'Lyovson',
@@ -13,7 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: 'portrait-primary',
     scope: '/',
     lang: 'en-US',
-    categories: ['blog', 'education', 'technology', 'lifestyle'],
+    categories: ['blog', 'education', 'technology', 'lifestyle', 'productivity'],
     icons: [
       {
         src: '/favicon-16x16.png',
@@ -26,10 +29,10 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
       {
-        src: '/apple-touch-icon.png',
-        sizes: '180x180',
+        src: '/android-chrome-192x192.png',
+        sizes: '192x192',
         type: 'image/png',
-        purpose: 'maskable',
+        purpose: 'any',
       },
       {
         src: '/android-chrome-192x192.png',
@@ -41,26 +44,103 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/android-chrome-512x512.png',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/android-chrome-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
         purpose: 'maskable',
+      },
+      {
+        src: '/apple-touch-icon.png',
+        sizes: '180x180',
+        type: 'image/png',
+        purpose: 'any',
       },
     ],
     screenshots: [
       {
-        src: '/screenshot-wide.png',
-        sizes: '1280x720',
+        src: `${siteUrl}/og-image.png`,
+        sizes: '1200x630',
         type: 'image/png',
         form_factor: 'wide',
-        label: 'Lyovson.com Homepage',
+        label: 'Homepage of Lyovson.com',
       },
       {
-        src: '/screenshot-narrow.png',
-        sizes: '640x1136',
+        src: `${siteUrl}/og-image.png`,
+        sizes: '1200x630',
         type: 'image/png',
         form_factor: 'narrow',
-        label: 'Lyovson.com Mobile View',
+        label: 'Lyovson.com mobile view',
+      },
+    ],
+    shortcuts: [
+      {
+        name: 'Latest Posts',
+        short_name: 'Posts',
+        description: 'View the latest blog posts and articles',
+        url: '/posts',
+        icons: [
+          {
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+        ],
+      },
+      {
+        name: 'Projects',
+        short_name: 'Projects',
+        description: 'Browse all projects and research',
+        url: '/projects',
+        icons: [
+          {
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+        ],
+      },
+      {
+        name: "Rafa's Posts",
+        short_name: 'Rafa',
+        description: 'Posts and articles by Rafa Lyovson',
+        url: '/rafa',
+        icons: [
+          {
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+        ],
+      },
+      {
+        name: "Jess's Posts",
+        short_name: 'Jess',
+        description: 'Posts and articles by Jess Lyovson',
+        url: '/jess',
+        icons: [
+          {
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+        ],
       },
     ],
     related_applications: [],
     prefer_related_applications: false,
+    dir: 'ltr',
+    display_override: ['window-controls-overlay', 'standalone', 'minimal-ui'],
+    launch_handler: {
+      client_mode: 'navigate-existing',
+    },
+    protocol_handlers: [
+      {
+        protocol: 'web+lyovson',
+        url: '/search?q=%s',
+      },
+    ],
   }
 }

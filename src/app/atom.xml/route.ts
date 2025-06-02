@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   'use cache'
   cacheTag('rss')
   cacheTag('posts')
-  cacheLife('rss') // RSS changes when posts change
+  cacheLife('rss')
 
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://lyovson.com'
 
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
       where: {
         _status: { equals: 'published' },
       },
-      limit: 50, // Latest 50 posts
+      limit: 50,
       sort: '-publishedAt',
       depth: 2,
       select: {
@@ -35,7 +35,6 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Create feed instance with site information
     const feed = new Feed({
       title: 'Lyovson.com - Writing, Projects & Research',
       description:
@@ -47,7 +46,7 @@ export async function GET(request: NextRequest) {
       favicon: `${SITE_URL}/favicon.ico`,
       copyright: `All rights reserved ${new Date().getFullYear()}, Lyovson.com`,
       updated: new Date(),
-      generator: 'Next.js RSS for Lyovson.com',
+      generator: 'Next.js Atom Feed for Lyovson.com',
       feedLinks: {
         rss2: `${SITE_URL}/feed.xml`,
         json: `${SITE_URL}/feed.json`,
@@ -60,7 +59,7 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    // Add posts to feed
+    // Add posts to feed (same logic as RSS)
     posts.docs
       .filter((post) => {
         return (
@@ -78,10 +77,8 @@ export async function GET(request: NextRequest) {
         const link = `${SITE_URL}/${projectSlug}/${post.slug}`
         const author = post.populatedAuthors?.[0]?.name || 'Lyovson Team'
 
-        // Create clean content excerpt for RSS
         let contentText = description
         if (!contentText && post.content) {
-          // Extract text from rich content for description
           const textContent = extractTextFromContent(post.content)
           contentText = textContent.substring(0, 300) + (textContent.length > 300 ? '...' : '')
         }
@@ -99,13 +96,6 @@ export async function GET(request: NextRequest) {
               link: `${SITE_URL}/${author.toLowerCase().replace(' ', '')}`,
             },
           ],
-          contributor: [
-            {
-              name: 'Lyovson.com',
-              email: 'hello@lyovson.com',
-              link: SITE_URL,
-            },
-          ],
           date: new Date(post.publishedAt || post.updatedAt),
           category: [
             {
@@ -116,47 +106,45 @@ export async function GET(request: NextRequest) {
         })
       })
 
-    return new Response(feed.rss2(), {
+    return new Response(feed.atom1(), {
       status: 200,
       headers: {
-        'Content-Type': 'application/rss+xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600, s-maxage=3600', // Cache for 1 hour
+        'Content-Type': 'application/atom+xml; charset=utf-8',
+        'Cache-Control': 'public, max-age=3600, s-maxage=3600',
       },
     })
   } catch (error) {
-    console.error('Error generating RSS feed:', error)
+    console.error('Error generating Atom feed:', error)
 
-    // Fallback RSS feed
-    const fallbackRss = `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
-  <channel>
-    <title>Lyovson.com</title>
-    <link>${SITE_URL}</link>
-    <description>Writing, Projects & Research by Rafa and Jess Lyovson</description>
-    <language>en-US</language>
-    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>Next.js RSS for Lyovson.com</generator>
-    <item>
-      <title>RSS Feed Temporarily Unavailable</title>
-      <link>${SITE_URL}</link>
-      <description>The RSS feed is temporarily unavailable. Please visit the website directly.</description>
-      <pubDate>${new Date().toUTCString()}</pubDate>
-      <guid isPermaLink="false">${SITE_URL}/rss-error-${Date.now()}</guid>
-    </item>
-  </channel>
-</rss>`
+    const fallbackAtom = `<?xml version="1.0" encoding="UTF-8" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Lyovson.com</title>
+  <link href="${SITE_URL}" />
+  <link href="${SITE_URL}/atom.xml" rel="self" />
+  <id>${SITE_URL}</id>
+  <updated>${new Date().toISOString()}</updated>
+  <author>
+    <name>Rafa &amp; Jess Lyovson</name>
+  </author>
+  <entry>
+    <title>Feed Temporarily Unavailable</title>
+    <link href="${SITE_URL}" />
+    <id>${SITE_URL}/feed-error-${Date.now()}</id>
+    <updated>${new Date().toISOString()}</updated>
+    <summary>The Atom feed is temporarily unavailable. Please visit the website directly.</summary>
+  </entry>
+</feed>`
 
-    return new Response(fallbackRss, {
+    return new Response(fallbackAtom, {
       status: 200,
       headers: {
-        'Content-Type': 'application/rss+xml; charset=utf-8',
-        'Cache-Control': 'no-cache', // Don't cache error responses
+        'Content-Type': 'application/atom+xml; charset=utf-8',
+        'Cache-Control': 'no-cache',
       },
     })
   }
 }
 
-// Helper function to extract text from rich content
 function extractTextFromContent(content: any): string {
   if (!content) return ''
 

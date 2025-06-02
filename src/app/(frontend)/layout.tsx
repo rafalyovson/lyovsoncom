@@ -95,7 +95,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 url: getServerSideURL(),
                 logo: {
                   '@type': 'ImageObject',
-                  url: `${getServerSideURL()}/logo-black.png`,
+                  url: `${getServerSideURL()}/logo-black.webp`,
                   width: 600,
                   height: 60,
                 },
@@ -208,11 +208,11 @@ export const metadata: Metadata = {
     site: '@lyovson',
   },
   alternates: {
-    canonical: '/',
+    canonical: getServerSideURL(),
     types: {
-      'application/rss+xml': [
-        { url: `${getServerSideURL()}/feed.xml`, title: 'Lyovson.com RSS Feed' },
-      ],
+      'application/rss+xml': [{ url: '/feed.xml', title: 'Lyovson.com RSS Feed' }],
+      'application/feed+json': [{ url: '/feed.json', title: 'Lyovson.com JSON Feed' }],
+      'application/atom+xml': [{ url: '/atom.xml', title: 'Lyovson.com Atom Feed' }],
     },
   },
   other: {

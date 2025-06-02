@@ -1,5 +1,6 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from 'next'
+// import withSerwistInit from '@serwist/next'
 
 import redirects from './redirects.js'
 
@@ -107,5 +108,14 @@ const nextConfig: NextConfig = {
     return config
   },
 }
+
+// Temporarily disabled Serwist due to compatibility issues with Next.js 15 canary
+// const withSerwist = withSerwistInit({
+//   swSrc: 'src/app/sw.ts',
+//   swDest: 'public/sw.js',
+//   cacheOnNavigation: true,
+//   reloadOnOnline: true,
+//   disable: process.env.NODE_ENV === 'development',
+// })
 
 export default withPayload(nextConfig)

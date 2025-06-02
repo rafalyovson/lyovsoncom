@@ -22,13 +22,13 @@ export const Logo = (props: Props) => {
   if (mounted) {
     switch (resolvedTheme) {
       case 'light':
-        src = '/logo-black.png'
+        src = '/logo-black.webp'
         break
       case 'dark':
-        src = '/logo-white.png'
+        src = '/logo-white.webp'
         break
       default:
-        src = '/logo-black.png'
+        src = '/logo-black.webp'
         break
     }
   }

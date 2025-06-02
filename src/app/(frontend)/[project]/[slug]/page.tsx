@@ -249,7 +249,7 @@ function SchemaArticle({ post, url }: { post: any; url: string }) {
       url: 'https://lyovson.com',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://lyovson.com/logo-black.png',
+        url: 'https://lyovson.com/logo-black.webp',
         width: 600,
         height: 60,
       },

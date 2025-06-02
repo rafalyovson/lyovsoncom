@@ -5,8 +5,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { getLatestPosts } from '@/utilities/get-post'
 import type { Metadata } from 'next/types'
 import { Suspense } from 'react'
-import { GridCardNav } from 'src/components/grid/card/nav'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import { PWAInstall } from '@/components/pwa-install'
 
 export default async function Page() {
   'use cache'
@@ -18,6 +18,8 @@ export default async function Page() {
 
   return (
     <>
+      <PWAInstall />
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts.docs} />
       </Suspense>
@@ -64,12 +66,20 @@ export function generateMetadata(): Metadata {
       card: 'summary_large_image',
       title: 'Lyovson.com - Writing, Projects & Research',
       description:
-        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research.',
+        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
       creator: '@lyovson',
       site: '@lyovson',
     },
     other: {
       'article:author': 'Rafa Lyovson, Jess Lyovson',
+      'application-name': 'Lyovson.com',
+      'mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-capable': 'yes',
+      'apple-mobile-web-app-status-bar-style': 'black-translucent',
+      'apple-mobile-web-app-title': 'Lyovson.com',
+      'msapplication-TileColor': '#000000',
+      'msapplication-config': '/browserconfig.xml',
+      'theme-color': '#000000',
     },
   }
 }
