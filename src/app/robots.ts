@@ -36,11 +36,11 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
       },
       {
         userAgent: ['GPTBot', 'Google-Extended', 'CCBot', 'ChatGPT-User', 'Claude-Web'],
-        disallow: '/',
+        allow: '/',
       },
       {
         userAgent: ['facebookexternalhit', 'Twitterbot', 'LinkedInBot'],
-        allow: '/',
+        allow: ['/', '/api/media/*'],
         crawlDelay: 2,
       },
     ],
