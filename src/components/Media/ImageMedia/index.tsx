@@ -19,6 +19,7 @@ const placeholderBlur =
 export const ImageMedia: React.FC<MediaProps> = (props) => {
   const {
     alt: altFromProps,
+    className,
     fill,
     imgClassName,
     priority,
@@ -52,29 +53,44 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   const loading = loadingFromProps || 'lazy'
 
-  // Define more accurate responsive sizes based on common use cases
   const sizes = sizeFromProps
     ? sizeFromProps
     : fill
-      ? '100vw' // If fill is true, image takes full width
+      ? '100vw'
       : '(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 40vw, 400px'
 
   return (
-    <picture className={cn(pictureClassName)}>
-      <NextImage
-        alt={alt || ''}
-        className={cn(imgClassName)}
-        fill={fill}
-        height={!fill ? height : undefined}
-        placeholder="blur"
-        blurDataURL={placeholderBlur}
-        priority={priority}
-        quality={80}
-        loading={loading}
-        sizes={sizes}
-        src={src}
-        width={!fill ? width : undefined}
+    <div className={cn(className, 'relative')} style={{ display: 'grid' }}>
+      <picture
+        className={cn(
+          pictureClassName,
+          'col-start-1 row-start-1 col-span-1 row-span-1',
+          'h-full w-full',
+        )}
+      >
+        <NextImage
+          alt={alt || ''}
+          className={cn(imgClassName, 'h-full w-full')}
+          fill={fill}
+          height={!fill ? height : undefined}
+          placeholder="blur"
+          blurDataURL={placeholderBlur}
+          priority={priority}
+          quality={80}
+          loading={loading}
+          sizes={sizes}
+          src={src}
+          width={!fill ? width : undefined}
+          style={{ objectFit: 'cover' }}
+        />
+      </picture>
+      <div
+        className={cn(
+          'media-glass-overlay',
+          'col-start-1 row-start-1 col-span-1 row-span-1',
+          'h-full w-full',
+        )}
       />
-    </picture>
+    </div>
   )
 }

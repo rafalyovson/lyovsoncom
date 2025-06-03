@@ -21,10 +21,17 @@ export const GridCardSection = ({
     <section
       onClick={onClick}
       className={cn(
-        'glass-section rounded-lg p-2 transition-all duration-300',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2',
-        'hover:shadow-md',
-        isInteractive && 'cursor-pointer glass-interactive',
+        'glass-section transition-glass',
+        // Enhanced glassmorphism with no grey hover
+        'hover:glass-section-hover hover:hover-float',
+        // Focus states
+        'focus-visible:outline-none focus-visible:glass-section-hover',
+        // Interactive states
+        isInteractive && [
+          'cursor-pointer',
+          // Active state for better feedback
+          'active:scale-[0.98] active:transition-glass-fast',
+        ],
         className,
       )}
       {...(isInteractive && {
