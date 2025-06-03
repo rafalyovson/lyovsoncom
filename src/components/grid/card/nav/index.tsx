@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-
+import { useSearchParams } from 'next/navigation'
 import { MenuModeType } from './types'
 import { HeroMode } from './hero-mode'
 import { SearchMode } from './search-mode'
@@ -9,7 +9,9 @@ import { MenuMode } from './menu-mode'
 
 import { GridCard } from '@/components/grid'
 export const GridCardNav = ({ className }: { className?: string }) => {
-  const [menuMode, setMenuMode] = useState<MenuModeType>('hero')
+  const searchParams = useSearchParams()
+  const search = searchParams.get('q')
+  const [menuMode, setMenuMode] = useState<MenuModeType>(search ? 'search' : 'hero')
   return (
     <GridCard className={`col-start-1 col-end-2 row-start-1 row-end-2  ${className}`}>
       {

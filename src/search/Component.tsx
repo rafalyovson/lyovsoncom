@@ -1,33 +1,30 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/utilities/cn'
-// import { useDebounce } from '@/utilities/useDebounce'
 
 export const Search: React.FC<{ className?: string }> = ({ className }) => {
-  const [value, setValue] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const value = searchParams.get('q') || ''
 
-  // const debouncedValue = useDebounce(value)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    const encoded = encodeURIComponent(newValue.trim())
 
-  // useEffect(() => {
-  //   router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
-  // }, [debouncedValue, router])
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    router.push(`/search?q=${value}`)
+    // Only push if not empty
+    if (encoded) {
+      router.push(`/search?q=${encoded}`)
+    }
   }
 
   return (
-    <div className={cn(' ', className)}>
+    <div className={cn(className)}>
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          handleSubmit(e)
         }}
       >
         <Label htmlFor="search" className="sr-only">
@@ -35,15 +32,13 @@ export const Search: React.FC<{ className?: string }> = ({ className }) => {
         </Label>
         <Input
           id="search"
-          onChange={(event) => {
-            setValue(event.target.value)
-          }}
+          defaultValue={value}
           placeholder="Search"
-          className=""
+          onChange={handleChange}
           autoFocus
         />
         <button type="submit" className="sr-only">
-          submit
+          Submit
         </button>
       </form>
     </div>
