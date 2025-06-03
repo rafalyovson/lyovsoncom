@@ -38,9 +38,9 @@ export const GridCardRelatedPosts = ({
                 key={post.id}
                 className={`row-start-1 row-end-2 col-start-2 col-end-4 grid items-center`}
               >
-                <h1 className="glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300 font-medium">
+                <h2 className="glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300 font-medium">
                   {post.title}
-                </h1>
+                </h2>
               </div>
             </GridCardSection>
           </Link>

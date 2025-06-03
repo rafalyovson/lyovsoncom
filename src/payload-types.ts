@@ -174,6 +174,24 @@ export interface Post {
         username?: string | null;
       }[]
     | null;
+  /**
+   * Pre-computed vector embedding for semantic search (auto-generated)
+   */
+  embedding?: {
+    vector?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+    model?: string | null;
+    dimensions?: number | null;
+    generatedAt?: string | null;
+    textHash?: string | null;
+  };
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -746,6 +764,15 @@ export interface PostsSelect<T extends boolean = true> {
         id?: T;
         name?: T;
         username?: T;
+      };
+  embedding?:
+    | T
+    | {
+        vector?: T;
+        model?: T;
+        dimensions?: T;
+        generatedAt?: T;
+        textHash?: T;
       };
   slug?: T;
   slugLock?: T;

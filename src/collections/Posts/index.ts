@@ -17,6 +17,7 @@ import {
 
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidatePost, revalidateDelete } from './hooks/revalidatePost'
+import { generateEmbeddingHook } from './hooks/generateEmbedding'
 
 import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
@@ -243,9 +244,60 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
+    // Pre-computed embedding for semantic search
+    {
+      name: 'embedding',
+      type: 'group',
+      access: {
+        update: () => false, // Only updated via hooks
+      },
+      admin: {
+        disabled: true,
+        readOnly: true,
+        description: 'Pre-computed vector embedding for semantic search (auto-generated)',
+      },
+      fields: [
+        {
+          name: 'vector',
+          type: 'json',
+          admin: {
+            hidden: true,
+          },
+        },
+        {
+          name: 'model',
+          type: 'text',
+          admin: {
+            hidden: true,
+          },
+        },
+        {
+          name: 'dimensions',
+          type: 'number',
+          admin: {
+            hidden: true,
+          },
+        },
+        {
+          name: 'generatedAt',
+          type: 'date',
+          admin: {
+            hidden: true,
+          },
+        },
+        {
+          name: 'textHash',
+          type: 'text',
+          admin: {
+            hidden: true,
+          },
+        },
+      ],
+    },
     ...slugField(),
   ],
   hooks: {
+    beforeChange: [generateEmbeddingHook],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

@@ -11,7 +11,13 @@ export const SiteTitleSection = () => {
         href="/"
       >
         <Logo />
-        <h1 className={`text-3xl text-center font-bold glass-text`}>Lyovson.com</h1>
+        <div
+          className={`text-3xl text-center font-bold glass-text`}
+          role="banner"
+          aria-label="Site title"
+        >
+          Lyovson.com
+        </div>
       </Link>
     </GridCardSection>
   )

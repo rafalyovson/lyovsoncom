@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
         populatedAuthors: true,
         project: true,
         content: true,
+        topics: true,
       },
     })
 
@@ -78,17 +79,23 @@ export async function GET(request: NextRequest) {
         const author = post.populatedAuthors?.[0]?.name || 'Lyovson Team'
 
         let contentText = description
-        if (!contentText && post.content) {
+        let fullContent = ''
+
+        if (post.content) {
           const textContent = extractTextFromContent(post.content)
-          contentText = textContent.substring(0, 300) + (textContent.length > 300 ? '...' : '')
+          fullContent = textContent
+          if (!contentText) {
+            contentText = textContent.substring(0, 300) + (textContent.length > 300 ? '...' : '')
+          }
         }
 
-        feed.addItem({
+        // Enhanced feed item with AI-friendly metadata
+        const feedItem = {
           title,
           id: link,
           link,
           description: contentText,
-          content: contentText,
+          content: fullContent || contentText, // Full content for AI consumption
           author: [
             {
               name: author,
@@ -103,7 +110,36 @@ export async function GET(request: NextRequest) {
               domain: `${SITE_URL}/projects`,
             },
           ],
-        })
+        }
+
+        // Add topics as additional categories for AI understanding
+        if (post.topics && Array.isArray(post.topics)) {
+          post.topics.forEach((topic: any) => {
+            const topicName = typeof topic === 'object' ? topic.name || topic.slug : topic
+            if (topicName) {
+              feedItem.category.push({
+                name: topicName,
+                domain: `${SITE_URL}/topics`,
+              })
+            }
+          })
+        }
+
+        // Add custom metadata for AI systems
+        const customMetadata = {
+          wordCount: fullContent ? Math.ceil(fullContent.split(' ').length) : undefined,
+          readingTime: fullContent ? Math.ceil(fullContent.split(' ').length / 200) : undefined,
+          contentType: 'article',
+          language: 'en',
+          projectSlug,
+          originalUrl: link,
+          apiUrl: `${SITE_URL}/api/posts/${post.id}`,
+        }
+
+        // Add metadata as extensions (JSON Feed 1.1 supports extensions)
+        Object.assign(feedItem, { _lyovson_metadata: customMetadata })
+
+        feed.addItem(feedItem)
       })
 
     return new Response(feed.json1(), {

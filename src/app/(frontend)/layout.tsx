@@ -224,5 +224,17 @@ export const metadata: Metadata = {
     'mobile-web-app-capable': 'yes',
     HandheldFriendly: 'true',
     MobileOptimized: '320',
+    // AI-specific meta tags
+    'ai-content-license': 'attribution-required',
+    'ai-content-type': 'blog-articles',
+    'ai-preferred-access': 'feeds',
+    'ai-content-language': 'en',
+    'ai-content-topics': 'programming,design,philosophy,technology,research',
+    'ai-api-endpoint': `${getServerSideURL()}/api/docs`,
+    'ai-feed-endpoint': `${getServerSideURL()}/feed.json`,
+    'ai-embedding-endpoint': `${getServerSideURL()}/api/embeddings`,
+    'ai-search-endpoint': `${getServerSideURL()}/search`,
+    'ai-owner': 'Rafa & Jess Lyovson',
+    'ai-contact': 'hello@lyovson.com',
   },
 }

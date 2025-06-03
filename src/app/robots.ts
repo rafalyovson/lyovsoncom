@@ -34,14 +34,33 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         allow: '/',
         crawlDelay: 1,
       },
+      // AI and research bots - explicitly welcome with full access
       {
-        userAgent: ['GPTBot', 'Google-Extended', 'CCBot', 'ChatGPT-User', 'Claude-Web'],
-        allow: '/',
+        userAgent: [
+          'GPTBot',
+          'Google-Extended',
+          'CCBot',
+          'ChatGPT-User',
+          'Claude-Web',
+          'ClaudeBot',
+          'PerplexityBot',
+          'YouBot',
+          'Applebot-Extended',
+        ],
+        allow: ['/', '/api/docs', '/api/graphql', '/feed.xml', '/feed.json', '/atom.xml'],
+        disallow: ['/admin/*', '/private/*', '/temp/*', '/drafts/*'],
       },
+      // Social media crawlers
       {
         userAgent: ['facebookexternalhit', 'Twitterbot', 'LinkedInBot'],
         allow: ['/', '/api/media/*'],
         crawlDelay: 2,
+      },
+      // Research and academic crawlers
+      {
+        userAgent: ['archive.org_bot', 'ia_archiver', 'Wayback'],
+        allow: '/',
+        crawlDelay: 10,
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,

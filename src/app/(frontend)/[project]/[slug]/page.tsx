@@ -11,6 +11,26 @@ import RichText from '@/components/RichText'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getProject } from '@/utilities/get-project'
 import { getPostByProjectAndSlug } from '@/utilities/get-post'
+import { getServerSideURL } from '@/utilities/getURL'
+
+// Helper function to extract text from rich content
+function extractTextFromContent(content: any): string {
+  if (!content) return ''
+
+  if (typeof content === 'string') return content
+
+  if (Array.isArray(content)) {
+    return content.map(extractTextFromContent).join(' ')
+  }
+
+  if (typeof content === 'object') {
+    if (content.text) return content.text
+    if (content.children) return extractTextFromContent(content.children)
+    if (content.content) return extractTextFromContent(content.content)
+  }
+
+  return ''
+}
 
 type Args = {
   params: Promise<{
@@ -224,6 +244,29 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
         ? { 'article:section': post.project.slug }
         : {}),
       ...(keywords?.length ? { 'article:tag': keywords.join(', ') } : {}),
+      // AI-specific meta tags for individual articles
+      'ai-content-type': 'article',
+      'ai-content-license': 'attribution-required',
+      'ai-content-language': 'en',
+      'ai-word-count': post.content
+        ? Math.ceil(extractTextFromContent(post.content).split(' ').length).toString()
+        : '0',
+      'ai-reading-time': post.content
+        ? Math.ceil(extractTextFromContent(post.content).split(' ').length / 200).toString()
+        : '0',
+      'ai-api-url': `${getServerSideURL()}/api/posts/${post.id}`,
+      'ai-embedding-url': `${getServerSideURL()}/api/embeddings/posts/${post.id}`,
+      ...(post.project && typeof post.project === 'object' && post.project.slug
+        ? { 'ai-project': post.project.slug }
+        : {}),
+      ...(keywords?.length ? { 'ai-topics': keywords.join(',') } : {}),
+      ...(post.populatedAuthors?.length
+        ? {
+            'ai-authors': post.populatedAuthors
+              .map((author) => author.username || author.name)
+              .join(','),
+          }
+        : {}),
     },
   }
 }

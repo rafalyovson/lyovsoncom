@@ -40,11 +40,11 @@ export const GridCardProject = ({
         <GridCardSection
           className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center glass-interactive`}
         >
-          <h1
+          <h2
             className={`text-xl font-bold text-center glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300`}
           >
             {name}
-          </h1>
+          </h2>
         </GridCardSection>
       </GridCard>
     </Link>
