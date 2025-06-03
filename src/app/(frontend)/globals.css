@@ -907,21 +907,6 @@
       -webkit-backdrop-filter: none !important;
     }
   }
-
-  .media-glass-overlay {
-    grid-area: 1 / 1 / -1 / -1; /* Ensures it covers the same area as the image in the parent grid */
-    background-color: var(--glass-media-overlay-bg);
-    backdrop-filter: blur(36px) saturate(170%);
-    -webkit-backdrop-filter: blur(36px) saturate(170%);
-    border-radius: inherit; /* Inherits from .glass-media */
-    transition: background-color var(--transition-medium) var(--ease-smooth);
-    pointer-events: none;
-    z-index: 1; /* Ensures it's on top of the image if there were stacking issues */
-  }
-
-  .glass-media:hover .media-glass-overlay {
-    background-color: var(--glass-media-overlay-bg-hover);
-  }
 }
 
 @layer base {
