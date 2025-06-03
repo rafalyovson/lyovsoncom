@@ -19,11 +19,10 @@ export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
     setMounted(true)
   }, [])
 
-  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light')
-
-  // Don't render anything until mounted to prevent hydration mismatch
-  if (!mounted) {
-    return null
+  const toggleTheme = () => {
+    if (mounted) {
+      setTheme(theme === 'light' ? 'dark' : 'light')
+    }
   }
 
   return (
