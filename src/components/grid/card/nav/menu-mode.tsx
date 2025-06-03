@@ -4,6 +4,7 @@ import { X } from 'lucide-react'
 
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
+import { ThemeSwitcher } from './theme-switcher'
 
 export const MenuMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType) => void }) => {
   return (

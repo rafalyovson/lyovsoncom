@@ -6,8 +6,9 @@ import { MenuModeType } from './types'
 import { HeroMode } from './hero-mode'
 import { SearchMode } from './search-mode'
 import { MenuMode } from './menu-mode'
-
+import { SettingsMode } from './settings-mode'
 import { GridCard } from '@/components/grid'
+
 export const GridCardNav = ({ className }: { className?: string }) => {
   const searchParams = useSearchParams()
   const search = searchParams.get('q')
@@ -19,6 +20,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
           hero: <HeroMode setMenuMode={setMenuMode} />,
           search: <SearchMode setMenuMode={setMenuMode} />,
           menu: <MenuMode setMenuMode={setMenuMode} />,
+          settings: <SettingsMode setMenuMode={setMenuMode} />,
         }[menuMode]
       }
     </GridCard>

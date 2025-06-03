@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { cn } from 'src/utilities/cn'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { draftMode } from 'next/headers'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Providers } from '@/providers'
@@ -12,6 +12,7 @@ import { Grid } from '@/components/grid'
 import { Toaster } from '@/components/ui/sonner'
 import { IBM_Plex_Mono, IBM_Plex_Serif, IBM_Plex_Sans } from 'next/font/google'
 import { GridCardNav } from '@/components/grid'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const fontMono = IBM_Plex_Mono({
   subsets: ['latin'],
@@ -126,7 +127,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers>
           <LivePreviewListener />
           <Grid>
-            <GridCardNav />
+            <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
+              <GridCardNav />
+            </Suspense>
             {children}
           </Grid>
           <Toaster />

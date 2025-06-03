@@ -1,4 +1,4 @@
-import { LucideMenu, Search } from 'lucide-react'
+import { Filter, LucideMenu, Search, Settings } from 'lucide-react'
 import Link from 'next/link'
 
 import { GridCardSection } from '../section'
@@ -7,6 +7,7 @@ import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
 import { ThemeSwitcher } from './theme-switcher'
 import { SiteTitleSection } from './site-title-section'
+import { SettingsMode } from './settings-mode'
 
 export const HeroMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType) => void }) => {
   return (
@@ -31,7 +32,15 @@ export const HeroMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType
         <LucideMenu className="w-7 h-7" />
         <span>Menu</span>
       </GridCardNavItem>
-      <ThemeSwitcher className={``} />
+      <GridCardNavItem
+        onClick={() => {
+          setMenuMode('settings')
+        }}
+        className="row-start-3 row-end-4 col-start-3 col-end-4"
+      >
+        <Settings className="w-7 h-7" />
+        <span>Settings</span>
+      </GridCardNavItem>
     </>
   )
 }
