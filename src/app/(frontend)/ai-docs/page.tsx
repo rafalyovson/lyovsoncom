@@ -451,7 +451,7 @@ GET ${SITE_URL}/api/embeddings/status
             </p>
           </div>
           <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-            Last updated: {new Date().toLocaleDateString()} •{' '}
+            Last updated: January 16, 2025 •{' '}
             <ExternalLink href={`${SITE_URL}/api/docs`}>Machine-readable version</ExternalLink>
           </p>
         </GridCardSection>

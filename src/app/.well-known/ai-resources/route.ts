@@ -1,11 +1,6 @@
 import { NextRequest } from 'next/server'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 
 export async function GET(request: NextRequest) {
-  'use cache'
-  cacheTag('well-known-ai')
-  cacheLife('static')
-
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://lyovson.com'
 
   const aiResources = {
@@ -93,7 +88,7 @@ export async function GET(request: NextRequest) {
     // Content licensing
     licensing: {
       copyright: 'Rafa & Jess Lyovson',
-      year: new Date().getFullYear(),
+      year: 2025,
       usage: 'Attribution required for content use',
       contact: 'hello@lyovson.com',
       attribution: 'Lyovson.com - https://lyovson.com',
@@ -109,7 +104,7 @@ export async function GET(request: NextRequest) {
     },
 
     // Last updated
-    lastUpdated: new Date().toISOString(),
+    lastUpdated: '2025-01-16T12:00:00Z',
     version: '1.0',
     generator: 'Next.js',
   }
