@@ -130,7 +130,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
                     className="glass-section"
                     imgClassName="m-0 w-full rounded-lg"
                     {...block}
-                    captionClassName="mx-auto max-w-[48rem] mt-4 glass-text-secondary text-center"
+                    captionClassName="mx-auto max-w-[48rem] glass-text-secondary text-center"
                     enableGutter={false}
                     disableInnerContainer={true}
                   />

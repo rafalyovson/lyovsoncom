@@ -530,11 +530,11 @@
     will-change: transform;
   }
 
-  @media (hover: hover) {
+  /* @media (hover: hover) {
     .glass-media:hover img {
       transform: scale(1.03) translateZ(0);
     }
-  }
+  } */
 
   .glass-text {
     color: var(--glass-text-refined);

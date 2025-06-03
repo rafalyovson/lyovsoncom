@@ -163,12 +163,8 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   // Handle both cases: when image is a media object or just an ID
   const metaImage = post.meta?.image && typeof post.meta.image === 'object' ? post.meta.image : null
 
-  // Keep URLs relative since metadataBase is set in layout
-  let imageUrl: string | null = null
-  if (metaImage?.url) {
-    // If URL starts with http, keep it absolute, otherwise keep just the path
-    imageUrl = metaImage.url.startsWith('http') ? metaImage.url : metaImage.url
-  }
+  // Since metadataBase is set in layout, we can use the URL directly
+  const imageUrl = metaImage?.url || null
 
   const ogImageAlt = metaImage?.alt || title
 

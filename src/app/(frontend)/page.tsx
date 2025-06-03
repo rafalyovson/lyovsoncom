@@ -61,6 +61,14 @@ export function generateMetadata(): Metadata {
         'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
       type: 'website',
       url: '/',
+      images: [
+        {
+          url: '/lyovsoncom-og-image.webp',
+          width: 1200,
+          height: 630,
+          alt: 'Lyovson.com - Writing, Projects & Research',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
@@ -69,6 +77,14 @@ export function generateMetadata(): Metadata {
         'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
       creator: '@lyovson',
       site: '@lyovson',
+      images: [
+        {
+          url: '/lyovsoncom-og-image.webp',
+          alt: 'Lyovson.com - Writing, Projects & Research',
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
     other: {
       'article:author': 'Rafa Lyovson, Jess Lyovson',
