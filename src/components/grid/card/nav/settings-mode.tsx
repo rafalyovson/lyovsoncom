@@ -1,6 +1,6 @@
 import { GridCardNavItem } from './grid-card-nav-item'
 import { MenuModeType } from './types'
-import { LogIn, X } from 'lucide-react'
+import { X, ShieldUser } from 'lucide-react'
 import { ThemeSwitcher } from './theme-switcher'
 import Link from 'next/link'
 
@@ -12,10 +12,7 @@ export const SettingsMode = ({
   return (
     <>
       <GridCardNavItem className={`row-start-1 row-end-2 col-start-1 col-end-2`}>
-        <Link href="/admin" className="flex flex-col justify-center items-center gap-2">
-          <LogIn className="w-7 h-7" />
-          <span>Login</span>
-        </Link>
+        <AdminLink />
       </GridCardNavItem>
       <ThemeSwitcher className={`row-start-2 row-end-3 col-start-2 col-end-3`} />
       <GridCardNavItem
@@ -26,5 +23,14 @@ export const SettingsMode = ({
         <span>Close</span>
       </GridCardNavItem>
     </>
+  )
+}
+
+const AdminLink = () => {
+  return (
+    <Link className="flex flex-col justify-center items-center gap-2" href="/admin">
+      <ShieldUser className="w-7 h-7" />
+      <span>Admin</span>
+    </Link>
   )
 }

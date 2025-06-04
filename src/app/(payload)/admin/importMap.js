@@ -19,6 +19,9 @@ import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 }
 import { SlugComponent as SlugComponent_92cc057d0a2abb4f6cf0307edf59f986 } from '@/fields/slug/SlugComponent'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
+import { default as default_0430f5fb3b8132a602107d7535a2a344 } from '@/components/admin/icon'
+import { default as default_334250e18ce0b45af3e0c04bb6fe8307 } from '@/components/admin/logo'
+import { default as default_cb2a1950465b657675d3ed6492a8aaaa } from '@/components/admin/login-text'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
 export const importMap = {
@@ -43,5 +46,8 @@ export const importMap = {
   "@/fields/slug/SlugComponent#SlugComponent": SlugComponent_92cc057d0a2abb4f6cf0307edf59f986,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
+  "@/components/admin/icon#default": default_0430f5fb3b8132a602107d7535a2a344,
+  "@/components/admin/logo#default": default_334250e18ce0b45af3e0c04bb6fe8307,
+  "@/components/admin/login-text#default": default_cb2a1950465b657675d3ed6492a8aaaa,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }

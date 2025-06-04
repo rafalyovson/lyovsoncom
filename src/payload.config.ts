@@ -28,6 +28,13 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    components: {
+      graphics: {
+        Icon: '@/components/admin/icon',
+        Logo: '@/components/admin/logo',
+      },
+      afterLogin: ['@/components/admin/login-text'],
+    },
     livePreview: {
       breakpoints: [
         {
