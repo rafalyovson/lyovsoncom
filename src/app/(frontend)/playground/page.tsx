@@ -27,7 +27,7 @@ export default async function SuspensePlayground() {
   )
 }
 
-export async function Playground() {
+async function Playground() {
   const headers = await nextHeaders()
   const payload = await getPayload({ config })
   const user = await payload.auth({ headers: headers })
