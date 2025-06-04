@@ -8,11 +8,10 @@ import { Providers } from '@/providers'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
-import { Grid } from '@/components/grid'
+import { Grid, SkeletonCard } from '@/components/grid'
 import { Toaster } from '@/components/ui/sonner'
 import { IBM_Plex_Mono, IBM_Plex_Serif, IBM_Plex_Sans } from 'next/font/google'
 import { GridCardNav } from '@/components/grid'
-import { Skeleton } from '@/components/ui/skeleton'
 
 const fontMono = IBM_Plex_Mono({
   subsets: ['latin'],
@@ -127,9 +126,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers>
           <LivePreviewListener />
           <Grid>
-            <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
+            <Suspense fallback={<SkeletonCard />}>
               <GridCardNav />
             </Suspense>
+
             {children}
           </Grid>
           <Toaster />

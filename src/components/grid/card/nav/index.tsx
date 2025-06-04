@@ -14,7 +14,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
   const search = searchParams.get('q')
   const [menuMode, setMenuMode] = useState<MenuModeType>(search ? 'search' : 'hero')
   return (
-    <GridCard className={`col-start-1 col-end-2 row-start-1 row-end-2  ${className}`}>
+    <GridCard className={`  ${className}`}>
       {
         {
           hero: <HeroMode setMenuMode={setMenuMode} />,

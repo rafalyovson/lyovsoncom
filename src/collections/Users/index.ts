@@ -16,11 +16,17 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
   },
-  auth: true,
+  auth: {
+    loginWithUsername: {
+      allowEmailLogin: true, // default: false
+      requireEmail: false, // default: false
+    },
+  },
   fields: [
     {
       name: 'name',
       type: 'text',
+      saveToJWT: true,
     },
     {
       name: 'username',
