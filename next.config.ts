@@ -33,7 +33,7 @@ const nextConfig: NextConfig = {
   redirects,
   experimental: {
     reactCompiler: true,
-    dynamicIO: true,
+    useCache: true,
     cacheLife: {
       static: {
         stale: 1800, // 30 minutes stale
