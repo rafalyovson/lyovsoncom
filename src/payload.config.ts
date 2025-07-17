@@ -63,6 +63,11 @@ export default buildConfig({
   db: vercelPostgresAdapter({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
+      // Optimize connection pooling for serverless
+      max: 1, // Maximum connections per instance (serverless works best with 1)
+      idleTimeoutMillis: 30000, // Close idle connections after 30s
+      connectionTimeoutMillis: 10000, // Connection timeout 10s
+      allowExitOnIdle: true, // Allow process to exit when idle
     },
   }),
   collections: [Posts, Media, Types, Topics, Projects, Users, Contacts],

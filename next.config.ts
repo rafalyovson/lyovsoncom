@@ -33,22 +33,39 @@ const nextConfig: NextConfig = {
   redirects,
   experimental: {
     reactCompiler: true,
-    useCache: true,
+
+    // Forward browser logs to the terminal for easier debugging
+    browserDebugInfoInTerminal: true,
+
+    // Enable new caching and pre-rendering behavior
+    useCache: true, // will be renamed to cacheComponents in Next.js 16
+
+    // Activate new client-side router improvements
+    clientSegmentCache: true,
+
+    // Explore route composition and segment overrides via DevTools
+    devtoolSegmentExplorer: true,
+
+    // Enable support for `global-not-found`, which allows you to more easily define a global 404 page.
+    globalNotFound: true,
+
+    // Enable persistent caching for the turbopack dev server and build.
+    turbopackPersistentCaching: true,
     cacheLife: {
       static: {
-        stale: 1800, // 30 minutes stale
-        revalidate: 3600, // 1 hour revalidate
+        stale: 7200, // 2 hours stale (was 30 minutes)
+        revalidate: 14400, // 4 hours revalidate (was 1 hour)
         expire: 86400, // 24 hours max
       },
       posts: {
-        stale: 300, // 5 minutes stale
-        revalidate: 600, // 10 minutes revalidate
-        expire: 3600, // 1 hour max
+        stale: 1800, // 30 minutes stale (was 5 minutes)
+        revalidate: 3600, // 1 hour revalidate (was 10 minutes)
+        expire: 7200, // 2 hours max (was 1 hour)
       },
       'grid-cards': {
-        stale: 600, // 10 minutes stale
-        revalidate: 1200, // 20 minutes revalidate
-        expire: 3600, // 1 hour max
+        stale: 1800, // 30 minutes stale (was 10 minutes)
+        revalidate: 3600, // 1 hour revalidate (was 20 minutes)
+        expire: 7200, // 2 hours max (was 1 hour)
       },
       'user-session': {
         stale: 60, // 1 minute stale
@@ -56,36 +73,39 @@ const nextConfig: NextConfig = {
         expire: 1800, // 30 minutes max
       },
       projects: {
-        stale: 3600, // 1 hour stale (projects change less)
-        revalidate: 7200, // 2 hours revalidate
+        stale: 14400, // 4 hours stale (was 1 hour)
+        revalidate: 28800, // 8 hours revalidate (was 2 hours)
         expire: 86400, // 24 hours max
       },
       topics: {
-        stale: 1800, // 30 minutes stale
-        revalidate: 3600, // 1 hour revalidate
-        expire: 43200, // 12 hours max
+        stale: 7200, // 2 hours stale (was 30 minutes)
+        revalidate: 14400, // 4 hours revalidate (was 1 hour)
+        expire: 86400, // 24 hours max (was 12 hours)
       },
       authors: {
-        stale: 1800, // 30 minutes stale
-        revalidate: 3600, // 1 hour revalidate
+        stale: 7200, // 2 hours stale (was 30 minutes)
+        revalidate: 14400, // 4 hours revalidate (was 1 hour)
         expire: 86400, // 24 hours max
       },
       sitemap: {
-        stale: 3600, // 1 hour stale
-        revalidate: 7200, // 2 hours revalidate
-        expire: 86400, // 24 hours max
+        stale: 14400, // 4 hours stale (was 1 hour)
+        revalidate: 28800, // 8 hours revalidate (was 2 hours)
+        expire: 172800, // 48 hours max (was 24 hours)
       },
       search: {
-        stale: 600, // 10 minutes stale (search results can change frequently)
-        revalidate: 1200, // 20 minutes revalidate
-        expire: 3600, // 1 hour max
+        stale: 1800, // 30 minutes stale (was 10 minutes)
+        revalidate: 3600, // 1 hour revalidate (was 20 minutes)
+        expire: 7200, // 2 hours max (was 1 hour)
       },
       rss: {
-        stale: 3600, // 1 hour stale
-        revalidate: 7200, // 2 hours revalidate
-        expire: 86400, // 24 hours max
+        stale: 14400, // 4 hours stale (was 1 hour)
+        revalidate: 28800, // 8 hours revalidate (was 2 hours)
+        expire: 172800, // 48 hours max (was 24 hours)
       },
     },
+  },
+  turbopack: {
+    resolveExtensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json'],
   },
   webpack: (config, { dev, isServer }) => {
     if (!isServer) {

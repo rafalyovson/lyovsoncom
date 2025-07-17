@@ -24,6 +24,12 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
     revalidateTag(`post-${doc.slug}`)
     revalidateTag('homepage') // Homepage shows latest posts
     revalidateTag('sitemap')
+    revalidateTag('rss') // Explicitly invalidate RSS feeds for immediate SEO indexing
+
+    // Log cache invalidation for monitoring
+    payload.logger.info(
+      `✅ Cache invalidated for new post: "${doc.title}" - RSS feeds, sitemap, and homepage updated immediately`,
+    )
 
     // If post belongs to a project, invalidate project cache
     if (doc.project && typeof doc.project === 'object') {
