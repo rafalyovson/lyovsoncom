@@ -34,7 +34,7 @@ export const Logo = (props: Props) => {
   }
 
   return (
-    /* eslint-disable @next/next/no-img-element */
+     
     <Image
       alt="Lyovson.com Logo"
       width={100}

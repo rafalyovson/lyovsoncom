@@ -19,7 +19,7 @@ export const GridCardPostSearch = ({
   fetchPriority,
   priority,
 }: GridCardPostProps) => {
-  const { project, meta: { image: metaImage } = {}, title, slug } = post
+  const { project, featuredImage, title, slug } = post
 
   const postUrl =
     project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`
@@ -27,11 +27,11 @@ export const GridCardPostSearch = ({
   return (
     <Link href={postUrl} className="group glass-interactive">
       <GridCard className={className}>
-        {metaImage && typeof metaImage !== 'string' && (
+        {featuredImage && typeof featuredImage !== 'string' && (
           <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4`}>
             <Media
               imgClassName="object-cover h-full"
-              resource={metaImage}
+              resource={featuredImage}
               pictureClassName="h-full"
               className="glass-media h-full flex justify-center items-center"
               {...(loading ? { loading } : {})}

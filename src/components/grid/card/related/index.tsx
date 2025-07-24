@@ -17,7 +17,6 @@ export const GridCardRelatedPosts = ({
         if (typeof post === 'number') {
           return null
         }
-        const metaImage = post.meta?.image
         return (
           <Link
             key={post.id}
@@ -26,10 +25,10 @@ export const GridCardRelatedPosts = ({
             aria-label={`Read related post: ${post.title}`}
           >
             <GridCardSection className={`grid grid-cols-3 grid-rows-1 gap-2 h-full`}>
-              {metaImage && (
+              {post.featuredImage && (
                 <Media
                   imgClassName="object-cover h-full"
-                  resource={metaImage}
+                  resource={post.featuredImage}
                   className="glass-media h-full flex justify-center items-center"
                   pictureClassName="row-start-1 row-end-2 col-start-1 col-end-2 h-full"
                 />

@@ -21,23 +21,14 @@ export const GridCardPostFull = ({
   fetchPriority,
   priority,
 }: GridCardPostProps) => {
-  const {
-    type,
-    topics,
-    project,
-    populatedAuthors,
-    meta: { image: metaImage } = {},
-    publishedAt,
-    title,
-    slug,
-  } = post
+  const { type, topics, project, populatedAuthors, featuredImage, publishedAt, title, slug } = post
 
   const postUrl =
     project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`
 
   return (
     <GridCard className={className}>
-      {metaImage && typeof metaImage !== 'string' && (
+      {featuredImage && typeof featuredImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
           <Link
             href={postUrl}
@@ -46,7 +37,7 @@ export const GridCardPostFull = ({
           >
             <Media
               imgClassName="object-cover h-full"
-              resource={metaImage}
+              resource={featuredImage}
               pictureClassName="h-full"
               className="glass-media h-full flex justify-center items-center"
               {...(loading ? { loading } : {})}

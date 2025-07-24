@@ -95,21 +95,10 @@ export async function GET(request: NextRequest) {
         model = (item as any).embedding.model || 'pre-computed'
         dimensions = (item as any).embedding.dimensions || embedding.length
       } else {
-        // Fallback: generate on-demand (for projects or posts without embeddings)
-        const content =
-          type === 'posts'
-            ? [
-                item.title,
-                item.meta?.title,
-                item.meta?.description,
-                // Note: We can't easily extract content without the utility here
-                item.topics?.map((t: any) => (typeof t === 'object' ? t.name : t)).join(' '),
-              ]
-                .filter(Boolean)
-                .join(' ')
-            : [item.name, item.description].filter(Boolean).join(' ')
+        // Extract text content for embedding
+        const textToEmbed = [item.title, item.description].filter(Boolean).join(' ')
 
-        const result = await generateEmbedding(content)
+        const result = await generateEmbedding(textToEmbed)
         embedding = result.vector
         model = result.model
         dimensions = result.dimensions

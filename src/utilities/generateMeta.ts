@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 
-
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
@@ -9,18 +8,21 @@ import type { Post } from '@/payload-types'
 export const generateMeta = async (args: { doc: Partial<Post> }): Promise<Metadata> => {
   const { doc } = args || {}
 
+  // Use main fields directly
+  const postImage = doc?.featuredImage
   const ogImage =
-    typeof doc?.meta?.image === 'object' &&
-    doc.meta.image !== null &&
-    'url' in doc.meta.image &&
+    typeof postImage === 'object' &&
+    postImage !== null &&
+    'url' in postImage &&
     `${getServerSideURL()}`
 
-  const title = doc?.meta?.title ? doc?.meta?.title + ' | Lyovson.com' : 'Lyovson.com'
+  const title = doc?.title ? doc?.title + ' | Lyovson.com' : 'Lyovson.com'
+  const description = doc?.description
 
   return {
-    description: doc?.meta?.description,
+    description,
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
+      description: description || '',
       images: ogImage
         ? [
             {

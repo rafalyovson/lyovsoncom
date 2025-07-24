@@ -48,12 +48,7 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
                 },
               },
               {
-                'meta.description': {
-                  like: query,
-                },
-              },
-              {
-                'meta.title': {
+                description: {
                   like: query,
                 },
               },

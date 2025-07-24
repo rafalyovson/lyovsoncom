@@ -157,11 +157,11 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     }
   }
 
-  const title = post.meta?.title || post.title
-  const description = post.meta?.description || ''
-
-  // Handle both cases: when image is a media object or just an ID
-  const metaImage = post.meta?.image && typeof post.meta.image === 'object' ? post.meta.image : null
+  // Use main fields directly - much cleaner!
+  const title = post.title
+  const description = post.description || ''
+  const postImage = post.featuredImage
+  const metaImage = postImage && typeof postImage === 'object' ? postImage : null
 
   // Since metadataBase is set in layout, we can use the URL directly
   const imageUrl = metaImage?.url || null
@@ -268,11 +268,15 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 function SchemaArticle({ post, url }: { post: any; url: string }) {
+  // Use main fields directly
+  const description = post.description || ''
+  const postImage = post.featuredImage
+
   const schemaData = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    headline: post.meta?.title || post.title,
-    description: post.meta?.description || '',
+    headline: post.title,
+    description,
     datePublished: post.publishedAt,
     dateModified: post.updatedAt,
     author:
@@ -298,13 +302,13 @@ function SchemaArticle({ post, url }: { post: any; url: string }) {
       '@type': 'WebPage',
       '@id': url,
     },
-    image: post.meta?.image?.url
+    image: postImage?.url
       ? {
           '@type': 'ImageObject',
-          url: post.meta.image.url,
+          url: postImage.url,
           width: 1200,
           height: 630,
-          alt: post.meta.image.alt || post.title,
+          alt: postImage.alt || post.title,
         }
       : undefined,
     url,

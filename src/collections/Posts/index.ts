@@ -7,13 +7,6 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-  OverviewField,
-  PreviewField,
-} from '@payloadcms/plugin-seo/fields'
 
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidatePost, revalidateDelete } from './hooks/revalidatePost'
@@ -40,19 +33,16 @@ export const Posts: CollectionConfig<'posts'> = {
     read: authenticatedOrPublished,
     update: authenticated,
   },
-  // This config controls what's populated by default when a post is referenced
-  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
-  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>
+  // Clean structure: title, featuredImage, and description at root level
+  // SEO metadata is automatically generated from these main fields
   defaultPopulate: {
     title: true,
     slug: true,
+    featuredImage: true,
+    description: true,
     topics: true,
     project: true,
     type: true,
-    meta: {
-      image: true,
-      description: true,
-    },
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -82,6 +72,23 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+    },
+    {
+      name: 'featuredImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        position: 'sidebar',
+        description: 'Main image for the post, used in cards and social sharing',
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      admin: {
+        position: 'sidebar',
+        description: 'Brief description of the post for previews and SEO',
+      },
     },
     {
       type: 'tabs',
@@ -157,33 +164,6 @@ export const Posts: CollectionConfig<'posts'> = {
             },
           ],
           label: 'Meta',
-        },
-        {
-          name: 'meta',
-          label: 'SEO',
-          fields: [
-            OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: 'media',
-            }),
-
-            MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-            }),
-          ],
         },
       ],
     },

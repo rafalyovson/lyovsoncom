@@ -150,6 +150,14 @@ export interface UserAuthOperations {
 export interface Post {
   id: number;
   title: string;
+  /**
+   * Main image for the post, used in cards and social sharing
+   */
+  featuredImage?: (number | null) | Media;
+  /**
+   * Brief description of the post for previews and SEO
+   */
+  description?: string | null;
   content: {
     root: {
       type: string;
@@ -169,14 +177,6 @@ export interface Post {
   topics?: (number | Topic)[] | null;
   project?: (number | null) | Project;
   relatedPosts?: (number | Post)[] | null;
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   populatedAuthors?:
@@ -209,67 +209,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "types".
- */
-export interface Type {
-  id: number;
-  name: string;
-  description?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "topics".
- */
-export interface Topic {
-  id: number;
-  name: string;
-  description?: string | null;
-  /**
-   * Hex color code (e.g. #FF0000). Leave empty to inherit from parent.
-   */
-  color?: string | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  parent?: (number | null) | Topic;
-  breadcrumbs?:
-    | {
-        doc?: (number | null) | Topic;
-        url?: string | null;
-        label?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "projects".
- */
-export interface Project {
-  id: number;
-  name: string;
-  description?: string | null;
-  image?: (number | null) | Media;
-  /**
-   * The Audience ID from Resend for managing newsletter subscriptions.
-   */
-  resendAudienceId?: string | null;
-  /**
-   * List of contacts associated with this project.
-   */
-  contacts?: (number | Contact)[] | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -354,6 +293,67 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "types".
+ */
+export interface Type {
+  id: number;
+  name: string;
+  description?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "topics".
+ */
+export interface Topic {
+  id: number;
+  name: string;
+  description?: string | null;
+  /**
+   * Hex color code (e.g. #FF0000). Leave empty to inherit from parent.
+   */
+  color?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  parent?: (number | null) | Topic;
+  breadcrumbs?:
+    | {
+        doc?: (number | null) | Topic;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  name: string;
+  description?: string | null;
+  image?: (number | null) | Media;
+  /**
+   * The Audience ID from Resend for managing newsletter subscriptions.
+   */
+  resendAudienceId?: string | null;
+  /**
+   * List of contacts associated with this project.
+   */
+  contacts?: (number | Contact)[] | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -763,18 +763,13 @@ export interface PayloadMigration {
  */
 export interface PostsSelect<T extends boolean = true> {
   title?: T;
+  featuredImage?: T;
+  description?: T;
   content?: T;
   type?: T;
   topics?: T;
   project?: T;
   relatedPosts?: T;
-  meta?:
-    | T
-    | {
-        title?: T;
-        image?: T;
-        description?: T;
-      };
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:

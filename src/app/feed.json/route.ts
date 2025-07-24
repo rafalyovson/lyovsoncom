@@ -72,8 +72,8 @@ export async function GET(request: NextRequest) {
         )
       })
       .forEach((post) => {
-        const title = post.meta?.title || post.title
-        const description = post.meta?.description || ''
+        const title = post.title
+        const description = post.description || ''
         const projectSlug = (post.project as any)?.slug || ''
         const link = `${SITE_URL}/${projectSlug}/${post.slug}`
         const author = post.populatedAuthors?.[0]?.name || 'Lyovson Team'

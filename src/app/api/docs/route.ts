@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
           description: 'Blog posts and articles',
           fields: [
             'title', 'slug', 'content', 'publishedAt', 'authors', 
-            'project', 'topics', 'meta.title', 'meta.description'
+            'project', 'topics', 'description', 'featuredImage'
           ],
           relationships: ['authors (users)', 'project', 'topics'],
           access: 'Public for published posts',

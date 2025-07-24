@@ -1,44 +1,19 @@
-import { BeforeSync, DocToSync } from '@payloadcms/plugin-search/types'
+import { BeforeSync } from '@payloadcms/plugin-search/types'
+import type { Post } from '@/payload-types'
 
-export const beforeSyncWithSearch: BeforeSync = async ({ originalDoc, searchDoc, payload }) => {
-  const {
-    doc: { relationTo: collection },
-  } = searchDoc
+export const beforeSyncWithSearch: BeforeSync = async ({ originalDoc, searchDoc }) => {
+  const post = originalDoc as Post
 
-  const { slug, id, topics, title, meta, excerpt } = originalDoc
-
-  const modifiedDoc: DocToSync = {
+  return {
     ...searchDoc,
-    slug,
-    meta: {
-      ...meta,
-      title: meta?.title || title,
-      image: meta?.image?.id || meta?.image,
-      description: meta?.description,
+    doc: {
+      relationTo: 'posts',
+      value: post.id.toString(),
     },
-    topics: [],
+    // Add searchable fields directly to the search doc
+    title: post.title,
+    image: typeof post.featuredImage === 'object' ? post.featuredImage?.id : post.featuredImage,
+    description: post.description,
+    slug: post.slug,
   }
-
-  if (topics && Array.isArray(topics) && topics.length > 0) {
-    // get full categories and keep a flattened copy of their most important properties
-    try {
-      const mappedTopics = topics.map((topic) => {
-        const { id, title } = topic
-
-        return {
-          relationTo: 'topics',
-          id,
-          title,
-        }
-      })
-
-      modifiedDoc.topics = mappedTopics
-    } catch (err) {
-      console.error(
-        `Failed. Topic not found when syncing collection '${collection}' with id: '${id}' to search.`,
-      )
-    }
-  }
-
-  return modifiedDoc
 }

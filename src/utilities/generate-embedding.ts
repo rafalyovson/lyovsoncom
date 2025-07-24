@@ -19,15 +19,10 @@ function extractTextFromContent(content: any): string {
 
 // Extract content text for embedding from a post
 export function extractPostText(post: any): string {
-  return [
-    post.title,
-    post.meta?.title,
-    post.meta?.description,
-    extractTextFromContent(post.content),
-    post.topics?.map((t: any) => (typeof t === 'object' ? t.name : t)).join(' '),
-  ]
-    .filter(Boolean)
-    .join(' ')
+  // Extract text content for embedding
+  const textToEmbed = [post.title, post.description].filter(Boolean).join(' ')
+
+  return textToEmbed
 }
 
 // Generate a simple hash-based fallback embedding

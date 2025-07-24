@@ -7,14 +7,13 @@ import { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 
 export const GridCardHero = async ({ className, post }: { className?: string; post: Post }) => {
-  const metaImage = post.meta?.image
   return (
     <GridCard className={`g3:w-[816px] g3:h-[400px] overflow-hidden g3:grid-cols-6 ${className}`}>
-      {metaImage && typeof metaImage !== 'string' && (
+      {post.featuredImage && typeof post.featuredImage !== 'string' && (
         <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4 g3:row-end-4`}>
           <Media
             imgClassName="object-cover h-full"
-            resource={metaImage}
+            resource={post.featuredImage}
             className="glass-media h-full flex justify-center items-center"
             pictureClassName="h-full"
           />
