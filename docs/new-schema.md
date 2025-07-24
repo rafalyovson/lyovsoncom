@@ -1,452 +1,451 @@
-### **1. Posts Collection Evolution**
+# Lyovson.com Knowledge Base Schema
 
-- The `Posts` collection previously had a `type` field that was a **relationship to a `Types` collection**.
-- This field will now be replaced with a **`select` (enum)** field because:
-    - Post types are **finite and structural** (Article, Review, Video, Podcast Episode, Photo Essay).
-    - Editors do **not need to add or remove types dynamically**, so a collection is unnecessary.
-    - It simplifies the schema and unlocks **Payload’s conditional field** features for post‑type‑specific fields.
+This document outlines the evolution of Lyovson.com from a simple blog into a **family knowledge hub and public Zettelkasten** with interconnected content types supporting reviews, references, and networked thoughts.
 
-### **2. Current & New Post Types**
+## Recent Schema Updates ✅
 
-- **All existing posts** are of type **Article**.
-- A new **Review** type is being added.
-- Other types (Video, Podcast Episode, Photo Essay, etc.) can be added easily over time.
+**December 2024**: Posts collection simplified for better SEO and editing experience:
 
-### **3. Review‑Specific Fields**
+- ✅ **Moved `meta.image` → `featuredImage`** (root-level relationship to media)
+- ✅ **Moved `meta.description` → `description`** (root-level textarea)  
+- ✅ **Use `title` directly** (removed `meta.title`)
+- ✅ **Removed `meta` tab** and SEO plugin complexity from Payload admin
+- ✅ **Updated all components** to use new root-level fields
+- ✅ **SEO metadata** now automatically generated from root-level fields
 
-When a Post is of type **Review**, two additional fields will be conditionally shown:
+**Result**: Cleaner schema, better editing experience, maintained SEO functionality.
 
-- **`rating`**: A number between **1–10**, representing a 10‑star rating system.
-- **`reference`**: A **relationship field** pointing to the entity being reviewed (Book, Movie, TV Show, Video Game, etc.).
+## Upcoming Architecture Change 🔄
 
----
+### **Posts Collection Type Field Evolution**
 
-### **4. Expanding Beyond Posts: The Knowledge Base**
+**Current Issue**: The `Posts` collection has a `type` field that is a **relationship to a `Types` collection**. This needs to change because:
 
-To support reviews and evolve Lyovson.com into a **family knowledge hub + public Zettelkasten**, the following collections will be added:
+- Post types are **finite and structural** (Article, Review, Video, Podcast Episode, Photo Essay)
+- Editors do **not need to add or remove types dynamically**, so a collection is unnecessary
+- It simplifies the schema and unlocks **Payload's conditional field** features for post-type-specific fields
 
-### **4.1. References**
+**Solution**: Replace `type` relationship with a **`select` (enum)** field:
 
-Five separate collections: **Books**, **Movies**, **TV Shows**, **Video Games**, and **Links**
+```typescript
+{
+  name: 'type',
+  type: 'select',
+  options: [
+    { label: 'Article', value: 'article' },
+    { label: 'Review', value: 'review' },
+    { label: 'Video', value: 'video' },
+    { label: 'Podcast Episode', value: 'podcast' },
+    { label: 'Photo Essay', value: 'photo' },
+  ],
+  required: true,
+}
+```
 
-- **Shared fields**: title (text), slug (text), coverImage (media), externalId (text for API sync), metadata group (creator names or persons, releaseDate, etc.)
-- **Quote fields** on each reference (excluding Links):
-    - `rafasQuotes` (array of text)
-    - `jesssQuotes` (array of text)
-- **Relationships**:
-    - `creators` (relationship → persons)
-
-### Links
-
-A special reference collection for arbitrary URLs:
-
-- **Fields**: label (text), url (text)
-- **Relationships**:
-    - `referenceType` (select: books, movies, tvShows, videoGames, posts, persons, notes, projects)
-    - `reference` (relationship → ["books","movies","tvShows","videoGames","posts","persons","notes","projects"])
-
-### **4.2. Persons** Persons**
-
-A `Persons` collection for individuals (authors, directors, actors, public figures)
-
-- **Fields**: name (text), slug (text), photo (media), bio (textarea), roles (select: author, director, actor, musician, developer, publicFigure)
-- **Relationships**:
-    - Linked from References (`creators`)
-    - Referenced by Posts (`personsMentioned`)
-    - Linked in Notes (`connections`)
-
-### **4.3. Notes**
-
-Merged Zettelkasten-style “atomic thoughts” and annotations:
-
-- **Fields**: title (text), content (richText), author (select: rafa, jess), visibility (select: public)
-- **Relationships**: `connections` → posts, books, movies, tvShows, videoGames, persons, notes (hasMany)
-
-### **4.4. Links**
-
-A central `Links` collection to attach arbitrary URLs to any entity:
-
-- **Fields**: label (text), url (text)
-- **Polymorphic**:
-    - `referenceType` (select: books, movies, tvShows, videoGames, posts, persons, notes, projects)
-    - `reference` (relationship → ["books","movies","tvShows","videoGames","posts","persons","notes","projects"])
+**Migration Notes**:
+- **All existing posts** are currently type "Article"
+- **Types collection** will be removed entirely
+- **Conditional fields** will be enabled for Review posts (rating, reference)
 
 ---
 
-### **5. How It All Connects**
+## Core Collections
 
-- **Posts** → link to `notesReferenced`, `references` (Books/Movies/TVShows/Games), `personsMentioned`, `topics`, `project`, `relatedPosts`.
-- **Reviews** → use `rating` + `reference`.
-- **References** → have source quotes and link to `persons` (creators).
-- **Persons** → show where they appear in Posts, Notes, and References.
-- **Notes** → networked across everything (Posts, References, Persons, other Notes).
-- **Links** → attach additional URLs to any content node.
+### 1. Posts ✅ **IMPLEMENTED**
 
----
+**Purpose**: Primary content layer (articles, reviews, videos, podcasts, photo essays).
 
-### **6. Why This Matters**
+**Core Fields**:
+- `title` (text) - Main title, used directly for SEO
+- `slug` (text) - Auto-generated URL slug
+- `type` (relationship → types) - Currently: Article, future: Review, Video, Podcast, Photo
+- `content` (richText) - Main content using Lexical editor
+- `description` (textarea) - Brief description for previews and SEO meta
+- `featuredImage` (relationship → media) - Main image for cards and social sharing
+- `publishedAt` (date) - Publication timestamp
+- `authors` (relationship → users, hasMany) - Post authors
 
-- Transforms Lyovson.com into a **living, interlinked family knowledge base**.
-- **Public by default**: only site-ready info lives here.
-- Mirrors your private Obsidian vault but **turns it into a navigable, publishable digital garden**.
-- Readers (and future family members) can explore posts, source materials, people, ideas, and external resources in one cohesive graph.
+**Conditional Fields** *(enabled by select-based type field)*:
+- `rating` (number 1–10) when **type = 'review'**
+- `reference` (relationship → [books, movies, tvShows, videoGames]) when **type = 'review'**  
+- `videoEmbedUrl` (text) when **type = 'video'**
+- `podcastEmbedUrl` (text) when **type = 'podcast'**
 
----
+**Implementation**:
+```typescript
+{
+  name: 'rating',
+  type: 'number',
+  min: 1,
+  max: 10,
+  condition: (data) => data.type === 'review',
+},
+{
+  name: 'reference',
+  type: 'relationship',
+  relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+  condition: (data) => data.type === 'review',
+}
+```
 
-### 1. Posts
+**Relationships**:
+- `topics` (relationship → topics, hasMany) - Editorial tags
+- `project` (relationship → projects) - Grouping (e.g., podcast season)
+- `relatedPosts` (relationship → posts, hasMany) - Manual connections
+- *Future*: `notesReferenced`, `references`, `personsMentioned`
 
-**Purpose**: Narrative layer (articles, reviews, videos, podcasts, photo essays).
-**Key Fields**:
-
-- `title` (text)
-- `slug` (text)
-- `type` (select: article, review, video, podcast, photo)
-- `content` (richText)
-- `excerpt` (text) *(optional custom excerpt)*
-- `coverImage` (relationship → media) *(optional)*
-- `publishedAt` (date)
-- `authors` (relationship → users, hasMany)
-
-**Conditional Fields**:
-
-- `rating` (number 1–10) when **type = review**
-- `reference` (relationship → [books, movies, tvShows, videoGames]) when **type = review**
-- `videoEmbedUrl` (text) when **type = video**
-- `podcastEmbedUrl` (text) when **type = podcast**
-
-**Graph Relationships**:
-
-- `notesReferenced` (relationship → notes, hasMany)
-- `references` (relationship → [books, movies, tvShows, videoGames], hasMany)
-- `personsMentioned` (relationship → persons, hasMany)
-- `topics` (relationship → topics, hasMany)
-- `project` (relationship → projects)
-- `relatedPosts` (relationship → posts, hasMany)
-
-**Utilities**:
-
-- SEO meta fields (title, description, image)
-- Embedding vector group
-- Slug field
-- Versioning/drafts
+**Technical Features**:
+- Pre-computed embedding vectors for semantic search
+- Automatic slug generation from title
+- Draft/publish workflow with versioning
+- SEO metadata auto-generated from `title`, `description`, `featuredImage`
 
 ---
 
-### 2. Books, Movies, TVShows, Games (References)
+### 2. Projects ✅ **IMPLEMENTED**
+
+**Purpose**: Grouping posts into series, seasons, or thematic collections.
+
+**Fields**:
+- `name` (text) - Project title
+- `slug` (text) - URL slug
+- `description` (textarea) - Project description
+- `posts` (relationship → posts, hasMany) - Associated posts
+
+**Examples**: "X-Files" (tech commentary), "Media Musings" (entertainment takes)
+
+---
+
+### 3. Topics ✅ **IMPLEMENTED**
+
+**Purpose**: Editorial taxonomy for categorizing and filtering content.
+
+**Fields**:
+- `name` (text) - Topic name
+- `slug` (text) - URL slug  
+- `description` (textarea) - Topic description
+
+**Examples**: "Tech", "Media", "Armenia", "Video Games"
+
+---
+
+### 4. Types ✅ **IMPLEMENTED**
+
+**Purpose**: Post format categorization.
+
+**Current Types**: Article (all existing posts)
+**Planned Types**: Review, Video, Podcast Episode, Photo Essay
+
+---
+
+### 5. Users ✅ **IMPLEMENTED**
+
+**Purpose**: Site authors and authentication.
+
+**Fields**:
+- `firstName`, `lastName` (text) - Author names
+- `email` (email) - Authentication email  
+- `avatar` (relationship → media) - Author photo
+- `bio` (textarea) - Author biography
+
+**Current**: Rafa & Jess Lyovson
+
+---
+
+### 6. Media ✅ **IMPLEMENTED**
+
+**Purpose**: File storage and management.
+
+**Features**:
+- Automatic image optimization (Sharp integration)
+- WebP conversion for performance
+- Alt text and metadata support
+- CDN integration via Vercel
+
+---
+
+### 7. Contacts ✅ **IMPLEMENTED**
+
+**Purpose**: Newsletter subscribers and contact form submissions.
+
+**Fields**:
+- `email` (email) - Contact email
+- `name` (text) - Contact name
+- `subscribedAt` (date) - Subscription timestamp
+
+**Integration**: Resend email service
+
+---
+
+## Planned Collections (Knowledge Base Expansion)
+
+### 8. Books, Movies, TV Shows, Video Games (References) 📋 **PLANNED**
 
 **Purpose**: Structured source materials for reviews and citations.
 
 **Shared Fields**:
-
-- `title` (text)
-- `slug` (text)
-- `coverImage` (relationship → media)
-- `externalId` (text) *(ID from Google Books / OMDb / IGDB)*
-- `metadata` (group):
-    - `creatorNames` (text or relationship to persons)
-    - `releaseDate` (date)
-    - other type-specific metadata
+- `title` (text) - Reference title
+- `slug` (text) - URL slug
+- `coverImage` (relationship → media) - Cover art
+- `description` (textarea) - Brief description
+- `releaseDate` (date) - When it was published/released
+- *Note: External API sync (Google Books, OMDb, IGDB) removed for initial simplicity*
 
 **Quote Fields**:
+- `rafasQuotes` (array of text) - Rafa's highlighted quotes
+- `jesssQuotes` (array of text) - Jess's highlighted quotes
 
-- `rafasQuotes` (array of text)
-- `jesssQuotes` (array of text)
+**Relationships**:
+- `creators` (relationship → persons, hasMany) - Authors, directors, developers
 
-**Graph Relationships**:
+**Manual Entry**: References will be manually created (no external API dependency)
 
-- `creators` (relationship → persons, hasMany)
-:
-- `creators` (relationship → persons, hasMany)
+**Simplified Fields for Initial Implementation**:
+```typescript
+// Books Collection Example
+{
+  name: 'title',
+  type: 'text',
+  required: true,
+},
+{
+  name: 'description', 
+  type: 'textarea',
+},
+{
+  name: 'coverImage',
+  type: 'upload',
+  relationTo: 'media',
+},
+{
+  name: 'releaseDate',
+  type: 'date',
+  admin: {
+    date: { pickerAppearance: 'dayOnly' }
+  }
+},
+{
+  name: 'rafasQuotes',
+  type: 'array',
+  fields: [{ name: 'quote', type: 'textarea' }]
+},
+{
+  name: 'jesssQuotes', 
+  type: 'array',
+  fields: [{ name: 'quote', type: 'textarea' }]
+}
+```
+
+**Future Enhancement**: External API sync can be added later without breaking existing data
 
 ---
 
-### 3. Persons
+### 9. Persons 📋 **PLANNED**
 
-**Purpose**: Individuals (authors, directors, actors, etc.) in your knowledge graph.
+**Purpose**: People in the knowledge graph (authors, directors, public figures).
 
 **Fields**:
+- `name` (text) - Person's name
+- `slug` (text) - URL slug
+- `photo` (relationship → media) - Person's photo
+- `bio` (textarea) - Biography
+- `roles` (select, hasMany) - author, director, actor, musician, developer, publicFigure
 
-- `name` (text)
-- `slug` (text)
-- `photo` (relationship → media)
-- `bio` (textarea)
-- `roles` (select, hasMany: author, director, actor, musician, developer, publicFigure)
-
-**Quote Fields**: *(none — quotes live on References)*
-
-**Graph Relationships**:
-
-- Linked by `creators` in References
-- Referenced by `personsMentioned` in Posts
+**Graph Connections**:
+- Referenced by `creators` in References
+- Referenced by `personsMentioned` in Posts  
 - Linked by `connections` in Notes
 
 ---
 
-### 4. Notes
+### 10. Notes 📋 **PLANNED**
 
-**Purpose**: Zettelkasten-style atomic thoughts and annotations (standalone or linked to other entities).
-
-**Fields**:
-
-- `title` (text)
-- `content` (richText)
-- `author` (select: rafa, jess)
-- `connections` (relationship → [posts, books, movies, tvShows, videoGames, persons, notes], hasMany)
-- `tags` (optional relationship → topics or tags)
-- `visibility` (select: public) *(future private option)*
-
----
-
-### 5. Projects
-
-**Purpose**: Grouping of Posts into series or seasons (e.g., podcast seasons, video series).
+**Purpose**: Zettelkasten-style atomic thoughts and annotations.
 
 **Fields**:
+- `title` (text) - Note title
+- `content` (richText) - Note content
+- `author` (select: rafa, jess) - Note author
+- `visibility` (select: public) - Visibility setting
+- `connections` (relationship → [posts, books, movies, tvShows, videoGames, persons, notes], hasMany) - Network links
 
-- `title` (text)
-- `slug` (text)
-- `description` (textarea)
-- `posts` (relationship → posts, hasMany)
+**Vision**: Public digital garden mirroring private Obsidian vault.
 
 ---
 
-### 6. Topics
+### 11. Links 📋 **PLANNED**
 
-**Purpose**: Editorial taxonomy (tags/categories) for Posts and Notes.
+**Purpose**: Attach arbitrary URLs to any content entity.
 
 **Fields**:
+- `label` (text) - Link description
+- `url` (text) - Target URL
+- `referenceType` (select) - Type of linked entity
+- `reference` (polymorphic relationship) - Linked entity
 
-- `name` (text)
-- `slug` (text)
-- `description` (textarea)
-- `color` (text) *(optional UI accent)*
-
----
-
-### 7. Users
-
-**Purpose**: Authors (currently you & Jess).
-
-**Fields**:
-
-- `firstName` (text)
-- `lastName` (text)
-- `email` (email)
-- `avatar` (relationship → media)
-- `bio` (textarea)
+**Use Cases**: Attach sources, related articles, social media posts to any content.
 
 ---
 
-### 8. Media
+## Network Effect Vision
 
-**Purpose**: File storage (images, video thumbnails, audio files).
+The complete system will create a **living, interconnected knowledge graph**:
 
-**Fields**:
+- **Posts** link to source materials, people mentioned, and supporting notes
+- **Reviews** connect to detailed reference information and creator profiles  
+- **References** preserve important quotes and link to their creators
+- **Persons** show their complete presence across posts, notes, and created works
+- **Notes** form bridges between disparate ideas and content
+- **Links** attach external context to any node in the graph
 
-- Managed by Payload’s Upload type.
-
----
-
-### 9. Contacts
-
-**Purpose**: Newsletter signups and messaging (Resend integration).
-
-**Fields**:
-
-- `email` (email)
-- `name` (text)
-- `subscribedAt` (date)
-- other contact metadata
+This transforms Lyovson.com from a blog into a **navigable family knowledge base** where readers can explore not just what you think, but the sources, people, and ideas that inform your thinking.
 
 ---
 
-### 10. Links
+## Implementation Status
 
-**Purpose**: Central URL entries that attach to any entity (References, Posts, Persons, Notes, Projects).
+| Collection | Status | Notes |
+|------------|--------|-------|
+| Posts | 🔄 **Needs Migration** | Change type from relationship → select, add conditional fields |
+| Projects | ✅ Complete | Grouping working well |
+| Topics | ✅ Complete | Editorial taxonomy functional |
+| Types | 🗑️ **Remove** | Will be replaced by Posts.type select field |
+| Users | ✅ Complete | Auth and author profiles |
+| Media | ✅ Complete | Optimized file handling |
+| Contacts | ✅ Complete | Newsletter integration |
+| References | 📋 Planned | Books, movies, games, TV (manual entry, no external APIs) |
+| Persons | 📋 Planned | People in knowledge graph |
+| Notes | 📋 Planned | Zettelkasten layer |
+| Links | 📋 Planned | External URL attachments |
 
-**Fields**:
-
-- `label` (text)
-- `url` (text)
-- `referenceType` (select: books, movies, tvShows, videoGames, posts, persons, notes, projects)
-- `reference` (relationship → ["books","movies","tvShows","videoGames","posts","persons","notes","projects"])
-
----
-
-### 1. Posts
-
-**Purpose**: Narrative layer (articles, reviews, videos, podcasts, photo essays).
-**Key Fields**:
-
-- `title` (text)
-- `slug` (text)
-- `type` (select: article, review, video, podcast, photo)
-- `content` (richText)
-- `excerpt` (text) *(optional custom excerpt)*
-- `coverImage` (relationship → media) *(optional)*
-- `publishedAt` (date)
-- `authors` (relationship → users, hasMany)
-
-**Conditional Fields**:
-
-- `rating` (number 1–10) when **type = review**
-- `reference` (relationship → [books, movies, tvShows, videoGames]) when **type = review**
-- `videoEmbedUrl` (text) when **type = video**
-- `podcastEmbedUrl` (text) when **type = podcast**
-
-**Graph Relationships**:
-
-- `notesReferenced` (relationship → notes, hasMany)
-- `references` (relationship → [books, movies, tvShows, videoGames], hasMany)
-- `personsMentioned` (relationship → persons, hasMany)
-- `topics` (relationship → topics, hasMany)
-- `project` (relationship → projects)
-- `relatedPosts` (relationship → posts, hasMany)
-
-**Utilities**:
-
-- SEO meta fields (title, description, image)
-- Embedding vector group
-- Slug field
-- Versioning/drafts
+**Next Phase**: 
+1. **Migrate Posts collection** (type field + conditional fields)
+2. **Remove Types collection**
+3. **Implement Books collection** for review functionality
 
 ---
 
-### 2. Books, Movies, TVShows, Games (References)
+## Migration Plan 🚚
 
-**Purpose**: Structured source materials for reviews and citations.
+### Step 1: Posts Collection Type Field Migration
 
-**Shared Fields**:
+**Current Schema**:
+```typescript
+{
+  name: 'type',
+  type: 'relationship',
+  relationTo: 'types',
+  required: true,
+}
+```
 
-- `title` (text)
-- `slug` (text)
-- `coverImage` (relationship → media)
-- `externalId` (text) *(ID from Google Books / OMDb / IGDB)*
-- `metadata` (group):
-    - `creatorNames` (text or relationship to persons)
-    - `releaseDate` (date)
-    - other type-specific metadata
+**New Schema**:
+```typescript
+{
+  name: 'type',
+  type: 'select',
+  options: [
+    { label: 'Article', value: 'article' },
+    { label: 'Review', value: 'review' },
+    { label: 'Video', value: 'video' },
+    { label: 'Podcast Episode', value: 'podcast' },
+    { label: 'Photo Essay', value: 'photo' },
+  ],
+  required: true,
+  defaultValue: 'article',
+}
+```
 
-**Quote Fields**:
+**Data Migration**: 
+- All existing posts currently reference a Types record (likely "Article")
+- Migration will convert all existing posts to `type: 'article'` 
+- **Zero downtime**: New select field will be backward compatible
 
-- `rafasQuotes` (array of text)
-- `jesssQuotes` (array of text)
+### Step 2: Add Conditional Fields
 
-**Graph Relationships**:
+```typescript
+{
+  name: 'rating',
+  type: 'number',
+  min: 1,
+  max: 10,
+  admin: {
+    description: '10-star rating system',
+    condition: (data) => data.type === 'review',
+  },
+},
+{
+  name: 'reference',
+  type: 'relationship',
+  relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+  admin: {
+    description: 'What is being reviewed',
+    condition: (data) => data.type === 'review',
+  },
+},
+{
+  name: 'videoEmbedUrl',
+  type: 'text',
+  admin: {
+    description: 'YouTube, Vimeo, or other video embed URL',
+    condition: (data) => data.type === 'video',
+  },
+},
+{
+  name: 'podcastEmbedUrl', 
+  type: 'text',
+  admin: {
+    description: 'Spotify, Apple Podcasts, or other podcast embed URL',
+    condition: (data) => data.type === 'podcast',
+  },
+}
+```
 
-- `creators` (relationship → persons, hasMany)
-:
-- `creators` (relationship → persons, hasMany)
+### Step 3: Safe Database Migration Strategy
 
----
+**Current Database State**:
+- All existing posts have `type` as relationship to Types collection
+- Likely one "Article" type record that all posts reference
+- Posts are live on production site
 
-### 3. Persons
+**Migration Order** (to prevent data loss):
 
-**Purpose**: Individuals (authors, directors, actors, etc.) in your knowledge graph.
+1. **Add new `typeSelect` field** to Posts collection (alongside existing `type` relationship)
+   ```typescript
+   {
+     name: 'typeSelect',
+     type: 'select',
+     options: [
+       { label: 'Article', value: 'article' },
+       { label: 'Review', value: 'review' },
+       { label: 'Video', value: 'video' },
+       { label: 'Podcast Episode', value: 'podcast' },
+       { label: 'Photo Essay', value: 'photo' },
+     ],
+     defaultValue: 'article',
+     admin: {
+       position: 'sidebar',
+       description: 'New type field - will replace relationship'
+     }
+   }
+   ```
 
-**Fields**:
+2. **Run data migration script** to populate `typeSelect` with 'article' for all existing posts
+3. **Update all frontend components** to use `post.typeSelect` instead of `post.type`
+4. **Test thoroughly** in production to ensure no breaking changes
+5. **Remove old `type` relationship field** from Posts collection  
+6. **Rename `typeSelect` → `type`** for clean final schema
+7. **Delete Types collection** and remove from config
 
-- `name` (text)
-- `slug` (text)
-- `photo` (relationship → media)
-- `bio` (textarea)
-- `roles` (select, hasMany: author, director, actor, musician, developer, publicFigure)
+**Benefits**:
+- ✅ **Zero downtime**: Site continues working during migration
+- ✅ **Data safety**: Old data preserved until migration confirmed  
+- ✅ **Rollback ready**: Can revert if issues arise
+- ✅ **Testing friendly**: Can test new field before switching
+- ✅ **Production safe**: No risk to live posts
 
-**Quote Fields**: *(none — quotes live on References)*
+### Step 4: Remove Types Collection
 
-**Graph Relationships**:
-
-- Linked by `creators` in References
-- Referenced by `personsMentioned` in Posts
-- Linked by `connections` in Notes
-
----
-
-### 4. Notes
-
-**Purpose**: Zettelkasten-style atomic thoughts and annotations (standalone or linked to other entities).
-
-**Fields**:
-
-- `title` (text)
-- `content` (richText)
-- `author` (select: rafa, jess)
-- `connections` (relationship → [posts, books, movies, tvShows, videoGames, persons, notes], hasMany)
-- `tags` (optional relationship → topics or tags)
-- `visibility` (select: public) *(future private option)*
-
----
-
-### 5. Projects
-
-**Purpose**: Grouping of Posts into series or seasons (e.g., podcast seasons, video series).
-
-**Fields**:
-
-- `title` (text)
-- `slug` (text)
-- `description` (textarea)
-- `posts` (relationship → posts, hasMany)
-
----
-
-### 6. Topics
-
-**Purpose**: Editorial taxonomy (tags/categories) for Posts and Notes.
-
-**Fields**:
-
-- `name` (text)
-- `slug` (text)
-- `description` (textarea)
-- `color` (text) *(optional UI accent)*
-
----
-
-### 7. Users
-
-**Purpose**: Authors (currently you & Jess).
-
-**Fields**:
-
-- `firstName` (text)
-- `lastName` (text)
-- `email` (email)
-- `avatar` (relationship → media)
-- `bio` (textarea)
-
----
-
-### 8. Media
-
-**Purpose**: File storage (images, video thumbnails, audio files).
-
-**Fields**:
-
-- Managed by Payload’s Upload type.
-
----
-
-### 9. Contacts
-
-**Purpose**: Newsletter signups and messaging (Resend integration).
-
-**Fields**:
-
-- `email` (email)
-- `name` (text)
-- `subscribedAt` (date)
-- other contact metadata
-
----
-
-### 10. Links
-
-**Purpose**: Central URL entries that attach to any entity (References, Posts, Persons, Notes, Projects).
-
-**Fields**:
-
-- `label` (text)
-- `url` (text)
-- `referenceType` (select: books, movies, tvShows, videoGames, posts, persons, notes, projects)
-- `reference` (relationship → ["books","movies","tvShows","videoGames","posts","persons","notes","projects"])
+- Delete `src/collections/Types/index.ts`  
+- Remove Types import from `payload.config.ts`
+- Update any remaining components that reference Types collection

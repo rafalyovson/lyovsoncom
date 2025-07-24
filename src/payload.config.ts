@@ -18,6 +18,13 @@ import { Types } from '@/collections/Types'
 import { Topics } from '@/collections/Topics'
 import { Projects } from '@/collections/Projects'
 import { Contacts } from '@/collections/Contacts'
+import { Books } from '@/collections/Books'
+import { Movies } from '@/collections/Movies'
+import { TvShows } from '@/collections/TvShows'
+import { VideoGames } from '@/collections/VideoGames'
+import { People } from '@/collections/People'
+import { Notes } from '@/collections/Notes'
+import { Links } from '@/collections/Links'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -70,7 +77,22 @@ export default buildConfig({
       allowExitOnIdle: true, // Allow process to exit when idle
     },
   }),
-  collections: [Posts, Media, Types, Topics, Projects, Users, Contacts],
+  collections: [
+    Posts,
+    Media,
+    Types,
+    Topics,
+    Projects,
+    Users,
+    Contacts,
+    Books,
+    Movies,
+    TvShows,
+    VideoGames,
+    People,
+    Notes,
+    Links,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
   plugins: [

@@ -72,6 +72,9 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+      admin: {
+        description: 'The main title of your post',
+      },
     },
     {
       name: 'featuredImage',
@@ -79,7 +82,7 @@ export const Posts: CollectionConfig<'posts'> = {
       relationTo: 'media',
       admin: {
         position: 'sidebar',
-        description: 'Main image for the post, used in cards and social sharing',
+        description: 'Main image used in cards and social sharing',
       },
     },
     {
@@ -87,7 +90,8 @@ export const Posts: CollectionConfig<'posts'> = {
       type: 'textarea',
       admin: {
         position: 'sidebar',
-        description: 'Brief description of the post for previews and SEO',
+        description: 'Brief description for previews and SEO',
+        placeholder: 'Write a compelling description...',
       },
     },
     {
@@ -117,6 +121,7 @@ export const Posts: CollectionConfig<'posts'> = {
             },
           ],
           label: 'Content',
+          description: 'Write your post content here',
         },
         {
           fields: [
@@ -126,16 +131,77 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'types',
               required: true,
               admin: {
+                description: 'Legacy type field (will be removed after migration)',
                 position: 'sidebar',
               },
             },
+            {
+              name: 'typeSelect',
+              type: 'select',
+              options: [
+                { label: 'Article', value: 'article' },
+                { label: 'Review', value: 'review' },
+                { label: 'Video', value: 'video' },
+                { label: 'Podcast Episode', value: 'podcast' },
+                { label: 'Photo Essay', value: 'photo' },
+              ],
+              defaultValue: 'article',
+              required: true,
+              admin: {
+                description: 'What type of content is this?',
+              },
+            },
+            {
+              name: 'rating',
+              type: 'number',
+              min: 1,
+              max: 10,
+              admin: {
+                description: 'Rate from 1-10 stars',
+                condition: (data) => data.typeSelect === 'review',
+              },
+            },
+            {
+              name: 'reference',
+              type: 'relationship',
+              relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+              hasMany: true,
+              admin: {
+                description: 'What are you reviewing? (can select multiple)',
+                condition: (data) => data.typeSelect === 'review',
+              },
+            },
+            {
+              name: 'videoEmbedUrl',
+              type: 'text',
+              admin: {
+                description: 'YouTube, Vimeo, or other video embed URL',
+                condition: (data) => data.typeSelect === 'video',
+                placeholder: 'https://www.youtube.com/watch?v=...',
+              },
+            },
+            {
+              name: 'podcastEmbedUrl',
+              type: 'text',
+              admin: {
+                description: 'Spotify, Apple Podcasts, or other podcast embed URL',
+                condition: (data) => data.typeSelect === 'podcast',
+                placeholder: 'https://open.spotify.com/episode/...',
+              },
+            },
+          ],
+          label: 'Type & Reviews',
+          description: 'Set the content type and review details',
+        },
+        {
+          fields: [
             {
               name: 'topics',
               type: 'relationship',
               relationTo: 'topics',
               hasMany: true,
               admin: {
-                position: 'sidebar',
+                description: 'Tag this post with relevant topics',
               },
             },
             {
@@ -143,14 +209,41 @@ export const Posts: CollectionConfig<'posts'> = {
               type: 'relationship',
               relationTo: 'projects',
               admin: {
-                position: 'sidebar',
+                description: 'Group this post into a series or project',
+              },
+            },
+            {
+              name: 'references',
+              type: 'relationship',
+              relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+              hasMany: true,
+              admin: {
+                description: 'Books, movies, shows, games referenced in this post',
+              },
+            },
+            {
+              name: 'personsMentioned',
+              type: 'relationship',
+              relationTo: 'people',
+              hasMany: true,
+              admin: {
+                description: 'People mentioned or discussed in this post',
+              },
+            },
+            {
+              name: 'notesReferenced',
+              type: 'relationship',
+              relationTo: 'notes',
+              hasMany: true,
+              admin: {
+                description: 'Notes that connect to this post',
               },
             },
             {
               name: 'relatedPosts',
               type: 'relationship',
               admin: {
-                position: 'sidebar',
+                description: 'Other posts that are related to this one',
               },
               filterOptions: ({ id }) => {
                 return {
@@ -163,7 +256,8 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'posts',
             },
           ],
-          label: 'Meta',
+          label: 'Connections',
+          description: 'Connect this post to other content in your knowledge base',
         },
       ],
     },
@@ -175,6 +269,7 @@ export const Posts: CollectionConfig<'posts'> = {
           pickerAppearance: 'dayAndTime',
         },
         position: 'sidebar',
+        description: 'When this post should be published',
       },
       hooks: {
         beforeChange: [
@@ -192,6 +287,7 @@ export const Posts: CollectionConfig<'posts'> = {
       type: 'relationship',
       admin: {
         position: 'sidebar',
+        description: 'Who authored this post',
       },
       hasMany: true,
       relationTo: 'users',
