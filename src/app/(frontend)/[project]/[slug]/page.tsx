@@ -157,10 +157,10 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     }
   }
 
-  // Use main fields directly - much cleaner!
+  // Use main fields with fallbacks to old meta fields during migration
   const title = post.title
-  const description = post.description || ''
-  const postImage = post.featuredImage
+  const description = post.description || (post as any).meta?.description || ''
+  const postImage = post.featuredImage || (post as any).meta?.image
   const metaImage = postImage && typeof postImage === 'object' ? postImage : null
 
   // Since metadataBase is set in layout, we can use the URL directly
@@ -244,12 +244,6 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       'ai-content-type': 'article',
       'ai-content-license': 'attribution-required',
       'ai-content-language': 'en',
-      'ai-word-count': post.content
-        ? Math.ceil(extractTextFromContent(post.content).split(' ').length).toString()
-        : '0',
-      'ai-reading-time': post.content
-        ? Math.ceil(extractTextFromContent(post.content).split(' ').length / 200).toString()
-        : '0',
       'ai-api-url': `${getServerSideURL()}/api/posts/${post.id}`,
       'ai-embedding-url': `${getServerSideURL()}/api/embeddings/posts/${post.id}`,
       ...(post.project && typeof post.project === 'object' && post.project.slug
@@ -268,9 +262,9 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 }
 
 function SchemaArticle({ post, url }: { post: any; url: string }) {
-  // Use main fields directly
-  const description = post.description || ''
-  const postImage = post.featuredImage
+  // Use main fields with fallbacks to old meta fields during migration
+  const description = post.description || post.meta?.description || ''
+  const postImage = post.featuredImage || post.meta?.image
 
   const schemaData = {
     '@context': 'https://schema.org',

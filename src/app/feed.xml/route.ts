@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
         slug: true,
         publishedAt: true,
         updatedAt: true,
-        meta: true,
+        description: true,
         populatedAuthors: true,
         project: true,
         content: true,
@@ -80,10 +80,8 @@ export async function GET(request: NextRequest) {
 
         // Create clean content excerpt for RSS
         let contentText = description
-        if (!contentText && post.content) {
-          // Extract text from rich content for description
-          const textContent = extractTextFromContent(post.content)
-          contentText = textContent.substring(0, 300) + (textContent.length > 300 ? '...' : '')
+        if (!contentText) {
+          contentText = 'Read the full article on Lyovson.com'
         }
 
         feed.addItem({

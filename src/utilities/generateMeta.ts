@@ -8,16 +8,17 @@ import type { Post } from '@/payload-types'
 export const generateMeta = async (args: { doc: Partial<Post> }): Promise<Metadata> => {
   const { doc } = args || {}
 
-  // Use main fields directly
-  const postImage = doc?.featuredImage
+  // Use main fields with fallbacks to old meta fields during migration
+  const postImage = doc?.featuredImage || (doc as any)?.meta?.image
   const ogImage =
     typeof postImage === 'object' &&
     postImage !== null &&
     'url' in postImage &&
-    `${getServerSideURL()}`
+    postImage.url &&
+    `${getServerSideURL()}${postImage.url}`
 
   const title = doc?.title ? doc?.title + ' | Lyovson.com' : 'Lyovson.com'
-  const description = doc?.description
+  const description = doc?.description || (doc as any)?.meta?.description
 
   return {
     description,

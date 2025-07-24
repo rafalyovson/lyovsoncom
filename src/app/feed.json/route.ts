@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
         slug: true,
         publishedAt: true,
         updatedAt: true,
-        meta: true,
+        description: true,
         populatedAuthors: true,
         project: true,
         content: true,
@@ -81,12 +81,8 @@ export async function GET(request: NextRequest) {
         let contentText = description
         let fullContent = ''
 
-        if (post.content) {
-          const textContent = extractTextFromContent(post.content)
-          fullContent = textContent
-          if (!contentText) {
-            contentText = textContent.substring(0, 300) + (textContent.length > 300 ? '...' : '')
-          }
+        if (!contentText) {
+          contentText = 'Read the full article on Lyovson.com'
         }
 
         // Enhanced feed item with AI-friendly metadata
