@@ -6,10 +6,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({ originalDoc, searchDoc 
 
   return {
     ...searchDoc,
-    doc: {
-      relationTo: 'posts',
-      value: post.id.toString(),
-    },
+    // Let the search plugin handle the doc relationship automatically
     // Add searchable fields directly to the search doc
     title: post.title,
     image: typeof post.featuredImage === 'object' ? post.featuredImage?.id : post.featuredImage,

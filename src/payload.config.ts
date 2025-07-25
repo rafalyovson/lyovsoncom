@@ -30,6 +30,16 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  // Development optimizations
+  debug: process.env.NODE_ENV === 'development',
+
+  // Skip heavy operations in development
+  onInit: async (payload) => {
+    if (process.env.NODE_ENV === 'development') {
+      payload.logger.info('🚀 Payload CMS initialized in development mode')
+    }
+  },
+
   admin: {
     importMap: {
       baseDir: path.resolve(dirname),
@@ -70,10 +80,11 @@ export default buildConfig({
   db: vercelPostgresAdapter({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
-      // Optimize connection pooling for serverless
-      max: 1, // Maximum connections per instance (serverless works best with 1)
-      idleTimeoutMillis: 30000, // Close idle connections after 30s
-      connectionTimeoutMillis: 10000, // Connection timeout 10s
+      // Optimized settings for faster schema introspection
+      max: process.env.NODE_ENV === 'production' ? 1 : 3, // Reduce dev connections
+      min: 0, // No minimum connections
+      idleTimeoutMillis: 10000, // Faster idle timeout (10s)
+      connectionTimeoutMillis: 15000, // Slightly reduce timeout (15s)
       allowExitOnIdle: true, // Allow process to exit when idle
     },
   }),
