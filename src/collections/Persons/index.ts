@@ -4,8 +4,8 @@ import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
 import { slugField } from '@/fields/slug'
 
-export const People: CollectionConfig = {
-  slug: 'people',
+export const Persons: CollectionConfig = {
+  slug: 'persons',
   access: {
     create: authenticated,
     delete: authenticated,
@@ -15,26 +15,31 @@ export const People: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'roles'],
+    description: 'Central registry for all creators and contributors',
   },
   fields: [
     {
       name: 'name',
       type: 'text',
       required: true,
-    },
-    {
-      name: 'photo',
-      type: 'upload',
-      relationTo: 'media',
       admin: {
-        description: "Person's photo",
+        description: 'Full name of the person',
       },
     },
     {
       name: 'bio',
       type: 'textarea',
       admin: {
-        description: 'Biography',
+        description: 'Biography or description',
+      },
+    },
+    {
+      name: 'photo',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        position: 'sidebar',
+        description: "Person's photo",
       },
     },
     {
@@ -47,10 +52,26 @@ export const People: CollectionConfig = {
         { label: 'Actor', value: 'actor' },
         { label: 'Musician', value: 'musician' },
         { label: 'Developer', value: 'developer' },
+        { label: 'Host', value: 'host' },
         { label: 'Public Figure', value: 'publicFigure' },
       ],
       admin: {
         description: 'What roles does this person have?',
+      },
+    },
+    {
+      name: 'website',
+      type: 'text',
+      admin: {
+        description: 'Personal or professional website',
+        placeholder: 'https://example.com',
+      },
+    },
+    {
+      name: 'socialLinks',
+      type: 'json',
+      admin: {
+        description: 'Social media links and profiles',
       },
     },
     ...slugField(),

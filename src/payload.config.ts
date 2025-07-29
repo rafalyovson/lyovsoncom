@@ -13,13 +13,14 @@ import { Contacts } from '@/collections/Contacts'
 import { Links } from '@/collections/Links'
 import { Media } from '@/collections/Media'
 import { Movies } from '@/collections/Movies'
+import { Music } from '@/collections/Music'
 import { Notes } from '@/collections/Notes'
-import { People } from '@/collections/People'
+import { Persons } from '@/collections/Persons'
+import { Podcasts } from '@/collections/Podcasts'
 import { Posts } from '@/collections/Posts'
 import { Projects } from '@/collections/Projects'
 import { Topics } from '@/collections/Topics'
 import { TvShows } from '@/collections/TvShows'
-import { Types } from '@/collections/Types'
 import { Users } from '@/collections/Users'
 import { VideoGames } from '@/collections/VideoGames'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -130,7 +131,6 @@ export default buildConfig({
   collections: [
     Posts,
     Media,
-    Types,
     Topics,
     Projects,
     Users,
@@ -139,7 +139,9 @@ export default buildConfig({
     Movies,
     TvShows,
     VideoGames,
-    People,
+    Music,
+    Podcasts,
+    Persons,
     Notes,
     Links,
   ],

@@ -26,11 +26,12 @@ export const Notes: CollectionConfig = {
     slug: true,
     author: true,
     visibility: true,
+    type: true,
     connections: true,
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'author', 'visibility', 'updatedAt'],
+    defaultColumns: ['title', 'type', 'author', 'visibility', 'updatedAt'],
     livePreview: {
       url: ({ data }) => {
         const path = generatePreviewPath({
@@ -60,6 +61,22 @@ export const Notes: CollectionConfig = {
       },
     },
     {
+      name: 'type',
+      type: 'select',
+      options: [
+        { label: 'Literature Note', value: 'literature' },
+        { label: 'Permanent Note', value: 'permanent' },
+        { label: 'Fleeting Note', value: 'fleeting' },
+        { label: 'Index Note', value: 'index' },
+      ],
+      defaultValue: 'fleeting',
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'What type of note is this?',
+      },
+    },
+    {
       name: 'author',
       type: 'select',
       options: [
@@ -77,7 +94,7 @@ export const Notes: CollectionConfig = {
       type: 'select',
       options: [
         { label: 'Public', value: 'public' },
-        // Future: private, draft, etc.
+        { label: 'Private', value: 'private' },
       ],
       defaultValue: 'public',
       required: true,
@@ -109,9 +126,52 @@ export const Notes: CollectionConfig = {
         {
           fields: [
             {
+              name: 'sourceReference',
+              type: 'relationship',
+              relationTo: ['books', 'movies', 'tvShows', 'videoGames', 'music', 'podcasts'],
+              admin: {
+                description: 'What book, movie, show, game, music, or podcast is this note about?',
+                condition: (data) => data.type === 'literature',
+              },
+            },
+            {
+              name: 'quoteText',
+              type: 'textarea',
+              admin: {
+                description: 'The actual quote or passage from the source',
+                condition: (data) => data.type === 'literature',
+                placeholder: 'Enter the quote...',
+              },
+            },
+            {
+              name: 'pageNumber',
+              type: 'text',
+              admin: {
+                description: 'Page number, timestamp, or location reference',
+                condition: (data) => data.type === 'literature',
+                placeholder: 'Page 42, 1:23:45, etc.',
+              },
+            },
+          ],
+          label: 'Literature Note Details',
+          description: 'Specific fields for literature notes (quotes and references)',
+        },
+        {
+          fields: [
+            {
               name: 'connections',
               type: 'relationship',
-              relationTo: ['posts', 'books', 'movies', 'tvShows', 'videoGames', 'people', 'notes'],
+              relationTo: [
+                'posts',
+                'books',
+                'movies',
+                'tvShows',
+                'videoGames',
+                'music',
+                'podcasts',
+                'persons',
+                'notes',
+              ],
               hasMany: true,
               admin: {
                 description: 'Connect this note to other content in your knowledge base',
@@ -203,19 +263,16 @@ export const Notes: CollectionConfig = {
     afterChange: [
       async ({ doc, req }) => {
         req.payload.logger.info(`Revalidating note: ${doc.slug}`)
-
         // TODO: Add revalidation logic for notes when we have note pages
-        // revalidateTag('notes')
-        // revalidateTag(`note-${doc.slug}`)
       },
     ],
   },
   versions: {
     drafts: {
       autosave: {
-        interval: 30000, // 30 seconds - prevents excessive autosave compute
+        interval: 30000,
       },
     },
-    maxPerDoc: 5, // Keep only 5 versions per note - prevents database bloat
+    maxPerDoc: 5,
   },
 }

@@ -45,7 +45,7 @@ export const Posts: CollectionConfig<'posts'> = {
     type: true,
   },
   admin: {
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    defaultColumns: ['title', 'type', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data }) => {
         const path = generatePreviewPath({
@@ -127,16 +127,6 @@ export const Posts: CollectionConfig<'posts'> = {
           fields: [
             {
               name: 'type',
-              type: 'relationship',
-              relationTo: 'types',
-              required: true,
-              admin: {
-                description: 'Legacy type field (will be removed after migration)',
-                position: 'sidebar',
-              },
-            },
-            {
-              name: 'typeSelect',
               type: 'select',
               options: [
                 { label: 'Article', value: 'article' },
@@ -158,17 +148,17 @@ export const Posts: CollectionConfig<'posts'> = {
               max: 10,
               admin: {
                 description: 'Rate from 1-10 stars',
-                condition: (data) => data.typeSelect === 'review',
+                condition: (data) => data.type === 'review',
               },
             },
             {
               name: 'reference',
               type: 'relationship',
-              relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+              relationTo: ['books', 'movies', 'tvShows', 'videoGames', 'music', 'podcasts'],
               hasMany: true,
               admin: {
                 description: 'What are you reviewing? (can select multiple)',
-                condition: (data) => data.typeSelect === 'review',
+                condition: (data) => data.type === 'review',
               },
             },
             {
@@ -176,7 +166,7 @@ export const Posts: CollectionConfig<'posts'> = {
               type: 'text',
               admin: {
                 description: 'YouTube, Vimeo, or other video embed URL',
-                condition: (data) => data.typeSelect === 'video',
+                condition: (data) => data.type === 'video',
                 placeholder: 'https://www.youtube.com/watch?v=...',
               },
             },
@@ -185,7 +175,7 @@ export const Posts: CollectionConfig<'posts'> = {
               type: 'text',
               admin: {
                 description: 'Spotify, Apple Podcasts, or other podcast embed URL',
-                condition: (data) => data.typeSelect === 'podcast',
+                condition: (data) => data.type === 'podcast',
                 placeholder: 'https://open.spotify.com/episode/...',
               },
             },
@@ -209,22 +199,22 @@ export const Posts: CollectionConfig<'posts'> = {
               type: 'relationship',
               relationTo: 'projects',
               admin: {
-                description: 'Group this post into a series or project',
+                description: 'Group this post into a series or project (optional)',
               },
             },
             {
               name: 'references',
               type: 'relationship',
-              relationTo: ['books', 'movies', 'tvShows', 'videoGames'],
+              relationTo: ['books', 'movies', 'tvShows', 'videoGames', 'music', 'podcasts'],
               hasMany: true,
               admin: {
-                description: 'Books, movies, shows, games referenced in this post',
+                description: 'Books, movies, shows, games, music, podcasts referenced in this post',
               },
             },
             {
               name: 'personsMentioned',
               type: 'relationship',
-              relationTo: 'people',
+              relationTo: 'persons',
               hasMany: true,
               admin: {
                 description: 'People mentioned or discussed in this post',
@@ -383,13 +373,11 @@ export const Posts: CollectionConfig<'posts'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 30000, // 30 seconds - prevents excessive autosave compute
+        interval: 30000,
       },
     },
-    maxPerDoc: 5, // Keep only 5 versions per post - prevents database bloat
+    maxPerDoc: 5,
   },
 }
 
-// NOTE: In [DATE] we migrated from categories/tags to types/topics/projects
-// Backup of the old structure can be found in ./taxonomy-backup.json
-// Migration script: ./src/migrations/taxonomyMigration.ts
+// NOTE: Migrated from categories/tags to types/topics/projects structure

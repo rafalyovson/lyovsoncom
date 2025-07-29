@@ -3,7 +3,6 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '@/access/anyone'
 import { authenticated } from '@/access/authenticated'
 import { slugField } from '@/fields/slug'
-import { generateEmbeddingHook } from './hooks/generateEmbedding'
 
 export const Books: CollectionConfig = {
   slug: 'books',
@@ -19,11 +18,12 @@ export const Books: CollectionConfig = {
     coverImage: true,
     description: true,
     creators: true,
+    type: true,
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'releaseDate', 'updatedAt'],
-    description: 'Manage books for reviews and references',
+    defaultColumns: ['title', 'type', 'releaseDate', 'updatedAt'],
+    description: 'Manage books, series, and comics for reviews and references',
   },
   fields: [
     {
@@ -32,6 +32,21 @@ export const Books: CollectionConfig = {
       required: true,
       admin: {
         description: 'The title of the book',
+      },
+    },
+    {
+      name: 'type',
+      type: 'select',
+      options: [
+        { label: 'Book', value: 'book' },
+        { label: 'Series', value: 'series' },
+        { label: 'Comics', value: 'comics' },
+      ],
+      defaultValue: 'book',
+      required: true,
+      admin: {
+        position: 'sidebar',
+        description: 'What type of publication is this?',
       },
     },
     {
@@ -65,136 +80,99 @@ export const Books: CollectionConfig = {
     {
       name: 'creators',
       type: 'relationship',
-      relationTo: 'people',
+      relationTo: 'persons',
       hasMany: true,
       admin: {
         position: 'sidebar',
-        description: 'Authors of this book',
+        description: 'Authors, illustrators, etc.',
       },
     },
     {
-      type: 'tabs',
-      tabs: [
-        {
-          fields: [
-            {
-              name: 'rafasQuotes',
-              type: 'array',
-              admin: {
-                description: "Save Rafa's highlighted quotes from this book",
-              },
-              fields: [
-                {
-                  name: 'quote',
-                  type: 'textarea',
-                  required: true,
-                  admin: {
-                    placeholder: 'Enter a memorable quote...',
-                  },
-                },
-              ],
-            },
-          ],
-          label: "Rafa's Quotes",
-          description: "Rafa's highlighted passages from this book",
-        },
-        {
-          fields: [
-            {
-              name: 'jesssQuotes',
-              type: 'array',
-              admin: {
-                description: "Save Jess's highlighted quotes from this book",
-              },
-              fields: [
-                {
-                  name: 'quote',
-                  type: 'textarea',
-                  required: true,
-                  admin: {
-                    placeholder: 'Enter a memorable quote...',
-                  },
-                },
-              ],
-            },
-          ],
-          label: "Jess's Quotes",
-          description: "Jess's highlighted passages from this book",
-        },
+      name: 'isbn',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: 'ISBN number',
+      },
+    },
+    {
+      name: 'genre',
+      type: 'select',
+      hasMany: true,
+      options: [
+        { label: 'Fiction', value: 'fiction' },
+        { label: 'Non-Fiction', value: 'non-fiction' },
+        { label: 'Science Fiction', value: 'sci-fi' },
+        { label: 'Fantasy', value: 'fantasy' },
+        { label: 'Mystery', value: 'mystery' },
+        { label: 'Romance', value: 'romance' },
+        { label: 'Thriller', value: 'thriller' },
+        { label: 'Biography', value: 'biography' },
+        { label: 'History', value: 'history' },
+        { label: 'Self-Help', value: 'self-help' },
+        { label: 'Technical', value: 'technical' },
       ],
-    },
-    // Pre-computed embedding for semantic search (pgvector format)
-    {
-      name: 'embedding_vector',
-      type: 'text', // Maps to vector(1536) in database
-      access: {
-        update: () => false, // Only updated via hooks
-      },
       admin: {
-        hidden: true,
-        description: 'Vector embedding for semantic search (pgvector format)',
+        position: 'sidebar',
+        description: 'Book genres',
       },
     },
     {
-      name: 'embedding_model',
-      type: 'text',
-      access: {
-        update: () => false,
-      },
-      admin: {
-        hidden: true,
-      },
-    },
-    {
-      name: 'embedding_dimensions',
+      name: 'familyRating',
       type: 'number',
-      access: {
-        update: () => false,
-      },
+      min: 1,
+      max: 10,
       admin: {
-        hidden: true,
+        position: 'sidebar',
+        description: 'Family rating (1-10)',
       },
     },
     {
-      name: 'embedding_generated_at',
-      type: 'date',
-      access: {
-        update: () => false,
-      },
+      name: 'readStatus',
+      type: 'select',
+      options: [
+        { label: 'Want to Read', value: 'want_to_read' },
+        { label: 'Reading', value: 'reading' },
+        { label: 'Read', value: 'read' },
+        { label: 'Abandoned', value: 'abandoned' },
+      ],
       admin: {
-        hidden: true,
+        position: 'sidebar',
+        description: 'Reading status',
       },
     },
     {
-      name: 'embedding_text_hash',
+      name: 'googleBooksId',
       type: 'text',
-      access: {
-        update: () => false,
-      },
       admin: {
-        hidden: true,
+        position: 'sidebar',
+        description: 'Google Books API ID',
+      },
+    },
+    {
+      name: 'apiData',
+      type: 'json',
+      admin: {
+        position: 'sidebar',
+        description: 'Full API response data',
       },
     },
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [generateEmbeddingHook],
     afterChange: [
       async ({ doc, req }) => {
         req.payload.logger.info(`Revalidating book: ${doc.slug}`)
-
         // TODO: Add revalidation logic for books when we have book pages
-        // revalidateTag('books')
-        // revalidateTag(`book-${doc.slug}`)
       },
     ],
   },
   versions: {
     drafts: {
       autosave: {
-        interval: 30000, // 30 seconds - prevents excessive autosave compute
+        interval: 30000,
       },
     },
-    maxPerDoc: 5, // Keep only 5 versions per book - prevents database bloat
+    maxPerDoc: 5,
   },
 }
