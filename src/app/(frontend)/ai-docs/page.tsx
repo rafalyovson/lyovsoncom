@@ -121,6 +121,18 @@ export default function AIDocsPage() {
                   <ExternalLink href={`${SITE_URL}/api/embeddings`}>Vector Embeddings</ExternalLink>
                 </li>
                 <li>
+                  📰{' '}
+                  <ExternalLink href={`${SITE_URL}/api/embeddings/posts/1`}>Posts API</ExternalLink>
+                </li>
+                <li>
+                  📚{' '}
+                  <ExternalLink href={`${SITE_URL}/api/embeddings/books/1`}>Books API</ExternalLink>
+                </li>
+                <li>
+                  📝{' '}
+                  <ExternalLink href={`${SITE_URL}/api/embeddings/notes/1`}>Notes API</ExternalLink>
+                </li>
+                <li>
                   📈{' '}
                   <ExternalLink href={`${SITE_URL}/api/embeddings/status`}>
                     System Status
@@ -133,7 +145,7 @@ export default function AIDocsPage() {
                   </ExternalLink>
                 </li>
                 <li>
-                  ⚡ <span className="text-green-600">OpenAI Integration</span>
+                  ⚡ <span className="text-green-600">pgvector + OpenAI</span>
                 </li>
               </ul>
             </div>
@@ -236,30 +248,36 @@ GET ${SITE_URL}/api/posts/[id]?depth=2`}
           </p>
 
           <CodeBlock title="Embeddings API Examples">
-            {`# Get embedding for a specific post (pre-computed, ~50ms)
-GET ${SITE_URL}/api/embeddings/posts/123
+            {`# Collection-specific endpoints (pre-computed, ~50ms)
+GET ${SITE_URL}/api/embeddings/posts/123      # Articles & blog posts
+GET ${SITE_URL}/api/embeddings/books/456      # Books with quotes
+GET ${SITE_URL}/api/embeddings/notes/789      # Personal notes
 
-# Get embeddings for all posts (bulk access)
+# Bulk access for training/analysis
 GET ${SITE_URL}/api/embeddings?type=posts&limit=50
 
-# Get embedding for a text query (real-time generation)
+# Real-time query embedding
 GET ${SITE_URL}/api/embeddings?q=programming tutorials
 
-# Get system status and coverage
+# System health across all collections
 GET ${SITE_URL}/api/embeddings/status
 
-# Response includes:
+# Advanced options
+GET ${SITE_URL}/api/embeddings/posts/123?content=true&format=full
+GET ${SITE_URL}/api/embeddings/books/456?regenerate=true
+
+# Response structure:
 {
   "id": 123,
   "embedding": [0.1, -0.2, 0.3, ...], // 1536-dimensional vector
   "dimensions": 1536,
   "metadata": {
+    "type": "post", // or "book", "note"
     "title": "Post Title",
     "url": "${SITE_URL}/project/post-slug",
     "wordCount": 1200,
     "readingTime": 6,
-    "topics": ["programming", "javascript"],
-    "isPrecomputed": true
+    "topics": ["programming", "javascript"]
   },
   "model": "text-embedding-3-small"
 }`}
@@ -275,9 +293,9 @@ GET ${SITE_URL}/api/embeddings/status
           <div className="bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-4 rounded-lg mb-4">
             <h3 className="font-medium mb-2">⚡ High-Performance Pre-computed Embeddings</h3>
             <p className="text-sm text-gray-700 dark:text-gray-300">
-              Our embedding system uses OpenAI&apos;s latest text-embedding-3-small model with
-              automatic pre-computation for lightning-fast API responses (&lt;100ms vs 1-3s
-              traditional).
+              Our embedding system uses pgvector + OpenAI&apos;s text-embedding-3-small model with
+              collection-specific endpoints and automatic pre-computation for lightning-fast API
+              responses (&lt;100ms vs 1-3s traditional).
             </p>
           </div>
 
@@ -286,7 +304,13 @@ GET ${SITE_URL}/api/embeddings/status
               <h3 className="font-medium mb-3">🚀 Performance Features</h3>
               <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                 <li>
-                  • <strong>Pre-computed vectors</strong> - Generated on post publish/update
+                  • <strong>pgvector storage</strong> - 44% smaller than JSONB
+                </li>
+                <li>
+                  • <strong>HNSW indexes</strong> - Sub-millisecond similarity search
+                </li>
+                <li>
+                  • <strong>Collection-specific</strong> - Posts, Books, Notes endpoints
                 </li>
                 <li>
                   • <strong>1536-dimensional</strong> OpenAI text-embedding-3-small
@@ -298,7 +322,7 @@ GET ${SITE_URL}/api/embeddings/status
                   • <strong>Fallback system</strong> - Works without OpenAI API key
                 </li>
                 <li>
-                  • <strong>Sub-100ms responses</strong> for individual posts
+                  • <strong>Sub-100ms responses</strong> for individual items
                 </li>
                 <li>
                   • <strong>Bulk access</strong> for training and analysis

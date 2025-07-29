@@ -41,12 +41,16 @@ export async function GET(request: NextRequest) {
         },
         embeddings: {
           endpoint: `${SITE_URL}/api/embeddings`,
-          individualPost: `${SITE_URL}/api/embeddings/posts/{id}`,
+          collections: {
+            posts: `${SITE_URL}/api/embeddings/posts/{id}`,
+            books: `${SITE_URL}/api/embeddings/books/{id}`,
+            notes: `${SITE_URL}/api/embeddings/notes/{id}`,
+          },
           authentication: 'not-required',
           model: 'text-embedding-3-small or fallback',
           dimensions: '1536 or 384',
           capabilities: ['semantic-search', 'similarity-analysis', 'content-clustering'],
-          usage: ['query-text', 'bulk-posts', 'individual-items'],
+          usage: ['query-text', 'bulk-posts', 'individual-items', 'collection-specific'],
         },
       },
 

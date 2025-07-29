@@ -292,23 +292,13 @@ export interface Post {
       }[]
     | null;
   /**
-   * Pre-computed vector embedding for semantic search (auto-generated)
+   * Vector embedding for semantic search (pgvector format)
    */
-  embedding?: {
-    vector?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    model?: string | null;
-    dimensions?: number | null;
-    generatedAt?: string | null;
-    textHash?: string | null;
-  };
+  embedding_vector?: string | null;
+  embedding_model?: string | null;
+  embedding_dimensions?: number | null;
+  embedding_generated_at?: string | null;
+  embedding_text_hash?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -459,23 +449,13 @@ export interface Book {
       }[]
     | null;
   /**
-   * Pre-computed vector embedding for semantic search (auto-generated)
+   * Vector embedding for semantic search (pgvector format)
    */
-  embedding?: {
-    vector?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    model?: string | null;
-    dimensions?: number | null;
-    generatedAt?: string | null;
-    textHash?: string | null;
-  };
+  embedding_vector?: string | null;
+  embedding_model?: string | null;
+  embedding_dimensions?: number | null;
+  embedding_generated_at?: string | null;
+  embedding_text_hash?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -797,23 +777,13 @@ export interface Note {
    */
   publishedAt?: string | null;
   /**
-   * Pre-computed vector embedding for semantic search (auto-generated)
+   * Vector embedding for semantic search (pgvector format)
    */
-  embedding?: {
-    vector?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
-    model?: string | null;
-    dimensions?: number | null;
-    generatedAt?: string | null;
-    textHash?: string | null;
-  };
+  embedding_vector?: string | null;
+  embedding_model?: string | null;
+  embedding_dimensions?: number | null;
+  embedding_generated_at?: string | null;
+  embedding_text_hash?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1296,15 +1266,11 @@ export interface PostsSelect<T extends boolean = true> {
         name?: T;
         username?: T;
       };
-  embedding?:
-    | T
-    | {
-        vector?: T;
-        model?: T;
-        dimensions?: T;
-        generatedAt?: T;
-        textHash?: T;
-      };
+  embedding_vector?: T;
+  embedding_model?: T;
+  embedding_dimensions?: T;
+  embedding_generated_at?: T;
+  embedding_text_hash?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1508,15 +1474,11 @@ export interface BooksSelect<T extends boolean = true> {
         quote?: T;
         id?: T;
       };
-  embedding?:
-    | T
-    | {
-        vector?: T;
-        model?: T;
-        dimensions?: T;
-        generatedAt?: T;
-        textHash?: T;
-      };
+  embedding_vector?: T;
+  embedding_model?: T;
+  embedding_dimensions?: T;
+  embedding_generated_at?: T;
+  embedding_text_hash?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
@@ -1629,15 +1591,11 @@ export interface NotesSelect<T extends boolean = true> {
   content?: T;
   connections?: T;
   publishedAt?: T;
-  embedding?:
-    | T
-    | {
-        vector?: T;
-        model?: T;
-        dimensions?: T;
-        generatedAt?: T;
-        textHash?: T;
-      };
+  embedding_vector?: T;
+  embedding_model?: T;
+  embedding_dimensions?: T;
+  embedding_generated_at?: T;
+  embedding_text_hash?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;

@@ -4,23 +4,37 @@ import configPromise from '@payload-config'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 import { generateEmbedding, extractTextFromContent } from '@/utilities/generate-embedding'
 
-// Posts-specific text extraction for API
-function extractPostsText(post: any): string {
+// Books-specific text extraction for API
+function extractBooksText(book: any): string {
   const parts: string[] = []
 
-  if (post.title) {
-    parts.push(post.title)
+  if (book.title) {
+    parts.push(book.title)
   }
 
-  if (post.description) {
-    parts.push(post.description)
+  if (book.description) {
+    parts.push(book.description)
   }
 
-  // Extract content from Lexical JSONB format
-  if (post.content) {
-    const contentText = extractTextFromContent(post.content)
-    if (contentText) {
-      parts.push(contentText)
+  // Include Rafa's quotes for richer embeddings
+  if (book.rafasQuotes && Array.isArray(book.rafasQuotes)) {
+    const rafaQuotes = book.rafasQuotes
+      .map((q: any) => q.quote)
+      .filter(Boolean)
+      .join(' ')
+    if (rafaQuotes) {
+      parts.push(rafaQuotes)
+    }
+  }
+
+  // Include Jess's quotes for richer embeddings
+  if (book.jesssQuotes && Array.isArray(book.jesssQuotes)) {
+    const jessQuotes = book.jesssQuotes
+      .map((q: any) => q.quote)
+      .filter(Boolean)
+      .join(' ')
+    if (jessQuotes) {
+      parts.push(jessQuotes)
     }
   }
 
@@ -45,20 +59,17 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
   try {
     const payload = await getPayload({ config: configPromise })
 
-    const post = await payload.findByID({
-      collection: 'posts',
+    const book = await payload.findByID({
+      collection: 'books',
       id: parseInt(id),
       depth: 2,
       select: {
-        id: true,
         title: true,
         slug: true,
-        content: true,
-        meta: true,
-        topics: true,
-        project: true,
-        populatedAuthors: true,
-        publishedAt: true,
+        description: true,
+        rafasQuotes: true,
+        jesssQuotes: true,
+        releaseDate: true, // Books use releaseDate, not publishedAt
         updatedAt: true,
         embedding_vector: true, // pgvector field
         embedding_model: true,
@@ -68,10 +79,10 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
       },
     })
 
-    if (!post) {
+    if (!book) {
       return new Response(
         JSON.stringify({
-          error: 'Post not found',
+          error: 'Book not found',
           id: parseInt(id),
         }),
         {
@@ -82,18 +93,18 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     }
 
     // Parse existing embedding from pgvector format
-    const postWithEmbedding = post as any // Type assertion for new pgvector fields
+    const bookWithEmbedding = book as any // Type assertion for new pgvector fields
     let existingEmbedding = null
-    if (postWithEmbedding.embedding_vector) {
+    if (bookWithEmbedding.embedding_vector) {
       try {
-        const vectorString = postWithEmbedding.embedding_vector.replace(/^\[|\]$/g, '') // Remove brackets
+        const vectorString = bookWithEmbedding.embedding_vector.replace(/^\[|\]$/g, '') // Remove brackets
         const vectorArray = vectorString.split(',').map(Number)
         existingEmbedding = {
           vector: vectorArray,
-          model: postWithEmbedding.embedding_model,
-          dimensions: postWithEmbedding.embedding_dimensions,
-          generatedAt: postWithEmbedding.embedding_generated_at,
-          textHash: postWithEmbedding.embedding_text_hash,
+          model: bookWithEmbedding.embedding_model,
+          dimensions: bookWithEmbedding.embedding_dimensions,
+          generatedAt: bookWithEmbedding.embedding_generated_at,
+          textHash: bookWithEmbedding.embedding_text_hash,
         }
       } catch (error) {
         console.error('Error parsing embedding vector:', error)
@@ -103,14 +114,14 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     // Handle regeneration or missing embedding
     let embedding = existingEmbedding
     if (regenerate || !existingEmbedding) {
-      const textContent = extractPostsText(post)
+      const textContent = extractBooksText(book)
 
       if (!textContent.trim()) {
         return new Response(
           JSON.stringify({
-            error: 'Post has no content to embed',
+            error: 'Book has no content to embed',
             id: parseInt(id),
-            title: post.title,
+            title: book.title,
           }),
           {
             status: 400,
@@ -126,14 +137,14 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         model,
         dimensions,
         generatedAt: new Date().toISOString(),
-        textHash: postWithEmbedding.embedding_text_hash, // Use existing hash if available
+        textHash: bookWithEmbedding.embedding_text_hash, // Use existing hash if available
       }
 
       // Only update the database if regenerating
       if (regenerate) {
         try {
           await payload.update({
-            collection: 'posts',
+            collection: 'books',
             id: parseInt(id),
             data: {
               embedding_vector: `[${vector.join(',')}]`,
@@ -143,20 +154,31 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
             } as any, // Type assertion for new pgvector fields
           })
         } catch (updateError) {
-          console.error('Failed to update post embedding:', updateError)
+          console.error('Failed to update book embedding:', updateError)
         }
       }
     }
 
     // Format response based on requested format
     const baseResponse = {
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      url: `${SITE_URL}/${post.slug}`,
+      id: book.id,
+      title: book.title,
+      slug: book.slug,
+      url: `${SITE_URL}/books/${book.slug}`, // Books collection URL structure
       embedding: null as any,
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt,
+      releaseDate: book.releaseDate,
+      updatedAt: book.updatedAt,
+      // Books-specific metadata
+      metadata: {
+        type: 'book',
+        quotesCount: {
+          rafa: Array.isArray(book.rafasQuotes) ? book.rafasQuotes.length : 0,
+          jess: Array.isArray(book.jesssQuotes) ? book.jesssQuotes.length : 0,
+        },
+        totalQuotes:
+          (Array.isArray(book.rafasQuotes) ? book.rafasQuotes.length : 0) +
+          (Array.isArray(book.jesssQuotes) ? book.jesssQuotes.length : 0),
+      },
     }
 
     switch (format) {
@@ -174,8 +196,12 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         break
       default: // 'full'
         baseResponse.embedding = embedding
-        if (includeContent && post.content) {
-          ;(baseResponse as any).content = post.content
+        if (includeContent) {
+          ;(baseResponse as any).content = {
+            description: book.description,
+            rafasQuotes: book.rafasQuotes,
+            jesssQuotes: book.jesssQuotes,
+          }
         }
         break
     }
@@ -195,7 +221,7 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     // For now, we'll rely on the Cache-Control headers
     return response
   } catch (error) {
-    console.error('Error in POST embeddings API:', error)
+    console.error('Error in Books embeddings API:', error)
 
     return new Response(
       JSON.stringify({

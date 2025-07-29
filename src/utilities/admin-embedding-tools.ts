@@ -1,6 +1,29 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { generateEmbedding, extractPostText, createTextHash } from './generate-embedding'
+import { generateEmbedding, createTextHash, extractTextFromContent } from './generate-embedding'
+
+// Posts-specific text extraction for admin tools
+function extractPostsText(post: any): string {
+  const parts: string[] = []
+
+  if (post.title) {
+    parts.push(post.title)
+  }
+
+  if (post.description) {
+    parts.push(post.description)
+  }
+
+  // Extract content from Lexical JSONB format
+  if (post.content) {
+    const contentText = extractTextFromContent(post.content)
+    if (contentText) {
+      parts.push(contentText)
+    }
+  }
+
+  return parts.filter(Boolean).join(' ')
+}
 
 // Get embedding statistics for all posts
 export async function getEmbeddingStats() {
@@ -17,7 +40,7 @@ export async function getEmbeddingStats() {
       collection: 'posts',
       where: {
         _status: { equals: 'published' },
-        'embedding.vector': { exists: true },
+        embedding_vector: { exists: true },
       },
       limit: 0,
       pagination: false,
@@ -43,7 +66,7 @@ export async function getPostsNeedingEmbeddings(limit = 50) {
     collection: 'posts',
     where: {
       _status: { equals: 'published' },
-      'embedding.vector': { exists: false },
+      embedding_vector: { exists: false },
     },
     limit,
     select: {
@@ -77,7 +100,7 @@ export async function regenerateEmbeddingForPost(postId: number) {
       throw new Error(`Post ${postId} is not published`)
     }
 
-    const textContent = extractPostText(post)
+    const textContent = extractPostsText(post)
     if (!textContent.trim()) {
       throw new Error(`Post ${postId} has no content to embed`)
     }
@@ -89,14 +112,12 @@ export async function regenerateEmbeddingForPost(postId: number) {
       collection: 'posts',
       id: postId,
       data: {
-        embedding: {
-          vector,
-          model,
-          dimensions,
-          generatedAt: new Date().toISOString(),
-          textHash,
-        },
-      },
+        embedding_vector: `[${vector.join(',')}]`, // pgvector format
+        embedding_model: model,
+        embedding_dimensions: dimensions,
+        embedding_generated_at: new Date().toISOString(),
+        embedding_text_hash: textHash,
+      } as any, // Type assertion for new pgvector fields
     })
 
     return {

@@ -322,53 +322,55 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     // Pre-computed embedding for semantic search
     {
-      name: 'embedding',
-      type: 'group',
+      name: 'embedding_vector',
+      type: 'text', // This will map to vector(1536) in the database
       access: {
         update: () => false, // Only updated via hooks
       },
       admin: {
-        disabled: true,
-        readOnly: true,
-        description: 'Pre-computed vector embedding for semantic search (auto-generated)',
+        hidden: true,
+        description: 'Vector embedding for semantic search (pgvector format)',
       },
-      fields: [
-        {
-          name: 'vector',
-          type: 'json',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'model',
-          type: 'text',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'dimensions',
-          type: 'number',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'generatedAt',
-          type: 'date',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'textHash',
-          type: 'text',
-          admin: {
-            hidden: true,
-          },
-        },
-      ],
+    },
+    {
+      name: 'embedding_model',
+      type: 'text',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_dimensions',
+      type: 'number',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_generated_at',
+      type: 'date',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_text_hash',
+      type: 'text',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
     },
     ...slugField(),
   ],
@@ -381,10 +383,10 @@ export const Posts: CollectionConfig<'posts'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 30000, // 30 seconds (was 100ms - 10 times per second!)
+        interval: 30000, // 30 seconds - prevents excessive autosave compute
       },
     },
-    maxPerDoc: 50,
+    maxPerDoc: 5, // Keep only 5 versions per post - prevents database bloat
   },
 }
 

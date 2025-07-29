@@ -11,7 +11,7 @@ import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { slugField } from '@/fields/slug'
 import { generatePreviewPath } from '@/utilities/generatePreviewPath'
 import { getServerSideURL } from '@/utilities/getURL'
-import { generateEmbeddingHook } from '@/collections/Posts/hooks/generateEmbedding'
+import { generateEmbeddingHook } from './hooks/generateEmbedding'
 
 export const Notes: CollectionConfig = {
   slug: 'notes',
@@ -144,55 +144,57 @@ export const Notes: CollectionConfig = {
         ],
       },
     },
-    // Pre-computed embedding for semantic search
+    // Pre-computed embedding for semantic search (pgvector format)
     {
-      name: 'embedding',
-      type: 'group',
+      name: 'embedding_vector',
+      type: 'text', // Maps to vector(1536) in database
       access: {
         update: () => false, // Only updated via hooks
       },
       admin: {
-        disabled: true,
-        readOnly: true,
-        description: 'Pre-computed vector embedding for semantic search (auto-generated)',
+        hidden: true,
+        description: 'Vector embedding for semantic search (pgvector format)',
       },
-      fields: [
-        {
-          name: 'vector',
-          type: 'json',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'model',
-          type: 'text',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'dimensions',
-          type: 'number',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'generatedAt',
-          type: 'date',
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: 'textHash',
-          type: 'text',
-          admin: {
-            hidden: true,
-          },
-        },
-      ],
+    },
+    {
+      name: 'embedding_model',
+      type: 'text',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_dimensions',
+      type: 'number',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_generated_at',
+      type: 'date',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      name: 'embedding_text_hash',
+      type: 'text',
+      access: {
+        update: () => false,
+      },
+      admin: {
+        hidden: true,
+      },
     },
     ...slugField(),
   ],
@@ -211,9 +213,9 @@ export const Notes: CollectionConfig = {
   versions: {
     drafts: {
       autosave: {
-        interval: 30000, // 30 seconds
+        interval: 30000, // 30 seconds - prevents excessive autosave compute
       },
     },
-    maxPerDoc: 50,
+    maxPerDoc: 5, // Keep only 5 versions per note - prevents database bloat
   },
 }

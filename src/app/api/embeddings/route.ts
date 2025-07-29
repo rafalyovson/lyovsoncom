@@ -60,7 +60,10 @@ export async function GET(request: NextRequest) {
             populatedAuthors: true,
             publishedAt: true,
             updatedAt: true,
-            embedding: true, // Include pre-computed embedding
+            embedding_vector: true, // pgvector field
+            embedding_model: true,
+            embedding_dimensions: true,
+            embedding_generated_at: true,
           },
         })
       } else if (type === 'projects') {
@@ -89,11 +92,12 @@ export async function GET(request: NextRequest) {
       let model = 'unknown'
       let dimensions = 0
 
-      if (type === 'posts' && (item as any).embedding?.vector) {
-        // Use pre-computed embedding
-        embedding = (item as any).embedding.vector
-        model = (item as any).embedding.model || 'pre-computed'
-        dimensions = (item as any).embedding.dimensions || embedding.length
+      if (type === 'posts' && (item as any).embedding_vector) {
+        // Use pre-computed embedding - parse pgvector format
+        const vectorString = (item as any).embedding_vector
+        embedding = typeof vectorString === 'string' ? JSON.parse(vectorString) : vectorString
+        model = (item as any).embedding_model || 'pre-computed'
+        dimensions = (item as any).embedding_dimensions || embedding.length
       } else {
         // Extract text content for embedding
         const textToEmbed = [item.title, item.description].filter(Boolean).join(' ')
@@ -114,7 +118,7 @@ export async function GET(request: NextRequest) {
           slug: item.slug,
           ...(includeContent &&
             type === 'posts' && {
-              wordCount: (item as any).embedding?.textHash ? 'available' : 'not-computed',
+              wordCount: (item as any).embedding_generated_at ? 'available' : 'not-computed',
               readingTime: 'available-on-individual-endpoint',
             }),
           url:
@@ -134,7 +138,7 @@ export async function GET(request: NextRequest) {
             topics: item.topics
               ?.map((t: any) => (typeof t === 'object' ? { name: t.name, slug: t.slug } : t))
               .filter(Boolean),
-            hasPrecomputedEmbedding: !!(item as any).embedding?.vector,
+            hasPrecomputedEmbedding: !!(item as any).embedding_vector,
           }),
         },
         model,
@@ -147,7 +151,7 @@ export async function GET(request: NextRequest) {
           'Content-Type': 'application/json; charset=utf-8',
           'Cache-Control': 'public, max-age=7200, s-maxage=7200', // Cache individual embeddings longer
           'Access-Control-Allow-Origin': '*',
-          'X-Embedding-Source': (item as any).embedding?.vector ? 'pre-computed' : 'on-demand',
+          'X-Embedding-Source': (item as any).embedding_vector ? 'pre-computed' : 'on-demand',
         },
       })
     }
@@ -170,7 +174,7 @@ export async function GET(request: NextRequest) {
           project: true,
           populatedAuthors: true,
           updatedAt: true,
-          embedding: true, // Include pre-computed embeddings
+          embedding_vector: true, // Include pre-computed embeddings
         },
       })
 
@@ -179,11 +183,12 @@ export async function GET(request: NextRequest) {
         let model = 'unknown'
         let dimensions = 0
 
-        if ((post as any).embedding?.vector) {
-          // Use pre-computed embedding
-          embedding = (post as any).embedding.vector
-          model = (post as any).embedding.model || 'pre-computed'
-          dimensions = (post as any).embedding.dimensions || embedding.length
+        if ((post as any).embedding_vector) {
+          // Use pre-computed embedding - parse pgvector format
+          const vectorString = (post as any).embedding_vector
+          embedding = typeof vectorString === 'string' ? JSON.parse(vectorString) : vectorString
+          model = (post as any).embedding_model || 'pre-computed'
+          dimensions = (post as any).embedding_dimensions || embedding.length
         } else {
           // Skip posts without pre-computed embeddings in bulk requests
           // to avoid long response times
@@ -241,7 +246,11 @@ export async function GET(request: NextRequest) {
         specificItem: `${SITE_URL}/api/embeddings?type={type}&id={id}`,
         queryEmbedding: `${SITE_URL}/api/embeddings?q={query}`,
         bulk: `${SITE_URL}/api/embeddings?type={type}&limit={limit}`,
-        individual: `${SITE_URL}/api/embeddings/posts/{id}`,
+        collections: {
+          posts: `${SITE_URL}/api/embeddings/posts/{id}`,
+          books: `${SITE_URL}/api/embeddings/books/{id}`,
+          notes: `${SITE_URL}/api/embeddings/notes/{id}`,
+        },
       },
       notes: {
         performance: 'Using pre-computed embeddings for fast response times',

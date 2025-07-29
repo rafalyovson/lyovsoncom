@@ -4,21 +4,17 @@ import configPromise from '@payload-config'
 import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
 import { generateEmbedding, extractTextFromContent } from '@/utilities/generate-embedding'
 
-// Posts-specific text extraction for API
-function extractPostsText(post: any): string {
+// Notes-specific text extraction for API
+function extractNotesText(note: any): string {
   const parts: string[] = []
 
-  if (post.title) {
-    parts.push(post.title)
-  }
-
-  if (post.description) {
-    parts.push(post.description)
+  if (note.title) {
+    parts.push(note.title)
   }
 
   // Extract content from Lexical JSONB format
-  if (post.content) {
-    const contentText = extractTextFromContent(post.content)
+  if (note.content) {
+    const contentText = extractTextFromContent(note.content)
     if (contentText) {
       parts.push(contentText)
     }
@@ -45,8 +41,8 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
   try {
     const payload = await getPayload({ config: configPromise })
 
-    const post = await payload.findByID({
-      collection: 'posts',
+    const note = await payload.findByID({
+      collection: 'notes',
       id: parseInt(id),
       depth: 2,
       select: {
@@ -54,10 +50,6 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         title: true,
         slug: true,
         content: true,
-        meta: true,
-        topics: true,
-        project: true,
-        populatedAuthors: true,
         publishedAt: true,
         updatedAt: true,
         embedding_vector: true, // pgvector field
@@ -68,10 +60,10 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
       },
     })
 
-    if (!post) {
+    if (!note) {
       return new Response(
         JSON.stringify({
-          error: 'Post not found',
+          error: 'Note not found',
           id: parseInt(id),
         }),
         {
@@ -82,18 +74,18 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     }
 
     // Parse existing embedding from pgvector format
-    const postWithEmbedding = post as any // Type assertion for new pgvector fields
+    const noteWithEmbedding = note as any // Type assertion for new pgvector fields
     let existingEmbedding = null
-    if (postWithEmbedding.embedding_vector) {
+    if (noteWithEmbedding.embedding_vector) {
       try {
-        const vectorString = postWithEmbedding.embedding_vector.replace(/^\[|\]$/g, '') // Remove brackets
+        const vectorString = noteWithEmbedding.embedding_vector.replace(/^\[|\]$/g, '') // Remove brackets
         const vectorArray = vectorString.split(',').map(Number)
         existingEmbedding = {
           vector: vectorArray,
-          model: postWithEmbedding.embedding_model,
-          dimensions: postWithEmbedding.embedding_dimensions,
-          generatedAt: postWithEmbedding.embedding_generated_at,
-          textHash: postWithEmbedding.embedding_text_hash,
+          model: noteWithEmbedding.embedding_model,
+          dimensions: noteWithEmbedding.embedding_dimensions,
+          generatedAt: noteWithEmbedding.embedding_generated_at,
+          textHash: noteWithEmbedding.embedding_text_hash,
         }
       } catch (error) {
         console.error('Error parsing embedding vector:', error)
@@ -103,14 +95,14 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     // Handle regeneration or missing embedding
     let embedding = existingEmbedding
     if (regenerate || !existingEmbedding) {
-      const textContent = extractPostsText(post)
+      const textContent = extractNotesText(note)
 
       if (!textContent.trim()) {
         return new Response(
           JSON.stringify({
-            error: 'Post has no content to embed',
+            error: 'Note has no content to embed',
             id: parseInt(id),
-            title: post.title,
+            title: note.title,
           }),
           {
             status: 400,
@@ -126,14 +118,14 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         model,
         dimensions,
         generatedAt: new Date().toISOString(),
-        textHash: postWithEmbedding.embedding_text_hash, // Use existing hash if available
+        textHash: noteWithEmbedding.embedding_text_hash, // Use existing hash if available
       }
 
       // Only update the database if regenerating
       if (regenerate) {
         try {
           await payload.update({
-            collection: 'posts',
+            collection: 'notes',
             id: parseInt(id),
             data: {
               embedding_vector: `[${vector.join(',')}]`,
@@ -143,20 +135,33 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
             } as any, // Type assertion for new pgvector fields
           })
         } catch (updateError) {
-          console.error('Failed to update post embedding:', updateError)
+          console.error('Failed to update note embedding:', updateError)
         }
       }
     }
 
+    // Calculate content statistics for Notes
+    const contentText = extractNotesText(note)
+    const wordCount = contentText.split(/\s+/).length
+    const readingTime = Math.ceil(wordCount / 200) // ~200 words per minute
+
     // Format response based on requested format
     const baseResponse = {
-      id: post.id,
-      title: post.title,
-      slug: post.slug,
-      url: `${SITE_URL}/${post.slug}`,
+      id: note.id,
+      title: note.title,
+      slug: note.slug,
+      url: `${SITE_URL}/notes/${note.slug}`, // Notes collection URL structure
       embedding: null as any,
-      publishedAt: post.publishedAt,
-      updatedAt: post.updatedAt,
+      publishedAt: note.publishedAt,
+      updatedAt: note.updatedAt,
+      // Notes-specific metadata
+      metadata: {
+        type: 'note',
+        wordCount,
+        readingTime,
+        contentFormat: 'lexical',
+        hasContent: !!note.content,
+      },
     }
 
     switch (format) {
@@ -174,8 +179,8 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         break
       default: // 'full'
         baseResponse.embedding = embedding
-        if (includeContent && post.content) {
-          ;(baseResponse as any).content = post.content
+        if (includeContent && note.content) {
+          ;(baseResponse as any).content = note.content
         }
         break
     }
@@ -195,7 +200,7 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
     // For now, we'll rely on the Cache-Control headers
     return response
   } catch (error) {
-    console.error('Error in POST embeddings API:', error)
+    console.error('Error in Notes embeddings API:', error)
 
     return new Response(
       JSON.stringify({

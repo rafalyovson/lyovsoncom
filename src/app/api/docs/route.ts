@@ -105,11 +105,13 @@ export async function GET(request: NextRequest) {
             baseUrl: `${SITE_URL}/api/embeddings`,
             endpoints: {
               bulk: '/api/embeddings?type=posts&limit=50',
-              individual: '/api/embeddings/posts/{id}',
+              posts: '/api/embeddings/posts/{id}',
+              books: '/api/embeddings/books/{id}',
+              notes: '/api/embeddings/notes/{id}',
               query: '/api/embeddings?q={text}',
               status: '/api/embeddings/status',
             },
-            description: 'High-performance pre-computed vector embeddings for AI applications',
+            description: 'High-performance pre-computed vector embeddings for AI applications across all collections',
             authentication: 'Not required',
             model: 'text-embedding-3-small (OpenAI) with fallback system',
             features: [
@@ -246,10 +248,13 @@ export async function GET(request: NextRequest) {
         },
         
         'Get embeddings for semantic search': {
-          individual: `${SITE_URL}/api/embeddings/posts/123`,
+          posts: `${SITE_URL}/api/embeddings/posts/123`,
+          books: `${SITE_URL}/api/embeddings/books/456`,
+          notes: `${SITE_URL}/api/embeddings/notes/789`,
           bulk: `${SITE_URL}/api/embeddings?type=posts&limit=10`,
           query: `${SITE_URL}/api/embeddings?q=programming tutorials`,
           withContent: `${SITE_URL}/api/embeddings/posts/123?content=true&format=full`,
+          regenerate: `${SITE_URL}/api/embeddings/books/456?regenerate=true`,
         },
         
         'Semantic similarity search': {
