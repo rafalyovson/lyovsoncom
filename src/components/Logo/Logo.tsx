@@ -22,23 +22,22 @@ export const Logo = (props: Props) => {
   if (mounted) {
     switch (resolvedTheme) {
       case 'light':
-        src = '/logo-black.webp'
+        src = '/crest-dark-simple.webp'
         break
       case 'dark':
-        src = '/logo-white.webp'
+        src = '/crest-light-simple.webp'
         break
       default:
-        src = '/logo-black.webp'
+        src = '/crest-dark-simple.webp'
         break
     }
   }
 
   return (
-     
     <Image
       alt="Lyovson.com Logo"
-      width={100}
-      height={100}
+      width={150}
+      height={150}
       className={clsx('', props.className)}
       src={src}
     />
