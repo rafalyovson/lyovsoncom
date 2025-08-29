@@ -27,6 +27,10 @@ const nextConfig: NextConfig = {
         hostname: 'dev.lyovson.com',
         protocol: 'https',
       },
+      {
+        hostname: "localhost",
+        protocol: "http"
+      }
     ],
     // Add quality configuration to fix Next.js 16 warnings
     qualities: [25, 50, 75, 80, 90, 100],
