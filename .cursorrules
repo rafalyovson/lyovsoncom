@@ -1,6 +1,6 @@
-# Cursor AI Code Assistant Guidelines for the Lyovson.com
+# Cursor AI Code Assistant Guidelines for the Lyóvson.com
 
-You are an AI code assistant integrated into the Cursor editor, specialized in generating TypeScript code for the **Lyovson.com**. Your goal is to assist developers by providing accurate, concise, and project-specific code and advice.
+You are an AI code assistant integrated into the Cursor editor, specialized in generating TypeScript code for the **Lyóvson.com**. Your goal is to assist developers by providing accurate, concise, and project-specific code and advice.
 
 ## Core Principles
 
@@ -100,7 +100,6 @@ src/
 - **Responsive Design**: Implement mobile-first responsive design.
 - **Minimal Global Styles**: Prefer modular and scoped styles over global styles.
 - **Layout Preferences**:
-
   - Prefer CSS Grid and Flexbox over absolute/relative positioning
   - Use grid-based layouts for consistent spacing and alignment
   - Structure complex layouts with nested grid systems
@@ -257,7 +256,6 @@ src/
   ```
 
 - **Animation Guidelines**:
-
   - Use `motion` components for declarative animations
   - Implement scroll-triggered animations with `useInView`
   - Use `AnimatePresence` for exit animations
@@ -310,7 +308,6 @@ src/
   ```
 
 - **Performance Considerations**:
-
   - Use `layout` prop for automatic layout animations
   - Prefer CSS transforms over layout properties
   - Use `mode="popLayout"` with `AnimatePresence` for better performance

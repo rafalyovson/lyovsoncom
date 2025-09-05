@@ -1,17 +1,16 @@
-import type { Metadata, Viewport } from 'next'
-import { Analytics } from '@vercel/analytics/next'
-import { cn } from 'src/utilities/cn'
-import React, { Suspense } from 'react'
-import { draftMode } from 'next/headers'
+import { Grid, GridCardNav, SkeletonCard } from '@/components/grid'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { Providers } from '@/providers'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import './globals.css'
-import { getServerSideURL } from '@/utilities/getURL'
-import { Grid, SkeletonCard } from '@/components/grid'
 import { Toaster } from '@/components/ui/sonner'
-import { IBM_Plex_Mono, IBM_Plex_Serif, IBM_Plex_Sans } from 'next/font/google'
-import { GridCardNav } from '@/components/grid'
+import { Providers } from '@/providers'
+import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata, Viewport } from 'next'
+import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from 'next/font/google'
+import { draftMode } from 'next/headers'
+import React, { Suspense } from 'react'
+import { cn } from 'src/utilities/cn'
+import './globals.css'
 
 const fontMono = IBM_Plex_Mono({
   subsets: ['latin'],
@@ -82,7 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               name: 'Lyovson.com',
               url: getServerSideURL(),
               description:
-                'Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research.',
+                'Website and blog of Rafa and Jess Lyóvson — featuring writing, projects, and research.',
               inLanguage: 'en-US',
               potentialAction: {
                 '@type': 'SearchAction',
@@ -104,12 +103,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               author: [
                 {
                   '@type': 'Person',
-                  name: 'Rafa Lyovson',
+                  name: 'Rafa Lyóvson',
                   url: `${getServerSideURL()}/rafa`,
                 },
                 {
                   '@type': 'Person',
-                  name: 'Jess Lyovson',
+                  name: 'Jess Lyóvson',
                   url: `${getServerSideURL()}/jess`,
                 },
               ],
@@ -158,16 +157,16 @@ export const metadata: Metadata = {
     template: '%s | Lyovson.com',
   },
   description:
-    'Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research.',
+    'Website and blog of Rafa and Jess Lyóvson — featuring writing, projects, and research.',
   applicationName: 'Lyovson.com',
   authors: [
-    { name: 'Rafa Lyovson', url: `${getServerSideURL()}/rafa` },
-    { name: 'Jess Lyovson', url: `${getServerSideURL()}/jess` },
+    { name: 'Rafa Lyóvson', url: `${getServerSideURL()}/rafa` },
+    { name: 'Jess Lyóvson', url: `${getServerSideURL()}/jess` },
   ],
   generator: 'Next.js',
   keywords: ['programming', 'writing', 'design', 'philosophy', 'research', 'projects'],
   referrer: 'origin-when-cross-origin',
-  creator: 'Rafa & Jess Lyovson',
+  creator: 'Rafa & Jess Lyóvson',
   publisher: 'Lyovson.com',
   formatDetection: {
     email: false,
@@ -237,7 +236,7 @@ export const metadata: Metadata = {
     'ai-feed-endpoint': `${getServerSideURL()}/feed.json`,
     'ai-embedding-endpoint': `${getServerSideURL()}/api/embeddings`,
     'ai-search-endpoint': `${getServerSideURL()}/search`,
-    'ai-owner': 'Rafa & Jess Lyovson',
+    'ai-owner': 'Rafa & Jess Lyóvson',
     'ai-contact': 'hello@lyovson.com',
   },
 }

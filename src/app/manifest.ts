@@ -1,14 +1,14 @@
-import { MetadataRoute } from 'next'
 import { getServerSideURL } from '@/utilities/getURL'
+import { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   const siteUrl = getServerSideURL()
 
   return {
-    name: 'Lyovson.com - Writing, Projects & Research',
-    short_name: 'Lyovson',
+    name: 'Lyóvson.com - Writing, Projects & Research',
+    short_name: 'Lyóvson',
     description:
-      'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
+      'Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.',
     start_url: '/',
     display: 'standalone',
     background_color: '#000000',
@@ -65,14 +65,14 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '1200x630',
         type: 'image/png',
         form_factor: 'wide',
-        label: 'Homepage of Lyovson.com',
+        label: 'Homepage of Lyóvson.com',
       },
       {
         src: `${siteUrl}/og-image.png`,
         sizes: '1200x630',
         type: 'image/png',
         form_factor: 'narrow',
-        label: 'Lyovson.com mobile view',
+        label: 'Lyóvson.com mobile view',
       },
     ],
     shortcuts: [
@@ -105,7 +105,7 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         name: "Rafa's Posts",
         short_name: 'Rafa',
-        description: 'Posts and articles by Rafa Lyovson',
+        description: 'Posts and articles by Rafa Lyóvson',
         url: '/rafa',
         icons: [
           {
@@ -118,7 +118,7 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         name: "Jess's Posts",
         short_name: 'Jess',
-        description: 'Posts and articles by Jess Lyovson',
+        description: 'Posts and articles by Jess Lyóvson',
         url: '/jess',
         icons: [
           {

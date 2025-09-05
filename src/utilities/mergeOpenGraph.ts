@@ -4,7 +4,7 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'The official website of Rafa and Jess Lyovsons.',
+  description: 'The official website of Rafa and Jess Lyóvson.',
   images: [
     {
       url: `${getServerSideURL()}/lyovsoncom-og-image.webp`,

@@ -23,7 +23,7 @@ export const GridCardJess = ({ className }: Props) => {
       >
         <Image
           src={'/jess-cozy.webp'}
-          alt={'Jess Lyovson'}
+          alt={'Jess Lyóvson'}
           width={400}
           height={400}
           className="object-cover w-full h-full rounded-md"
@@ -36,7 +36,7 @@ export const GridCardJess = ({ className }: Props) => {
           'g3:row-start-1 g3:row-end-2 g3:col-start-4 g3:col-end-8',
         )}
       >
-        <h1 className={`text-2xl font-bold text-center glass-text`}>Jess Lyovson</h1>
+        <h1 className={`text-2xl font-bold text-center glass-text`}>Jess Lyóvson</h1>
         <p className={`text-sm text-center italic glass-text-secondary`}>
           Storyteller, creator, and maker of things
         </p>
@@ -50,7 +50,7 @@ export const GridCardJess = ({ className }: Props) => {
         <a
           href={`https://x.com/jesslyovson`}
           target="_blank"
-          aria-label={`Jess Lyovson on X.com`}
+          aria-label={`Jess Lyóvson on X.com`}
           className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiX size={24} className="text-current" />
@@ -66,7 +66,7 @@ export const GridCardJess = ({ className }: Props) => {
         <a
           href={`https://www.youtube.com/@hasmikkhachunts1741`}
           target="_blank"
-          aria-label={`Jess Lyovson on YouTube`}
+          aria-label={`Jess Lyóvson on YouTube`}
           className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiYoutube size={24} className="text-current" />

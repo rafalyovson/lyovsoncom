@@ -2,8 +2,8 @@
 /// <reference lib="webworker" />
 
 import { defaultCache } from '@serwist/next/worker'
-import { installSerwist } from '@serwist/sw'
 import type { PrecacheEntry } from '@serwist/precaching'
+import { installSerwist } from '@serwist/sw'
 
 declare const self: ServiceWorkerGlobalScope & {
   __SW_MANIFEST: (PrecacheEntry | string)[] | undefined
@@ -54,7 +54,7 @@ self.addEventListener('push', (event: PushEvent) => {
       const data = event.data.json()
 
       const options = {
-        body: data.body || 'New notification from Lyovson.com',
+        body: data.body || 'New notification from Lyóvson.com',
         icon: '/android-chrome-192x192.png',
         badge: '/android-chrome-192x192.png',
         data: {
@@ -78,13 +78,13 @@ self.addEventListener('push', (event: PushEvent) => {
         silent: false,
       }
 
-      event.waitUntil(self.registration.showNotification(data.title || 'Lyovson.com', options))
+      event.waitUntil(self.registration.showNotification(data.title || 'Lyóvson.com', options))
     } catch (error) {
       console.error('Error parsing push data:', error)
 
       // Fallback notification
       event.waitUntil(
-        self.registration.showNotification('New update from Lyovson.com', {
+        self.registration.showNotification('New update from Lyóvson.com', {
           body: 'Check out the latest content!',
           icon: '/android-chrome-192x192.png',
           data: { url: '/' },

@@ -23,7 +23,7 @@ export const GridCardRafa = ({ className }: Props) => {
       >
         <Image
           src={'/rafa-cozy.webp'}
-          alt={'Rafa Lyovson'}
+          alt={'Rafa Lyóvson'}
           width={400}
           height={400}
           className="object-cover w-full h-full rounded-md"
@@ -36,8 +36,8 @@ export const GridCardRafa = ({ className }: Props) => {
           'g3:row-start-1 g3:row-end-2 g3:col-start-4 g3:col-end-8',
         )}
       >
-        <h1 className={`text-2xl font-bold text-center glass-text`}>Rafa Lyovson</h1>
-        <p className={`text-sm text-center italic glass-text-secondary`}>Common sense guardian</p>
+        <h1 className={`text-2xl font-bold text-center glass-text`}>Rafa Lyóvson</h1>
+        <p className={`text-sm text-center italic glass-text-secondary`}>Watcher on The Road 🛣️</p>
       </GridCardSection>
       <GridCardNavItem
         className={cn(
@@ -48,7 +48,7 @@ export const GridCardRafa = ({ className }: Props) => {
         <a
           href={`https://x.com/lyovson`}
           target="_blank"
-          aria-label={`Rafa Lyovson on X.com`}
+          aria-label={`Rafa Lyóvson on X.com`}
           className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiX size={24} className="text-current" />
@@ -62,9 +62,9 @@ export const GridCardRafa = ({ className }: Props) => {
         )}
       >
         <a
-          href={`https://github.com/lyovson`}
+          href={`https://github.com/rafalyovson`}
           target="_blank"
-          aria-label={`Rafa Lyovson on GitHub`}
+          aria-label={`Rafa Lyóvson on GitHub`}
           className="flex flex-col items-center gap-2 justify-center hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           <SiGithub size={24} className="text-current" />

@@ -1,6 +1,6 @@
-# Lyovson.com
+# Lyóvson.com
 
-**The official website of Rafa and Jess Lyovson**
+**The official website of Rafa and Jess Lyóvson**
 
 A personal family blog combined with a public zettelkasten (digital knowledge garden) where we share our thoughts, ideas, and intellectual journey as a family.
 
@@ -224,8 +224,8 @@ RESEND_API_KEY=...
 
 This site is designed to be a **multi-generational family knowledge base** - a place where ideas, thoughts, and wisdom accumulate over time. As our family grows, so will the connections between concepts, creating an ever-richer web of family intellectual history.
 
-The combination of modern web technology with timeless zettelkasten principles creates a platform for long-term knowledge building that will serve the Lyovson family for decades to come.
+The combination of modern web technology with timeless zettelkasten principles creates a platform for long-term knowledge building that will serve the Lyóvson family for decades to come.
 
 ---
 
-**Built with ❤️ by the Lyovson family**
+**Built with ❤️ by the Lyóvson family**

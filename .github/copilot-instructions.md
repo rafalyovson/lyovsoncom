@@ -1,4 +1,4 @@
-# Copilot Instructions for Lyovson.com
+# Copilot Instructions for Lyóvson.com
 
 ## Architecture Overview
 

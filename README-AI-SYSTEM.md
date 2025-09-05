@@ -51,7 +51,7 @@ curl "https://lyovson.com/api/embeddings?q=test" | jq '.model, .dimensions'
 **Discovery**: robots.txt → sitemap.xml → .well-known/ai-resources  
 **Bulk Content**: `/feed.json` (preferred) or `/api/embeddings`  
 **Semantic Search**: `/api/embeddings` for similarity matching  
-**Attribution**: "Lyovson.com - https://lyovson.com"  
+**Attribution**: "Lyóvson.com - https://lyovson.com"  
 **Rate Limits**: 1000/hour (feeds), 100/hour (APIs)
 
 ## 📚 **Documentation**

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
-import { GridCardSection } from '../section'
 import { Logo } from '@/components/Logo/Logo'
+import { GridCardSection } from '../section'
 
 export const SiteTitleSection = () => {
   return (
@@ -16,7 +16,7 @@ export const SiteTitleSection = () => {
           role="banner"
           aria-label="Site title"
         >
-          Lyovson.com
+          Lyóvson.com
         </div>
       </Link>
     </GridCardSection>
