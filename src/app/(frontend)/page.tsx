@@ -3,10 +3,9 @@ import { Pagination } from '@/components/Pagination'
 import { SkeletonGrid } from '@/components/grid/skeleton'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getLatestPosts } from '@/utilities/get-post'
+import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from 'next/cache'
 import type { Metadata } from 'next/types'
 import { Suspense } from 'react'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
-import { PWAInstall } from '@/components/pwa-install'
 
 export default async function Page() {
   'use cache'
@@ -39,10 +38,10 @@ export function generateMetadata(): Metadata {
   return {
     title: 'Lyovson.com',
     description:
-      'Official website of Rafa and Jess Lyovson — featuring writing, projects, and research on programming, design, philosophy, and technology.',
+      'Official website of Rafa and Jess Lyóvson — featuring writing, projects, and research on programming, design, philosophy, and technology.',
     keywords: [
-      'Rafa Lyovson',
-      'Jess Lyovson',
+      'Rafa Lyóvson',
+      'Jess Lyóvson',
       'programming',
       'writing',
       'design',
@@ -56,9 +55,9 @@ export function generateMetadata(): Metadata {
       canonical: '/',
     },
     openGraph: {
-      title: 'Lyovson.com - Writing, Projects & Research',
+      title: 'Lyóvson.com - Writing, Projects & Research',
       description:
-        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
+        'Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.',
       type: 'website',
       url: '/',
       images: [
@@ -66,7 +65,7 @@ export function generateMetadata(): Metadata {
           url: '/lyovsoncom-og-image.webp',
           width: 1200,
           height: 630,
-          alt: 'Lyovson.com - Writing, Projects & Research',
+          alt: 'Lyóvson.com - Writing, Projects & Research',
         },
       ],
     },
@@ -74,25 +73,25 @@ export function generateMetadata(): Metadata {
       card: 'summary_large_image',
       title: 'Lyovson.com - Writing, Projects & Research',
       description:
-        'Official website of Rafa and Jess Lyovson featuring writing, projects, and research on programming, design, philosophy, and technology.',
+        'Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.',
       creator: '@lyovson',
       site: '@lyovson',
       images: [
         {
           url: '/lyovsoncom-og-image.webp',
-          alt: 'Lyovson.com - Writing, Projects & Research',
+          alt: 'Lyóvson.com - Writing, Projects & Research',
           width: 1200,
           height: 630,
         },
       ],
     },
     other: {
-      'article:author': 'Rafa Lyovson, Jess Lyovson',
-      'application-name': 'Lyovson.com',
+      'article:author': 'Rafa Lyóvson, Jess Lyóvson',
+      'application-name': 'Lyóvson.com',
       'mobile-web-app-capable': 'yes',
       'apple-mobile-web-app-capable': 'yes',
       'apple-mobile-web-app-status-bar-style': 'black-translucent',
-      'apple-mobile-web-app-title': 'Lyovson.com',
+      'apple-mobile-web-app-title': 'Lyóvson.com',
       'msapplication-TileColor': '#000000',
       'msapplication-config': '/browserconfig.xml',
       'theme-color': '#000000',
