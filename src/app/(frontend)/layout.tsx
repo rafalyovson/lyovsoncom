@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google'
 import { Grid, GridCardNav, SkeletonCard } from '@/components/grid'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Toaster } from '@/components/ui/sonner'
@@ -135,6 +136,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </Providers>
         <Analytics />
       </body>
+      <GoogleAnalytics gaId="G-R4R3XJRY28" />
     </html>
   )
 }
