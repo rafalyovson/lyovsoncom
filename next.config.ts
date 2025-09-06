@@ -49,9 +49,6 @@ const nextConfig: NextConfig = {
     // Activate new client-side router improvements
     clientSegmentCache: true,
 
-    // Explore route composition and segment overrides via DevTools
-    devtoolSegmentExplorer: true,
-
     // Enable support for `global-not-found`, which allows you to more easily define a global 404 page.
     globalNotFound: true,
 
@@ -134,14 +131,5 @@ const nextConfig: NextConfig = {
     return config
   },
 }
-
-// Temporarily disabled Serwist due to compatibility issues with Next.js 15 canary
-// const withSerwist = withSerwistInit({
-//   swSrc: 'src/app/sw.ts',
-//   swDest: 'public/sw.js',
-//   cacheOnNavigation: true,
-//   reloadOnOnline: true,
-//   disable: process.env.NODE_ENV === 'development',
-// })
 
 export default withPayload(nextConfig)
