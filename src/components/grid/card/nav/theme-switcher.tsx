@@ -1,37 +1,37 @@
-'use client'
+"use client";
 
-import React, { useEffect, useState } from 'react'
-import { SunMoon } from 'lucide-react'
-import { useTheme } from 'next-themes'
+import { SunMoon } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
-import { GridCardNavItem } from './grid-card-nav-item'
+import { GridCardNavItem } from "./grid-card-nav-item";
 
 type ThemeSwitcherProps = {
-  className?: string
-}
+  className?: string;
+};
 
 export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   // Prevent hydration mismatch
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   const toggleTheme = () => {
     if (mounted) {
-      setTheme(theme === 'light' ? 'dark' : 'light')
+      setTheme(theme === "light" ? "dark" : "light");
     }
-  }
+  };
 
   return (
     <GridCardNavItem
+      className={`col-start-3 col-end-4 row-start-3 row-end-4 ${className}`}
       onClick={toggleTheme}
-      className={`row-start-3 row-end-4 col-start-3 col-end-4 ${className}`}
     >
-      <SunMoon className="w-7 h-7" />
-      <span className="text-sm font-medium">Theme</span>
+      <SunMoon className="h-7 w-7" />
+      <span className="font-medium text-sm">Theme</span>
     </GridCardNavItem>
-  )
-}
+  );
+};

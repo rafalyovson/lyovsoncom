@@ -1,23 +1,27 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import configPromise from "@payload-config";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import { getPayload } from "payload";
+import type { Project } from "@/payload-types";
 
-export async function getProjects() {
-  'use cache'
-  cacheTag('projects')
-  cacheLife('projects')
+export async function getProjects(): Promise<Project[] | null> {
+  "use cache";
+  cacheTag("projects");
+  cacheLife("projects");
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
 
   const projects = await payload.find({
-    collection: 'projects',
+    collection: "projects",
     limit: 100,
-    sort: 'createdAt:desc',
-  })
+    sort: "createdAt:desc",
+  });
 
-  if (!projects || !projects.docs || !projects.docs[0]) {
-    return null
+  if (!projects?.docs?.[0]) {
+    return null;
   }
 
-  return projects.docs
+  return projects.docs as Project[];
 }

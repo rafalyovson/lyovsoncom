@@ -1,1 +1,1 @@
-export type MenuModeType = 'hero' | 'search' | 'menu' | 'settings'
+export type MenuModeType = "hero" | "search" | "menu" | "settings";

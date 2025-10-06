@@ -1,11 +1,11 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload";
 
-import { anyone } from '@/access/anyone'
-import { authenticated } from '@/access/authenticated'
-import { slugField } from '@/fields/slug'
+import { anyone } from "@/access/anyone";
+import { authenticated } from "@/access/authenticated";
+import { slugField } from "@/fields/slug";
 
 export const Books: CollectionConfig = {
-  slug: 'books',
+  slug: "books",
   access: {
     create: authenticated,
     delete: authenticated,
@@ -21,140 +21,140 @@ export const Books: CollectionConfig = {
     type: true,
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'type', 'releaseDate', 'updatedAt'],
-    description: 'Manage books, series, and comics for reviews and references',
+    useAsTitle: "title",
+    defaultColumns: ["title", "type", "releaseDate", "updatedAt"],
+    description: "Manage books, series, and comics for reviews and references",
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
+      name: "title",
+      type: "text",
       required: true,
       admin: {
-        description: 'The title of the book',
+        description: "The title of the book",
       },
     },
     {
-      name: 'type',
-      type: 'select',
+      name: "type",
+      type: "select",
       options: [
-        { label: 'Book', value: 'book' },
-        { label: 'Series', value: 'series' },
-        { label: 'Comics', value: 'comics' },
+        { label: "Book", value: "book" },
+        { label: "Series", value: "series" },
+        { label: "Comics", value: "comics" },
       ],
-      defaultValue: 'book',
+      defaultValue: "book",
       required: true,
       admin: {
-        position: 'sidebar',
-        description: 'What type of publication is this?',
+        position: "sidebar",
+        description: "What type of publication is this?",
       },
     },
     {
-      name: 'description',
-      type: 'textarea',
+      name: "description",
+      type: "textarea",
       admin: {
-        description: 'Brief description or summary of the book',
-        placeholder: 'What is this book about?',
+        description: "Brief description or summary of the book",
+        placeholder: "What is this book about?",
       },
     },
     {
-      name: 'coverImage',
-      type: 'upload',
-      relationTo: 'media',
+      name: "coverImage",
+      type: "upload",
+      relationTo: "media",
       admin: {
-        position: 'sidebar',
-        description: 'Book cover image',
+        position: "sidebar",
+        description: "Book cover image",
       },
     },
     {
-      name: 'releaseDate',
-      type: 'date',
+      name: "releaseDate",
+      type: "date",
       admin: {
-        position: 'sidebar',
+        position: "sidebar",
         date: {
-          pickerAppearance: 'dayOnly',
+          pickerAppearance: "dayOnly",
         },
-        description: 'Publication date',
+        description: "Publication date",
       },
     },
     {
-      name: 'creators',
-      type: 'relationship',
-      relationTo: 'persons',
+      name: "creators",
+      type: "relationship",
+      relationTo: "persons",
       hasMany: true,
       admin: {
-        position: 'sidebar',
-        description: 'Authors, illustrators, etc.',
+        position: "sidebar",
+        description: "Authors, illustrators, etc.",
       },
     },
     {
-      name: 'isbn',
-      type: 'text',
+      name: "isbn",
+      type: "text",
       admin: {
-        position: 'sidebar',
-        description: 'ISBN number',
+        position: "sidebar",
+        description: "ISBN number",
       },
     },
     {
-      name: 'genre',
-      type: 'select',
+      name: "genre",
+      type: "select",
       hasMany: true,
       options: [
-        { label: 'Fiction', value: 'fiction' },
-        { label: 'Non-Fiction', value: 'non-fiction' },
-        { label: 'Science Fiction', value: 'sci-fi' },
-        { label: 'Fantasy', value: 'fantasy' },
-        { label: 'Mystery', value: 'mystery' },
-        { label: 'Romance', value: 'romance' },
-        { label: 'Thriller', value: 'thriller' },
-        { label: 'Biography', value: 'biography' },
-        { label: 'History', value: 'history' },
-        { label: 'Self-Help', value: 'self-help' },
-        { label: 'Technical', value: 'technical' },
+        { label: "Fiction", value: "fiction" },
+        { label: "Non-Fiction", value: "non-fiction" },
+        { label: "Science Fiction", value: "sci-fi" },
+        { label: "Fantasy", value: "fantasy" },
+        { label: "Mystery", value: "mystery" },
+        { label: "Romance", value: "romance" },
+        { label: "Thriller", value: "thriller" },
+        { label: "Biography", value: "biography" },
+        { label: "History", value: "history" },
+        { label: "Self-Help", value: "self-help" },
+        { label: "Technical", value: "technical" },
       ],
       admin: {
-        position: 'sidebar',
-        description: 'Book genres',
+        position: "sidebar",
+        description: "Book genres",
       },
     },
     {
-      name: 'familyRating',
-      type: 'number',
+      name: "familyRating",
+      type: "number",
       min: 1,
       max: 10,
       admin: {
-        position: 'sidebar',
-        description: 'Family rating (1-10)',
+        position: "sidebar",
+        description: "Family rating (1-10)",
       },
     },
     {
-      name: 'readStatus',
-      type: 'select',
+      name: "readStatus",
+      type: "select",
       options: [
-        { label: 'Want to Read', value: 'want_to_read' },
-        { label: 'Reading', value: 'reading' },
-        { label: 'Read', value: 'read' },
-        { label: 'Abandoned', value: 'abandoned' },
+        { label: "Want to Read", value: "want_to_read" },
+        { label: "Reading", value: "reading" },
+        { label: "Read", value: "read" },
+        { label: "Abandoned", value: "abandoned" },
       ],
       admin: {
-        position: 'sidebar',
-        description: 'Reading status',
+        position: "sidebar",
+        description: "Reading status",
       },
     },
     {
-      name: 'googleBooksId',
-      type: 'text',
+      name: "googleBooksId",
+      type: "text",
       admin: {
-        position: 'sidebar',
-        description: 'Google Books API ID',
+        position: "sidebar",
+        description: "Google Books API ID",
       },
     },
     {
-      name: 'apiData',
-      type: 'json',
+      name: "apiData",
+      type: "json",
       admin: {
-        position: 'sidebar',
-        description: 'Full API response data',
+        position: "sidebar",
+        description: "Full API response data",
       },
     },
     ...slugField(),
@@ -162,7 +162,7 @@ export const Books: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating book: ${doc.slug}`)
+        req.payload.logger.info(`Revalidating book: ${doc.slug}`);
         // TODO: Add revalidation logic for books when we have book pages
       },
     ],
@@ -170,9 +170,9 @@ export const Books: CollectionConfig = {
   versions: {
     drafts: {
       autosave: {
-        interval: 30000,
+        interval: 30_000,
       },
     },
     maxPerDoc: 5,
   },
-}
+};

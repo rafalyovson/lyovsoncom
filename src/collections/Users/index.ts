@@ -1,10 +1,10 @@
-import type { CollectionConfig } from 'payload'
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from "next/cache";
+import type { CollectionConfig } from "payload";
 
-import { authenticated } from '@/access/authenticated'
+import { authenticated } from "@/access/authenticated";
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   access: {
     admin: authenticated,
     create: authenticated,
@@ -13,8 +13,8 @@ export const Users: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['name', 'email'],
-    useAsTitle: 'name',
+    defaultColumns: ["name", "email"],
+    useAsTitle: "name",
   },
   auth: {
     loginWithUsername: {
@@ -24,13 +24,13 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
       saveToJWT: true,
     },
     {
-      name: 'username',
-      type: 'text',
+      name: "username",
+      type: "text",
       unique: true,
     },
   ],
@@ -38,27 +38,29 @@ export const Users: CollectionConfig = {
     afterChange: [
       async ({ doc, req }) => {
         if (doc.username) {
-          req.payload.logger.info(`Revalidating author: ${doc.username}`)
+          req.payload.logger.info(`Revalidating author: ${doc.username}`);
 
           // Revalidate user-related cache tags
-          revalidateTag('users')
-          revalidateTag(`author-${doc.username}`)
-          revalidateTag('posts') // Posts may reference this author
+          revalidateTag("users");
+          revalidateTag(`author-${doc.username}`);
+          revalidateTag("posts"); // Posts may reference this author
         }
       },
     ],
     afterDelete: [
       async ({ doc, req }) => {
         if (doc?.username) {
-          req.payload.logger.info(`Revalidating after user deletion: ${doc.username}`)
+          req.payload.logger.info(
+            `Revalidating after user deletion: ${doc.username}`
+          );
 
           // Revalidate user-related cache tags
-          revalidateTag('users')
-          revalidateTag(`author-${doc.username}`)
-          revalidateTag('posts') // Posts may reference this author
+          revalidateTag("users");
+          revalidateTag(`author-${doc.username}`);
+          revalidateTag("posts"); // Posts may reference this author
         }
       },
     ],
   },
   timestamps: true,
-}
+};

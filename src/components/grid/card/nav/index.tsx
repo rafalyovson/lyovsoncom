@@ -1,18 +1,20 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { MenuModeType } from './types'
-import { HeroMode } from './hero-mode'
-import { SearchMode } from './search-mode'
-import { MenuMode } from './menu-mode'
-import { SettingsMode } from './settings-mode'
-import { GridCard } from '@/components/grid'
+import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { GridCard } from "@/components/grid";
+import { HeroMode } from "./hero-mode";
+import { MenuMode } from "./menu-mode";
+import { SearchMode } from "./search-mode";
+import { SettingsMode } from "./settings-mode";
+import type { MenuModeType } from "./types";
 
 export const GridCardNav = ({ className }: { className?: string }) => {
-  const searchParams = useSearchParams()
-  const search = searchParams.get('q')
-  const [menuMode, setMenuMode] = useState<MenuModeType>(search ? 'search' : 'hero')
+  const searchParams = useSearchParams();
+  const search = searchParams.get("q");
+  const [menuMode, setMenuMode] = useState<MenuModeType>(
+    search ? "search" : "hero"
+  );
   return (
     <GridCard className={`  ${className}`}>
       {
@@ -24,7 +26,7 @@ export const GridCardNav = ({ className }: { className?: string }) => {
         }[menuMode]
       }
     </GridCard>
-  )
-}
+  );
+};
 
-export { GridCardNavItem } from './grid-card-nav-item'
+export { GridCardNavItem } from "./grid-card-nav-item";

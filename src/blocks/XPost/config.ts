@@ -1,81 +1,93 @@
-import type { Block } from 'payload'
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical";
+import type { Block } from "payload";
+
+// Regex patterns for X/Twitter post ID extraction
+const NUMERIC_ID_REGEX = /^\d+$/;
+const STATUS_PATH_REGEX = /\/status\/(\d+)/;
 
 // Improved X post ID/URL extraction function
 const extractXPostID = (input: string): string => {
-  if (!input) return ''
+  if (!input) {
+    return "";
+  }
 
   // If it's already a numeric ID, return it
-  if (/^\d+$/.test(input)) {
-    return input
+  if (NUMERIC_ID_REGEX.test(input)) {
+    return input;
   }
 
   try {
-    const urlObj = new URL(input)
+    const urlObj = new URL(input);
 
     // Normalize hostname
-    const hostname = urlObj.hostname.replace('www.', '')
+    const hostname = urlObj.hostname.replace("www.", "");
 
     // Handle x.com and twitter.com domains
-    if (hostname === 'x.com' || hostname === 'twitter.com') {
+    if (hostname === "x.com" || hostname === "twitter.com") {
       // Extract ID from path format: /username/status/123456789
-      const matches = urlObj.pathname.match(/\/status\/(\d+)/)
-      if (matches && matches[1]) {
-        return matches[1]
+      const matches = urlObj.pathname.match(STATUS_PATH_REGEX);
+      if (matches?.[1]) {
+        return matches[1];
       }
     }
-  } catch (e) {
+  } catch (_e) {
     // Not a URL, check if it's a full path
-    const pathMatches = input.match(/\/status\/(\d+)/)
-    if (pathMatches && pathMatches[1]) {
-      return pathMatches[1]
+    const pathMatches = input.match(STATUS_PATH_REGEX);
+    if (pathMatches?.[1]) {
+      return pathMatches[1];
     }
   }
 
-  return ''
-}
+  return "";
+};
 
 export const XPost: Block = {
-  slug: 'xpost',
-  interfaceName: 'XPostBlock',
+  slug: "xpost",
+  interfaceName: "XPostBlock",
   fields: [
     {
-      name: 'postId',
-      type: 'text',
+      name: "postId",
+      type: "text",
       required: true,
-      label: 'X Post URL or ID',
+      label: "X Post URL or ID",
       admin: {
         description:
-          'Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789) or post ID',
+          "Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789) or post ID",
       },
       hooks: {
         beforeChange: [
           ({ value }) => {
-            if (!value) return value
-            const postId = extractXPostID(value)
+            if (!value) {
+              return value;
+            }
+            const postId = extractXPostID(value);
             if (!postId) {
               throw new Error(
-                'Invalid X post URL or ID. Please enter a valid X (Twitter) post URL or ID.',
-              )
+                "Invalid X post URL or ID. Please enter a valid X (Twitter) post URL or ID."
+              );
             }
-            return postId
+            return postId;
           },
         ],
       },
     },
     {
-      name: 'caption',
-      type: 'richText',
+      name: "caption",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
-          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
+          return [
+            ...rootFeatures,
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+          ];
         },
       }),
-      label: 'Caption',
+      label: "Caption",
     },
   ],
-}
+};

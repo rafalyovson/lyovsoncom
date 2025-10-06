@@ -1,30 +1,33 @@
-import React from 'react'
-
-import type { QuoteBlock as QuoteBlockType } from '@/payload-types'
-import RichText from '@/components/RichText'
-import { cn } from '@/utilities/cn'
+import type React from "react";
+import RichText from "@/components/RichText";
+import type { QuoteBlock as QuoteBlockType } from "@/payload-types";
+import { cn } from "@/utilities/cn";
 
 type Props = {
-  className?: string
-} & QuoteBlockType
+  className?: string;
+} & QuoteBlockType;
 
-export const QuoteBlock: React.FC<Props> = ({ className, quote, attribution }) => {
+export const QuoteBlock: React.FC<Props> = ({
+  className,
+  quote,
+  attribution,
+}) => {
   return (
-    <div className={cn('container ', className)}>
-      <blockquote className="glass-section glass-premium relative border-l-4 border-glass-border-hover pl-6 py-6  mt-0 mb-0 italic rounded-lg">
-        <div className="text-xl glass-text-secondary leading-relaxed">
+    <div className={cn("container", className)}>
+      <blockquote className="glass-section glass-premium relative mt-0 mb-0 rounded-lg border-glass-border-hover border-l-4 py-6 pl-6 italic">
+        <div className="glass-text-secondary text-xl leading-relaxed">
           <RichText content={quote} enableGutter={false} />
         </div>
         {attribution && (
-          <footer className="mt-4 text-sm glass-text-secondary opacity-80 font-medium">
+          <footer className="glass-text-secondary mt-4 font-medium text-sm opacity-80">
             — {attribution}
           </footer>
         )}
         {/* Glass decorative element */}
-        <div className="absolute top-4 right-4 w-8 h-8 glass-badge rounded-full flex items-center justify-center">
+        <div className="glass-badge absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full">
           <span className="text-glass-text-secondary text-lg">&ldquo;</span>
         </div>
       </blockquote>
     </div>
-  )
-}
+  );
+};

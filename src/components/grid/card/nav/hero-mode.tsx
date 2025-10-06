@@ -1,46 +1,45 @@
-import { Filter, LucideMenu, Search, Settings } from 'lucide-react'
-import Link from 'next/link'
+import { LucideMenu, Search, Settings } from "lucide-react";
 
-import { GridCardSection } from '../section'
+import { GridCardNavItem } from "./grid-card-nav-item";
+import { SiteTitleSection } from "./site-title-section";
+import type { MenuModeType } from "./types";
 
-import { GridCardNavItem } from './grid-card-nav-item'
-import { MenuModeType } from './types'
-import { ThemeSwitcher } from './theme-switcher'
-import { SiteTitleSection } from './site-title-section'
-import { SettingsMode } from './settings-mode'
-
-export const HeroMode = ({ setMenuMode }: { setMenuMode: (menuMode: MenuModeType) => void }) => {
+export const HeroMode = ({
+  setMenuMode,
+}: {
+  setMenuMode: (menuMode: MenuModeType) => void;
+}) => {
   return (
     <>
       <SiteTitleSection />
 
       <GridCardNavItem
+        className="col-start-1 col-end-2 row-start-3 row-end-4"
         onClick={() => {
-          setMenuMode('search')
+          setMenuMode("search");
         }}
-        className="row-start-3 row-end-4 col-start-1 col-end-2"
       >
-        <Search className="w-7 h-7" />
+        <Search className="h-7 w-7" />
         <span>Search</span>
       </GridCardNavItem>
       <GridCardNavItem
-        className="row-start-3 row-end-4 col-start-2 col-end-3"
+        className="col-start-2 col-end-3 row-start-3 row-end-4"
         onClick={() => {
-          setMenuMode('menu')
+          setMenuMode("menu");
         }}
       >
-        <LucideMenu className="w-7 h-7" />
+        <LucideMenu className="h-7 w-7" />
         <span>Menu</span>
       </GridCardNavItem>
       <GridCardNavItem
+        className="col-start-3 col-end-4 row-start-3 row-end-4"
         onClick={() => {
-          setMenuMode('settings')
+          setMenuMode("settings");
         }}
-        className="row-start-3 row-end-4 col-start-3 col-end-4"
       >
-        <Settings className="w-7 h-7" />
+        <Settings className="h-7 w-7" />
         <span>Settings</span>
       </GridCardNavItem>
     </>
-  )
-}
+  );
+};

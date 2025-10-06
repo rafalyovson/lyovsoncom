@@ -1,19 +1,24 @@
-import React, { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
-import { cn } from '@/utilities/cn'
+import { cn } from "@/utilities/cn";
 
-export const GridCard = ({ children, className }: { children: ReactNode; className?: string }) => {
+export const GridCard = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
   return (
     <div
-      role="article"
-      tabIndex={0}
       className={cn(
-        'grid grid-cols-3 grid-rows-3 w-[400px] h-[400px] aspect-square gap-2 p-2',
-        'glass-card rounded-xl glass-interactive',
-        className,
+        "grid aspect-square h-[400px] w-[400px] grid-cols-3 grid-rows-3 gap-2 p-2",
+        "glass-card glass-interactive rounded-xl",
+        className
       )}
+      role="article"
     >
       {children}
     </div>
-  )
-}
+  );
+};

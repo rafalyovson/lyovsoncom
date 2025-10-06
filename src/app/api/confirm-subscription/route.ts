@@ -1,43 +1,66 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { Resend } from 'resend'
-import { NextResponse } from 'next/server'
+import configPromise from "@payload-config";
+import { NextResponse } from "next/server";
+import { getPayload } from "payload";
+import { Resend } from "resend";
+import type { Contact } from "@/payload-types";
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Prevent prerendering for API routes that use request.url
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const token = searchParams.get('token')
+    const { searchParams } = new URL(request.url);
+    const token = searchParams.get("token");
 
     if (!token) {
-      return NextResponse.json({ error: 'Token is required' }, { status: 400 })
+      return NextResponse.json({ error: "Token is required" }, { status: 400 });
     }
 
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise });
 
     // Find contact by token
     const contacts = await payload.find({
-      collection: 'contacts',
+      collection: "contacts",
       where: {
         confirmationToken: { equals: token },
-        status: { equals: 'pending' },
+        status: { equals: "pending" },
       },
       limit: 1,
-    })
+    });
 
     if (!contacts.docs.length) {
-      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 400 })
+      return NextResponse.json(
+        { error: "Invalid or expired token" },
+        { status: 400 }
+      );
     }
 
-    const contact = contacts.docs[0]
+    const contact = contacts.docs[0] as Contact;
 
     // Check if token is expired
-    if (new Date(contact.confirmationExpiry!) < new Date()) {
-      return NextResponse.json({ error: 'Confirmation link has expired' }, { status: 400 })
+    if (!contact.confirmationExpiry) {
+      return NextResponse.json(
+        { error: "Invalid confirmation data" },
+        { status: 400 }
+      );
+    }
+
+    if (new Date(contact.confirmationExpiry) < new Date()) {
+      return NextResponse.json(
+        { error: "Confirmation link has expired" },
+        { status: 400 }
+      );
+    }
+
+    // Validate required environment variable
+    const audienceId = process.env.RESEND_AUDIENCE_ID;
+    if (!audienceId) {
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
     }
 
     // Create contact in Resend
@@ -46,25 +69,29 @@ export async function GET(request: Request) {
       firstName: contact.firstName || undefined,
       lastName: contact.lastName || undefined,
       unsubscribed: false,
-      audienceId: process.env.RESEND_AUDIENCE_ID!,
-    })
+      audienceId,
+    });
 
     // Update contact in database
     await payload.update({
-      collection: 'contacts',
+      collection: "contacts",
       id: contact.id,
       data: {
-        status: 'active',
+        status: "active",
         resendContactId: resendContact.data?.id,
         confirmationToken: null,
         confirmationExpiry: null,
       },
-    })
+    });
 
     // Redirect to success page
-    return NextResponse.redirect(new URL('/subscription-confirmed', request.url))
-  } catch (error) {
-    console.error('Error confirming subscription:', error)
-    return NextResponse.json({ error: 'Failed to confirm subscription' }, { status: 500 })
+    return NextResponse.redirect(
+      new URL("/subscription-confirmed", request.url)
+    );
+  } catch (_error) {
+    return NextResponse.json(
+      { error: "Failed to confirm subscription" },
+      { status: 500 }
+    );
   }
 }

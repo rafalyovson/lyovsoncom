@@ -1,18 +1,18 @@
-import { Atom, BriefcaseBusiness, Calendar, Flower, PenTool, User as UserIcon } from 'lucide-react'
-import Link from 'next/link'
+import { BriefcaseBusiness, Calendar, PenTool } from "lucide-react";
+import Link from "next/link";
 
-import { GridCard, GridCardSection } from '@/components/grid'
-import { Media } from '@/components/Media'
-import { Badge } from '@/components/ui/badge'
-import { Post } from '@/payload-types'
+import { GridCard, GridCardSection } from "@/components/grid";
+import { Media } from "@/components/Media";
+import { Badge } from "@/components/ui/badge";
+import type { Post } from "@/payload-types";
 
 export type GridCardPostProps = {
-  post: Post
-  className?: string
-  loading?: 'lazy' | 'eager'
-  fetchPriority?: 'high' | 'low' | 'auto'
-  priority?: boolean
-}
+  post: Post;
+  className?: string;
+  loading?: "lazy" | "eager";
+  fetchPriority?: "high" | "low" | "auto";
+  priority?: boolean;
+};
 
 export const GridCardPostFull = ({
   post,
@@ -21,25 +21,37 @@ export const GridCardPostFull = ({
   fetchPriority,
   priority,
 }: GridCardPostProps) => {
-  const { type, topics, project, populatedAuthors, featuredImage, publishedAt, title, slug } = post
+  const {
+    topics,
+    project,
+    populatedAuthors,
+    featuredImage,
+    publishedAt,
+    title,
+    slug,
+  } = post;
 
   const postUrl =
-    project && typeof project === 'object' ? `/${project.slug}/${slug}` : `/posts/${slug}`
+    project && typeof project === "object"
+      ? `/${project.slug}/${slug}`
+      : `/posts/${slug}`;
 
   return (
     <GridCard className={className}>
-      {featuredImage && typeof featuredImage !== 'string' && (
-        <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-3`}>
+      {featuredImage && typeof featuredImage !== "string" && (
+        <GridCardSection
+          className={"col-start-1 col-end-3 row-start-1 row-end-3"}
+        >
           <Link
-            href={postUrl}
-            className="block h-full group overflow-hidden rounded-lg"
             aria-label={`Read "${title}"`}
+            className="group block h-full overflow-hidden rounded-lg"
+            href={postUrl}
           >
             <Media
+              className="glass-media flex h-full items-center justify-center"
               imgClassName="object-cover h-full"
-              resource={featuredImage}
               pictureClassName="h-full"
-              className="glass-media h-full flex justify-center items-center"
+              resource={featuredImage}
               {...(loading ? { loading } : {})}
               {...(fetchPriority ? { fetchPriority } : {})}
               {...(priority ? { priority } : {})}
@@ -49,11 +61,15 @@ export const GridCardPostFull = ({
       )}
 
       <GridCardSection
-        className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center glass-interactive`}
+        className={
+          "glass-interactive col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
+        }
       >
-        <Link href={postUrl} className="block group">
+        <Link className="group block" href={postUrl}>
           <h2
-            className={`text-xl font-bold text-center glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300`}
+            className={
+              "glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+            }
           >
             {title}
           </h2>
@@ -61,76 +77,84 @@ export const GridCardPostFull = ({
       </GridCardSection>
 
       <GridCardSection
-        className={`row-start-1 row-end-2 col-start-3 col-end-4 flex flex-col gap-2 justify-end items-center`}
+        className={
+          "col-start-3 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-end gap-2"
+        }
       >
-        {topics &&
-          topics.map((topic, index) => {
-            if (typeof topic !== 'object') return null
-            return (
-              <Link
-                className={`text-xs font-semibold w-full glass-stagger-${Math.min(index + 1, 6)}`}
-                key={topic.id}
-                href={{ pathname: `/topics/${topic.slug}` }}
-                aria-label={`View posts about ${topic.name}`}
+        {topics?.map((topic, index) => {
+          if (typeof topic !== "object") {
+            return null;
+          }
+          return (
+            <Link
+              aria-label={`View posts about ${topic.name}`}
+              className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
+              href={{ pathname: `/topics/${topic.slug}` }}
+              key={topic.id}
+            >
+              <Badge
+                className="glass-badge glass-text w-full shadow-md"
+                style={{
+                  backgroundColor: topic.color || "var(--glass-bg)",
+                  color: "var(--glass-text)",
+                }}
+                variant="default"
               >
-                <Badge
-                  variant="default"
-                  style={{
-                    backgroundColor: topic.color || 'var(--glass-bg)',
-                    color: 'var(--glass-text)',
-                  }}
-                  className="w-full glass-badge glass-text shadow-md"
-                >
-                  {topic.name}
-                </Badge>
-              </Link>
-            )
-          })}
+                {topic.name}
+              </Badge>
+            </Link>
+          );
+        })}
       </GridCardSection>
 
       <GridCardSection
-        className={`row-start-2 row-end-3 col-start-3 col-end-4 flex flex-col gap-2 justify-evenly`}
+        className={
+          "col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2"
+        }
       >
-        {populatedAuthors &&
-          populatedAuthors.map((author, index) => {
-            if (typeof author !== 'object') return null
-            return (
-              <Link
-                href={{ pathname: `/${author.username}` }}
-                className={`flex items-center gap-2 glass-text hover:text-[var(--glass-text-secondary)] transition-colors duration-300 glass-interactive glass-stagger-${Math.min(index + 1, 6)}`}
-                key={author.id}
-                aria-label={`View ${author.name}'s profile`}
-              >
-                <PenTool className="w-5 h-5" aria-hidden="true" />
-                <span className="font-medium text-xs">{author.name?.replace(' Lyovson', '')}</span>
-              </Link>
-            )
-          })}
+        {populatedAuthors?.map((author, index) => {
+          if (typeof author !== "object") {
+            return null;
+          }
+          return (
+            <Link
+              aria-label={`View ${author.name}'s profile`}
+              className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
+              href={{ pathname: `/${author.username}` }}
+              key={author.id}
+            >
+              <PenTool aria-hidden="true" className="h-5 w-5" />
+              <span className="font-medium text-xs">
+                {author.name?.replace(" Lyovson", "")}
+              </span>
+            </Link>
+          );
+        })}
 
-        <div className="text-xs flex items-center gap-2 glass-text-secondary">
-          <Calendar className="w-5 h-5" aria-hidden="true" />
+        <div className="glass-text-secondary flex items-center gap-2 text-xs">
+          <Calendar aria-hidden="true" className="h-5 w-5" />
           <time dateTime={publishedAt || undefined}>
             {publishedAt &&
-              new Date(publishedAt).toLocaleDateString('en-GB', {
-                year: '2-digit',
-                month: 'short',
-                day: '2-digit',
+              new Date(publishedAt).toLocaleDateString("en-GB", {
+                year: "2-digit",
+                month: "short",
+                day: "2-digit",
               })}
           </time>
         </div>
 
-        {project && typeof project === 'object' && (
+        {project && typeof project === "object" && (
           <Link
-            href={{ pathname: `/${project.slug}` }}
-            className="flex items-center gap-2 glass-text hover:text-[var(--glass-text-secondary)] transition-colors duration-300 glass-interactive"
-            key={project.id}
             aria-label={`View ${project.name} project`}
+            className="glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+            href={{ pathname: `/${project.slug}` }}
+            key={project.id}
           >
-            <BriefcaseBusiness className="w-5 h-5" aria-hidden="true" />
+            <BriefcaseBusiness aria-hidden="true" className="h-5 w-5" />
             <span className="font-medium text-xs">{project.name}</span>
           </Link>
         )}
       </GridCardSection>
     </GridCard>
-  )
-}
+  );
+};

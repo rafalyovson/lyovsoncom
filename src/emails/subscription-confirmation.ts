@@ -1,17 +1,17 @@
-import { getServerSideURL } from '@/utilities/getURL'
+import { getServerSideURL } from "@/utilities/getURL";
 
 type ConfirmationEmailProps = {
-  firstName: string
-  confirmationToken: string
-  projectName: string
-}
+  firstName: string;
+  confirmationToken: string;
+  projectName: string;
+};
 
 export function getSubscriptionConfirmationEmail({
   firstName,
   confirmationToken,
   projectName,
 }: ConfirmationEmailProps): { html: string; subject: string } {
-  const confirmUrl = `${getServerSideURL()}/api/confirm-subscription?token=${confirmationToken}`
+  const confirmUrl = `${getServerSideURL()}/api/confirm-subscription?token=${confirmationToken}`;
 
   const html = `
     <div>
@@ -24,10 +24,10 @@ export function getSubscriptionConfirmationEmail({
       <p>This link will expire in 24 hours.</p>
       <p>If you didn't request this subscription, you can safely ignore this email.</p>
     </div>
-  `
+  `;
 
   return {
     html,
     subject: `Confirm your subscription to ${projectName}`,
-  }
+  };
 }

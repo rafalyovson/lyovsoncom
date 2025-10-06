@@ -1,0 +1,64 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite"],
+  "linter": {
+    "rules": {
+      "style": {
+        "noMagicNumbers": "warn",
+        "useFilenamingConvention": "off",
+        "noNonNullAssertion": "warn",
+        "noNestedTernary": "warn",
+        "noNamespace": "warn"
+      },
+      "suspicious": {
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noBitwiseOperators": "off",
+        "noEmptyBlockStatements": "warn",
+        "noUnknownAtRules": "off",
+        "useAwait": "warn",
+        "noEvolvingTypes": "warn",
+        "noImplicitAnyLet": "warn",
+        "noDocumentCookie": "warn"
+      },
+      "nursery": {
+        "noShadow": "warn",
+        "noUnnecessaryConditions": "warn",
+        "useAnchorHref": "warn",
+        "useConsistentTypeDefinitions": "warn"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn",
+        "noCommaOperator": "off",
+        "noForEach": "warn",
+        "noBannedTypes": "warn"
+      },
+      "performance": {
+        "noBarrelFile": "warn",
+        "useTopLevelRegex": "warn",
+        "noNamespaceImport": "warn"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "warn",
+        "useValidAnchor": "warn",
+        "useButtonType": "warn",
+        "useAriaPropsSupportedByRole": "warn",
+        "useSemanticElements": "warn",
+        "noNoninteractiveElementInteractions": "warn",
+        "useKeyWithClickEvents": "warn",
+        "noStaticElementInteractions": "warn",
+        "useFocusableInteractive": "warn",
+        "useAriaPropsForRole": "warn"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "warn",
+        "noUnusedFunctionParameters": "warn",
+        "noNestedComponentDefinitions": "warn"
+      }
+    }
+  }
+}

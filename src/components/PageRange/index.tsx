@@ -1,34 +1,34 @@
-import React from 'react'
+import type React from "react";
 
 const defaultLabels = {
-  plural: 'Docs',
-  singular: 'Doc',
-}
+  plural: "Docs",
+  singular: "Doc",
+};
 
 const defaultCollectionLabels = {
   posts: {
-    plural: 'Posts',
-    singular: 'Post',
+    plural: "Posts",
+    singular: "Post",
   },
-}
+};
 
 // Type guard to check if a collection exists in defaultCollectionLabels
 function isValidCollection(
-  collection: string | undefined,
+  collection: string | undefined
 ): collection is keyof typeof defaultCollectionLabels {
-  return !!collection && collection in defaultCollectionLabels
+  return !!collection && collection in defaultCollectionLabels;
 }
 
 export const PageRange: React.FC<{
-  className?: string
-  collection?: string
+  className?: string;
+  collection?: string;
   collectionLabels?: {
-    plural?: string
-    singular?: string
-  }
-  currentPage?: number
-  limit?: number
-  totalDocs?: number
+    plural?: string;
+    singular?: string;
+  };
+  currentPage?: number;
+  limit?: number;
+  totalDocs?: number;
 }> = (props) => {
   const {
     className,
@@ -37,27 +37,34 @@ export const PageRange: React.FC<{
     currentPage,
     limit,
     totalDocs,
-  } = props
+  } = props;
 
-  let indexStart = (currentPage ? currentPage - 1 : 1) * (limit || 1) + 1
-  if (totalDocs && indexStart > totalDocs) indexStart = 0
+  let indexStart = (currentPage ? currentPage - 1 : 1) * (limit || 1) + 1;
+  if (totalDocs && indexStart > totalDocs) {
+    indexStart = 0;
+  }
 
-  let indexEnd = (currentPage || 1) * (limit || 1)
-  if (totalDocs && indexEnd > totalDocs) indexEnd = totalDocs
+  let indexEnd = (currentPage || 1) * (limit || 1);
+  if (totalDocs && indexEnd > totalDocs) {
+    indexEnd = totalDocs;
+  }
 
   const { plural, singular } =
     collectionLabelsFromProps ||
-    (isValidCollection(collection) ? defaultCollectionLabels[collection] : defaultLabels) ||
-    {}
+    (isValidCollection(collection)
+      ? defaultCollectionLabels[collection]
+      : defaultLabels) ||
+    {};
 
   return (
-    <div className={[className, 'font-semibold'].filter(Boolean).join(' ')}>
-      {(typeof totalDocs === 'undefined' || totalDocs === 0) && 'Search produced no results.'}
-      {typeof totalDocs !== 'undefined' &&
+    <div className={[className, "font-semibold"].filter(Boolean).join(" ")}>
+      {(typeof totalDocs === "undefined" || totalDocs === 0) &&
+        "Search produced no results."}
+      {typeof totalDocs !== "undefined" &&
         totalDocs > 0 &&
-        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ''} of ${totalDocs} ${
+        `Showing ${indexStart}${indexStart > 0 ? ` - ${indexEnd}` : ""} of ${totalDocs} ${
           totalDocs > 1 ? plural : singular
         }`}
     </div>
-  )
-}
+  );
+};

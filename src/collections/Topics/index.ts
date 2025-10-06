@@ -1,12 +1,12 @@
-import type { CollectionConfig } from 'payload'
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from "next/cache";
+import type { CollectionConfig } from "payload";
 
-import { anyone } from '@/access/anyone'
-import { authenticated } from '@/access/authenticated'
-import { slugField } from '@/fields/slug'
+import { anyone } from "@/access/anyone";
+import { authenticated } from "@/access/authenticated";
+import { slugField } from "@/fields/slug";
 
 export const Topics: CollectionConfig = {
-  slug: 'topics',
+  slug: "topics",
   access: {
     create: authenticated,
     delete: authenticated,
@@ -14,27 +14,28 @@ export const Topics: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    useAsTitle: 'name',
-    defaultColumns: ['name', 'slug', 'parent'],
+    useAsTitle: "name",
+    defaultColumns: ["name", "slug", "parent"],
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
       required: true,
     },
     {
-      name: 'description',
-      type: 'textarea',
+      name: "description",
+      type: "textarea",
     },
     {
-      name: 'color',
-      type: 'text',
+      name: "color",
+      type: "text",
       admin: {
-        description: 'Hex color code (e.g. #FF0000). Leave empty to inherit from parent.',
+        description:
+          "Hex color code (e.g. #FF0000). Leave empty to inherit from parent.",
       },
     },
-    ...slugField('name'),
+    ...slugField("name"),
   ],
   hooks: {
     beforeChange: [
@@ -42,37 +43,39 @@ export const Topics: CollectionConfig = {
         // If no color is set and there's a parent, inherit parent's color
         if (!data.color && data.parent) {
           const parentTopic = await req.payload.findByID({
-            collection: 'topics',
+            collection: "topics",
             id: data.parent,
-          })
-          if (parentTopic?.color) {
-            data.color = parentTopic.color
+          });
+          if (parentTopic && "color" in parentTopic && parentTopic.color) {
+            data.color = parentTopic.color;
           }
         }
-        return data
+        return data;
       },
     ],
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating topic: ${doc.slug}`)
+        req.payload.logger.info(`Revalidating topic: ${doc.slug}`);
 
         // Revalidate topic-related cache tags
-        revalidateTag('topics')
-        revalidateTag(`topic-${doc.slug}`)
-        revalidateTag('posts') // Posts may reference this topic
-        revalidateTag('sitemap')
+        revalidateTag("topics");
+        revalidateTag(`topic-${doc.slug}`);
+        revalidateTag("posts"); // Posts may reference this topic
+        revalidateTag("sitemap");
       },
     ],
     afterDelete: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating after topic deletion: ${doc?.slug}`)
+        req.payload.logger.info(
+          `Revalidating after topic deletion: ${doc?.slug}`
+        );
 
         // Revalidate topic-related cache tags
-        revalidateTag('topics')
-        revalidateTag(`topic-${doc?.slug}`)
-        revalidateTag('posts') // Posts may reference this topic
-        revalidateTag('sitemap')
+        revalidateTag("topics");
+        revalidateTag(`topic-${doc?.slug}`);
+        revalidateTag("posts"); // Posts may reference this topic
+        revalidateTag("sitemap");
       },
     ],
   },
-}
+};

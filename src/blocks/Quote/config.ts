@@ -1,29 +1,33 @@
-import type { Block } from 'payload'
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical";
+import type { Block } from "payload";
 
 export const Quote: Block = {
-  slug: 'quote',
-  interfaceName: 'QuoteBlock',
+  slug: "quote",
+  interfaceName: "QuoteBlock",
   fields: [
     {
-      name: 'quote',
-      type: 'richText',
+      name: "quote",
+      type: "richText",
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {
-          return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
+          return [
+            ...rootFeatures,
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+          ];
         },
       }),
       required: true,
-      label: 'Quote Text',
+      label: "Quote Text",
     },
     {
-      name: 'attribution',
-      type: 'text',
-      label: 'Attribution',
+      name: "attribution",
+      type: "text",
+      label: "Attribution",
     },
   ],
-}
+};

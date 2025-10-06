@@ -1,25 +1,26 @@
-import React, { Fragment } from 'react'
-
-import type { Props } from './types'
-import { ImageMedia } from './ImageMedia'
-import { VideoMedia } from './VideoMedia'
-import { cn } from '@/lib/utils'
+import type React from "react";
+import { Fragment } from "react";
+import { cn } from "@/lib/utils";
+import { ImageMedia } from "./ImageMedia";
+import type { Props } from "./types";
+import { VideoMedia } from "./VideoMedia";
 
 export const Media: React.FC<Props> = (props) => {
-  const { className, htmlElement = 'div', resource } = props
+  const { className, htmlElement = "div", resource } = props;
 
-  const isVideo = typeof resource === 'object' && resource?.mimeType?.includes('video')
-  const Tag = (htmlElement as any) || Fragment
+  const isVideo =
+    typeof resource === "object" && resource?.mimeType?.includes("video");
+  const Tag = (htmlElement as any) || Fragment;
 
   return (
     <Tag
       {...(htmlElement !== null
         ? {
-            className: cn(className, 'contents'),
+            className: cn(className, "contents"),
           }
         : {})}
     >
       {isVideo ? <VideoMedia {...props} /> : <ImageMedia {...props} />}
     </Tag>
-  )
-}
+  );
+};

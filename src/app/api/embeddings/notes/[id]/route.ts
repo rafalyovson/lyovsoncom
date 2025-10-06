@@ -1,49 +1,67 @@
-import { NextRequest } from 'next/server'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
-import { generateEmbedding, extractTextFromContent } from '@/utilities/generate-embedding'
+import configPromise from "@payload-config";
+import type { NextRequest } from "next/server";
+import { getPayload } from "payload";
+import type { Note } from "@/payload-types";
+import {
+  extractTextFromContent,
+  generateEmbedding,
+} from "@/utilities/generate-embedding";
+
+// Regex for word counting
+const WORD_SPLIT_REGEX = /\s+/;
+
+// Extended Note type with pgvector fields
+type NoteWithEmbedding = Note & {
+  embedding_vector?: string;
+  embedding_model?: string;
+  embedding_dimensions?: number;
+  embedding_generated_at?: string;
+  embedding_text_hash?: string;
+};
 
 // Notes-specific text extraction for API
-function extractNotesText(note: any): string {
-  const parts: string[] = []
+function extractNotesText(note: Pick<Note, "title" | "content">): string {
+  const parts: string[] = [];
 
   if (note.title) {
-    parts.push(note.title)
+    parts.push(note.title);
   }
 
   // Extract content from Lexical JSONB format
   if (note.content) {
-    const contentText = extractTextFromContent(note.content)
+    const contentText = extractTextFromContent(note.content);
     if (contentText) {
-      parts.push(contentText)
+      parts.push(contentText);
     }
   }
 
-  return parts.filter(Boolean).join(' ')
+  return parts.filter(Boolean).join(" ");
 }
 
 type Args = {
   params: Promise<{
-    id: string
-  }>
-}
+    id: string;
+  }>;
+};
 
-export async function GET(request: NextRequest, { params: paramsPromise }: Args) {
-  const { id } = await paramsPromise
-  const { searchParams } = new URL(request.url)
-  const includeContent = searchParams.get('content') === 'true'
-  const format = searchParams.get('format') || 'full' // 'full', 'vector-only', 'metadata-only'
-  const regenerate = searchParams.get('regenerate') === 'true' // Force regenerate
+export async function GET(
+  request: NextRequest,
+  { params: paramsPromise }: Args
+) {
+  const { id } = await paramsPromise;
+  const { searchParams } = new URL(request.url);
+  const includeContent = searchParams.get("content") === "true";
+  const format = searchParams.get("format") || "full"; // 'full', 'vector-only', 'metadata-only'
+  const regenerate = searchParams.get("regenerate") === "true"; // Force regenerate
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://lyovson.com'
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
   try {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise });
 
     const note = await payload.findByID({
-      collection: 'notes',
-      id: parseInt(id),
+      collection: "notes",
+      id: Number.parseInt(id, 10),
       depth: 2,
       select: {
         id: true,
@@ -58,60 +76,70 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         embedding_generated_at: true,
         embedding_text_hash: true,
       },
-    })
+    });
 
     if (!note) {
       return new Response(
         JSON.stringify({
-          error: 'Note not found',
-          id: parseInt(id),
+          error: "Note not found",
+          id: Number.parseInt(id, 10),
         }),
         {
           status: 404,
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Parse existing embedding from pgvector format
-    const noteWithEmbedding = note as any // Type assertion for new pgvector fields
-    let existingEmbedding = null
+    const noteWithEmbedding = note as NoteWithEmbedding;
+    let existingEmbedding: {
+      vector: number[];
+      model?: string;
+      dimensions?: number;
+      generatedAt?: string;
+      textHash?: string;
+    } | null = null;
     if (noteWithEmbedding.embedding_vector) {
       try {
-        const vectorString = noteWithEmbedding.embedding_vector.replace(/^\[|\]$/g, '') // Remove brackets
-        const vectorArray = vectorString.split(',').map(Number)
+        const vectorString = noteWithEmbedding.embedding_vector.replace(
+          /^\[|\]$/g,
+          ""
+        ); // Remove brackets
+        const vectorArray = vectorString.split(",").map(Number);
         existingEmbedding = {
           vector: vectorArray,
           model: noteWithEmbedding.embedding_model,
           dimensions: noteWithEmbedding.embedding_dimensions,
           generatedAt: noteWithEmbedding.embedding_generated_at,
           textHash: noteWithEmbedding.embedding_text_hash,
-        }
-      } catch (error) {
-        console.error('Error parsing embedding vector:', error)
+        };
+      } catch (_error) {
+        // Silently fail if vector parsing fails - embedding will be regenerated
       }
     }
 
     // Handle regeneration or missing embedding
-    let embedding = existingEmbedding
+    let embedding = existingEmbedding;
     if (regenerate || !existingEmbedding) {
-      const textContent = extractNotesText(note)
+      const textContent = extractNotesText(note);
 
       if (!textContent.trim()) {
         return new Response(
           JSON.stringify({
-            error: 'Note has no content to embed',
-            id: parseInt(id),
+            error: "Note has no content to embed",
+            id: Number.parseInt(id, 10),
             title: note.title,
           }),
           {
             status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          },
-        )
+            headers: { "Content-Type": "application/json" },
+          }
+        );
       }
 
-      const { vector, model, dimensions } = await generateEmbedding(textContent)
+      const { vector, model, dimensions } =
+        await generateEmbedding(textContent);
 
       embedding = {
         vector,
@@ -119,143 +147,171 @@ export async function GET(request: NextRequest, { params: paramsPromise }: Args)
         dimensions,
         generatedAt: new Date().toISOString(),
         textHash: noteWithEmbedding.embedding_text_hash, // Use existing hash if available
-      }
+      };
 
       // Only update the database if regenerating
       if (regenerate) {
         try {
           await payload.update({
-            collection: 'notes',
-            id: parseInt(id),
+            collection: "notes",
+            id: Number.parseInt(id, 10),
             data: {
-              embedding_vector: `[${vector.join(',')}]`,
+              embedding_vector: `[${vector.join(",")}]`,
               embedding_model: model,
               embedding_dimensions: dimensions,
               embedding_generated_at: embedding.generatedAt,
-            } as any, // Type assertion for new pgvector fields
-          })
-        } catch (updateError) {
-          console.error('Failed to update note embedding:', updateError)
+            } as Partial<NoteWithEmbedding>,
+          });
+        } catch (_updateError) {
+          // Database update failed - embedding is still returned in response
         }
       }
     }
 
     // Calculate content statistics for Notes
-    const contentText = extractNotesText(note)
-    const wordCount = contentText.split(/\s+/).length
-    const readingTime = Math.ceil(wordCount / 200) // ~200 words per minute
+    const contentText = extractNotesText(note);
+    const wordCount = contentText.split(WORD_SPLIT_REGEX).length;
+    const readingTime = Math.ceil(wordCount / 200); // ~200 words per minute
 
     // Format response based on requested format
-    const baseResponse = {
+    type EmbeddingData =
+      | {
+          vector?: number[];
+          model?: string;
+          dimensions?: number;
+          generatedAt?: string;
+          textHash?: string;
+        }
+      | number[]
+      | null;
+
+    const baseResponse: {
+      id: number | string;
+      title?: string | null;
+      slug?: string | null;
+      url: string;
+      embedding: EmbeddingData;
+      publishedAt?: string | null;
+      updatedAt: string;
+      metadata: {
+        type: string;
+        wordCount: number;
+        readingTime: number;
+        contentFormat: string;
+        hasContent: boolean;
+      };
+      content?: unknown;
+    } = {
       id: note.id,
       title: note.title,
       slug: note.slug,
       url: `${SITE_URL}/notes/${note.slug}`, // Notes collection URL structure
-      embedding: null as any,
+      embedding: null,
       publishedAt: note.publishedAt,
       updatedAt: note.updatedAt,
       // Notes-specific metadata
       metadata: {
-        type: 'note',
+        type: "note",
         wordCount,
         readingTime,
-        contentFormat: 'lexical',
+        contentFormat: "lexical",
         hasContent: !!note.content,
       },
-    }
+    };
 
     switch (format) {
-      case 'vector-only':
-        baseResponse.embedding = embedding?.vector || null
-        break
-      case 'metadata-only':
+      case "vector-only":
+        baseResponse.embedding = embedding?.vector || null;
+        break;
+      case "metadata-only":
         baseResponse.embedding = embedding
           ? {
               model: embedding.model,
               dimensions: embedding.dimensions,
               generatedAt: embedding.generatedAt,
             }
-          : null
-        break
+          : null;
+        break;
       default: // 'full'
-        baseResponse.embedding = embedding
+        baseResponse.embedding = embedding;
         if (includeContent && note.content) {
-          ;(baseResponse as any).content = note.content
+          baseResponse.content = note.content;
         }
-        break
+        break;
     }
 
     const response = new Response(JSON.stringify(baseResponse, null, 2), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': regenerate
-          ? 'no-cache, no-store, must-revalidate'
-          : 'public, max-age=3600, s-maxage=3600',
-        'Access-Control-Allow-Origin': '*',
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": regenerate
+          ? "no-cache, no-store, must-revalidate"
+          : "public, max-age=3600, s-maxage=3600",
+        "Access-Control-Allow-Origin": "*",
       },
-    })
+    });
 
     // Note: cacheTag and cacheLife can only be used inside "use cache" functions
     // For now, we'll rely on the Cache-Control headers
-    return response
+    return response;
   } catch (error) {
-    console.error('Error in Notes embeddings API:', error)
-
     return new Response(
       JSON.stringify({
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error',
-        id: parseInt(id),
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+        id: Number.parseInt(id, 10),
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
 
 // Handle POST requests for embedding operations
-export async function POST(request: NextRequest, { params: paramsPromise }: Args) {
-  const { id } = await paramsPromise
+export async function POST(
+  request: NextRequest,
+  { params: paramsPromise }: Args
+) {
+  const { id: _id } = await paramsPromise;
 
   try {
-    const body = await request.json()
-    const { action = 'regenerate' } = body
+    const body = await request.json();
+    const { action = "regenerate" } = body;
 
-    if (action === 'regenerate') {
+    if (action === "regenerate") {
       // Redirect to GET with regenerate=true
-      const url = new URL(request.url)
-      url.searchParams.set('regenerate', 'true')
+      const url = new URL(request.url);
+      url.searchParams.set("regenerate", "true");
 
       return new Response(null, {
         status: 302,
         headers: {
           Location: url.toString(),
         },
-      })
+      });
     }
 
     return new Response(
       JSON.stringify({
-        error: 'Invalid action',
-        validActions: ['regenerate'],
+        error: "Invalid action",
+        validActions: ["regenerate"],
       }),
       {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
-  } catch (error) {
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (_error) {
     return new Response(
       JSON.stringify({
-        error: 'Invalid request body',
+        error: "Invalid request body",
       }),
       {
         status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

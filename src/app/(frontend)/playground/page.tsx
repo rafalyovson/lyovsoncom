@@ -1,45 +1,42 @@
-import { Metadata } from 'next'
-import { createContactAction } from '@/actions/create-contact-action'
+import config from "@payload-config";
+import type { Metadata } from "next";
+import { headers as nextHeaders } from "next/headers";
+import { redirect } from "next/navigation";
+import { getPayload } from "payload";
+import { Suspense } from "react";
+import { createContactAction } from "@/actions/create-contact-action";
 import {
-  GridCardSubscribe,
-  GridCardNav,
-  GridCardUserSocial,
-  GridCardRafa,
-  GridCardJess,
   GridCard,
+  GridCardJess,
+  GridCardRafa,
   GridCardSection,
-} from '@/components/grid'
-import { getCachedProjectBySlug } from '@/utilities/get-project'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
-import { cookies } from 'next/headers'
-import { Suspense } from 'react'
-import { redirect } from 'next/navigation'
-import { headers as nextHeaders } from 'next/headers'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { SkeletonCard } from '@/components/grid'
+  GridCardSubscribe,
+  GridCardUserSocial,
+  SkeletonCard,
+} from "@/components/grid";
+import { getCachedProjectBySlug } from "@/utilities/get-project";
 
-export default async function SuspensePlayground() {
+export default function SuspensePlayground() {
   return (
     <Suspense fallback={<SkeletonCard />}>
       <Playground />
     </Suspense>
-  )
+  );
 }
 
 async function Playground() {
-  const headers = await nextHeaders()
-  const payload = await getPayload({ config })
-  const user = await payload.auth({ headers: headers })
+  const headers = await nextHeaders();
+  const payload = await getPayload({ config });
+  const user = await payload.auth({ headers });
 
-  if (!user || !user.user) {
-    redirect('/admin')
+  if (!user?.user) {
+    redirect("/admin");
   }
 
-  const project = await getCachedProjectBySlug('media-musings')
+  const project = await getCachedProjectBySlug("media-musings");
 
   if (!project) {
-    throw new Error('Media Musings project not found')
+    throw new Error("Media Musings project not found");
   }
 
   return (
@@ -50,43 +47,49 @@ async function Playground() {
         </GridCardSection>
       </GridCard>
       <GridCardSubscribe
-        title="Media Musings"
         description="Join our journney through all kinds of media and ideas."
         emoji="👩"
         handleSubmit={createContactAction}
         projectId={project.id}
+        title="Media Musings"
       />
       <GridCardJess />
       <GridCardRafa />
       <GridCardUserSocial />
     </>
-  )
+  );
 }
 
 export const metadata: Metadata = {
-  title: `Playground - Interactive Demos | Lyovson.com`,
+  title: "Playground - Interactive Demos | Lyovson.com",
   description:
-    'Explore interactive demos, experiments, and test features on the Lyovson.com playground. Try out new components and functionality.',
-  keywords: ['playground', 'interactive demos', 'experiments', 'test features', 'web development'],
+    "Explore interactive demos, experiments, and test features on the Lyovson.com playground. Try out new components and functionality.",
+  keywords: [
+    "playground",
+    "interactive demos",
+    "experiments",
+    "test features",
+    "web development",
+  ],
   alternates: {
-    canonical: '/playground',
+    canonical: "/playground",
   },
   openGraph: {
-    title: 'Playground - Interactive Demos',
+    title: "Playground - Interactive Demos",
     description:
-      'Explore interactive demos, experiments, and test features on the Lyovson.com playground.',
-    type: 'website',
-    url: '/playground',
+      "Explore interactive demos, experiments, and test features on the Lyovson.com playground.",
+    type: "website",
+    url: "/playground",
   },
   twitter: {
-    card: 'summary',
-    title: 'Playground - Interactive Demos',
-    description: 'Explore interactive demos and experiments on Lyovson.com.',
-    creator: '@lyovson',
-    site: '@lyovson',
+    card: "summary",
+    title: "Playground - Interactive Demos",
+    description: "Explore interactive demos and experiments on Lyovson.com.",
+    creator: "@lyovson",
+    site: "@lyovson",
   },
   robots: {
     index: true,
     follow: true,
   },
-}
+};

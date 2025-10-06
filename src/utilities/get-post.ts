@@ -1,17 +1,21 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import type { Post } from '@/payload-types'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import configPromise from "@payload-config";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import type { PaginatedDocs } from "payload";
+import { getPayload } from "payload";
+import type { Post } from "@/payload-types";
 
 export async function getPost(slug: string): Promise<Post | null> {
-  'use cache'
-  cacheTag('posts')
-  cacheTag(`post-${slug}`)
-  cacheLife('posts')
+  "use cache";
+  cacheTag("posts");
+  cacheTag(`post-${slug}`);
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
   const response = await payload.find({
-    collection: 'posts',
+    collection: "posts",
     where: {
       slug: {
         equals: slug,
@@ -19,24 +23,24 @@ export async function getPost(slug: string): Promise<Post | null> {
     },
     limit: 1,
     depth: 2,
-  })
+  });
 
-  return response.docs[0] || null
+  return (response.docs[0] as Post) || null;
 }
 
 export async function getPostByProjectAndSlug(
   projectSlug: string,
-  slug: string,
+  slug: string
 ): Promise<Post | null> {
-  'use cache'
-  cacheTag('posts')
-  cacheTag(`post-${slug}`)
-  cacheTag(`project-${projectSlug}`)
-  cacheLife('posts')
+  "use cache";
+  cacheTag("posts");
+  cacheTag(`post-${slug}`);
+  cacheTag(`project-${projectSlug}`);
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
   const response = await payload.find({
-    collection: 'posts',
+    collection: "posts",
     depth: 2,
     where: {
       AND: [
@@ -46,59 +50,72 @@ export async function getPostByProjectAndSlug(
           },
         },
         {
-          'project.slug': {
+          "project.slug": {
             equals: projectSlug,
           },
         },
       ],
     },
-  })
+  });
 
-  return response.docs[0] || null
+  return (response.docs[0] as Post) || null;
 }
 
-export async function getLatestPosts(limit: number = 12) {
-  'use cache'
-  cacheTag('posts')
-  cacheTag('homepage')
-  cacheLife('posts')
+export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
+  "use cache";
+  cacheTag("posts");
+  cacheTag("homepage");
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
-  return await payload.find({
-    collection: 'posts',
+  const payload = await getPayload({ config: configPromise });
+  const result = await payload.find({
+    collection: "posts",
     depth: 1,
     limit,
     overrideAccess: false,
-    sort: 'createdAt:desc',
-  })
+    sort: "createdAt:desc",
+  });
+
+  return {
+    ...result,
+    docs: result.docs as Post[],
+  };
 }
 
-export async function getPaginatedPosts(pageNumber: number, limit: number = 12) {
-  'use cache'
-  cacheTag('posts')
-  cacheTag(`posts-page-${pageNumber}`)
-  cacheLife('posts')
+export async function getPaginatedPosts(
+  pageNumber: number,
+  limit = 12
+): Promise<PaginatedDocs<Post>> {
+  "use cache";
+  cacheTag("posts");
+  cacheTag(`posts-page-${pageNumber}`);
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
-  return await payload.find({
-    collection: 'posts',
+  const payload = await getPayload({ config: configPromise });
+  const result = await payload.find({
+    collection: "posts",
     depth: 1,
     limit,
     page: pageNumber,
     overrideAccess: false,
-    sort: 'createdAt:desc',
-  })
+    sort: "createdAt:desc",
+  });
+
+  return {
+    ...result,
+    docs: result.docs as Post[],
+  };
 }
 
 export async function getPostCount() {
-  'use cache'
-  cacheTag('posts')
-  cacheTag('post-count')
-  cacheLife('posts')
+  "use cache";
+  cacheTag("posts");
+  cacheTag("post-count");
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
   return await payload.count({
-    collection: 'posts',
+    collection: "posts",
     overrideAccess: false,
-  })
+  });
 }

@@ -1,15 +1,13 @@
-import React from 'react'
-
-import { serializeLexical } from './serialize'
-
-import { cn } from '@/utilities/cn'
+import type React from "react";
+import { cn } from "@/utilities/cn";
+import { serializeLexical } from "./serialize";
 
 type Props = {
-  className?: string
-  content: Record<string, any>
-  enableGutter?: boolean
-  enableProse?: boolean
-}
+  className?: string;
+  content: Record<string, any>;
+  enableGutter?: boolean;
+  enableProse?: boolean;
+};
 
 const RichText: React.FC<Props> = ({
   className,
@@ -18,27 +16,27 @@ const RichText: React.FC<Props> = ({
   enableProse = true,
 }) => {
   if (!content) {
-    return null
+    return null;
   }
 
   return (
     <div
       className={cn(
         {
-          'container ': enableGutter,
-          'max-w-none': !enableGutter,
-          'mx-auto prose dark:prose-invert ': enableProse,
+          container: enableGutter,
+          "max-w-none": !enableGutter,
+          "prose dark:prose-invert mx-auto": enableProse,
         },
-        className,
+        className
       )}
     >
       {content &&
         !Array.isArray(content) &&
-        typeof content === 'object' &&
-        'root' in content &&
+        typeof content === "object" &&
+        "root" in content &&
         serializeLexical({ nodes: content?.root?.children })}
     </div>
-  )
-}
+  );
+};
 
-export default RichText
+export default RichText;

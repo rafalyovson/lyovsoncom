@@ -1,16 +1,16 @@
-import Link from 'next/link'
+import Link from "next/link";
 
-import { GridCard, GridCardSection } from '@/components/grid'
-import { Media } from '@/components/Media'
-import { Project } from '@/payload-types'
+import { GridCard, GridCardSection } from "@/components/grid";
+import { Media } from "@/components/Media";
+import type { Project } from "@/payload-types";
 
 export type GridCardProjectProps = {
-  project: Project
-  className?: string
-  loading?: 'lazy' | 'eager'
-  fetchPriority?: 'high' | 'low' | 'auto'
-  priority?: boolean
-}
+  project: Project;
+  className?: string;
+  loading?: "lazy" | "eager";
+  fetchPriority?: "high" | "low" | "auto";
+  priority?: boolean;
+};
 
 export const GridCardProject = ({
   project,
@@ -19,18 +19,24 @@ export const GridCardProject = ({
   fetchPriority,
   priority,
 }: GridCardProjectProps) => {
-  const { name, slug } = project
+  const { name, slug } = project;
 
   return (
-    <Link href={`/${slug}`} className="group glass-interactive" aria-label={`View ${name} project`}>
+    <Link
+      aria-label={`View ${name} project`}
+      className="group glass-interactive"
+      href={`/${slug}`}
+    >
       <GridCard className={`${className}`}>
-        {project.image && typeof project.image !== 'string' && (
-          <GridCardSection className={`row-start-1 row-end-3 col-start-1 col-end-4`}>
+        {project.image && typeof project.image !== "string" && (
+          <GridCardSection
+            className={"col-start-1 col-end-4 row-start-1 row-end-3"}
+          >
             <Media
+              className="glass-media flex h-full items-center justify-center"
               imgClassName="object-cover h-full"
-              resource={project.image}
               pictureClassName="h-full"
-              className="glass-media h-full flex justify-center items-center"
+              resource={project.image}
               {...(loading ? { loading } : {})}
               {...(fetchPriority ? { fetchPriority } : {})}
               {...(priority ? { priority } : {})}
@@ -38,15 +44,19 @@ export const GridCardProject = ({
           </GridCardSection>
         )}
         <GridCardSection
-          className={`row-start-3 row-end-4 col-start-1 col-end-4 h-full flex flex-col justify-center glass-interactive`}
+          className={
+            "glass-interactive col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
+          }
         >
           <h2
-            className={`text-xl font-bold text-center glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300`}
+            className={
+              "glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+            }
           >
             {name}
           </h2>
         </GridCardSection>
       </GridCard>
     </Link>
-  )
-}
+  );
+};

@@ -1,12 +1,12 @@
-import type { CollectionConfig } from 'payload'
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from "next/cache";
+import type { CollectionConfig } from "payload";
 
-import { anyone } from '@/access/anyone'
-import { authenticated } from '@/access/authenticated'
-import { slugField } from '@/fields/slug'
+import { anyone } from "@/access/anyone";
+import { authenticated } from "@/access/authenticated";
+import { slugField } from "@/fields/slug";
 
 export const Projects: CollectionConfig = {
-  slug: 'projects',
+  slug: "projects",
   access: {
     create: authenticated,
     delete: authenticated,
@@ -14,68 +14,71 @@ export const Projects: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    useAsTitle: 'name',
-    defaultColumns: ['name', 'slug', 'resendAudienceId'],
+    useAsTitle: "name",
+    defaultColumns: ["name", "slug", "resendAudienceId"],
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
       required: true,
     },
     {
-      name: 'description',
-      type: 'textarea',
+      name: "description",
+      type: "textarea",
     },
     {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
+      name: "image",
+      type: "upload",
+      relationTo: "media",
     },
     {
-      name: 'resendAudienceId',
-      type: 'text',
-      label: 'Resend Audience ID',
+      name: "resendAudienceId",
+      type: "text",
+      label: "Resend Audience ID",
       defaultValue: process.env.RESEND_AUDIENCE_ID,
       admin: {
-        description: 'The Audience ID from Resend for managing newsletter subscriptions.',
+        description:
+          "The Audience ID from Resend for managing newsletter subscriptions.",
       },
     },
     {
-      name: 'contacts',
-      type: 'relationship',
-      relationTo: 'contacts',
+      name: "contacts",
+      type: "relationship",
+      relationTo: "contacts",
       hasMany: true,
       admin: {
-        description: 'List of contacts associated with this project.',
+        description: "List of contacts associated with this project.",
       },
     },
-    ...slugField('name'),
+    ...slugField("name"),
   ],
   hooks: {
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating project: ${doc.slug}`)
+        req.payload.logger.info(`Revalidating project: ${doc.slug}`);
 
         // Revalidate project-related cache tags
-        revalidateTag('projects')
-        revalidateTag(`project-${doc.slug}`)
-        revalidateTag('posts') // Posts may reference this project
-        revalidateTag('sitemap')
-        revalidateTag('playground') // Playground uses project data
+        revalidateTag("projects");
+        revalidateTag(`project-${doc.slug}`);
+        revalidateTag("posts"); // Posts may reference this project
+        revalidateTag("sitemap");
+        revalidateTag("playground"); // Playground uses project data
       },
     ],
     afterDelete: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating after project deletion: ${doc?.slug}`)
+        req.payload.logger.info(
+          `Revalidating after project deletion: ${doc?.slug}`
+        );
 
         // Revalidate project-related cache tags
-        revalidateTag('projects')
-        revalidateTag(`project-${doc?.slug}`)
-        revalidateTag('posts') // Posts may reference this project
-        revalidateTag('sitemap')
-        revalidateTag('playground') // Playground uses project data
+        revalidateTag("projects");
+        revalidateTag(`project-${doc?.slug}`);
+        revalidateTag("posts"); // Posts may reference this project
+        revalidateTag("sitemap");
+        revalidateTag("playground"); // Playground uses project data
       },
     ],
   },
-}
+};

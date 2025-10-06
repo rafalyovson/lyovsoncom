@@ -1,67 +1,69 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import { Suspense } from 'react'
-import { GridCardNav } from 'src/components/grid/card/nav'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import type { Metadata } from "next";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { Pagination } from '@/components/Pagination'
-import { SkeletonGrid } from '@/components/grid/skeleton'
-import { Skeleton } from '@/components/ui/skeleton'
-import { getTopicPosts } from '@/utilities/get-topic-posts'
-import { getTopic, getAllTopics } from '@/utilities/get-topic'
+import { CollectionArchive } from "@/components/CollectionArchive";
+import { SkeletonGrid } from "@/components/grid/skeleton";
+import { Pagination } from "@/components/Pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getAllTopics, getTopic } from "@/utilities/get-topic";
+import { getTopicPosts } from "@/utilities/get-topic-posts";
 
-interface PageProps {
+type PageProps = {
   params: Promise<{
-    slug: string
-  }>
-}
+    slug: string;
+  }>;
+};
 
 export async function generateStaticParams() {
-  'use cache'
-  cacheTag('topics')
-  cacheLife('static') // Build-time data doesn't change often
+  "use cache";
+  cacheTag("topics");
+  cacheLife("static"); // Build-time data doesn't change often
 
-  const topicsResponse = await getAllTopics()
+  const topicsResponse = await getAllTopics();
 
   if (!topicsResponse) {
-    return []
+    return [];
   }
 
-  const { docs } = topicsResponse
+  const { docs } = topicsResponse;
 
   return docs.map(({ slug }) => ({
     slug,
-  }))
+  }));
 }
 
 export default async function Page({ params: paramsPromise }: PageProps) {
-  'use cache'
+  "use cache";
 
-  const { slug } = await paramsPromise
+  const { slug } = await paramsPromise;
 
   // Add cache tags for this specific topic
-  cacheTag('posts')
-  cacheTag('topics')
-  cacheTag(`topic-${slug}`)
-  cacheLife('posts')
+  cacheTag("posts");
+  cacheTag("topics");
+  cacheTag(`topic-${slug}`);
+  cacheLife("posts");
 
   // Get topic for metadata
-  const topic = await getTopic(slug)
+  const topic = await getTopic(slug);
 
   if (!topic) {
-    return notFound()
+    return notFound();
   }
 
-  const topicName = topic.name || slug
+  const _topicName = topic.name || slug;
 
-  const response = await getTopicPosts(slug)
+  const response = await getTopicPosts(slug);
 
   if (!response) {
-    return notFound()
+    return notFound();
   }
 
-  const { docs: posts, totalPages, page } = response
+  const { docs: posts, totalPages, page } = response;
 
   return (
     <>
@@ -70,35 +72,37 @@ export default async function Page({ params: paramsPromise }: PageProps) {
       </Suspense>
       <div className="container">
         {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
+          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
             <Pagination page={page} totalPages={totalPages} />
           </Suspense>
         )}
       </div>
     </>
-  )
+  );
 }
 
-export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
-  'use cache'
+export async function generateMetadata({
+  params: paramsPromise,
+}: PageProps): Promise<Metadata> {
+  "use cache";
 
-  const { slug } = await paramsPromise
+  const { slug } = await paramsPromise;
 
   // Add cache tags for metadata
-  cacheTag('topics')
-  cacheTag(`topic-${slug}`)
-  cacheLife('topics')
+  cacheTag("topics");
+  cacheTag(`topic-${slug}`);
+  cacheLife("topics");
 
-  const topic = await getTopic(slug)
+  const topic = await getTopic(slug);
 
   if (!topic) {
     return {
-      title: 'Topic Not Found | Lyovson.com',
-      description: 'The requested topic could not be found',
-    }
+      title: "Topic Not Found | Lyovson.com",
+      description: "The requested topic could not be found",
+    };
   }
 
-  const topicName = topic.name || slug
+  const topicName = topic.name || slug;
 
   return {
     title: `${topicName} | Lyovson.com`,
@@ -106,5 +110,5 @@ export async function generateMetadata({ params: paramsPromise }: PageProps): Pr
     alternates: {
       canonical: `/topics/${slug}`,
     },
-  }
+  };
 }

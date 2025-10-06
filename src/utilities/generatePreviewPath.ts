@@ -1,22 +1,22 @@
-import { CollectionSlug } from 'payload'
+import type { CollectionSlug } from "payload";
 
 const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
-  posts: '/posts',
-}
+  posts: "/posts",
+};
 
 type Props = {
-  collection: keyof typeof collectionPrefixMap
-  slug: string
-  project?: any
-}
+  collection: keyof typeof collectionPrefixMap;
+  slug: string;
+  project?: any;
+};
 
 export const generatePreviewPath = ({ collection, slug, project }: Props) => {
-  if (collection === 'posts') {
-    if (project && typeof project === 'object') {
-      return `/${project.slug}/${slug}`
+  if (collection === "posts") {
+    if (project && typeof project === "object") {
+      return `/${project.slug}/${slug}`;
     }
-    return `/posts/${slug}` // fallback if no project
+    return `/posts/${slug}`; // fallback if no project
   }
 
-  return `/${collection}/${slug}`
-}
+  return `/${collection}/${slug}`;
+};

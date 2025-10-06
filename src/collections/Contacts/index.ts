@@ -1,9 +1,9 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload";
 
-import { authenticated } from '@/access/authenticated'
+import { authenticated } from "@/access/authenticated";
 
 export const Contacts: CollectionConfig = {
-  slug: 'contacts',
+  slug: "contacts",
   access: {
     create: authenticated,
     delete: authenticated,
@@ -11,36 +11,36 @@ export const Contacts: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    useAsTitle: 'email',
-    defaultColumns: ['email', 'firstName', 'lastName', 'status', 'project'],
+    useAsTitle: "email",
+    defaultColumns: ["email", "firstName", "lastName", "status", "project"],
   },
   fields: [
     {
-      name: 'email',
-      type: 'email',
+      name: "email",
+      type: "email",
       required: true,
       unique: true,
     },
     {
-      name: 'firstName',
-      type: 'text',
+      name: "firstName",
+      type: "text",
       admin: {
-        placeholder: 'Enter first name',
+        placeholder: "Enter first name",
       },
     },
     {
-      name: 'lastName',
-      type: 'text',
+      name: "lastName",
+      type: "text",
       admin: {
-        placeholder: 'Enter last name',
+        placeholder: "Enter last name",
       },
     },
     {
-      name: 'confirmationToken',
-      type: 'text',
+      name: "confirmationToken",
+      type: "text",
       admin: {
-        position: 'sidebar',
-        description: 'Token used for email confirmation',
+        position: "sidebar",
+        description: "Token used for email confirmation",
       },
       access: {
         read: () => false,
@@ -48,11 +48,11 @@ export const Contacts: CollectionConfig = {
       hidden: true,
     },
     {
-      name: 'confirmationExpiry',
-      type: 'date',
+      name: "confirmationExpiry",
+      type: "date",
       admin: {
-        position: 'sidebar',
-        description: 'When the confirmation token expires',
+        position: "sidebar",
+        description: "When the confirmation token expires",
       },
       access: {
         read: () => false,
@@ -60,54 +60,54 @@ export const Contacts: CollectionConfig = {
       hidden: true,
     },
     {
-      name: 'unsubscribed',
-      type: 'checkbox',
+      name: "unsubscribed",
+      type: "checkbox",
       defaultValue: false,
       admin: {
-        description: 'Indicates if the contact has unsubscribed.',
+        description: "Indicates if the contact has unsubscribed.",
       },
     },
     {
-      name: 'status',
-      type: 'select',
+      name: "status",
+      type: "select",
       options: [
-        { label: 'Pending', value: 'pending' },
-        { label: 'Active', value: 'active' },
-        { label: 'Unsubscribed', value: 'unsubscribed' },
+        { label: "Pending", value: "pending" },
+        { label: "Active", value: "active" },
+        { label: "Unsubscribed", value: "unsubscribed" },
       ],
-      defaultValue: 'pending',
+      defaultValue: "pending",
     },
     {
-      name: 'project',
-      type: 'relationship',
-      relationTo: 'projects',
+      name: "project",
+      type: "relationship",
+      relationTo: "projects",
       required: true,
       admin: {
-        description: 'The project this contact is associated with.',
+        description: "The project this contact is associated with.",
       },
     },
     {
-      name: 'resendContactId',
-      type: 'text',
+      name: "resendContactId",
+      type: "text",
       admin: {
-        description: 'The unique Contact ID from Resend.',
+        description: "The unique Contact ID from Resend.",
       },
     },
     {
-      name: 'subscribedAt',
-      type: 'date',
+      name: "subscribedAt",
+      type: "date",
       defaultValue: () => new Date(),
       admin: {
-        description: 'The date and time the contact subscribed.',
+        description: "The date and time the contact subscribed.",
       },
     },
     {
-      name: 'notes',
-      type: 'textarea',
+      name: "notes",
+      type: "textarea",
       admin: {
-        description: 'Optional notes about the contact.',
-        placeholder: 'Add any additional information or notes.',
+        description: "Optional notes about the contact.",
+        placeholder: "Add any additional information or notes.",
       },
     },
   ],
-}
+};

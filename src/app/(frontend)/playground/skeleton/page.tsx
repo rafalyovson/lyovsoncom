@@ -1,13 +1,15 @@
-import { GridCardNav } from '@/components/grid'
-import { SkeletonCard, SkeletonGrid } from '@/components/grid/skeleton'
-import type { Metadata } from 'next'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import type { Metadata } from "next";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
 
 export default async function SkeletonPlayground() {
-  'use cache'
-  cacheTag('playground')
-  cacheTag('skeleton-playground')
-  cacheLife('static') // Static testing page
+  "use cache";
+  cacheTag("playground");
+  cacheTag("skeleton-playground");
+  cacheLife("static"); // Static testing page
 
   return (
     <>
@@ -30,32 +32,39 @@ export default async function SkeletonPlayground() {
       <SkeletonCard />
       <SkeletonCard />
     </>
-  )
+  );
 }
 
 export const metadata: Metadata = {
-  title: 'Skeleton Loading Demo | Lyovson.com',
+  title: "Skeleton Loading Demo | Lyovson.com",
   description:
-    'Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.',
-  keywords: ['skeleton loading', 'loading animations', 'UI components', 'demo', 'web development'],
+    "Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.",
+  keywords: [
+    "skeleton loading",
+    "loading animations",
+    "UI components",
+    "demo",
+    "web development",
+  ],
   alternates: {
-    canonical: '/playground/skeleton',
+    canonical: "/playground/skeleton",
   },
   openGraph: {
-    title: 'Skeleton Loading Demo',
-    description: 'Interactive demo showcasing skeleton loading components and animations.',
-    type: 'website',
-    url: '/playground/skeleton',
+    title: "Skeleton Loading Demo",
+    description:
+      "Interactive demo showcasing skeleton loading components and animations.",
+    type: "website",
+    url: "/playground/skeleton",
   },
   twitter: {
-    card: 'summary',
-    title: 'Skeleton Loading Demo',
-    description: 'Interactive demo of skeleton loading components.',
-    site: '@lyovson',
+    card: "summary",
+    title: "Skeleton Loading Demo",
+    description: "Interactive demo of skeleton loading components.",
+    site: "@lyovson",
   },
   robots: {
     index: false, // Don't index demo/test pages
     follow: true,
     noarchive: true,
   },
-}
+};

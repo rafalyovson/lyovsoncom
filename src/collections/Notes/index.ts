@@ -1,20 +1,19 @@
-import type { CollectionConfig } from 'payload'
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
   lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+} from "@payloadcms/richtext-lexical";
+import type { CollectionConfig } from "payload";
 
-import { anyone } from '@/access/anyone'
-import { authenticated } from '@/access/authenticated'
-import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { slugField } from '@/fields/slug'
-import { generatePreviewPath } from '@/utilities/generatePreviewPath'
-import { getServerSideURL } from '@/utilities/getURL'
-import { generateEmbeddingHook } from './hooks/generateEmbedding'
+import { authenticated } from "@/access/authenticated";
+import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { slugField } from "@/fields/slug";
+import { generatePreviewPath } from "@/utilities/generatePreviewPath";
+import { getServerSideURL } from "@/utilities/getURL";
+import { generateEmbeddingHook } from "./hooks/generateEmbedding";
 
 export const Notes: CollectionConfig = {
-  slug: 'notes',
+  slug: "notes",
   access: {
     create: authenticated,
     delete: authenticated,
@@ -30,195 +29,210 @@ export const Notes: CollectionConfig = {
     connections: true,
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'type', 'author', 'visibility', 'updatedAt'],
+    useAsTitle: "title",
+    defaultColumns: ["title", "type", "author", "visibility", "updatedAt"],
     livePreview: {
       url: ({ data }) => {
         const path = generatePreviewPath({
-          slug: typeof data?.slug === 'string' ? data.slug : '',
-          collection: 'notes',
-        })
+          slug: typeof data?.slug === "string" ? data.slug : "",
+          collection: "notes",
+        });
 
-        return `${getServerSideURL()}${path}`
+        return `${getServerSideURL()}${path}`;
       },
     },
     preview: (data) => {
       const path = generatePreviewPath({
-        slug: typeof data?.slug === 'string' ? data.slug : '',
-        collection: 'notes',
-      })
+        slug: typeof data?.slug === "string" ? data.slug : "",
+        collection: "notes",
+      });
 
-      return `${getServerSideURL()}${path}`
+      return `${getServerSideURL()}${path}`;
     },
   },
   fields: [
     {
-      name: 'title',
-      type: 'text',
+      name: "title",
+      type: "text",
       required: true,
       admin: {
-        description: 'The main title of your note',
+        description: "The main title of your note",
       },
     },
     {
-      name: 'type',
-      type: 'select',
+      name: "type",
+      type: "select",
       options: [
-        { label: 'Literature Note', value: 'literature' },
-        { label: 'Permanent Note', value: 'permanent' },
-        { label: 'Fleeting Note', value: 'fleeting' },
-        { label: 'Index Note', value: 'index' },
+        { label: "Literature Note", value: "literature" },
+        { label: "Permanent Note", value: "permanent" },
+        { label: "Fleeting Note", value: "fleeting" },
+        { label: "Index Note", value: "index" },
       ],
-      defaultValue: 'fleeting',
+      defaultValue: "fleeting",
       required: true,
       admin: {
-        position: 'sidebar',
-        description: 'What type of note is this?',
+        position: "sidebar",
+        description: "What type of note is this?",
       },
     },
     {
-      name: 'author',
-      type: 'select',
+      name: "author",
+      type: "select",
       options: [
-        { label: 'Rafa', value: 'rafa' },
-        { label: 'Jess', value: 'jess' },
+        { label: "Rafa", value: "rafa" },
+        { label: "Jess", value: "jess" },
       ],
       required: true,
       admin: {
-        position: 'sidebar',
-        description: 'Who wrote this note?',
+        position: "sidebar",
+        description: "Who wrote this note?",
       },
     },
     {
-      name: 'visibility',
-      type: 'select',
+      name: "visibility",
+      type: "select",
       options: [
-        { label: 'Public', value: 'public' },
-        { label: 'Private', value: 'private' },
+        { label: "Public", value: "public" },
+        { label: "Private", value: "private" },
       ],
-      defaultValue: 'public',
+      defaultValue: "public",
       required: true,
       admin: {
-        position: 'sidebar',
-        description: 'Who can see this note?',
+        position: "sidebar",
+        description: "Who can see this note?",
       },
     },
     {
-      type: 'tabs',
+      type: "tabs",
       tabs: [
         {
           fields: [
             {
-              name: 'content',
-              type: 'richText',
+              name: "content",
+              type: "richText",
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
-                  return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
+                  return [
+                    ...rootFeatures,
+                    FixedToolbarFeature(),
+                    InlineToolbarFeature(),
+                  ];
                 },
               }),
               label: false,
               required: true,
             },
           ],
-          label: 'Content',
-          description: 'Write your note content here',
+          label: "Content",
+          description: "Write your note content here",
         },
         {
           fields: [
             {
-              name: 'sourceReference',
-              type: 'relationship',
-              relationTo: ['books', 'movies', 'tvShows', 'videoGames', 'music', 'podcasts'],
+              name: "sourceReference",
+              type: "relationship",
+              relationTo: [
+                "books",
+                "movies",
+                "tvShows",
+                "videoGames",
+                "music",
+                "podcasts",
+              ],
               admin: {
-                description: 'What book, movie, show, game, music, or podcast is this note about?',
-                condition: (data) => data.type === 'literature',
+                description:
+                  "What book, movie, show, game, music, or podcast is this note about?",
+                condition: (data) => data.type === "literature",
               },
             },
             {
-              name: 'quoteText',
-              type: 'textarea',
+              name: "quoteText",
+              type: "textarea",
               admin: {
-                description: 'The actual quote or passage from the source',
-                condition: (data) => data.type === 'literature',
-                placeholder: 'Enter the quote...',
+                description: "The actual quote or passage from the source",
+                condition: (data) => data.type === "literature",
+                placeholder: "Enter the quote...",
               },
             },
             {
-              name: 'pageNumber',
-              type: 'text',
+              name: "pageNumber",
+              type: "text",
               admin: {
-                description: 'Page number, timestamp, or location reference',
-                condition: (data) => data.type === 'literature',
-                placeholder: 'Page 42, 1:23:45, etc.',
+                description: "Page number, timestamp, or location reference",
+                condition: (data) => data.type === "literature",
+                placeholder: "Page 42, 1:23:45, etc.",
               },
             },
           ],
-          label: 'Literature Note Details',
-          description: 'Specific fields for literature notes (quotes and references)',
+          label: "Literature Note Details",
+          description:
+            "Specific fields for literature notes (quotes and references)",
         },
         {
           fields: [
             {
-              name: 'connections',
-              type: 'relationship',
+              name: "connections",
+              type: "relationship",
               relationTo: [
-                'posts',
-                'books',
-                'movies',
-                'tvShows',
-                'videoGames',
-                'music',
-                'podcasts',
-                'persons',
-                'notes',
+                "posts",
+                "books",
+                "movies",
+                "tvShows",
+                "videoGames",
+                "music",
+                "podcasts",
+                "persons",
+                "notes",
               ],
               hasMany: true,
               admin: {
-                description: 'Connect this note to other content in your knowledge base',
+                description:
+                  "Connect this note to other content in your knowledge base",
               },
             },
           ],
-          label: 'Connections',
-          description: 'Link this note to related posts, books, people, and other notes',
+          label: "Connections",
+          description:
+            "Link this note to related posts, books, people, and other notes",
         },
       ],
     },
     {
-      name: 'publishedAt',
-      type: 'date',
+      name: "publishedAt",
+      type: "date",
       admin: {
         date: {
-          pickerAppearance: 'dayAndTime',
+          pickerAppearance: "dayAndTime",
         },
-        position: 'sidebar',
-        description: 'When this note should be published',
+        position: "sidebar",
+        description: "When this note should be published",
       },
       hooks: {
         beforeChange: [
           ({ siblingData, value }) => {
-            if (siblingData._status === 'published' && !value) {
-              return new Date()
+            if (siblingData._status === "published" && !value) {
+              return new Date();
             }
-            return value
+            return value;
           },
         ],
       },
     },
     // Pre-computed embedding for semantic search (pgvector format)
     {
-      name: 'embedding_vector',
-      type: 'text', // Maps to vector(1536) in database
+      name: "embedding_vector",
+      type: "text", // Maps to vector(1536) in database
       access: {
         update: () => false, // Only updated via hooks
       },
       admin: {
         hidden: true,
-        description: 'Vector embedding for semantic search (pgvector format)',
+        description: "Vector embedding for semantic search (pgvector format)",
       },
     },
     {
-      name: 'embedding_model',
-      type: 'text',
+      name: "embedding_model",
+      type: "text",
       access: {
         update: () => false,
       },
@@ -227,8 +241,8 @@ export const Notes: CollectionConfig = {
       },
     },
     {
-      name: 'embedding_dimensions',
-      type: 'number',
+      name: "embedding_dimensions",
+      type: "number",
       access: {
         update: () => false,
       },
@@ -237,8 +251,8 @@ export const Notes: CollectionConfig = {
       },
     },
     {
-      name: 'embedding_generated_at',
-      type: 'date',
+      name: "embedding_generated_at",
+      type: "date",
       access: {
         update: () => false,
       },
@@ -247,8 +261,8 @@ export const Notes: CollectionConfig = {
       },
     },
     {
-      name: 'embedding_text_hash',
-      type: 'text',
+      name: "embedding_text_hash",
+      type: "text",
       access: {
         update: () => false,
       },
@@ -262,7 +276,7 @@ export const Notes: CollectionConfig = {
     beforeChange: [generateEmbeddingHook],
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating note: ${doc.slug}`)
+        req.payload.logger.info(`Revalidating note: ${doc.slug}`);
         // TODO: Add revalidation logic for notes when we have note pages
       },
     ],
@@ -270,9 +284,9 @@ export const Notes: CollectionConfig = {
   versions: {
     drafts: {
       autosave: {
-        interval: 30000,
+        interval: 30_000,
       },
     },
     maxPerDoc: 5,
   },
-}
+};

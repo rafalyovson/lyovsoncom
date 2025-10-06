@@ -1,35 +1,43 @@
-import Link from 'next/link'
-import { ReactNode } from 'react'
+import Link from "next/link";
+import type { ReactNode } from "react";
 
-import { GridCardSection } from '../section'
+import { GridCardSection } from "../section";
 
 type GridCardNavItemProps = {
-  children: ReactNode
-  link?: string
-  onClick?: () => void
-  className?: string
-}
+  children: ReactNode;
+  link?: string;
+  onClick?: () => void;
+  className?: string;
+};
 
-export const GridCardNavItem = ({ children, link, onClick, className }: GridCardNavItemProps) => {
+export const GridCardNavItem = ({
+  children,
+  link,
+  onClick,
+  className,
+}: GridCardNavItemProps) => {
   if (link) {
     return (
-      <GridCardSection interactive className={`group glass-interactive ${className}`}>
+      <GridCardSection
+        className={`group glass-interactive ${className}`}
+        interactive
+      >
         <Link
+          className="glass-text flex h-full flex-col items-center justify-center gap-2 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
           href={link}
-          className="flex flex-col gap-2 items-center justify-center h-full glass-text group-hover:text-[var(--glass-text-secondary)] transition-colors duration-300"
         >
           {children}
         </Link>
       </GridCardSection>
-    )
+    );
   }
   return (
     <GridCardSection
-      onClick={onClick}
+      className={`glass-interactive glass-text flex h-full cursor-pointer flex-col items-center justify-center gap-2 ${className}`}
       interactive
-      className={`flex flex-col gap-2 items-center justify-center h-full cursor-pointer glass-interactive glass-text ${className}`}
+      onClick={onClick}
     >
       {children}
     </GridCardSection>
-  )
-}
+  );
+};

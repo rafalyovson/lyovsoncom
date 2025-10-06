@@ -1,42 +1,44 @@
-import configPromise from '@payload-config'
-import { notFound } from 'next/navigation'
-import type { Metadata } from 'next/types'
-import { getPayload } from 'payload'
-import { Suspense } from 'react'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import configPromise from "@payload-config";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next/types";
+import { getPayload } from "payload";
+import { Suspense } from "react";
+import { CollectionArchive } from "@/components/CollectionArchive";
+import { SkeletonGrid } from "@/components/grid/skeleton";
+import { Pagination } from "@/components/Pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Project } from "@/payload-types";
+import { getProject } from "@/utilities/get-project";
+import { getProjectPosts } from "@/utilities/get-project-posts";
 
-import { CollectionArchive } from '@/components/CollectionArchive'
-import { Pagination } from '@/components/Pagination'
-import { SkeletonGrid } from '@/components/grid/skeleton'
-import { Skeleton } from '@/components/ui/skeleton'
-import { getProject } from '@/utilities/get-project'
-import { getProjectPosts } from '@/utilities/get-project-posts'
-import { GridCardNav } from 'src/components/grid/card/nav'
-
-interface PageProps {
+type PageProps = {
   params: Promise<{
-    project: string
-  }>
-}
+    project: string;
+  }>;
+};
 
 export default async function Page({ params: paramsPromise }: PageProps) {
-  'use cache'
+  "use cache";
 
-  const { project: projectSlug } = await paramsPromise
+  const { project: projectSlug } = await paramsPromise;
 
   // Add cache tags for this project
-  cacheTag('posts')
-  cacheTag('projects')
-  cacheTag(`project-${projectSlug}`)
-  cacheLife('posts')
+  cacheTag("posts");
+  cacheTag("projects");
+  cacheTag(`project-${projectSlug}`);
+  cacheLife("posts");
 
-  const response = await getProjectPosts(projectSlug)
+  const response = await getProjectPosts(projectSlug);
 
   if (!response) {
-    return notFound()
+    return notFound();
   }
 
-  const { docs, totalPages, page } = response
+  const { docs, totalPages, page } = response;
 
   return (
     <>
@@ -45,57 +47,66 @@ export default async function Page({ params: paramsPromise }: PageProps) {
       </Suspense>
       <div className="container">
         {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="h-10 w-64 mx-auto mt-4" />}>
+          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
             <Pagination page={page} totalPages={totalPages} />
           </Suspense>
         )}
       </div>
     </>
-  )
+  );
 }
 
-export async function generateMetadata({ params: paramsPromise }: PageProps): Promise<Metadata> {
-  'use cache'
+export async function generateMetadata({
+  params: paramsPromise,
+}: PageProps): Promise<Metadata> {
+  "use cache";
 
-  const { project: projectSlug } = await paramsPromise
+  const { project: projectSlug } = await paramsPromise;
 
   // Add cache tags for metadata
-  cacheTag('projects')
-  cacheTag(`project-${projectSlug}`)
-  cacheLife('static') // Project metadata changes less frequently
+  cacheTag("projects");
+  cacheTag(`project-${projectSlug}`);
+  cacheLife("static"); // Project metadata changes less frequently
 
-  const project = await getProject(projectSlug)
+  const project = await getProject(projectSlug);
 
   if (!project) {
     return {
-      title: 'Project Not Found | Lyovson.com',
-      description: 'The requested project could not be found',
-    }
+      title: "Project Not Found | Lyovson.com",
+      description: "The requested project could not be found",
+    };
   }
 
   return {
     title: `${project.name} | Lyovson.com`,
-    description: project.description || `Posts and content from the ${project.name} project`,
+    description:
+      project.description ||
+      `Posts and content from the ${project.name} project`,
     alternates: {
       canonical: `/${projectSlug}`,
     },
-  }
+  };
 }
 
 export async function generateStaticParams() {
-  'use cache'
-  cacheTag('projects')
-  cacheLife('static') // Build-time data doesn't change often
+  "use cache";
+  cacheTag("projects");
+  cacheLife("static"); // Build-time data doesn't change often
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
   const response = await payload.find({
-    collection: 'projects',
+    collection: "projects",
     limit: 1000,
-  })
+  });
 
-  const { docs } = response
+  const { docs } = response;
 
-  return docs.map(({ slug }) => ({
-    project: slug,
-  }))
+  return docs
+    .filter(
+      (doc): doc is Project =>
+        typeof doc === "object" && "slug" in doc && !!doc.slug
+    )
+    .map(({ slug }) => ({
+      project: slug as string,
+    }));
 }

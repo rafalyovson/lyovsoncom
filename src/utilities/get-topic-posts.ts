@@ -1,34 +1,41 @@
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-import { unstable_cacheTag as cacheTag, unstable_cacheLife as cacheLife } from 'next/cache'
+import configPromise from "@payload-config";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
+import type { PaginatedDocs } from "payload";
+import { getPayload } from "payload";
+import type { Post } from "@/payload-types";
 
-export async function getTopicPosts(slug: string) {
-  'use cache'
-  cacheTag('posts')
-  cacheTag('topics')
-  cacheTag(`topic-${slug}`)
-  cacheLife('posts')
+export async function getTopicPosts(
+  slug: string
+): Promise<PaginatedDocs<Post> | null> {
+  "use cache";
+  cacheTag("posts");
+  cacheTag("topics");
+  cacheTag(`topic-${slug}`);
+  cacheLife("posts");
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
 
   const topic = await payload.find({
-    collection: 'topics',
+    collection: "topics",
     where: {
       slug: {
         equals: slug,
       },
     },
     limit: 1,
-  })
+  });
 
-  const topicId = topic.docs[0]?.id
+  const topicId = topic.docs[0]?.id;
 
   if (!topicId) {
-    return null
+    return null;
   }
 
-  return await payload.find({
-    collection: 'posts',
+  const result = await payload.find({
+    collection: "posts",
     depth: 1,
     limit: 12,
     where: {
@@ -37,6 +44,11 @@ export async function getTopicPosts(slug: string) {
       },
     },
     overrideAccess: false,
-    sort: 'createdAt:desc',
-  })
+    sort: "createdAt:desc",
+  });
+
+  return {
+    ...result,
+    docs: result.docs as Post[],
+  };
 }
