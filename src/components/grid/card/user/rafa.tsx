@@ -4,13 +4,15 @@ import { cn } from "@/lib/utils";
 import type { User } from "@/payload-types";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
+const MAX_SOCIAL_LINKS = 3;
+
 type Props = {
   user?: User;
   className?: string;
 };
 
 export const GridCardRafa = ({ user, className }: Props) => {
-  const socialLinks = user?.socialLinks?.slice(0, 3) || [];
+  const socialLinks = user?.socialLinks?.slice(0, MAX_SOCIAL_LINKS) || [];
 
   const gridPositions = [
     "col-start-1 col-end-2 row-start-5 row-end-6 g3:col-start-4 g3:col-end-5 g3:row-start-2 g3:row-end-3",
@@ -56,7 +58,9 @@ export const GridCardRafa = ({ user, className }: Props) => {
 
       {socialLinks.map((link, index) => {
         const iconConfig = SOCIAL_ICON_MAP[link.platform];
-        if (!iconConfig) return null;
+        if (!iconConfig) {
+          return null;
+        }
 
         const IconComponent = iconConfig.icon;
 

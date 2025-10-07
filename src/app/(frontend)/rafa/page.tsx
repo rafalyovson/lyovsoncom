@@ -4,12 +4,8 @@ import {
 } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
-import { Suspense } from "react";
-import { CollectionArchive } from "@/components/CollectionArchive";
 import { GridCardRafa } from "@/components/grid/card/user";
-import { SkeletonGrid } from "@/components/grid/skeleton";
-import { Pagination } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
+import RichText from "@/components/RichText";
 import { getAuthorPosts } from "@/utilities/get-author-posts";
 
 export default async function Page() {
@@ -27,22 +23,28 @@ export default async function Page() {
     return notFound();
   }
 
-  const { posts, user } = response;
-  const { docs, totalPages, page } = posts;
+  const { user } = response;
 
   return (
     <>
-      <GridCardRafa user={user} />
-      <Suspense fallback={<SkeletonGrid />}>
-        <CollectionArchive posts={docs} />
-      </Suspense>
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination page={page} totalPages={totalPages} />
-          </Suspense>
-        )}
-      </div>
+      <GridCardRafa
+        className={
+          "g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 g2:row-end-2 g4:self-start"
+        }
+        user={user}
+      />
+      {user?.bio && (
+        <article className="glass-card glass-interactive g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px] w-[400px] rounded-lg p-6">
+          <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
+            <RichText
+              className="h-full"
+              content={user.bio}
+              enableGutter={false}
+              enableProse={true}
+            />
+          </div>
+        </article>
+      )}
     </>
   );
 }

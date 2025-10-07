@@ -102,7 +102,7 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         if (doc.username) {
           req.payload.logger.info(`Revalidating author: ${doc.username}`);
 
@@ -114,7 +114,7 @@ export const Users: CollectionConfig = {
       },
     ],
     afterDelete: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         if (doc?.username) {
           req.payload.logger.info(
             `Revalidating after user deletion: ${doc.username}`
