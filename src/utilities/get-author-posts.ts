@@ -5,11 +5,16 @@ import {
 } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
-import type { Post } from "@/payload-types";
+import type { Post, User } from "@/payload-types";
+
+type AuthorPostsResponse = {
+  posts: PaginatedDocs<Post>;
+  user: User;
+};
 
 export async function getAuthorPosts(
   username: string
-): Promise<PaginatedDocs<Post> | null> {
+): Promise<AuthorPostsResponse | null> {
   "use cache";
   cacheTag("posts");
   cacheTag("users");
@@ -18,8 +23,8 @@ export async function getAuthorPosts(
 
   const payload = await getPayload({ config: configPromise });
 
-  // First get the user ID
-  const user = await payload.find({
+  // First get the user
+  const userResult = await payload.find({
     collection: "users",
     where: {
       username: {
@@ -27,14 +32,14 @@ export async function getAuthorPosts(
       },
     },
     limit: 1,
-    sort: "createdAt:desc",
   });
 
-  if (!user?.docs?.[0]) {
+  if (!userResult?.docs?.[0]) {
     return null;
   }
 
-  const authorId = user.docs[0]?.id;
+  const user = userResult.docs[0] as User;
+  const authorId = user.id;
 
   // Then query posts using the author ID
   const result = await payload.find({
@@ -47,11 +52,14 @@ export async function getAuthorPosts(
       },
     },
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {
-    ...result,
-    docs: result.docs as Post[],
+    posts: {
+      ...result,
+      docs: result.docs as Post[],
+    },
+    user,
   };
 }

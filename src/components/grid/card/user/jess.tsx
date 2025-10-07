@@ -1,13 +1,23 @@
-import { SiX, SiYoutube } from "@icons-pack/react-simple-icons";
 import Image from "next/image";
 import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
+import type { User } from "@/payload-types";
+import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 type Props = {
+  user?: User;
   className?: string;
 };
 
-export const GridCardJess = ({ className }: Props) => {
+export const GridCardJess = ({ user, className }: Props) => {
+  const socialLinks = user?.socialLinks?.slice(0, 3) || [];
+
+  const gridPositions = [
+    "col-start-1 col-end-2 row-start-5 row-end-6 g3:col-start-4 g3:col-end-5 g3:row-start-2 g3:row-end-3",
+    "col-start-2 col-end-3 row-start-5 row-end-6 g3:col-start-5 g3:col-end-6 g3:row-start-2 g3:row-end-3",
+    "col-start-3 col-end-4 row-start-5 row-end-6 g3:col-start-6 g3:col-end-7 g3:row-start-2 g3:row-end-3",
+  ];
+
   return (
     <GridCard
       className={cn(
@@ -22,7 +32,7 @@ export const GridCardJess = ({ className }: Props) => {
         )}
       >
         <Image
-          alt={"Jess Lyóvson"}
+          alt={user?.name || "Jess Lyóvson"}
           className="h-full w-full rounded-md object-cover"
           height={400}
           src={"/jess-cozy.webp"}
@@ -37,46 +47,34 @@ export const GridCardJess = ({ className }: Props) => {
         )}
       >
         <h1 className={"glass-text text-center font-bold text-2xl"}>
-          Jess Lyóvson
+          {user?.name || "Jess Lyóvson"}
         </h1>
         <p className={"glass-text-secondary text-center text-sm italic"}>
-          Storyteller, creator, and maker of things
+          {user?.quote || "Storyteller, creator, and maker of things"}
         </p>
       </GridCardSection>
-      <GridCardNavItem
-        className={cn(
-          "col-start-1 col-end-2 row-start-5 row-end-6",
-          "g3:col-start-4 g3:col-end-5 g3:row-start-2 g3:row-end-3"
-        )}
-      >
-        <a
-          aria-label={"Jess Lyóvson on X.com"}
-          className="flex flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
-          href={"https://x.com/jesslyovson"}
-          rel="noopener"
-          target="_blank"
-        >
-          <SiX className="text-current" size={24} />
-          <span className="text-sm">x.com</span>
-        </a>
-      </GridCardNavItem>
-      <GridCardNavItem
-        className={cn(
-          "col-start-2 col-end-3 row-start-5 row-end-6",
-          "g3:col-start-5 g3:col-end-6 g3:row-start-2 g3:row-end-3"
-        )}
-      >
-        <a
-          aria-label={"Jess Lyóvson on YouTube"}
-          className="flex flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
-          href={"https://www.youtube.com/@hasmikkhachunts1741"}
-          rel="noopener"
-          target="_blank"
-        >
-          <SiYoutube className="text-current" size={24} />
-          <span className="text-sm">YouTube</span>
-        </a>
-      </GridCardNavItem>
+
+      {socialLinks.map((link, index) => {
+        const iconConfig = SOCIAL_ICON_MAP[link.platform];
+        if (!iconConfig) return null;
+
+        const IconComponent = iconConfig.icon;
+
+        return (
+          <GridCardNavItem className={cn(gridPositions[index])} key={link.url}>
+            <a
+              aria-label={`${user?.name || "Jess Lyóvson"} on ${iconConfig.label}`}
+              className="flex flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+              href={link.url}
+              rel="noopener"
+              target="_blank"
+            >
+              <IconComponent className="text-current" size={24} />
+              <span className="text-sm">{iconConfig.label}</span>
+            </a>
+          </GridCardNavItem>
+        );
+      })}
     </GridCard>
   );
 };

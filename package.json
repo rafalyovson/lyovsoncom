@@ -119,7 +119,7 @@
     "ultracite": "5.3.9"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0"
+    "node": "^22"
   },
   "packageManager": "pnpm@10.13.1"
 }

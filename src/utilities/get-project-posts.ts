@@ -26,7 +26,6 @@ export async function getProjectPosts(
       },
     },
     limit: 1,
-    sort: "createdAt:desc",
   });
 
   if (!project?.docs?.[0]) {
@@ -45,7 +44,7 @@ export async function getProjectPosts(
       },
     },
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {
@@ -95,7 +94,7 @@ export async function getPaginatedProjectPosts(
       },
     },
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {

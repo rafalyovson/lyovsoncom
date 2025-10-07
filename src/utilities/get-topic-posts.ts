@@ -44,7 +44,7 @@ export async function getTopicPosts(
       },
     },
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {

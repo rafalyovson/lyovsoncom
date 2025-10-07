@@ -1214,6 +1214,38 @@ export interface Note {
 export interface User {
   id: number;
   name?: string | null;
+  /**
+   * A short tagline or quote (like X/Facebook bio)
+   */
+  quote?: string | null;
+  /**
+   * A brief biography or description about this user
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Social media profiles and links
+   */
+  socialLinks?:
+    | {
+        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
   email?: string | null;
@@ -1859,6 +1891,15 @@ export interface ProjectsSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  quote?: T;
+  bio?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;

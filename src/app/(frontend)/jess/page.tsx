@@ -27,11 +27,12 @@ export default async function Page() {
     return notFound();
   }
 
-  const { docs, totalPages, page } = response;
+  const { posts, user } = response;
+  const { docs, totalPages, page } = posts;
 
   return (
     <>
-      <GridCardJess className="" />
+      <GridCardJess user={user} />
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>

@@ -73,7 +73,7 @@ export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
     depth: 1,
     limit,
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {
@@ -98,7 +98,7 @@ export async function getPaginatedPosts(
     limit,
     page: pageNumber,
     overrideAccess: false,
-    sort: "createdAt:desc",
+    sort: "-publishedAt",
   });
 
   return {
