@@ -15,9 +15,9 @@ export const GridCardRafa = ({ user, className }: Props) => {
   const socialLinks = user?.socialLinks?.slice(0, MAX_SOCIAL_LINKS) || [];
 
   const gridPositions = [
-    "col-start-1 col-end-2 row-start-5 row-end-6 g3:col-start-4 g3:col-end-5 g3:row-start-2 g3:row-end-3",
-    "col-start-2 col-end-3 row-start-5 row-end-6 g3:col-start-5 g3:col-end-6 g3:row-start-2 g3:row-end-3",
-    "col-start-3 col-end-4 row-start-5 row-end-6 g3:col-start-6 g3:col-end-7 g3:row-start-2 g3:row-end-3",
+    "col-start-1 col-end-2 row-start-5 row-end-6 g3:col-start-4 g3:col-end-5 g3:row-start-3 g3:row-end-4",
+    "col-start-2 col-end-3 row-start-5 row-end-6 g3:col-start-5 g3:col-end-6 g3:row-start-3 g3:row-end-4",
+    "col-start-3 col-end-4 row-start-5 row-end-6 g3:col-start-6 g3:col-end-7 g3:row-start-3 g3:row-end-4",
   ];
 
   return (
@@ -44,16 +44,18 @@ export const GridCardRafa = ({ user, className }: Props) => {
 
       <GridCardSection
         className={cn(
-          "col-start-1 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center",
-          "g3:col-start-4 g3:col-end-8 g3:row-start-1 g3:row-end-2"
+          "col-start-1 col-end-4 row-start-1 row-end-2 flex h-full flex-col items-center justify-center px-4 md:px-8",
+          "g3:col-start-4 g3:col-end-8 g3:row-start-1 g3:row-end-3"
         )}
       >
-        <h1 className={"glass-text text-center font-bold text-2xl"}>
-          {user?.name || "Rafa Lyóvson"}
-        </h1>
-        <p className={"glass-text-secondary text-center text-sm italic"}>
-          {user?.quote || "Watcher on The Road 🛣️"}
-        </p>
+        <div className="mx-auto w-full max-w-3xl space-y-4">
+          <h1 className={"glass-text text-center font-bold text-2xl md:text-3xl lg:text-4xl"}>
+            {user?.name || "Rafa Lyóvson"}
+          </h1>
+          <p className={"glass-text-secondary text-center text-base leading-relaxed"}>
+            {user?.quote || "Watcher on The Road 🛣️"}
+          </p>
+        </div>
       </GridCardSection>
 
       {socialLinks.map((link, index) => {

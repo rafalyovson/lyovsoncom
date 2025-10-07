@@ -34,16 +34,23 @@ export const GridCardHero = async ({
       >
         <Link
           aria-label={`Featured post: ${post.title}`}
-          className="group flex h-full flex-col items-center justify-center"
+          className="group flex h-full flex-col items-center justify-center px-4 md:px-8"
           href="/"
         >
-          <h1
-            className={
-              "glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
-            }
-          >
-            {post.title}
-          </h1>
+          <div className="mx-auto w-full max-w-3xl space-y-4">
+            <h1
+              className={
+                "glass-text text-center font-bold text-2xl transition-colors duration-300 md:text-3xl lg:text-4xl group-hover:text-[var(--glass-text-secondary)]"
+              }
+            >
+              {post.title}
+            </h1>
+            {post.description && (
+              <p className={"glass-text-secondary text-left text-base leading-relaxed"}>
+                {post.description}
+              </p>
+            )}
+          </div>
         </Link>
       </GridCardSection>
     </GridCard>
