@@ -18,8 +18,9 @@ export const Users: CollectionConfig = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ["name", "email"],
+    defaultColumns: ["avatar", "name", "username", "email"],
     useAsTitle: "name",
+    description: "User accounts and author profiles",
   },
   auth: {
     loginWithUsername: {
@@ -29,73 +30,109 @@ export const Users: CollectionConfig = {
   },
   fields: [
     {
-      name: "name",
-      type: "text",
-      saveToJWT: true,
-    },
-    {
-      name: "username",
-      type: "text",
-      unique: true,
-    },
-    {
-      name: "quote",
-      type: "text",
+      name: "avatar",
+      type: "upload",
+      relationTo: "media",
       required: false,
-      maxLength: 150,
       admin: {
-        description: "A short tagline or quote (like X/Facebook bio)",
-        placeholder: "Your tagline here...",
+        position: "sidebar",
+        description: "Profile picture for this user",
       },
     },
     {
-      name: "bio",
-      type: "richText",
-      required: false,
-      editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({
-              enabledHeadingSizes: ["h2", "h3"],
-            }),
-            InlineToolbarFeature(),
-          ];
-        },
-      }),
-      admin: {
-        description: "A brief biography or description about this user",
-      },
-    },
-    {
-      name: "socialLinks",
-      type: "array",
-      required: false,
-      admin: {
-        description: "Social media profiles and links",
-      },
-      fields: [
+      type: "tabs",
+      tabs: [
         {
-          name: "platform",
-          type: "select",
-          required: true,
-          options: [
-            { label: "X", value: "x" },
-            { label: "LinkedIn", value: "linkedin" },
-            { label: "GitHub", value: "github" },
-            { label: "Instagram", value: "instagram" },
-            { label: "Facebook", value: "facebook" },
-            { label: "YouTube", value: "youtube" },
-            { label: "Website", value: "website" },
+          label: "Profile",
+          description: "Basic profile information",
+          fields: [
+            {
+              name: "name",
+              type: "text",
+              saveToJWT: true,
+              required: true,
+              admin: {
+                description: "Full name of the user",
+              },
+            },
+            {
+              name: "username",
+              type: "text",
+              unique: true,
+              required: true,
+              admin: {
+                description: "Unique username for this user",
+                placeholder: "johndoe",
+              },
+            },
+            {
+              name: "quote",
+              type: "text",
+              required: false,
+              maxLength: 150,
+              admin: {
+                description: "A short tagline or quote (like X/Facebook bio)",
+                placeholder: "Your tagline here...",
+              },
+            },
           ],
         },
         {
-          name: "url",
-          type: "text",
-          required: true,
-          admin: {
-            placeholder: "https://...",
-          },
+          label: "Social",
+          description: "Biography and social media links",
+          fields: [
+            {
+              name: "bio",
+              type: "richText",
+              required: false,
+              editor: lexicalEditor({
+                features: ({ rootFeatures }) => {
+                  return [
+                    ...rootFeatures,
+                    HeadingFeature({
+                      enabledHeadingSizes: ["h2", "h3"],
+                    }),
+                    InlineToolbarFeature(),
+                  ];
+                },
+              }),
+              admin: {
+                description: "A brief biography or description about this user",
+              },
+            },
+            {
+              name: "socialLinks",
+              type: "array",
+              required: false,
+              admin: {
+                description: "Social media profiles and links",
+              },
+              fields: [
+                {
+                  name: "platform",
+                  type: "select",
+                  required: true,
+                  options: [
+                    { label: "X", value: "x" },
+                    { label: "LinkedIn", value: "linkedin" },
+                    { label: "GitHub", value: "github" },
+                    { label: "Instagram", value: "instagram" },
+                    { label: "Facebook", value: "facebook" },
+                    { label: "YouTube", value: "youtube" },
+                    { label: "Website", value: "website" },
+                  ],
+                },
+                {
+                  name: "url",
+                  type: "text",
+                  required: true,
+                  admin: {
+                    placeholder: "https://...",
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },

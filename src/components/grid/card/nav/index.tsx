@@ -16,7 +16,9 @@ export const GridCardNav = ({ className }: { className?: string }) => {
     search ? "search" : "hero"
   );
   return (
-    <GridCard className={`  ${className}`}>
+    <GridCard
+      className={`col-start-1 col-end-2 row-start-1 row-end-2 self-start ${className}`}
+    >
       {
         {
           hero: <HeroMode setMenuMode={setMenuMode} />,

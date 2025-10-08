@@ -1208,12 +1208,22 @@ export interface Note {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * User accounts and author profiles
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
   id: number;
-  name?: string | null;
+  /**
+   * Profile picture for this user
+   */
+  avatar?: (number | null) | Media;
+  /**
+   * Full name of the user
+   */
+  name: string;
+  username: string;
   /**
    * A short tagline or quote (like X/Facebook bio)
    */
@@ -1249,7 +1259,6 @@ export interface User {
   updatedAt: string;
   createdAt: string;
   email?: string | null;
-  username: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
   salt?: string | null;
@@ -1890,7 +1899,9 @@ export interface ProjectsSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  avatar?: T;
   name?: T;
+  username?: T;
   quote?: T;
   bio?: T;
   socialLinks?:
@@ -1903,7 +1914,6 @@ export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
-  username?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
   salt?: T;
