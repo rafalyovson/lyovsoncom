@@ -5,11 +5,11 @@ import {
 } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
-import type { Post, User } from "@/payload-types";
+import type { Lyovson, Post } from "@/payload-types";
 
 type AuthorPostsResponse = {
   posts: PaginatedDocs<Post>;
-  user: User;
+  user: Lyovson;
 };
 
 export async function getAuthorPosts(
@@ -17,15 +17,15 @@ export async function getAuthorPosts(
 ): Promise<AuthorPostsResponse | null> {
   "use cache";
   cacheTag("posts");
-  cacheTag("users");
-  cacheTag(`author-${username}`);
+  cacheTag("lyovsons");
+  cacheTag(`lyovson-${username}`);
   cacheLife("posts");
 
   const payload = await getPayload({ config: configPromise });
 
-  // First get the user
+  // First get the lyovson
   const userResult = await payload.find({
-    collection: "users",
+    collection: "lyovsons",
     where: {
       username: {
         equals: username,
@@ -38,7 +38,7 @@ export async function getAuthorPosts(
     return null;
   }
 
-  const user = userResult.docs[0] as User;
+  const user = userResult.docs[0] as Lyovson;
   const authorId = user.id;
 
   // Then query posts using the author ID

@@ -43,6 +43,6 @@ export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
 export { GridCardSubscribe } from "./card/subscribe";
 export { GridCardSubscribeConfirmed } from "./card/subscribe/confirmed";
-export { GridCardJess, GridCardRafa } from "./card/user";
+export { GridCardJess, GridCardRafa, GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";
 export { SkeletonCard, SkeletonGrid } from "./skeleton";

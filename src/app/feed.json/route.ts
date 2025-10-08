@@ -66,19 +66,13 @@ export async function GET(_request: NextRequest) {
     // Add posts to feed (same logic as RSS)
     posts.docs
       .filter((post) => {
-        return (
-          post.slug &&
-          post.project &&
-          typeof post.project === "object" &&
-          "slug" in post.project &&
-          post.project.slug
-        );
+        return post.slug;
       })
       .forEach((post) => {
         const title = post.title;
         const description = post.description || "";
+        const link = `${SITE_URL}/posts/${post.slug}`;
         const projectSlug = (post.project as any)?.slug || "";
-        const link = `${SITE_URL}/${projectSlug}/${post.slug}`;
         const author = post.populatedAuthors?.[0]?.name || "Lyovson Team";
 
         let contentText = description;

@@ -11,6 +11,7 @@ import sharp from "sharp"; // sharp-import
 import { Books } from "@/collections/Books";
 import { Contacts } from "@/collections/Contacts";
 import { Links } from "@/collections/Links";
+import { Lyovsons } from "@/collections/Lyovsons";
 import { Media } from "@/collections/Media";
 import { Movies } from "@/collections/Movies";
 import { Music } from "@/collections/Music";
@@ -21,7 +22,6 @@ import { Posts } from "@/collections/Posts";
 import { Projects } from "@/collections/Projects";
 import { Topics } from "@/collections/Topics";
 import { TvShows } from "@/collections/TvShows";
-import { Users } from "@/collections/Users";
 import { VideoGames } from "@/collections/VideoGames";
 import { defaultLexical } from "@/fields/defaultLexical";
 import { plugins } from "@/plugins";
@@ -45,7 +45,7 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    user: Users.slug,
+    user: Lyovsons.slug,
     components: {
       graphics: {
         Icon: "@/components/admin/icon",
@@ -128,7 +128,7 @@ export default buildConfig({
     Media,
     Topics,
     Projects,
-    Users,
+    Lyovsons,
     Contacts,
     Books,
     Movies,

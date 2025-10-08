@@ -21,10 +21,7 @@ export const GridCardPostSearch = ({
 }: GridCardPostProps) => {
   const { project, featuredImage, title, slug } = post;
 
-  const postUrl =
-    project && typeof project === "object"
-      ? `/${project.slug}/${slug}`
-      : `/posts/${slug}`;
+  const postUrl = `/posts/${slug}`;
 
   return (
     <Link className="group glass-interactive" href={postUrl}>

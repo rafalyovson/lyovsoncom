@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { getPayload } from "payload";
-import type { User } from "@/payload-types";
+import type { Lyovson } from "@/payload-types";
 
 // Importing config this way to avoid pulling in collection hooks
 async function getPayloadInstance() {
@@ -37,7 +37,7 @@ export async function getAuthAndEditUrl(slug?: string, pathname?: string) {
     }
 
     return {
-      user: authResult.user as User,
+      user: authResult.user as Lyovson,
       editUrl,
     };
   } catch (_error) {

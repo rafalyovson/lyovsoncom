@@ -12,9 +12,8 @@ import { GridCardHero } from "src/components/grid/card/hero";
 import { GridCardRelatedPosts } from "@/components/grid/card/related";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { Media, Post, User } from "@/payload-types";
-import { getPostByProjectAndSlug } from "@/utilities/get-post";
-import { getProject } from "@/utilities/get-project";
+import type { Lyovson, Media, Post } from "@/payload-types";
+import { getPost } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
 // Lexical content node types
@@ -58,7 +57,6 @@ function _extractTextFromContent(content: LexicalContentNode): string {
 
 type Args = {
   params: Promise<{
-    project: string;
     slug: string;
   }>;
 };
@@ -66,30 +64,21 @@ type Args = {
 export default async function PostPage({ params: paramsPromise }: Args) {
   "use cache";
 
-  const { project: projectSlug, slug } = await paramsPromise;
+  const { slug } = await paramsPromise;
 
-  // Add cache tags for this specific post and project
+  // Add cache tags for this specific post
   cacheTag("posts");
   cacheTag(`post-${slug}`);
-  cacheTag(`project-${projectSlug}`);
   cacheLife("posts");
 
-  const project = await getProject(projectSlug);
-  if (!project) {
-    return notFound();
-  }
-
-  const post = await getPostByProjectAndSlug(projectSlug, slug);
+  const post = await getPost(slug);
   if (!post?.content) {
     return notFound();
   }
 
   return (
     <>
-      <SchemaArticle
-        post={post}
-        url={`https://lyovson.com/${projectSlug}/${slug}`}
-      />
+      <SchemaArticle post={post} url={`https://lyovson.com/posts/${slug}`} />
 
       <GridCardHero
         className={
@@ -132,41 +121,24 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 export async function generateStaticParams() {
   "use cache";
   cacheTag("posts");
-  cacheTag("projects");
   cacheLife("static"); // Build-time data doesn't change often
 
   const payload = await getPayload({ config: configPromise });
-  const projects = await payload.find({
-    collection: "projects",
+  const posts = await payload.find({
+    collection: "posts",
+    where: {
+      _status: {
+        equals: "published",
+      },
+    },
     limit: 1000,
   });
 
-  const paths: { project: string; slug: string }[] = [];
-
-  for (const project of projects.docs) {
-    if (typeof project === "object" && "slug" in project && project.slug) {
-      const posts = await payload.find({
-        collection: "posts",
-        where: {
-          "project.id": {
-            equals: project.id,
-          },
-        },
-        limit: 1000,
-      });
-
-      for (const post of posts.docs) {
-        if (typeof post === "object" && "slug" in post && post.slug) {
-          paths.push({
-            project: project.slug as string,
-            slug: post.slug as string,
-          });
-        }
-      }
-    }
-  }
-
-  return paths;
+  return posts.docs
+    .filter((post) => typeof post === "object" && "slug" in post && post.slug)
+    .map((post) => ({
+      slug: (post as { slug: string }).slug,
+    }));
 }
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Metadata generation requires many conditional fields for SEO/social media
@@ -175,19 +147,18 @@ export async function generateMetadata({
 }: Args): Promise<Metadata> {
   "use cache";
 
-  const { project: projectSlug, slug } = await paramsPromise;
+  const { slug } = await paramsPromise;
 
   // Add cache tags for metadata
   cacheTag("posts");
   cacheTag(`post-${slug}`);
-  cacheTag(`project-${projectSlug}`);
   cacheLife("posts");
 
-  const post = await getPostByProjectAndSlug(projectSlug, slug);
+  const post = await getPost(slug);
   if (!post) {
     return {
       title: "Not Found | Lyovson.com",
-      description: "The requested project could not be found",
+      description: "The requested post could not be found",
     };
   }
 
@@ -220,7 +191,7 @@ export async function generateMetadata({
     .filter(Boolean);
 
   // Relative URL path - metadataBase will be prepended automatically
-  const canonicalUrl = `/${projectSlug}/${slug}`;
+  const canonicalUrl = `/posts/${slug}`;
 
   return {
     title: `${title} | Lyovson.com`,
@@ -335,7 +306,7 @@ function SchemaArticle({ post, url }: { post: Post; url: string }) {
       post.populatedAuthors
         ?.map((a) => {
           if (typeof a === "object" && a !== null) {
-            const author = a as Partial<User> & {
+            const author = a as Partial<Lyovson> & {
               socialLinks?: Record<string, string>;
             };
             return {

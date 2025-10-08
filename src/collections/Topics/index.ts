@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
@@ -62,6 +62,9 @@ export const Topics: CollectionConfig = {
         revalidateTag(`topic-${doc.slug}`);
         revalidateTag("posts"); // Posts may reference this topic
         revalidateTag("sitemap");
+
+        // Revalidate topic path
+        revalidatePath(`/topics/${doc.slug}`);
       },
     ],
     afterDelete: [
@@ -75,6 +78,9 @@ export const Topics: CollectionConfig = {
         revalidateTag(`topic-${doc?.slug}`);
         revalidateTag("posts"); // Posts may reference this topic
         revalidateTag("sitemap");
+
+        // Revalidate topic path
+        revalidatePath(`/topics/${doc?.slug}`);
       },
     ],
   },

@@ -77,13 +77,36 @@ export async function generateMetadata({
     };
   }
 
+  const description =
+    project.description || `Posts and content from the ${project.name} project`;
+
   return {
     title: `${project.name} | Lyovson.com`,
-    description:
-      project.description ||
-      `Posts and content from the ${project.name} project`,
+    description,
+    keywords: [
+      project.name,
+      "project",
+      "collection",
+      "posts",
+      "articles",
+      "Lyovson",
+    ],
     alternates: {
-      canonical: `/${projectSlug}`,
+      canonical: `/projects/${projectSlug}`,
+    },
+    openGraph: {
+      title: `${project.name}`,
+      description,
+      type: "website",
+      url: `/projects/${projectSlug}`,
+      siteName: "Lyovson.com",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.name}`,
+      description,
+      site: "@lyovson",
+      creator: "@lyovson",
     },
   };
 }

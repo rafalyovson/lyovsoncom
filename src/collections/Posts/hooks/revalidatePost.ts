@@ -39,7 +39,7 @@ async function getAuthorUsernames(
       } else if (typeof a === "number" || typeof a === "string") {
         try {
           const user = await req.payload.findByID({
-            collection: "users",
+            collection: "lyovsons",
             id: a as any,
           });
           const u = user?.username;
@@ -64,10 +64,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   const { payload } = req;
 
   if (doc._status === "published") {
-    const path =
-      doc.project && typeof doc.project === "object"
-        ? `/${doc.project.slug}/${doc.slug}`
-        : `/posts/${doc.slug}`;
+    const path = `/posts/${doc.slug}`;
 
     payload.logger.info(`Revalidating post at path: ${path}`);
 
@@ -93,7 +90,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     if (doc.project && typeof doc.project === "object") {
       revalidateTag(`project-${doc.project.slug}`);
       // Also revalidate the project landing page path if present
-      revalidatePath(`/${doc.project.slug}`);
+      revalidatePath(`/projects/${doc.project.slug}`);
     }
 
     // Invalidate author pages/tags for all authors on this post
@@ -124,10 +121,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
   // If the post was previously published, we need to revalidate the old path
   if (previousDoc?._status === "published" && doc._status !== "published") {
-    const oldPath =
-      previousDoc.project && typeof previousDoc.project === "object"
-        ? `/${previousDoc.project.slug}/${previousDoc.slug}`
-        : `/posts/${previousDoc.slug}`;
+    const oldPath = `/posts/${previousDoc.slug}`;
 
     payload.logger.info(`Revalidating old post at path: ${oldPath}`);
 
@@ -143,7 +137,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     // Also revalidate old project and author pages
     if (previousDoc.project && typeof previousDoc.project === "object") {
       revalidateTag(`project-${previousDoc.project.slug}`);
-      revalidatePath(`/${previousDoc.project.slug}`);
+      revalidatePath(`/projects/${previousDoc.project.slug}`);
     }
 
     try {
@@ -179,10 +173,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   doc,
   req,
 }) => {
-  const path =
-    doc?.project && typeof doc.project === "object"
-      ? `/${doc.project.slug}/${doc.slug}`
-      : `/posts/${doc?.slug}`;
+  const path = `/posts/${doc?.slug}`;
 
   revalidatePath(path);
   revalidateTag("posts");
@@ -196,7 +187,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   // If post belonged to a project, invalidate project cache
   if (doc?.project && typeof doc.project === "object") {
     revalidateTag(`project-${doc.project.slug}`);
-    revalidatePath(`/${doc.project.slug}`);
+    revalidatePath(`/projects/${doc.project.slug}`);
   }
 
   // Invalidate author pages/tags

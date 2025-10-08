@@ -3,13 +3,13 @@ import {
   InlineToolbarFeature,
   lexicalEditor,
 } from "@payloadcms/richtext-lexical";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
 
-export const Users: CollectionConfig = {
-  slug: "users",
+export const Lyovsons: CollectionConfig = {
+  slug: "lyovsons",
   access: {
     admin: authenticated,
     create: authenticated,
@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
   admin: {
     defaultColumns: ["avatar", "name", "username", "email"],
     useAsTitle: "name",
-    description: "User accounts and author profiles",
+    description: "Lyovson family members",
   },
   auth: {
     loginWithUsername: {
@@ -37,6 +37,21 @@ export const Users: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "Profile picture for this user",
+      },
+    },
+    {
+      name: "font",
+      type: "select",
+      required: false,
+      defaultValue: "sans",
+      options: [
+        { label: "Sans Serif", value: "sans" },
+        { label: "Serif", value: "serif" },
+        { label: "Monospace", value: "mono" },
+      ],
+      admin: {
+        position: "sidebar",
+        description: "Preferred font family for this user's page",
       },
     },
     {
@@ -143,10 +158,14 @@ export const Users: CollectionConfig = {
         if (doc.username) {
           req.payload.logger.info(`Revalidating author: ${doc.username}`);
 
-          // Revalidate user-related cache tags
-          revalidateTag("users");
-          revalidateTag(`author-${doc.username}`);
+          // Revalidate lyovson-related cache tags
+          revalidateTag("lyovsons");
+          revalidateTag(`lyovson-${doc.username}`);
           revalidateTag("posts"); // Posts may reference this author
+          revalidateTag("sitemap");
+
+          // Revalidate author page path
+          revalidatePath(`/${doc.username}`);
         }
       },
     ],
@@ -157,10 +176,14 @@ export const Users: CollectionConfig = {
             `Revalidating after user deletion: ${doc.username}`
           );
 
-          // Revalidate user-related cache tags
-          revalidateTag("users");
-          revalidateTag(`author-${doc.username}`);
+          // Revalidate lyovson-related cache tags
+          revalidateTag("lyovsons");
+          revalidateTag(`lyovson-${doc.username}`);
           revalidateTag("posts"); // Posts may reference this author
+          revalidateTag("sitemap");
+
+          // Revalidate author page path
+          revalidatePath(`/${doc.username}`);
         }
       },
     ],

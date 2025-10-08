@@ -11,3 +11,9 @@ public/media/
 
 public/robots.txt
 .env*.local
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# Payload auto-generated files
+src/payload-generated-schema.ts

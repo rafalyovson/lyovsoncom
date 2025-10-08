@@ -31,10 +31,7 @@ export const GridCardPostFull = ({
     slug,
   } = post;
 
-  const postUrl =
-    project && typeof project === "object"
-      ? `/${project.slug}/${slug}`
-      : `/posts/${slug}`;
+  const postUrl = `/posts/${slug}`;
 
   return (
     <GridCard className={className}>
@@ -147,7 +144,7 @@ export const GridCardPostFull = ({
           <Link
             aria-label={`View ${project.name} project`}
             className="glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
-            href={{ pathname: `/${project.slug}` }}
+            href={{ pathname: `/projects/${project.slug}` }}
             key={project.id}
           >
             <BriefcaseBusiness aria-hidden="true" className="h-5 w-5" />

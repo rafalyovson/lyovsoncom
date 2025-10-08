@@ -12,44 +12,95 @@ const redirects = () => {
     source: "/:path((?!ie-incompatible.html$).*)", // all pages except the incompatibility page
   };
 
+  // All specific post redirects - Generated from database query
+  // This ensures every published post has an explicit redirect
   const specificPostRedirects = [
+    // media-musings posts
     {
       source:
-        "/posts/the-truth-vs-an-opinion-how-to-become-the-media-that-wont-suck",
-      destination:
-        "/media-musings/the-truth-vs-an-opinion-how-to-become-the-media-that-wont-suck",
-      permanent: true,
-    },
-    {
-      source: "/posts/bye-bye-apple-tv",
-      destination: "/media-musings/bye-bye-apple-tv",
-      permanent: true,
-    },
-    {
-      source: "/posts/slow-horses-personified",
-      destination: "/media-musings/slow-horses-personified",
-      permanent: true,
-    },
-    {
-      source: "/posts/a-vardavar-tale-my-water-drenched-childhood-trauma",
-      destination:
         "/media-musings/a-vardavar-tale-my-water-drenched-childhood-trauma",
+      destination: "/posts/a-vardavar-tale-my-water-drenched-childhood-trauma",
       permanent: true,
     },
     {
-      source: "/posts/stardew-valley-sucks-you-in",
-      destination: "/media-musings/stardew-valley-sucks-you-in",
+      source: "/media-musings/bye-bye-apple-tv",
+      destination: "/posts/bye-bye-apple-tv",
       permanent: true,
     },
     {
-      source: "/posts/quell-the-sequels-the-capitalism-of-familiarity",
+      source: "/media-musings/more-work-vs-good-work",
+      destination: "/posts/more-work-vs-good-work",
+      permanent: true,
+    },
+    {
+      source: "/media-musings/quell-the-sequels-the-capitalism-of-familiarity",
+      destination: "/posts/quell-the-sequels-the-capitalism-of-familiarity",
+      permanent: true,
+    },
+    {
+      source: "/media-musings/slow-horses-personified",
+      destination: "/posts/slow-horses-personified",
+      permanent: true,
+    },
+    {
+      source: "/media-musings/stardew-valley-sucks-you-in",
+      destination: "/posts/stardew-valley-sucks-you-in",
+      permanent: true,
+    },
+    {
+      source: "/media-musings/stress--success",
+      destination: "/posts/stress--success",
+      permanent: true,
+    },
+    {
+      source:
+        "/media-musings/the-truth-vs-an-opinion-how-to-become-the-media-that-wont-suck",
       destination:
-        "/media-musings/quell-the-sequels-the-capitalism-of-familiarity",
+        "/posts/the-truth-vs-an-opinion-how-to-become-the-media-that-wont-suck",
+      permanent: true,
+    },
+    // x-files posts
+    {
+      source: "/x-files/first-things-first-x-articles",
+      destination: "/posts/first-things-first-x-articles",
+      permanent: true,
+    },
+    {
+      source: "/x-files/in-what-we-trust",
+      destination: "/posts/in-what-we-trust",
+      permanent: true,
+    },
+    {
+      source: "/x-files/omarchy-btw",
+      destination: "/posts/omarchy-btw",
+      permanent: true,
+    },
+    {
+      source: "/x-files/siri--gemini-somehow-it-makes-sense",
+      destination: "/posts/siri--gemini-somehow-it-makes-sense",
       permanent: true,
     },
   ];
 
-  const allRedirects = [internetExplorerRedirect, ...specificPostRedirects];
+  // Redirect old project index pages to new format
+  const projectIndexRedirects = [
+    {
+      source: "/media-musings",
+      destination: "/projects/media-musings",
+      permanent: true,
+    },
+    {
+      source: "/x-files",
+      destination: "/projects/x-files",
+      permanent: true,
+    },
+  ];
+
+  const allRedirects = [
+    internetExplorerRedirect,
+    ...specificPostRedirects,
+    ...projectIndexRedirects,
+  ];
 
   return allRedirects;
 };

@@ -1,4 +1,4 @@
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
@@ -64,6 +64,10 @@ export const Projects: CollectionConfig = {
         revalidateTag("posts"); // Posts may reference this project
         revalidateTag("sitemap");
         revalidateTag("playground"); // Playground uses project data
+
+        // Revalidate project paths
+        revalidatePath(`/projects/${doc.slug}`);
+        revalidatePath("/projects"); // Listing page
       },
     ],
     afterDelete: [
@@ -78,6 +82,10 @@ export const Projects: CollectionConfig = {
         revalidateTag("posts"); // Posts may reference this project
         revalidateTag("sitemap");
         revalidateTag("playground"); // Playground uses project data
+
+        // Revalidate project paths
+        revalidatePath(`/projects/${doc?.slug}`);
+        revalidatePath("/projects"); // Listing page
       },
     ],
   },

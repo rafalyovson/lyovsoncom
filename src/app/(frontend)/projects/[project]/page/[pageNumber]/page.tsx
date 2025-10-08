@@ -98,7 +98,7 @@ export async function generateMetadata({
     title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
     description: project.description || `Posts from ${projectName}`,
     alternates: {
-      canonical: `/${projectSlug}/page/${pageNumber}`,
+      canonical: `/projects/${projectSlug}/page/${pageNumber}`,
     },
   };
 }

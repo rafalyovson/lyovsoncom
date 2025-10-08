@@ -114,17 +114,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Add posts with enhanced metadata
   posts
-    .filter((post): post is Post & { project: Project } =>
-      Boolean(
-        post?.slug &&
-          post?.project &&
-          typeof post.project === "object" &&
-          "slug" in post.project
-      )
-    )
+    .filter((post): post is Post => Boolean(post?.slug))
     .forEach((post) => {
       routes.push({
-        url: `${SITE_URL}/${post.project.slug}/${post.slug}`,
+        url: `${SITE_URL}/posts/${post.slug}`,
         lastModified: new Date(post.updatedAt),
         changeFrequency: "monthly", // Articles change less frequently after publication
         priority: 0.8,
@@ -136,7 +129,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .filter((project): project is Project => Boolean(project?.slug))
     .forEach((project) => {
       routes.push({
-        url: `${SITE_URL}/${project.slug}`,
+        url: `${SITE_URL}/projects/${project.slug}`,
         lastModified: new Date(project.updatedAt),
         changeFrequency: "weekly",
         priority: 0.9,

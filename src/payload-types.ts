@@ -63,7 +63,7 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
+    lyovsons: LyovsonAuthOperations;
   };
   blocks: {};
   collections: {
@@ -71,7 +71,7 @@ export interface Config {
     media: Media;
     topics: Topic;
     projects: Project;
-    users: User;
+    lyovsons: Lyovson;
     contacts: Contact;
     books: Book;
     movies: Movie;
@@ -96,7 +96,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     topics: TopicsSelect<false> | TopicsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
+    lyovsons: LyovsonsSelect<false> | LyovsonsSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
     books: BooksSelect<false> | BooksSelect<true>;
     movies: MoviesSelect<false> | MoviesSelect<true>;
@@ -121,15 +121,15 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: User & {
-    collection: 'users';
+  user: Lyovson & {
+    collection: 'lyovsons';
   };
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
-export interface UserAuthOperations {
+export interface LyovsonAuthOperations {
   forgotPassword:
     | {
         email: string;
@@ -297,7 +297,7 @@ export interface Post {
   /**
    * Who authored this post
    */
-  authors?: (number | User)[] | null;
+  authors?: (number | Lyovson)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -1208,17 +1208,21 @@ export interface Note {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * User accounts and author profiles
+ * Lyovson family members
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "lyovsons".
  */
-export interface User {
+export interface Lyovson {
   id: number;
   /**
    * Profile picture for this user
    */
   avatar?: (number | null) | Media;
+  /**
+   * Preferred font family for this user's page
+   */
+  font?: ('sans' | 'serif' | 'mono') | null;
   /**
    * Full name of the user
    */
@@ -1633,8 +1637,8 @@ export interface PayloadLockedDocument {
         value: number | Project;
       } | null)
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'lyovsons';
+        value: number | Lyovson;
       } | null)
     | ({
         relationTo: 'contacts';
@@ -1694,8 +1698,8 @@ export interface PayloadLockedDocument {
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
   };
   updatedAt: string;
   createdAt: string;
@@ -1707,8 +1711,8 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'users';
-    value: number | User;
+    relationTo: 'lyovsons';
+    value: number | Lyovson;
   };
   key?: string | null;
   value?:
@@ -1896,10 +1900,11 @@ export interface ProjectsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "lyovsons_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface LyovsonsSelect<T extends boolean = true> {
   avatar?: T;
+  font?: T;
   name?: T;
   username?: T;
   quote?: T;

@@ -4,13 +4,13 @@ export { GridCardRafa } from "./rafa";
 import Image from "next/image";
 import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
-import type { Media, User } from "@/payload-types";
+import type { Lyovson, Media } from "@/payload-types";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 const MAX_SOCIAL_LINKS = 3;
 
 type Props = {
-  user?: User;
+  user?: Lyovson;
   className?: string;
 };
 
