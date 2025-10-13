@@ -87,12 +87,14 @@ export async function GET(_request: NextRequest) {
       // Discovery
       sitemap: `${SITE_URL}/sitemap.xml`,
       robots: `${SITE_URL}/robots.txt`,
+      llmsTxt: `${SITE_URL}/llms.txt`,
     },
 
     // Documentation for AI systems
     documentation: {
       human: `${SITE_URL}/ai-docs`,
       machine: `${SITE_URL}/api/docs`,
+      llmsTxt: `${SITE_URL}/llms.txt`,
       specification: "openapi-3.0.3",
     },
 
@@ -134,7 +136,7 @@ export async function GET(_request: NextRequest) {
     },
 
     // Last updated
-    lastUpdated: "2025-01-16T12:00:00Z",
+    lastUpdated: "2025-01-14T12:00:00Z",
     version: "1.0",
     generator: "Next.js",
   };

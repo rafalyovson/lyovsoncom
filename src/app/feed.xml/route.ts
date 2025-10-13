@@ -7,6 +7,7 @@ import {
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
+import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
 export async function GET(_request: NextRequest) {
   "use cache";
@@ -79,8 +80,13 @@ export async function GET(_request: NextRequest) {
             : "";
         const author = post.populatedAuthors?.[0]?.name || "Lyovson Team";
 
-        // Create clean content excerpt for RSS
-        let contentText = description;
+        // Extract full content from Lexical format for AI consumption
+        const fullContent = post.content
+          ? extractLexicalText(post.content as any)
+          : "";
+
+        // Use description as summary, full content as main content
+        let contentText = description || fullContent;
         if (!contentText) {
           contentText = "Read the full article on Lyovson.com";
         }
@@ -90,7 +96,7 @@ export async function GET(_request: NextRequest) {
           id: link,
           link,
           description: contentText,
-          content: contentText,
+          content: fullContent || contentText,
           author: [
             {
               name: author,
@@ -151,43 +157,4 @@ export async function GET(_request: NextRequest) {
       },
     });
   }
-}
-
-// Lexical content node types
-type LexicalContentNode =
-  | string
-  | {
-      text?: string;
-      children?: LexicalContentNode[];
-      content?: LexicalContentNode;
-    }
-  | LexicalContentNode[];
-
-// Helper function to extract text from rich content
-function _extractTextFromContent(content: LexicalContentNode): string {
-  if (!content) {
-    return "";
-  }
-
-  if (typeof content === "string") {
-    return content;
-  }
-
-  if (Array.isArray(content)) {
-    return content.map(_extractTextFromContent).join(" ");
-  }
-
-  if (typeof content === "object") {
-    if (content.text) {
-      return content.text;
-    }
-    if (content.children) {
-      return _extractTextFromContent(content.children);
-    }
-    if (content.content) {
-      return _extractTextFromContent(content.content);
-    }
-  }
-
-  return "";
 }

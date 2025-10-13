@@ -8,7 +8,10 @@ import { Suspense } from "react";
 
 import { GridCardProject } from "@/components/grid/card/project";
 import { SkeletonGrid } from "@/components/grid/skeleton";
+import { JsonLd } from "@/components/JsonLd";
+import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProjects } from "@/utilities/get-projects";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export default async function Page() {
   "use cache";
@@ -25,12 +28,28 @@ export default async function Page() {
     return notFound();
   }
 
+  // Generate CollectionPage schema
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: "Projects & Research",
+    description:
+      "Explore projects and research covering technology, programming, design, and creative endeavors.",
+    url: `${getServerSideURL()}/projects`,
+    itemCount: response.length,
+    items: response.map((project) => ({
+      url: `${getServerSideURL()}/projects/${project.slug}`,
+    })),
+  });
+
   return (
-    <Suspense fallback={<SkeletonGrid />}>
-      {response.map((project) => (
-        <GridCardProject key={project.id} project={project} />
-      ))}
-    </Suspense>
+    <>
+      <JsonLd data={collectionPageSchema} />
+
+      <Suspense fallback={<SkeletonGrid />}>
+        {response.map((project) => (
+          <GridCardProject key={project.id} project={project} />
+        ))}
+      </Suspense>
+    </>
   );
 }
 

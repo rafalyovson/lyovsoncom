@@ -6,6 +6,7 @@ import {
 } from "next/cache";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
 export async function GET(_request: NextRequest) {
   "use cache";
@@ -75,9 +76,12 @@ export async function GET(_request: NextRequest) {
         const projectSlug = (post.project as any)?.slug || "";
         const author = post.populatedAuthors?.[0]?.name || "Lyovson Team";
 
-        let contentText = description;
-        const fullContent: string = "";
+        // Extract full content from Lexical format for AI consumption
+        const fullContent = post.content
+          ? extractLexicalText(post.content as any)
+          : "";
 
+        let contentText = description || fullContent;
         if (!contentText) {
           contentText = "Read the full article on Lyovson.com";
         }
@@ -180,32 +184,4 @@ export async function GET(_request: NextRequest) {
       },
     });
   }
-}
-
-function _extractTextFromContent(content: any): string {
-  if (!content) {
-    return "";
-  }
-
-  if (typeof content === "string") {
-    return content;
-  }
-
-  if (Array.isArray(content)) {
-    return content.map(_extractTextFromContent).join(" ");
-  }
-
-  if (typeof content === "object") {
-    if (content.text) {
-      return content.text;
-    }
-    if (content.children) {
-      return _extractTextFromContent(content.children);
-    }
-    if (content.content) {
-      return _extractTextFromContent(content.content);
-    }
-  }
-
-  return "";
 }

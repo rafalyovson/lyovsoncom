@@ -7,9 +7,12 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { GridCardUser } from "@/components/grid/card/user";
+import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import type { Lyovson, Media } from "@/payload-types";
+import { generatePersonSchema } from "@/utilities/generate-json-ld";
 import { getAuthorPosts } from "@/utilities/get-author-posts";
+import { getServerSideURL } from "@/utilities/getURL";
 
 type PageProps = {
   params: Promise<{ lyovson: string }>;
@@ -34,8 +37,35 @@ export default async function Page({ params }: PageProps) {
 
   const { user } = response;
 
+  // Extract avatar URL for schema
+  const avatarMedia: Media | null =
+    user?.avatar && typeof user.avatar === "object"
+      ? (user.avatar as Media)
+      : null;
+  const avatarUrl = avatarMedia?.url
+    ? `${getServerSideURL()}${avatarMedia.url}`
+    : undefined;
+
+  // Extract social links
+  const socialLinks = {
+    twitter: user.socialLinks?.find((s) => s.platform === "x")?.url,
+    github: user.socialLinks?.find((s) => s.platform === "github")?.url,
+    linkedin: user.socialLinks?.find((s) => s.platform === "linkedin")?.url,
+  };
+
+  // Generate Person schema
+  const personSchema = generatePersonSchema({
+    name: user.name,
+    username: user.username,
+    bio: user.quote || undefined,
+    avatarUrl,
+    socialLinks,
+  });
+
   return (
     <>
+      <JsonLd data={personSchema} />
+
       <GridCardUser
         className={
           "g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 g2:row-end-2 g4:self-start"

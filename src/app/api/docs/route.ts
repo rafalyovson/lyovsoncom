@@ -148,6 +148,12 @@ export async function GET(_request: NextRequest) {
             "Complete sitemap with all public pages, updated every 2 hours",
         },
 
+        llmsTxt: {
+          url: `${SITE_URL}/llms.txt`,
+          description:
+            "AI discovery guide following llms.txt standard (2025) - comprehensive guide for AI systems and language models",
+        },
+
         search: {
           url: `${SITE_URL}/search`,
           api: `${SITE_URL}/api/search`,

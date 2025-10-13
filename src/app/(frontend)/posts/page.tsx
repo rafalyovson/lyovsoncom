@@ -8,9 +8,12 @@ import { Suspense } from "react";
 
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestPosts } from "@/utilities/get-post";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export default async function Page() {
   "use cache";
@@ -26,10 +29,24 @@ export default async function Page() {
     return notFound();
   }
 
-  const { docs, totalPages, page } = response;
+  const { docs, totalPages, page, totalDocs } = response;
+
+  // Generate CollectionPage schema
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: "Posts & Articles",
+    description:
+      "Browse all posts and articles covering programming, design, philosophy, technology, and creative projects.",
+    url: `${getServerSideURL()}/posts`,
+    itemCount: totalDocs,
+    items: docs.map((post) => ({
+      url: `${getServerSideURL()}/posts/${post.slug}`,
+    })),
+  });
 
   return (
     <>
+      <JsonLd data={collectionPageSchema} />
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>

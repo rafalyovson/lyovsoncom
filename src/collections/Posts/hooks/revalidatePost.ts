@@ -112,10 +112,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         );
       }
     } catch (e) {
-      payload.logger.error(
-        "Failed to update author pages for post change",
-        e
-      );
+      payload.logger.error("Failed to update author pages for post change", e);
     }
   }
 
@@ -123,7 +120,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   if (previousDoc?._status === "published" && doc._status !== "published") {
     const oldPath = `/posts/${previousDoc.slug}`;
 
-    payload.logger.info(`Updating cache for unpublished post at path: ${oldPath}`);
+    payload.logger.info(
+      `Updating cache for unpublished post at path: ${oldPath}`
+    );
 
     revalidatePath(oldPath);
     updateTag("posts");

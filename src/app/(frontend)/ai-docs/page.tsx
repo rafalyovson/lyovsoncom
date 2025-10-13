@@ -117,6 +117,12 @@ export default function AIDocsPage() {
                     Robots.txt
                   </ExternalLink>
                 </li>
+                <li>
+                  🧠{" "}
+                  <ExternalLink href={`${SITE_URL}/llms.txt`}>
+                    llms.txt (AI Discovery)
+                  </ExternalLink>
+                </li>
               </ul>
             </div>
             <div>

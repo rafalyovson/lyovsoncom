@@ -10,9 +10,14 @@ import { Suspense } from "react";
 import { GridCardHero } from "src/components/grid/card/hero";
 
 import { GridCardRelatedPosts } from "@/components/grid/card/related";
+import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Lyovson, Media, Post } from "@/payload-types";
+import {
+  generateArticleSchema,
+  generateBreadcrumbSchema,
+} from "@/utilities/generate-json-ld";
 import { getPost } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
@@ -76,9 +81,52 @@ export default async function PostPage({ params: paramsPromise }: Args) {
     return notFound();
   }
 
+  // Extract data for JSON-LD schemas
+  const postImage =
+    post.featuredImage && typeof post.featuredImage === "object"
+      ? (post.featuredImage as Media)
+      : null;
+  const imageUrl = postImage?.url
+    ? `${getServerSideURL()}${postImage.url}`
+    : undefined;
+
+  // Generate Article schema
+  const articleSchema = generateArticleSchema({
+    title: post.title,
+    description: post.description || undefined,
+    slug,
+    publishedAt: post.publishedAt || undefined,
+    updatedAt: post.updatedAt || undefined,
+    imageUrl,
+    imageWidth: postImage?.width || undefined,
+    imageHeight: postImage?.height || undefined,
+    authors: post.populatedAuthors
+      ?.filter((author) => author.name && author.username)
+      .map((author) => ({
+        name: author.name as string,
+        username: author.username as string,
+      })),
+    keywords: post.topics
+      ?.map((topic) => {
+        if (typeof topic === "object" && topic !== null) {
+          return topic.name || topic.slug || "";
+        }
+        return "";
+      })
+      .filter(Boolean),
+  });
+
+  // Generate Breadcrumb schema
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: getServerSideURL() },
+    { name: "Posts", url: `${getServerSideURL()}/posts` },
+    { name: post.title },
+  ]);
+
   return (
     <>
-      <SchemaArticle post={post} url={`https://lyovson.com/posts/${slug}`} />
+      <JsonLd data={articleSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       <GridCardHero
         className={
