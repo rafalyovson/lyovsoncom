@@ -1,12 +1,8 @@
-import {
-  FixedToolbarFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -110,15 +106,7 @@ export const Notes: CollectionConfig = {
             {
               name: "content",
               type: "richText",
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                  ];
-                },
-              }),
+              editor: noteEditorConfig,
               label: false,
               required: true,
             },

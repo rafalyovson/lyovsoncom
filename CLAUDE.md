@@ -84,6 +84,64 @@ Main collections with relationships:
 - `revalidatePost` - Clears Next.js cache
 - `populateAuthors` - Hydrates user data
 
+### Lexical Editor Configuration
+
+The project uses **shared Lexical editor configurations** for consistency across collections. All configs are defined in `src/fields/lexical-configs.ts`.
+
+**Available Configurations:**
+
+1. **`richEditorConfig`** - Full-featured editor for Posts
+   - All heading sizes (h1-h4)
+   - All custom blocks: Banner, Code, Media, YouTube, XPost, Quote, GIF
+   - Text formatting: Bold, Italic, Underline, Strikethrough
+   - Fixed and inline toolbars
+
+2. **`bioEditorConfig`** - Profile/bio editor for Lyovsons
+   - Section headings (h2-h4, no h1 for semantic hierarchy)
+   - Limited blocks: Media, YouTube, Quote
+   - All text formatting features
+
+3. **`noteEditorConfig`** - Minimal editor for Notes
+   - Basic text formatting only
+   - No headings or blocks (keeps notes lightweight)
+
+**Adding New Features:**
+
+To add a feature to all editors, update `src/fields/defaultLexical.ts` (the root config):
+
+```typescript
+export const defaultLexical = lexicalEditor({
+  features: () => [
+    ParagraphFeature(),
+    BoldFeature(),
+    ItalicFeature(),
+    UnderlineFeature(),
+    StrikethroughFeature(),
+    NewFeature(),  // ← Add here
+    LinkFeature({...}),
+  ],
+});
+```
+
+All editors inherit from `rootFeatures`, so changes propagate automatically.
+
+**Regenerating Admin Bundle:**
+
+After modifying editor configs:
+```bash
+pnpm payload generate:importmap  # Regenerate client bundle references
+rm -rf .next                     # Clear Next.js cache
+pnpm dev                         # Restart server
+```
+
+**Keyboard Shortcuts:**
+- Bold: `Ctrl/Cmd + B`
+- Italic: `Ctrl/Cmd + I`
+- Underline: `Ctrl/Cmd + U`
+- Strikethrough: `Ctrl/Cmd + Shift + S`
+- Create link: `Ctrl/Cmd + K`
+- Insert block: Type `/` in editor
+
 ### File Organization
 
 - **kebab-case** for all files: `grid-card-section.tsx`

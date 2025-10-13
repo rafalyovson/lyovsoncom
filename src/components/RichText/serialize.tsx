@@ -228,7 +228,6 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
             if (node?.checked != null) {
               return (
                 <li
-                  aria-checked={node.checked ? "true" : "false"}
                   className={`${node.checked ? "line-through opacity-60" : ""}`}
                   key={index}
                   tabIndex={-1}

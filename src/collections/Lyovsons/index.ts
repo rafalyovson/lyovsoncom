@@ -1,12 +1,8 @@
-import {
-  HeadingFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from "@payloadcms/richtext-lexical";
 import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
+import { bioEditorConfig } from "@/fields/lexical-configs";
 
 export const Lyovsons: CollectionConfig = {
   slug: "lyovsons",
@@ -100,17 +96,7 @@ export const Lyovsons: CollectionConfig = {
               name: "bio",
               type: "richText",
               required: false,
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    HeadingFeature({
-                      enabledHeadingSizes: ["h2", "h3"],
-                    }),
-                    InlineToolbarFeature(),
-                  ];
-                },
-              }),
+              editor: bioEditorConfig,
               admin: {
                 description: "A brief biography or description about this user",
               },

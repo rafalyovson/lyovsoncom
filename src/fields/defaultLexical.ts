@@ -4,6 +4,7 @@ import {
   LinkFeature,
   lexicalEditor,
   ParagraphFeature,
+  StrikethroughFeature,
   UnderlineFeature,
 } from "@payloadcms/richtext-lexical";
 import type { Config } from "payload";
@@ -15,6 +16,7 @@ export const defaultLexical: Config["editor"] = lexicalEditor({
       UnderlineFeature(),
       BoldFeature(),
       ItalicFeature(),
+      StrikethroughFeature(),
       LinkFeature({
         enabledCollections: ["posts"],
         fields: ({ defaultFields }) => {
