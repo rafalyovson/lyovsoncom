@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
@@ -56,14 +56,14 @@ export const Projects: CollectionConfig = {
   hooks: {
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating project: ${doc.slug}`);
+        req.payload.logger.info(`Updating cache for project: ${doc.slug}`);
 
-        // Revalidate project-related cache tags
-        revalidateTag("projects");
-        revalidateTag(`project-${doc.slug}`);
-        revalidateTag("posts"); // Posts may reference this project
-        revalidateTag("sitemap");
-        revalidateTag("playground"); // Playground uses project data
+        // Update project-related cache tags with immediate refresh
+        updateTag("projects");
+        updateTag(`project-${doc.slug}`);
+        updateTag("posts"); // Posts may reference this project
+        updateTag("sitemap");
+        updateTag("playground"); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc.slug}`);
@@ -73,15 +73,15 @@ export const Projects: CollectionConfig = {
     afterDelete: [
       async ({ doc, req }) => {
         req.payload.logger.info(
-          `Revalidating after project deletion: ${doc?.slug}`
+          `Updating cache after project deletion: ${doc?.slug}`
         );
 
-        // Revalidate project-related cache tags
-        revalidateTag("projects");
-        revalidateTag(`project-${doc?.slug}`);
-        revalidateTag("posts"); // Posts may reference this project
-        revalidateTag("sitemap");
-        revalidateTag("playground"); // Playground uses project data
+        // Update project-related cache tags with immediate refresh
+        updateTag("projects");
+        updateTag(`project-${doc?.slug}`);
+        updateTag("posts"); // Posts may reference this project
+        updateTag("sitemap");
+        updateTag("playground"); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc?.slug}`);

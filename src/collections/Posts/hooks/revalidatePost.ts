@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -71,24 +71,24 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     // Revalidate the specific post path
     revalidatePath(path);
 
-    // Revalidate post-related cache tags
-    revalidateTag("posts");
-    revalidateTag(`post-${doc.slug}`);
-    revalidateTag("homepage"); // Homepage shows latest posts
-    revalidateTag("sitemap");
-    revalidateTag("rss"); // Explicitly invalidate RSS feeds for immediate SEO indexing
+    // Update cache tags with immediate refresh for instant visibility
+    updateTag("posts");
+    updateTag(`post-${doc.slug}`);
+    updateTag("homepage"); // Homepage shows latest posts
+    updateTag("sitemap");
+    updateTag("rss"); // Explicitly invalidate RSS feeds for immediate SEO indexing
     // Belt-and-suspenders: explicitly revalidate key listing paths
     revalidatePath("/");
     revalidatePath("/posts");
 
     // Log cache invalidation for monitoring
     payload.logger.info(
-      `✅ Cache invalidated for new post: "${doc.title}" - RSS feeds, sitemap, and homepage updated immediately`
+      `✅ Cache updated for new post: "${doc.title}" - RSS feeds, sitemap, and homepage refreshed immediately`
     );
 
     // If post belongs to a project, invalidate project cache
     if (doc.project && typeof doc.project === "object") {
-      revalidateTag(`project-${doc.project.slug}`);
+      updateTag(`project-${doc.project.slug}`);
       // Also revalidate the project landing page path if present
       revalidatePath(`/projects/${doc.project.slug}`);
     }
@@ -101,19 +101,19 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (doc as any).populatedAuthors
       );
       if (authorUsernames.length) {
-        revalidateTag("users");
+        updateTag("users");
         for (const username of authorUsernames) {
-          revalidateTag(`author-${username}`);
+          updateTag(`author-${username}`);
           // Revalidate well-known author paths (e.g., /rafa, /jess)
           revalidatePath(`/${username}`);
         }
         payload.logger.info(
-          `Revalidated author pages for: ${authorUsernames.map((u) => `/${u}`).join(", ")}`
+          `Updated author pages for: ${authorUsernames.map((u) => `/${u}`).join(", ")}`
         );
       }
     } catch (e) {
       payload.logger.error(
-        "Failed to revalidate author pages for post change",
+        "Failed to update author pages for post change",
         e
       );
     }
@@ -123,20 +123,20 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   if (previousDoc?._status === "published" && doc._status !== "published") {
     const oldPath = `/posts/${previousDoc.slug}`;
 
-    payload.logger.info(`Revalidating old post at path: ${oldPath}`);
+    payload.logger.info(`Updating cache for unpublished post at path: ${oldPath}`);
 
     revalidatePath(oldPath);
-    revalidateTag("posts");
-    revalidateTag(`post-${previousDoc.slug}`);
-    revalidateTag("homepage");
-    revalidateTag("sitemap");
+    updateTag("posts");
+    updateTag(`post-${previousDoc.slug}`);
+    updateTag("homepage");
+    updateTag("sitemap");
     // Also revalidate main listing paths
     revalidatePath("/");
     revalidatePath("/posts");
 
-    // Also revalidate old project and author pages
+    // Also update old project and author pages
     if (previousDoc.project && typeof previousDoc.project === "object") {
-      revalidateTag(`project-${previousDoc.project.slug}`);
+      updateTag(`project-${previousDoc.project.slug}`);
       revalidatePath(`/projects/${previousDoc.project.slug}`);
     }
 
@@ -147,20 +147,20 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (previousDoc as any).populatedAuthors
       );
       if (prevAuthorUsernames.length) {
-        revalidateTag("users");
+        updateTag("users");
         for (const username of prevAuthorUsernames) {
-          revalidateTag(`author-${username}`);
+          updateTag(`author-${username}`);
           revalidatePath(`/${username}`);
         }
         payload.logger.info(
-          `Revalidated author pages after unpublish: ${prevAuthorUsernames
+          `Updated author pages after unpublish: ${prevAuthorUsernames
             .map((u) => `/${u}`)
             .join(", ")}`
         );
       }
     } catch (e) {
       payload.logger.error(
-        "Failed to revalidate author pages for previous post state",
+        "Failed to update author pages for previous post state",
         e
       );
     }
@@ -176,17 +176,17 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   const path = `/posts/${doc?.slug}`;
 
   revalidatePath(path);
-  revalidateTag("posts");
-  revalidateTag(`post-${doc?.slug}`);
-  revalidateTag("homepage"); // Homepage shows latest posts
-  revalidateTag("sitemap");
+  updateTag("posts");
+  updateTag(`post-${doc?.slug}`);
+  updateTag("homepage"); // Homepage shows latest posts
+  updateTag("sitemap");
   // Also revalidate main listing paths
   revalidatePath("/");
   revalidatePath("/posts");
 
   // If post belonged to a project, invalidate project cache
   if (doc?.project && typeof doc.project === "object") {
-    revalidateTag(`project-${doc.project.slug}`);
+    updateTag(`project-${doc.project.slug}`);
     revalidatePath(`/projects/${doc.project.slug}`);
   }
 
@@ -198,9 +198,9 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
       (doc as any)?.populatedAuthors
     );
     if (authorUsernames.length) {
-      revalidateTag("users");
+      updateTag("users");
       for (const username of authorUsernames) {
-        revalidateTag(`author-${username}`);
+        updateTag(`author-${username}`);
         revalidatePath(`/${username}`);
       }
     }

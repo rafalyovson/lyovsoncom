@@ -1,7 +1,6 @@
 "use server";
 
 import configPromise from "@payload-config";
-import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getPayload } from "payload";
 import { z } from "zod";
 import type { ActionState } from "@/types/grid-enhancements";
@@ -17,9 +16,6 @@ export async function createContact(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  "use cache";
-  cacheLife("user-session");
-
   try {
     const payload = await getPayload({ config: configPromise });
 

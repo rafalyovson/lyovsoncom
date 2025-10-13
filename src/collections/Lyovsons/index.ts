@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
@@ -142,13 +142,13 @@ export const Lyovsons: CollectionConfig = {
     afterChange: [
       ({ doc, req }) => {
         if (doc.username) {
-          req.payload.logger.info(`Revalidating author: ${doc.username}`);
+          req.payload.logger.info(`Updating cache for author: ${doc.username}`);
 
-          // Revalidate lyovson-related cache tags
-          revalidateTag("lyovsons");
-          revalidateTag(`lyovson-${doc.username}`);
-          revalidateTag("posts"); // Posts may reference this author
-          revalidateTag("sitemap");
+          // Update lyovson-related cache tags with immediate refresh
+          updateTag("lyovsons");
+          updateTag(`lyovson-${doc.username}`);
+          updateTag("posts"); // Posts may reference this author
+          updateTag("sitemap");
 
           // Revalidate author page path
           revalidatePath(`/${doc.username}`);
@@ -159,14 +159,14 @@ export const Lyovsons: CollectionConfig = {
       ({ doc, req }) => {
         if (doc?.username) {
           req.payload.logger.info(
-            `Revalidating after user deletion: ${doc.username}`
+            `Updating cache after user deletion: ${doc.username}`
           );
 
-          // Revalidate lyovson-related cache tags
-          revalidateTag("lyovsons");
-          revalidateTag(`lyovson-${doc.username}`);
-          revalidateTag("posts"); // Posts may reference this author
-          revalidateTag("sitemap");
+          // Update lyovson-related cache tags with immediate refresh
+          updateTag("lyovsons");
+          updateTag(`lyovson-${doc.username}`);
+          updateTag("posts"); // Posts may reference this author
+          updateTag("sitemap");
 
           // Revalidate author page path
           revalidatePath(`/${doc.username}`);

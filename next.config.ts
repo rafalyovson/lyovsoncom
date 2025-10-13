@@ -65,6 +65,11 @@ const nextConfig: NextConfig = {
         revalidate: 14_400, // 4 hours revalidate (was 1 hour)
         expire: 86_400, // 24 hours max
       },
+      homepage: {
+        stale: 1800, // 30 minutes stale
+        revalidate: 3600, // 1 hour revalidate
+        expire: 7200, // 2 hours max
+      },
       posts: {
         stale: 1800, // 30 minutes stale (was 5 minutes)
         revalidate: 3600, // 1 hour revalidate (was 10 minutes)
@@ -109,6 +114,11 @@ const nextConfig: NextConfig = {
         stale: 14_400, // 4 hours stale (was 1 hour)
         revalidate: 28_800, // 8 hours revalidate (was 2 hours)
         expire: 172_800, // 48 hours max (was 24 hours)
+      },
+      redirects: {
+        stale: 14_400, // 4 hours stale
+        revalidate: 28_800, // 8 hours revalidate
+        expire: 172_800, // 48 hours max
       },
     },
   },

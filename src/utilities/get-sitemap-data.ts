@@ -12,7 +12,7 @@ export async function getSitemapData() {
   cacheTag("posts");
   cacheTag("projects");
   cacheTag("topics");
-  cacheLife("static"); // Sitemap changes less frequently
+  cacheLife("sitemap"); // Sitemap changes less frequently
 
   const payload = await getPayload({ config: configPromise });
 

@@ -1,4 +1,4 @@
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
@@ -55,13 +55,13 @@ export const Topics: CollectionConfig = {
     ],
     afterChange: [
       async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating topic: ${doc.slug}`);
+        req.payload.logger.info(`Updating cache for topic: ${doc.slug}`);
 
-        // Revalidate topic-related cache tags
-        revalidateTag("topics");
-        revalidateTag(`topic-${doc.slug}`);
-        revalidateTag("posts"); // Posts may reference this topic
-        revalidateTag("sitemap");
+        // Update topic-related cache tags with immediate refresh
+        updateTag("topics");
+        updateTag(`topic-${doc.slug}`);
+        updateTag("posts"); // Posts may reference this topic
+        updateTag("sitemap");
 
         // Revalidate topic path
         revalidatePath(`/topics/${doc.slug}`);
@@ -70,14 +70,14 @@ export const Topics: CollectionConfig = {
     afterDelete: [
       async ({ doc, req }) => {
         req.payload.logger.info(
-          `Revalidating after topic deletion: ${doc?.slug}`
+          `Updating cache after topic deletion: ${doc?.slug}`
         );
 
-        // Revalidate topic-related cache tags
-        revalidateTag("topics");
-        revalidateTag(`topic-${doc?.slug}`);
-        revalidateTag("posts"); // Posts may reference this topic
-        revalidateTag("sitemap");
+        // Update topic-related cache tags with immediate refresh
+        updateTag("topics");
+        updateTag(`topic-${doc?.slug}`);
+        updateTag("posts"); // Posts may reference this topic
+        updateTag("sitemap");
 
         // Revalidate topic path
         revalidatePath(`/topics/${doc?.slug}`);

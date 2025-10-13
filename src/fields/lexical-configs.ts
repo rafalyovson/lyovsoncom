@@ -4,8 +4,8 @@ import {
   HeadingFeature,
   HorizontalRuleFeature,
   InlineToolbarFeature,
-  StrikethroughFeature,
   lexicalEditor,
+  StrikethroughFeature,
 } from "@payloadcms/richtext-lexical";
 import type { Config } from "payload";
 import { Banner } from "@/blocks/Banner/config";
