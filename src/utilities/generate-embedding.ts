@@ -2,31 +2,10 @@ import crypto from "node:crypto";
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
 import type { CollectionBeforeChangeHook } from "payload";
+import { extractLexicalText } from "./extract-lexical-text";
 
-// Helper function to extract text from Lexical content
-function extractTextFromContent(content: any): string {
-  if (!content) {
-    return "";
-  }
-  if (typeof content === "string") {
-    return content;
-  }
-  if (Array.isArray(content)) {
-    return content.map(extractTextFromContent).join(" ");
-  }
-  if (typeof content === "object") {
-    if (content.text) {
-      return content.text;
-    }
-    if (content.children) {
-      return extractTextFromContent(content.children);
-    }
-    if (content.content) {
-      return extractTextFromContent(content.content);
-    }
-  }
-  return "";
-}
+// Re-export extractLexicalText as extractTextFromContent for backwards compatibility
+export { extractLexicalText as extractTextFromContent };
 
 // Generate a simple hash-based fallback embedding
 function generateFallbackEmbedding(text: string): number[] {
@@ -218,6 +197,3 @@ export function createEmbeddingHook(
     }
   };
 }
-
-// Export the helper for backwards compatibility
-export { extractTextFromContent };

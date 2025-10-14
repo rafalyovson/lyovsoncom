@@ -1,20 +1,15 @@
 import configPromise from "@payload-config";
 import { Feed } from "feed";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
-export async function GET(_request: NextRequest) {
-  "use cache";
-  cacheTag("rss");
-  cacheTag("posts");
-  cacheLife("rss"); // RSS changes when posts change
+// Force dynamic rendering for RSS feeds (2025 best practice)
+// This ensures fresh content on every request while HTTP Cache-Control handles caching
+export const dynamic = "force-dynamic";
 
+export async function GET(_request: NextRequest) {
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
   try {

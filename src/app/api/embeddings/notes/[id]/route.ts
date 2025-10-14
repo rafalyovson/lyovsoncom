@@ -29,7 +29,7 @@ function extractNotesText(note: Pick<Note, "title" | "content">): string {
 
   // Extract content from Lexical JSONB format
   if (note.content) {
-    const contentText = extractTextFromContent(note.content);
+    const contentText = extractTextFromContent(note.content as any);
     if (contentText) {
       parts.push(contentText);
     }
