@@ -4,6 +4,9 @@ import { Edit, ShieldUser } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { use, useMemo } from "react";
+
+import { cn } from "@/lib/utils";
+
 import { getAuthAndEditUrl } from "@/actions/get-auth-and-edit-url";
 import { GridCard, GridCardSection } from "@/components/grid";
 
@@ -25,7 +28,7 @@ export function GridCardAdmin({ className }: { className?: string }) {
   }
 
   return (
-    <GridCard className={`${className}`}>
+    <GridCard className={cn(className)}>
       <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-center gap-2">
         Welcome, {user.name}
       </GridCardSection>

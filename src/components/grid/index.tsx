@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export const Grid = ({ children }: { children: ReactNode }) => {
   return (
-    <main className="relative mx-auto grid min-h-screen g2:grid-cols-[400px_400px] g3:grid-cols-[400px_400px_400px] g4:grid-cols-[400px_400px_400px_400px] g5:grid-cols-[400px_400px_400px_400px_400px] g6:grid-cols-[400px_400px_400px_400px_400px_400px] grid-cols-[400px] place-items-center justify-center gap-4 p-4 g2:[grid-auto-rows:max-content]">
+    <main className="relative mx-auto grid min-h-screen g2:grid-cols-[400px_400px] g3:grid-cols-[400px_400px_400px] g4:grid-cols-[400px_400px_400px_400px] g5:grid-cols-[400px_400px_400px_400px_400px] g6:grid-cols-[400px_400px_400px_400px_400px_400px] grid-cols-[clamp(18rem,100vw-2rem,400px)] place-items-center justify-center gap-4 p-4 g2:[grid-auto-rows:max-content]">
       {/* Theme-aware glassmorphism background context */}
       <div
         className="-z-10 fixed inset-0"
@@ -34,7 +34,7 @@ export const Grid = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export { GridCard } from "./card";
+export { GridCard, GridCardContent } from "./card";
 export { GridCardHero } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";

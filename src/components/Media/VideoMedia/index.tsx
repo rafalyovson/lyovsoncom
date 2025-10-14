@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useEffect, useRef } from "react";
-import { cn } from "src/utilities/cn";
+import { cn } from "@/lib/utils";
 import { getClientSideURL } from "@/utilities/getURL";
 import type { Props as MediaProps } from "../types";
 

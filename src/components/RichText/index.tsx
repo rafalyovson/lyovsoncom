@@ -1,5 +1,5 @@
 import type React from "react";
-import { cn } from "@/utilities/cn";
+import { cn } from "@/lib/utils";
 import { serializeLexical } from "./serialize";
 
 type Props = {

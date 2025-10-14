@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { cn } from "@/lib/utils";
+
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import type { Project } from "@/payload-types";
@@ -27,7 +29,7 @@ export const GridCardProject = ({
       className="group glass-interactive"
       href={`/${slug}`}
     >
-      <GridCard className={`${className}`}>
+      <GridCard className={cn(className)}>
         {project.image && typeof project.image !== "string" && (
           <GridCardSection
             className={"col-start-1 col-end-4 row-start-1 row-end-3"}

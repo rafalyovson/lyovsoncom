@@ -6,7 +6,7 @@ import {
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { getPayload } from "payload";
-import { GridCardUser } from "@/components/grid/card/user";
+import { GridCardContent, GridCardUser } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import type { Lyovson, Media } from "@/payload-types";
@@ -73,7 +73,7 @@ export default async function Page({ params }: PageProps) {
         user={user}
       />
       {user?.bio && (
-        <article className="glass-card glass-interactive g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px] w-[400px] rounded-lg p-6">
+        <GridCardContent className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px]">
           <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
             <RichText
               className="h-full"
@@ -82,7 +82,7 @@ export default async function Page({ params }: PageProps) {
               enableProse={true}
             />
           </div>
-        </article>
+        </GridCardContent>
       )}
     </>
   );

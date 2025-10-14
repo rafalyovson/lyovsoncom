@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type React from "react";
-import { cn } from "src/utilities/cn";
-
 import { Button, type ButtonProps } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
 
 type CMSLinkType = {

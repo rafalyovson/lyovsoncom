@@ -2,6 +2,9 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+
 import { GridCard } from "@/components/grid";
 import { HeroMode } from "./hero-mode";
 import { MenuMode } from "./menu-mode";
@@ -17,7 +20,10 @@ export const GridCardNav = ({ className }: { className?: string }) => {
   );
   return (
     <GridCard
-      className={`col-start-1 col-end-2 row-start-1 row-end-2 self-start ${className}`}
+      className={cn(
+        "col-start-1 col-end-2 row-start-1 row-end-2 self-start",
+        className
+      )}
     >
       {
         {

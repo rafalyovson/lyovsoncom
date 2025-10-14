@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { cn } from "@/lib/utils";
+
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import type { Post } from "@/payload-types";
@@ -12,15 +14,21 @@ export const GridCardRelatedPosts = ({
   className?: string;
 }) => {
   return (
-    <GridCard className={`${className} max-w-[400px]`}>
+    <GridCard className={cn(className)}>
       {posts.map((post, index) => {
         if (typeof post === "number") {
           return null;
         }
+        const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
+        const staggerClass = `glass-stagger-${Math.min(index + 1, 6)}`;
         return (
           <Link
             aria-label={`Read related post: ${post.title}`}
-            className={`col-start-1 col-end-4 row-start-${index + 1} row-end-${index + 2} group glass-interactive glass-stagger-${Math.min(index + 1, 6)}`}
+            className={cn(
+              "col-start-1 col-end-4 group glass-interactive",
+              rowClass,
+              staggerClass
+            )}
             href={`/posts/${post.slug}`}
             key={post.id}
           >

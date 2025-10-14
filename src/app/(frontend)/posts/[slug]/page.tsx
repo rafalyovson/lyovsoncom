@@ -7,9 +7,12 @@ import {
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
 import { Suspense } from "react";
-import { GridCardHero } from "src/components/grid/card/hero";
 
-import { GridCardRelatedPosts } from "@/components/grid/card/related";
+import {
+  GridCardContent,
+  GridCardHero,
+  GridCardRelatedPosts,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -134,7 +137,9 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         }
         post={post}
       />
-      <article className="glass-card glass-interactive g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px] w-[400px] rounded-lg p-6">
+      <GridCardContent
+        className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px]"
+      >
         <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
           <RichText
             className="h-full"
@@ -143,7 +148,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
             enableProse={true}
           />
         </div>
-      </article>
+      </GridCardContent>
 
       <aside
         className={

@@ -1,7 +1,7 @@
 import type React from "react";
 import RichText from "@/components/RichText";
 import type { QuoteBlock as QuoteBlockType } from "@/payload-types";
-import { cn } from "@/utilities/cn";
+import { cn } from "@/lib/utils";
 
 type Props = {
   className?: string;

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/utilities/cn";
+import { cn } from "@/lib/utils";
 
 export const Search: React.FC<{ className?: string }> = ({ className }) => {
   const router = useRouter();

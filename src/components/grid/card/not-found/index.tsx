@@ -1,5 +1,5 @@
 import { GridCard, GridCardSection } from "@/components/grid";
-import { cn } from "@/utilities/cn";
+import { cn } from "@/lib/utils";
 
 export function GridCardNotFound({ className }: { className?: string }) {
   return (

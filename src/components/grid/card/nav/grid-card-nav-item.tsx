@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { cn } from "@/lib/utils";
+
 import { GridCardSection } from "../section";
 
 type GridCardNavItemProps = {
@@ -19,7 +21,8 @@ export const GridCardNavItem = ({
   if (link) {
     return (
       <GridCardSection
-        className={`group glass-interactive ${className}`}
+        asChild
+        className={cn("group glass-interactive", className)}
         interactive
       >
         <Link
@@ -33,7 +36,10 @@ export const GridCardNavItem = ({
   }
   return (
     <GridCardSection
-      className={`glass-interactive glass-text flex h-full cursor-pointer flex-col items-center justify-center gap-2 ${className}`}
+      className={cn(
+        "glass-interactive glass-text flex h-full cursor-pointer flex-col items-center justify-center gap-2",
+        className
+      )}
       interactive
       onClick={onClick}
     >

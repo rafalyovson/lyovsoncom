@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import type { ActionResponse } from "@/actions/create-contact-action";
 import { GridCard } from "@/components/grid/";
-import { cn } from "@/utilities/cn";
+import { cn } from "@/lib/utils";
 import { GridCardSection } from "../section";
 import { SubscribeForm } from "./subscribe-form";
 
