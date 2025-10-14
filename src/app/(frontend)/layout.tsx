@@ -203,7 +203,6 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  manifest: "/manifest.json",
   robots: {
     index: true,
     follow: true,
