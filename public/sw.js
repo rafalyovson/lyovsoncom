@@ -1,7 +1,7 @@
 // Simple Service Worker for PWA functionality
-// Version 1.0.0
+// Version 1.1.0 - Fixed manifest path to match Next.js generated file
 
-const CACHE_NAME = "lyovson-cache-v1";
+const CACHE_NAME = "lyovson-cache-v2";
 const OFFLINE_URL = "/offline";
 const HTTP_OK = 200;
 
@@ -13,7 +13,7 @@ const urlsToCache = [
   "/projects",
   "/rafa",
   "/jess",
-  "/manifest.json",
+  "/manifest.webmanifest",
 ];
 
 // Install event - cache essential resources
