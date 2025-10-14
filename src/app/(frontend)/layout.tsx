@@ -6,7 +6,6 @@ import { draftMode } from "next/headers";
 import type React from "react";
 import { Suspense } from "react";
 import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
-import { LivePreviewListener } from "@/components/LivePreviewListener";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
@@ -145,7 +144,6 @@ export default async function RootLayout({
       </head>
       <body>
         <Providers>
-          <LivePreviewListener />
           <Grid>
             <Suspense fallback={<SkeletonCard />}>
               <GridCardNav />
