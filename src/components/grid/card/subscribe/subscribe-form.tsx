@@ -8,14 +8,12 @@ type SubscribeFormProps = {
   buttonText: string;
   action: (formData: FormData) => void;
   state: ActionResponse;
-  projectId: number;
 };
 
 export function SubscribeForm({
   buttonText,
   action,
   state,
-  projectId,
 }: SubscribeFormProps) {
   return (
     <form
@@ -48,8 +46,6 @@ export function SubscribeForm({
       <Button className="grow" type="submit">
         {buttonText}
       </Button>
-
-      <input name="projectId" type="hidden" value={projectId} />
     </form>
   );
 }

@@ -13,53 +13,53 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | 'Pacific/Midway'
-  | 'Pacific/Niue'
-  | 'Pacific/Honolulu'
-  | 'Pacific/Rarotonga'
-  | 'America/Anchorage'
-  | 'Pacific/Gambier'
-  | 'America/Los_Angeles'
-  | 'America/Tijuana'
-  | 'America/Denver'
-  | 'America/Phoenix'
-  | 'America/Chicago'
-  | 'America/Guatemala'
-  | 'America/New_York'
-  | 'America/Bogota'
-  | 'America/Caracas'
-  | 'America/Santiago'
-  | 'America/Buenos_Aires'
-  | 'America/Sao_Paulo'
-  | 'Atlantic/South_Georgia'
-  | 'Atlantic/Azores'
-  | 'Atlantic/Cape_Verde'
-  | 'Europe/London'
-  | 'Europe/Berlin'
-  | 'Africa/Lagos'
-  | 'Europe/Athens'
-  | 'Africa/Cairo'
-  | 'Europe/Moscow'
-  | 'Asia/Riyadh'
-  | 'Asia/Dubai'
-  | 'Asia/Baku'
-  | 'Asia/Karachi'
-  | 'Asia/Tashkent'
-  | 'Asia/Calcutta'
-  | 'Asia/Dhaka'
-  | 'Asia/Almaty'
-  | 'Asia/Jakarta'
-  | 'Asia/Bangkok'
-  | 'Asia/Shanghai'
-  | 'Asia/Singapore'
-  | 'Asia/Tokyo'
-  | 'Asia/Seoul'
-  | 'Australia/Brisbane'
-  | 'Australia/Sydney'
-  | 'Pacific/Guam'
-  | 'Pacific/Noumea'
-  | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+  | "Pacific/Midway"
+  | "Pacific/Niue"
+  | "Pacific/Honolulu"
+  | "Pacific/Rarotonga"
+  | "America/Anchorage"
+  | "Pacific/Gambier"
+  | "America/Los_Angeles"
+  | "America/Tijuana"
+  | "America/Denver"
+  | "America/Phoenix"
+  | "America/Chicago"
+  | "America/Guatemala"
+  | "America/New_York"
+  | "America/Bogota"
+  | "America/Caracas"
+  | "America/Santiago"
+  | "America/Buenos_Aires"
+  | "America/Sao_Paulo"
+  | "Atlantic/South_Georgia"
+  | "Atlantic/Azores"
+  | "Atlantic/Cape_Verde"
+  | "Europe/London"
+  | "Europe/Berlin"
+  | "Africa/Lagos"
+  | "Europe/Athens"
+  | "Africa/Cairo"
+  | "Europe/Moscow"
+  | "Asia/Riyadh"
+  | "Asia/Dubai"
+  | "Asia/Baku"
+  | "Asia/Karachi"
+  | "Asia/Tashkent"
+  | "Asia/Calcutta"
+  | "Asia/Dhaka"
+  | "Asia/Almaty"
+  | "Asia/Jakarta"
+  | "Asia/Bangkok"
+  | "Asia/Shanghai"
+  | "Asia/Singapore"
+  | "Asia/Tokyo"
+  | "Asia/Seoul"
+  | "Australia/Brisbane"
+  | "Australia/Sydney"
+  | "Pacific/Guam"
+  | "Pacific/Noumea"
+  | "Pacific/Auckland"
+  | "Pacific/Fiji";
 
 export interface Config {
   auth: {
@@ -84,11 +84,11 @@ export interface Config {
     links: Link;
     redirects: Redirect;
     forms: Form;
-    'form-submissions': FormSubmission;
+    "form-submissions": FormSubmission;
     search: Search;
-    'payload-locked-documents': PayloadLockedDocument;
-    'payload-preferences': PayloadPreference;
-    'payload-migrations': PayloadMigration;
+    "payload-locked-documents": PayloadLockedDocument;
+    "payload-preferences": PayloadPreference;
+    "payload-migrations": PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -109,11 +109,19 @@ export interface Config {
     links: LinksSelect<false> | LinksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
-    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
+    "form-submissions":
+      | FormSubmissionsSelect<false>
+      | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
-    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
-    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
-    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
+    "payload-locked-documents":
+      | PayloadLockedDocumentsSelect<false>
+      | PayloadLockedDocumentsSelect<true>;
+    "payload-preferences":
+      | PayloadPreferencesSelect<false>
+      | PayloadPreferencesSelect<true>;
+    "payload-migrations":
+      | PayloadMigrationsSelect<false>
+      | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: number;
@@ -122,7 +130,7 @@ export interface Config {
   globalsSelect: {};
   locale: null;
   user: Lyovson & {
-    collection: 'lyovsons';
+    collection: "lyovsons";
   };
   jobs: {
     tasks: unknown;
@@ -185,8 +193,8 @@ export interface Post {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -195,7 +203,7 @@ export interface Post {
   /**
    * What type of content is this?
    */
-  type: 'article' | 'review' | 'video' | 'podcast' | 'photo';
+  type: "article" | "review" | "video" | "podcast" | "photo";
   /**
    * Rate from 1-10 stars
    */
@@ -206,27 +214,27 @@ export interface Post {
   reference?:
     | (
         | {
-            relationTo: 'books';
+            relationTo: "books";
             value: number | Book;
           }
         | {
-            relationTo: 'movies';
+            relationTo: "movies";
             value: number | Movie;
           }
         | {
-            relationTo: 'tvShows';
+            relationTo: "tvShows";
             value: number | TvShow;
           }
         | {
-            relationTo: 'videoGames';
+            relationTo: "videoGames";
             value: number | VideoGame;
           }
         | {
-            relationTo: 'music';
+            relationTo: "music";
             value: number | Music;
           }
         | {
-            relationTo: 'podcasts';
+            relationTo: "podcasts";
             value: number | Podcast;
           }
       )[]
@@ -253,27 +261,27 @@ export interface Post {
   references?:
     | (
         | {
-            relationTo: 'books';
+            relationTo: "books";
             value: number | Book;
           }
         | {
-            relationTo: 'movies';
+            relationTo: "movies";
             value: number | Movie;
           }
         | {
-            relationTo: 'tvShows';
+            relationTo: "tvShows";
             value: number | TvShow;
           }
         | {
-            relationTo: 'videoGames';
+            relationTo: "videoGames";
             value: number | VideoGame;
           }
         | {
-            relationTo: 'music';
+            relationTo: "music";
             value: number | Music;
           }
         | {
-            relationTo: 'podcasts';
+            relationTo: "podcasts";
             value: number | Podcast;
           }
       )[]
@@ -317,7 +325,7 @@ export interface Post {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -334,8 +342,8 @@ export interface Media {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -418,7 +426,7 @@ export interface Book {
   /**
    * What type of publication is this?
    */
-  type: 'book' | 'series' | 'comics';
+  type: "book" | "series" | "comics";
   /**
    * Brief description or summary of the book
    */
@@ -444,17 +452,17 @@ export interface Book {
    */
   genre?:
     | (
-        | 'fiction'
-        | 'non-fiction'
-        | 'sci-fi'
-        | 'fantasy'
-        | 'mystery'
-        | 'romance'
-        | 'thriller'
-        | 'biography'
-        | 'history'
-        | 'self-help'
-        | 'technical'
+        | "fiction"
+        | "non-fiction"
+        | "sci-fi"
+        | "fantasy"
+        | "mystery"
+        | "romance"
+        | "thriller"
+        | "biography"
+        | "history"
+        | "self-help"
+        | "technical"
       )[]
     | null;
   /**
@@ -464,7 +472,7 @@ export interface Book {
   /**
    * Reading status
    */
-  readStatus?: ('want_to_read' | 'reading' | 'read' | 'abandoned') | null;
+  readStatus?: ("want_to_read" | "reading" | "read" | "abandoned") | null;
   /**
    * Google Books API ID
    */
@@ -485,7 +493,7 @@ export interface Book {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Central registry for all creators and contributors
@@ -510,7 +518,17 @@ export interface Person {
   /**
    * What roles does this person have?
    */
-  roles?: ('author' | 'director' | 'actor' | 'musician' | 'developer' | 'host' | 'publicFigure')[] | null;
+  roles?:
+    | (
+        | "author"
+        | "director"
+        | "actor"
+        | "musician"
+        | "developer"
+        | "host"
+        | "publicFigure"
+      )[]
+    | null;
   /**
    * Personal or professional website
    */
@@ -547,7 +565,7 @@ export interface Movie {
   /**
    * What type of film is this?
    */
-  type: 'movie' | 'documentary' | 'short_film';
+  type: "movie" | "documentary" | "short_film";
   /**
    * Plot summary or description
    */
@@ -569,16 +587,16 @@ export interface Movie {
    */
   genre?:
     | (
-        | 'action'
-        | 'comedy'
-        | 'drama'
-        | 'horror'
-        | 'sci-fi'
-        | 'romance'
-        | 'thriller'
-        | 'documentary'
-        | 'animation'
-        | 'family'
+        | "action"
+        | "comedy"
+        | "drama"
+        | "horror"
+        | "sci-fi"
+        | "romance"
+        | "thriller"
+        | "documentary"
+        | "animation"
+        | "family"
       )[]
     | null;
   /**
@@ -588,7 +606,7 @@ export interface Movie {
   /**
    * Watch status
    */
-  watchStatus?: ('want_to_watch' | 'watching' | 'watched') | null;
+  watchStatus?: ("want_to_watch" | "watching" | "watched") | null;
   /**
    * OMDB API ID
    */
@@ -609,7 +627,7 @@ export interface Movie {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Manage TV shows, seasons, and episodes
@@ -626,7 +644,7 @@ export interface TvShow {
   /**
    * What type of TV content is this?
    */
-  type: 'show' | 'season' | 'episode';
+  type: "show" | "season" | "episode";
   /**
    * Show summary or description
    */
@@ -660,17 +678,17 @@ export interface TvShow {
    */
   genre?:
     | (
-        | 'action'
-        | 'comedy'
-        | 'drama'
-        | 'horror'
-        | 'sci-fi'
-        | 'romance'
-        | 'thriller'
-        | 'documentary'
-        | 'animation'
-        | 'family'
-        | 'reality'
+        | "action"
+        | "comedy"
+        | "drama"
+        | "horror"
+        | "sci-fi"
+        | "romance"
+        | "thriller"
+        | "documentary"
+        | "animation"
+        | "family"
+        | "reality"
       )[]
     | null;
   /**
@@ -680,7 +698,7 @@ export interface TvShow {
   /**
    * Watch status
    */
-  watchStatus?: ('want_to_watch' | 'watching' | 'watched') | null;
+  watchStatus?: ("want_to_watch" | "watching" | "watched") | null;
   /**
    * Full API response data
    */
@@ -697,7 +715,7 @@ export interface TvShow {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Manage video games, DLC, and expansions
@@ -714,7 +732,7 @@ export interface VideoGame {
   /**
    * What type of video game content is this?
    */
-  type: 'game' | 'dlc' | 'expansion';
+  type: "game" | "dlc" | "expansion";
   /**
    * Game description or summary
    */
@@ -734,22 +752,24 @@ export interface VideoGame {
   /**
    * Gaming platforms
    */
-  platforms?: ('pc' | 'playstation' | 'xbox' | 'switch' | 'mobile' | 'vr')[] | null;
+  platforms?:
+    | ("pc" | "playstation" | "xbox" | "switch" | "mobile" | "vr")[]
+    | null;
   /**
    * Game genres
    */
   genre?:
     | (
-        | 'action'
-        | 'adventure'
-        | 'rpg'
-        | 'strategy'
-        | 'simulation'
-        | 'sports'
-        | 'racing'
-        | 'puzzle'
-        | 'horror'
-        | 'indie'
+        | "action"
+        | "adventure"
+        | "rpg"
+        | "strategy"
+        | "simulation"
+        | "sports"
+        | "racing"
+        | "puzzle"
+        | "horror"
+        | "indie"
       )[]
     | null;
   /**
@@ -759,11 +779,11 @@ export interface VideoGame {
   /**
    * Play status
    */
-  playStatus?: ('want_to_play' | 'playing' | 'completed' | 'abandoned') | null;
+  playStatus?: ("want_to_play" | "playing" | "completed" | "abandoned") | null;
   /**
    * ESRB rating
    */
-  esrbRating?: ('e' | 'e10' | 't' | 'm' | 'ao') | null;
+  esrbRating?: ("e" | "e10" | "t" | "m" | "ao") | null;
   /**
    * Metacritic score
    */
@@ -784,7 +804,7 @@ export interface VideoGame {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Manage albums, songs, and soundtracks
@@ -801,7 +821,7 @@ export interface Music {
   /**
    * What type of music content is this?
    */
-  type: 'album' | 'song' | 'soundtrack';
+  type: "album" | "song" | "soundtrack";
   /**
    * Description or notes about this music
    */
@@ -827,18 +847,18 @@ export interface Music {
    */
   genre?:
     | (
-        | 'rock'
-        | 'pop'
-        | 'hip-hop'
-        | 'electronic'
-        | 'jazz'
-        | 'classical'
-        | 'country'
-        | 'rnb'
-        | 'folk'
-        | 'indie'
-        | 'alternative'
-        | 'soundtrack'
+        | "rock"
+        | "pop"
+        | "hip-hop"
+        | "electronic"
+        | "jazz"
+        | "classical"
+        | "country"
+        | "rnb"
+        | "folk"
+        | "indie"
+        | "alternative"
+        | "soundtrack"
       )[]
     | null;
   /**
@@ -856,7 +876,7 @@ export interface Music {
   /**
    * Listen status
    */
-  listenStatus?: ('want_to_listen' | 'listening' | 'listened') | null;
+  listenStatus?: ("want_to_listen" | "listening" | "listened") | null;
   /**
    * Full API response data from streaming services
    */
@@ -873,7 +893,7 @@ export interface Music {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Manage podcast episodes and shows
@@ -890,7 +910,7 @@ export interface Podcast {
   /**
    * Is this an episode or show-level entry?
    */
-  type: 'episode' | 'show';
+  type: "episode" | "show";
   /**
    * The name of the podcast show
    */
@@ -932,18 +952,18 @@ export interface Podcast {
    */
   genre?:
     | (
-        | 'technology'
-        | 'business'
-        | 'comedy'
-        | 'education'
-        | 'news'
-        | 'society-culture'
-        | 'science'
-        | 'health-fitness'
-        | 'arts'
-        | 'true-crime'
-        | 'history'
-        | 'sports'
+        | "technology"
+        | "business"
+        | "comedy"
+        | "education"
+        | "news"
+        | "society-culture"
+        | "science"
+        | "health-fitness"
+        | "arts"
+        | "true-crime"
+        | "history"
+        | "sports"
       )[]
     | null;
   /**
@@ -965,7 +985,7 @@ export interface Podcast {
   /**
    * Listen status
    */
-  listenStatus?: ('want_to_listen' | 'listening' | 'listened') | null;
+  listenStatus?: ("want_to_listen" | "listening" | "listened") | null;
   /**
    * Full API response data from podcast platforms
    */
@@ -982,7 +1002,7 @@ export interface Podcast {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1053,11 +1073,11 @@ export interface Contact {
    * Indicates if the contact has unsubscribed.
    */
   unsubscribed?: boolean | null;
-  status?: ('pending' | 'active' | 'unsubscribed') | null;
+  status?: ("pending" | "active" | "unsubscribed") | null;
   /**
-   * The project this contact is associated with.
+   * Legacy field: Optional project association for historical data.
    */
-  project: number | Project;
+  project?: (number | null) | Project;
   /**
    * The unique Contact ID from Resend.
    */
@@ -1086,15 +1106,15 @@ export interface Note {
   /**
    * What type of note is this?
    */
-  type: 'literature' | 'permanent' | 'fleeting' | 'index';
+  type: "literature" | "permanent" | "fleeting" | "index";
   /**
    * Who wrote this note?
    */
-  author: 'rafa' | 'jess';
+  author: "rafa" | "jess";
   /**
    * Who can see this note?
    */
-  visibility: 'public' | 'private';
+  visibility: "public" | "private";
   content: {
     root: {
       type: string;
@@ -1103,8 +1123,8 @@ export interface Note {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1115,27 +1135,27 @@ export interface Note {
    */
   sourceReference?:
     | ({
-        relationTo: 'books';
+        relationTo: "books";
         value: number | Book;
       } | null)
     | ({
-        relationTo: 'movies';
+        relationTo: "movies";
         value: number | Movie;
       } | null)
     | ({
-        relationTo: 'tvShows';
+        relationTo: "tvShows";
         value: number | TvShow;
       } | null)
     | ({
-        relationTo: 'videoGames';
+        relationTo: "videoGames";
         value: number | VideoGame;
       } | null)
     | ({
-        relationTo: 'music';
+        relationTo: "music";
         value: number | Music;
       } | null)
     | ({
-        relationTo: 'podcasts';
+        relationTo: "podcasts";
         value: number | Podcast;
       } | null);
   /**
@@ -1152,39 +1172,39 @@ export interface Note {
   connections?:
     | (
         | {
-            relationTo: 'posts';
+            relationTo: "posts";
             value: number | Post;
           }
         | {
-            relationTo: 'books';
+            relationTo: "books";
             value: number | Book;
           }
         | {
-            relationTo: 'movies';
+            relationTo: "movies";
             value: number | Movie;
           }
         | {
-            relationTo: 'tvShows';
+            relationTo: "tvShows";
             value: number | TvShow;
           }
         | {
-            relationTo: 'videoGames';
+            relationTo: "videoGames";
             value: number | VideoGame;
           }
         | {
-            relationTo: 'music';
+            relationTo: "music";
             value: number | Music;
           }
         | {
-            relationTo: 'podcasts';
+            relationTo: "podcasts";
             value: number | Podcast;
           }
         | {
-            relationTo: 'persons';
+            relationTo: "persons";
             value: number | Person;
           }
         | {
-            relationTo: 'notes';
+            relationTo: "notes";
             value: number | Note;
           }
       )[]
@@ -1205,7 +1225,7 @@ export interface Note {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ('draft' | 'published') | null;
+  _status?: ("draft" | "published") | null;
 }
 /**
  * Lyovson family members
@@ -1222,7 +1242,7 @@ export interface Lyovson {
   /**
    * Preferred font family for this user's page
    */
-  font?: ('sans' | 'serif' | 'mono') | null;
+  font?: ("sans" | "serif" | "mono") | null;
   /**
    * Full name of the user
    */
@@ -1243,8 +1263,8 @@ export interface Lyovson {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1255,7 +1275,14 @@ export interface Lyovson {
    */
   socialLinks?:
     | {
-        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
+        platform:
+          | "x"
+          | "linkedin"
+          | "github"
+          | "instagram"
+          | "facebook"
+          | "youtube"
+          | "website";
         url: string;
         id?: string | null;
       }[]
@@ -1293,7 +1320,15 @@ export interface Link {
   /**
    * What type of link is this?
    */
-  type: 'website' | 'article' | 'video' | 'youtube' | 'social_media' | 'documentation' | 'tool' | 'repository';
+  type:
+    | "website"
+    | "article"
+    | "video"
+    | "youtube"
+    | "social_media"
+    | "documentation"
+    | "tool"
+    | "repository";
   /**
    * The URL this link points to
    */
@@ -1302,58 +1337,58 @@ export interface Link {
    * What type of content is this link attached to?
    */
   referenceType:
-    | 'books'
-    | 'movies'
-    | 'tvShows'
-    | 'videoGames'
-    | 'music'
-    | 'podcasts'
-    | 'posts'
-    | 'persons'
-    | 'notes'
-    | 'projects';
+    | "books"
+    | "movies"
+    | "tvShows"
+    | "videoGames"
+    | "music"
+    | "podcasts"
+    | "posts"
+    | "persons"
+    | "notes"
+    | "projects";
   /**
    * The specific item this link is attached to
    */
   reference:
     | {
-        relationTo: 'books';
+        relationTo: "books";
         value: number | Book;
       }
     | {
-        relationTo: 'movies';
+        relationTo: "movies";
         value: number | Movie;
       }
     | {
-        relationTo: 'tvShows';
+        relationTo: "tvShows";
         value: number | TvShow;
       }
     | {
-        relationTo: 'videoGames';
+        relationTo: "videoGames";
         value: number | VideoGame;
       }
     | {
-        relationTo: 'music';
+        relationTo: "music";
         value: number | Music;
       }
     | {
-        relationTo: 'podcasts';
+        relationTo: "podcasts";
         value: number | Podcast;
       }
     | {
-        relationTo: 'posts';
+        relationTo: "posts";
         value: number | Post;
       }
     | {
-        relationTo: 'persons';
+        relationTo: "persons";
         value: number | Person;
       }
     | {
-        relationTo: 'notes';
+        relationTo: "notes";
         value: number | Note;
       }
     | {
-        relationTo: 'projects';
+        relationTo: "projects";
         value: number | Project;
       };
   /**
@@ -1382,9 +1417,9 @@ export interface Redirect {
    */
   from: string;
   to?: {
-    type?: ('reference' | 'custom') | null;
+    type?: ("reference" | "custom") | null;
     reference?: {
-      relationTo: 'posts';
+      relationTo: "posts";
       value: number | Post;
     } | null;
     url?: string | null;
@@ -1409,7 +1444,7 @@ export interface Form {
             defaultValue?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'checkbox';
+            blockType: "checkbox";
           }
         | {
             name: string;
@@ -1418,7 +1453,7 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'country';
+            blockType: "country";
           }
         | {
             name: string;
@@ -1427,7 +1462,7 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'email';
+            blockType: "email";
           }
         | {
             message?: {
@@ -1438,8 +1473,15 @@ export interface Form {
                   version: number;
                   [k: string]: unknown;
                 }[];
-                direction: ('ltr' | 'rtl') | null;
-                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                direction: ("ltr" | "rtl") | null;
+                format:
+                  | "left"
+                  | "start"
+                  | "center"
+                  | "right"
+                  | "end"
+                  | "justify"
+                  | "";
                 indent: number;
                 version: number;
               };
@@ -1447,7 +1489,7 @@ export interface Form {
             } | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'message';
+            blockType: "message";
           }
         | {
             name: string;
@@ -1457,7 +1499,7 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'number';
+            blockType: "number";
           }
         | {
             name: string;
@@ -1475,7 +1517,7 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'select';
+            blockType: "select";
           }
         | {
             name: string;
@@ -1484,17 +1526,7 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'state';
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            defaultValue?: string | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: 'text';
+            blockType: "state";
           }
         | {
             name: string;
@@ -1504,7 +1536,17 @@ export interface Form {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: 'textarea';
+            blockType: "text";
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: "textarea";
           }
       )[]
     | null;
@@ -1512,7 +1554,7 @@ export interface Form {
   /**
    * Choose whether to display an on-page message or redirect to a different page after they submit the form.
    */
-  confirmationType?: ('message' | 'redirect') | null;
+  confirmationType?: ("message" | "redirect") | null;
   confirmationMessage?: {
     root: {
       type: string;
@@ -1521,8 +1563,8 @@ export interface Form {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -1553,8 +1595,15 @@ export interface Form {
               version: number;
               [k: string]: unknown;
             }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            direction: ("ltr" | "rtl") | null;
+            format:
+              | "left"
+              | "start"
+              | "center"
+              | "right"
+              | "end"
+              | "justify"
+              | "";
             indent: number;
             version: number;
           };
@@ -1594,7 +1643,7 @@ export interface Search {
   title?: string | null;
   priority?: number | null;
   doc: {
-    relationTo: 'posts';
+    relationTo: "posts";
     value: number | Post;
   };
   slug?: string | null;
@@ -1622,84 +1671,84 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'posts';
+        relationTo: "posts";
         value: number | Post;
       } | null)
     | ({
-        relationTo: 'media';
+        relationTo: "media";
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'topics';
+        relationTo: "topics";
         value: number | Topic;
       } | null)
     | ({
-        relationTo: 'projects';
+        relationTo: "projects";
         value: number | Project;
       } | null)
     | ({
-        relationTo: 'lyovsons';
+        relationTo: "lyovsons";
         value: number | Lyovson;
       } | null)
     | ({
-        relationTo: 'contacts';
+        relationTo: "contacts";
         value: number | Contact;
       } | null)
     | ({
-        relationTo: 'books';
+        relationTo: "books";
         value: number | Book;
       } | null)
     | ({
-        relationTo: 'movies';
+        relationTo: "movies";
         value: number | Movie;
       } | null)
     | ({
-        relationTo: 'tvShows';
+        relationTo: "tvShows";
         value: number | TvShow;
       } | null)
     | ({
-        relationTo: 'videoGames';
+        relationTo: "videoGames";
         value: number | VideoGame;
       } | null)
     | ({
-        relationTo: 'music';
+        relationTo: "music";
         value: number | Music;
       } | null)
     | ({
-        relationTo: 'podcasts';
+        relationTo: "podcasts";
         value: number | Podcast;
       } | null)
     | ({
-        relationTo: 'persons';
+        relationTo: "persons";
         value: number | Person;
       } | null)
     | ({
-        relationTo: 'notes';
+        relationTo: "notes";
         value: number | Note;
       } | null)
     | ({
-        relationTo: 'links';
+        relationTo: "links";
         value: number | Link;
       } | null)
     | ({
-        relationTo: 'redirects';
+        relationTo: "redirects";
         value: number | Redirect;
       } | null)
     | ({
-        relationTo: 'forms';
+        relationTo: "forms";
         value: number | Form;
       } | null)
     | ({
-        relationTo: 'form-submissions';
+        relationTo: "form-submissions";
         value: number | FormSubmission;
       } | null)
     | ({
-        relationTo: 'search';
+        relationTo: "search";
         value: number | Search;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: 'lyovsons';
+    relationTo: "lyovsons";
     value: number | Lyovson;
   };
   updatedAt: string;
@@ -1712,7 +1761,7 @@ export interface PayloadLockedDocument {
 export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: 'lyovsons';
+    relationTo: "lyovsons";
     value: number | Lyovson;
   };
   key?: string | null;
@@ -2386,7 +2435,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "BannerBlock".
  */
 export interface BannerBlock {
-  style: 'info' | 'warning' | 'error' | 'success';
+  style: "info" | "warning" | "error" | "success";
   content: {
     root: {
       type: string;
@@ -2395,8 +2444,8 @@ export interface BannerBlock {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -2404,18 +2453,18 @@ export interface BannerBlock {
   };
   id?: string | null;
   blockName?: string | null;
-  blockType: 'banner';
+  blockType: "banner";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CodeBlock".
  */
 export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
+  language?: ("typescript" | "javascript" | "css") | null;
   code: string;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'code';
+  blockType: "code";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2425,7 +2474,7 @@ export interface MediaBlock {
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'mediaBlock';
+  blockType: "mediaBlock";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2444,17 +2493,17 @@ export interface YouTubeBlock {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
     [k: string]: unknown;
   } | null;
-  aspectRatio?: ('16:9' | '4:3' | '1:1') | null;
+  aspectRatio?: ("16:9" | "4:3" | "1:1") | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'youtube';
+  blockType: "youtube";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2473,8 +2522,8 @@ export interface XPostBlock {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -2482,7 +2531,7 @@ export interface XPostBlock {
   } | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'xpost';
+  blockType: "xpost";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2497,8 +2546,8 @@ export interface QuoteBlock {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -2507,7 +2556,7 @@ export interface QuoteBlock {
   attribution?: string | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'quote';
+  blockType: "quote";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2530,8 +2579,8 @@ export interface GIFBlock {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      direction: ("ltr" | "rtl") | null;
+      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
       indent: number;
       version: number;
     };
@@ -2539,7 +2588,7 @@ export interface GIFBlock {
   } | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'gif';
+  blockType: "gif";
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2549,7 +2598,6 @@ export interface Auth {
   [k: string]: unknown;
 }
 
-
-declare module 'payload' {
+declare module "payload" {
   export interface GeneratedTypes extends Config {}
 }

@@ -20,11 +20,7 @@ export const GridCardNavItem = ({
 }: GridCardNavItemProps) => {
   if (link) {
     return (
-      <GridCardSection
-        asChild
-        className={cn("group", className)}
-        interactive
-      >
+      <GridCardSection asChild className={cn("group", className)} interactive>
         <Link
           className="glass-text flex h-full flex-col items-center justify-center gap-2 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
           href={link}

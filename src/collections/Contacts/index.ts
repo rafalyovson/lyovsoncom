@@ -12,7 +12,7 @@ export const Contacts: CollectionConfig = {
   },
   admin: {
     useAsTitle: "email",
-    defaultColumns: ["email", "firstName", "lastName", "status", "project"],
+    defaultColumns: ["email", "firstName", "lastName", "status"],
   },
   fields: [
     {
@@ -42,9 +42,6 @@ export const Contacts: CollectionConfig = {
         position: "sidebar",
         description: "Token used for email confirmation",
       },
-      access: {
-        read: () => false,
-      },
       hidden: true,
     },
     {
@@ -53,9 +50,6 @@ export const Contacts: CollectionConfig = {
       admin: {
         position: "sidebar",
         description: "When the confirmation token expires",
-      },
-      access: {
-        read: () => false,
       },
       hidden: true,
     },
@@ -81,9 +75,10 @@ export const Contacts: CollectionConfig = {
       name: "project",
       type: "relationship",
       relationTo: "projects",
-      required: true,
+      required: false,
       admin: {
-        description: "The project this contact is associated with.",
+        description:
+          "Legacy field: Optional project association for historical data.",
       },
     },
     {

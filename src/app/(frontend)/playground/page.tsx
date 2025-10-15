@@ -9,11 +9,9 @@ import {
   GridCard,
   GridCardSection,
   GridCardSubscribe,
-  GridCardUser,
   GridCardUserSocial,
   SkeletonCard,
 } from "@/components/grid";
-import { getCachedProjectBySlug } from "@/utilities/get-project";
 
 export default function SuspensePlayground() {
   return (
@@ -32,12 +30,6 @@ async function Playground() {
     redirect("/admin");
   }
 
-  const project = await getCachedProjectBySlug("media-musings");
-
-  if (!project) {
-    throw new Error("Media Musings project not found");
-  }
-
   return (
     <>
       <GridCard>
@@ -46,11 +38,10 @@ async function Playground() {
         </GridCardSection>
       </GridCard>
       <GridCardSubscribe
-        description="Join our journney through all kinds of media and ideas."
-        emoji="👩"
+        description="Stay up to date with our latest posts and projects."
+        emoji="👋"
         handleSubmit={createContactAction}
-        projectId={project.id}
-        title="Media Musings"
+        title="Subscribe to Lyovson.com"
       />
 
       <GridCardUserSocial />

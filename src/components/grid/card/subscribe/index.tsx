@@ -12,7 +12,6 @@ type GridCardSubscribeProps = {
   buttonText?: string;
   emoji?: string;
   className?: string;
-  projectId: number;
   handleSubmit: (
     prevState: ActionResponse,
     formData: FormData
@@ -26,7 +25,6 @@ export const GridCardSubscribe = ({
   emoji = "👋",
   className,
   handleSubmit,
-  projectId,
 }: GridCardSubscribeProps) => {
   const [state, formAction] = useActionState(handleSubmit, {
     success: false,
@@ -54,9 +52,7 @@ export const GridCardSubscribe = ({
         <p className={cn("glass-text-secondary text-sm")}>{description}</p>
       </GridCardSection>
       {state.message && (
-        <GridCardSection
-          className="col-start-1 col-end-4 row-start-2 row-end-3 flex items-center justify-center"
-        >
+        <GridCardSection className="col-start-1 col-end-4 row-start-2 row-end-3 flex items-center justify-center">
           {state.success && (
             <div className={cn("glass-text text-center font-bold text-2xl")}>
               <p>✅ {state.message}</p>
@@ -70,13 +66,10 @@ export const GridCardSubscribe = ({
         </GridCardSection>
       )}
 
-      <GridCardSection
-        className="col-start-1 col-end-4 row-start-3 row-end-4"
-      >
+      <GridCardSection className="col-start-1 col-end-4 row-start-3 row-end-4">
         <SubscribeForm
           action={formAction}
           buttonText={buttonText}
-          projectId={projectId}
           state={state}
         />
       </GridCardSection>

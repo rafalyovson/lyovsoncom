@@ -11,7 +11,6 @@ const contactSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(2),
   lastName: z.string().optional(),
-  projectId: z.coerce.number().positive(),
 });
 
 export type ActionResponse = {
@@ -33,7 +32,6 @@ export async function createContactAction(
       email: formData.get("email"),
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
-      projectId: formData.get("projectId"),
     });
 
     if (!result.success) {
@@ -49,7 +47,7 @@ export async function createContactAction(
       };
     }
 
-    const { email, firstName, lastName, projectId } = result.data;
+    const { email, firstName, lastName } = result.data;
 
     // Check existing contact
     const existingContact = await payload.find({
@@ -59,18 +57,78 @@ export async function createContactAction(
     });
 
     if (existingContact.docs.length) {
-      return { success: false, message: "Contact already exists" };
+      const contact = existingContact.docs[0] as Contact;
+
+      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
+      console.log(
+        `[Subscribe] Found existing contact: ${email}, status: ${contact.status}`
+      );
+
+      // If already active and confirmed, they're subscribed
+      if (contact.status === "active") {
+        return {
+          success: true, // Changed to true - not an error!
+          message:
+            "You're already subscribed! Check your inbox for our latest emails.",
+          contact,
+        };
+      }
+
+      // If pending or unsubscribed, allow re-subscription
+      if (contact.status === "pending" || contact.status === "unsubscribed") {
+        // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
+        console.log(
+          `[Subscribe] Re-subscribing ${email} (was ${contact.status})`
+        );
+
+        // Generate new confirmation token
+        const confirmationToken = generateToken();
+        const confirmationExpiry = new Date();
+        confirmationExpiry.setHours(confirmationExpiry.getHours() + 24);
+
+        // Update existing contact with new token
+        const updatedContact = await payload.update({
+          collection: "contacts",
+          id: contact.id,
+          data: {
+            firstName,
+            lastName,
+            status: "pending",
+            confirmationToken,
+            confirmationExpiry: confirmationExpiry.toISOString(),
+            subscribedAt: new Date().toISOString(),
+            // Clear old Resend ID if unsubscribed (will be regenerated on confirmation)
+            ...(contact.status === "unsubscribed" && { resendContactId: null }),
+          },
+        });
+
+        // Send fresh confirmation email
+        const { html, subject } = await getSubscriptionConfirmationEmail({
+          firstName,
+          confirmationToken,
+        });
+
+        await payload.sendEmail({
+          to: email,
+          from: "notifications@mail.lyovson.com",
+          subject,
+          html,
+        });
+
+        // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
+        console.log(`[Subscribe] Sent confirmation email to ${email}`);
+
+        return {
+          success: true,
+          message: "Please check your email to confirm your subscription.",
+          contact: updatedContact as Contact,
+        };
+      }
     }
 
-    // Verify project exists
-    const project = await payload.findByID({
-      collection: "projects",
-      id: projectId,
-    });
-
-    if (!project) {
-      return { success: false, message: "Project not found" };
-    }
+    // If no existing contact, create new one
+    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
+    console.log(`[Subscribe] Creating new contact: ${email}`);
 
     // Generate confirmation token
     const confirmationToken = generateToken();
@@ -84,7 +142,6 @@ export async function createContactAction(
         email,
         firstName,
         lastName,
-        project: projectId,
         status: "pending",
         subscribedAt: new Date().toISOString(),
         confirmationToken,
@@ -93,15 +150,9 @@ export async function createContactAction(
     });
 
     // Send confirmation email
-    const projectName = (
-      typeof project === "object" && "name" in project
-        ? project.name
-        : "Project"
-    ) as string;
-    const { html, subject } = getSubscriptionConfirmationEmail({
+    const { html, subject } = await getSubscriptionConfirmationEmail({
       firstName,
       confirmationToken,
-      projectName,
     });
 
     await payload.sendEmail({
@@ -110,6 +161,9 @@ export async function createContactAction(
       subject,
       html,
     });
+
+    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
+    console.log(`[Subscribe] Sent confirmation email to ${email}`);
 
     return {
       success: true,

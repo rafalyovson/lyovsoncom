@@ -63,7 +63,7 @@ export function generateMetadata(): Metadata {
       url: "/",
       images: [
         {
-          url: "/lyovsoncom-og-image.webp",
+          url: "/og-image.png",
           width: 1200,
           height: 630,
           alt: "Lyóvson.com - Writing, Projects & Research",
@@ -79,7 +79,7 @@ export function generateMetadata(): Metadata {
       site: "@lyovson",
       images: [
         {
-          url: "/lyovsoncom-og-image.webp",
+          url: "/og-image.png",
           alt: "Lyóvson.com - Writing, Projects & Research",
           width: 1200,
           height: 630,
