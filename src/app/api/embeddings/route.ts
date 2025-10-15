@@ -212,7 +212,9 @@ export async function GET(request: NextRequest) {
           project: true,
           populatedAuthors: true,
           updatedAt: true,
-          embedding_vector: true, // Include pre-computed embeddings
+          embedding_vector: true, // pgvector field
+          embedding_model: true,
+          embedding_dimensions: true,
         },
       });
 

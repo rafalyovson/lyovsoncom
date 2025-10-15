@@ -1,12 +1,22 @@
 import configPromise from "@payload-config";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import type { Payload } from "payload";
 
-export async function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
-
-  try {
-    const payload = await getPayload({ config: configPromise });
+// Cached data-fetching function (idiomatic Next.js 15/16 pattern)
+// This works around Next.js 16 canary bug #76612 where "use cache" on route handlers causes serialization errors
+// Pattern: Extract data-fetching logic into separate cached function, route handler returns Response
+async function getEmbeddingStatus(
+  payload: Payload,
+  SITE_URL: string
+): Promise<Record<string, unknown>> {
+  "use cache";
+  cacheTag("embedding-status");
+  cacheLife("static");
 
     // Get embedding statistics using new pgvector schema
     const [
@@ -212,10 +222,12 @@ export async function GET(_request: NextRequest) {
       timestamp: new Date().toISOString(),
     };
 
-    // Add recommendations based on status
+    // Add recommendations based on status (must be inside cached function for immutability)
+    const recommendations = [];
+
     if (!process.env.OPENAI_API_KEY) {
-      status.recommendations.push({
-        type: "warning",
+      recommendations.push({
+        type: "warning" as const,
         message:
           "No OpenAI API key configured - using fallback hash-based embeddings",
         action:
@@ -223,35 +235,50 @@ export async function GET(_request: NextRequest) {
       });
     }
 
-    if (status.statistics.overallCoveragePercentage < 100) {
-      status.recommendations.push({
-        type: "info",
-        message: `${status.statistics.itemsNeedingEmbeddings} items need embeddings across all collections`,
+    const overallCoveragePercentage = status.statistics.overallCoveragePercentage as number;
+    const itemsNeedingEmbeddings = status.statistics.itemsNeedingEmbeddings as number;
+
+    if (overallCoveragePercentage < 100) {
+      recommendations.push({
+        type: "info" as const,
+        message: `${itemsNeedingEmbeddings} items need embeddings across all collections`,
         action:
           "Edit and save existing content to generate embeddings automatically",
       });
     }
 
-    if (status.statistics.overallCoveragePercentage === 100) {
-      status.recommendations.push({
-        type: "success",
+    if (overallCoveragePercentage === 100) {
+      recommendations.push({
+        type: "success" as const,
         message: "All published content has embeddings!",
         action: "System is ready for AI applications and semantic search",
       });
     }
 
     // Collection-specific recommendations
-    Object.entries(status.statistics.collections).forEach(
-      ([collection, stats]: [string, any]) => {
-        if (stats.totalPublished > 0 && stats.withEmbeddings === 0) {
-          status.recommendations.push({
-            type: "warning",
-            message: `No embeddings found for ${collection} collection`,
-            action: `Publish or edit content in ${collection} to generate embeddings`,
-          });
-        }
+    const collections = status.statistics.collections as Record<string, any>;
+    Object.entries(collections).forEach(([collection, stats]) => {
+      if (stats.totalPublished > 0 && stats.withEmbeddings === 0) {
+        recommendations.push({
+          type: "warning" as const,
+          message: `No embeddings found for ${collection} collection`,
+          action: `Publish or edit content in ${collection} to generate embeddings`,
+        });
       }
-    );
+    });
+
+    status.recommendations = recommendations;
+
+    return status;
+  }
+
+// Route handler - thin wrapper that calls cached function and returns Response
+export async function GET(_request: NextRequest) {
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+
+  try {
+    const payload = await getPayload({ config: configPromise });
+    const status = await getEmbeddingStatus(payload, SITE_URL);
 
     return new Response(JSON.stringify(status, null, 2), {
       status: 200,
