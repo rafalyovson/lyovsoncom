@@ -16,6 +16,7 @@ import {
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import type { Lyovson, Media, Post } from "@/payload-types";
 import {
   generateArticleSchema,
@@ -131,14 +132,12 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
-      <GridCardHero
-        className={
-          "g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-start-1 g2:row-end-2 g4:self-start"
-        }
-        post={post}
-      />
+      <GridCardHero className={""} post={post} />
       <GridCardContent
-        className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px]"
+        className={cn(
+          "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
+          "g3:col-end-4 g3:row-start-2 g3:w-[816px]"
+        )}
       >
         <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
           <RichText
@@ -151,9 +150,10 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       </GridCardContent>
 
       <aside
-        className={
-          "g2:col-start-1 g4:col-start-4 g2:col-end-2 g4:col-end-5 g2:row-start-2 g4:row-start-1 g2:row-end-3 g4:row-end-2 g2:self-start"
-        }
+        className={cn(
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start",
+          "g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2"
+        )}
       >
         {post.relatedPosts && post.relatedPosts.length > 0 && (
           <Suspense

@@ -36,7 +36,7 @@ export const GridCardHero = ({
       )}
       <GridCardSection
         className={
-          "glass-interactive col-start-1 g3:col-start-4 col-end-4 g3:col-end-8 g3:row-start-1 row-start-4 g3:row-end-4 row-end-8"
+          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-8 g3:row-start-1 row-start-4 g3:row-end-4 row-end-8"
         }
       >
         <Link

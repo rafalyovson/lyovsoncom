@@ -5,10 +5,10 @@ import {
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
+import { Skeleton } from "@/components//ui/skeleton";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getProject } from "@/utilities/get-project";
 import { getPaginatedProjectPosts } from "@/utilities/get-project-posts";
 

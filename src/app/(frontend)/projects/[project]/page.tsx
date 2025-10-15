@@ -10,7 +10,6 @@ import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { Project } from "@/payload-types";
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
@@ -45,13 +44,9 @@ export default async function Page({ params: paramsPromise }: PageProps) {
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination page={page} totalPages={totalPages} />
-          </Suspense>
-        )}
-      </div>
+      {totalPages > 1 && page && (
+        <Pagination page={page} totalPages={totalPages} />
+      )}
     </>
   );
 }

@@ -26,6 +26,7 @@ export const GridCardSection = ({
         "glass-section transition-glass",
         "hover:hover-float",
         "focus-visible:outline-none",
+        isInteractive && "glass-interactive",
         // Interactive states
         shouldHandleWrapperInteraction && [
           "cursor-pointer",

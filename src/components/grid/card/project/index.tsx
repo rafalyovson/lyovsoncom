@@ -1,7 +1,4 @@
 import Link from "next/link";
-
-import { cn } from "@/lib/utils";
-
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import type { Project } from "@/payload-types";
@@ -29,11 +26,9 @@ export const GridCardProject = ({
       className="group glass-interactive"
       href={`/${slug}`}
     >
-      <GridCard className={cn(className)}>
+      <GridCard className={className}>
         {project.image && typeof project.image !== "string" && (
-          <GridCardSection
-            className={"col-start-1 col-end-4 row-start-1 row-end-3"}
-          >
+          <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3">
             <Media
               className="glass-media flex h-full items-center justify-center"
               imgClassName="object-cover h-full"
@@ -45,11 +40,7 @@ export const GridCardProject = ({
             />
           </GridCardSection>
         )}
-        <GridCardSection
-          className={
-            "glass-interactive col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
-          }
-        >
+        <GridCardSection className="col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center">
           <h2
             className={
               "glass-text text-center font-bold text-xl transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"

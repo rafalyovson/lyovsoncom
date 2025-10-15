@@ -1,6 +1,3 @@
-export { GridCardJess } from "./jess";
-export { GridCardRafa } from "./rafa";
-
 import Image from "next/image";
 import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
@@ -44,7 +41,10 @@ export const GridCardUser = ({ user, className }: Props) => {
   return (
     <GridCard
       className={cn(
-        "g3:col-span-2 g3:row-span-1 row-span-2 g3:h-[400px] h-[816px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3 grid-rows-6",
+        "col-start-1 col-end-2 row-start-2 row-end-4 h-[816px] w-[400px] grid-rows-6",
+        "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
+        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[400px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3",
+        "g4:self-start",
         className
       )}
     >

@@ -2,9 +2,8 @@
 
 import { useActionState } from "react";
 import type { ActionResponse } from "@/actions/create-contact-action";
-import { GridCard } from "@/components/grid/";
+import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
-import { GridCardSection } from "../section";
 import { SubscribeForm } from "./subscribe-form";
 
 type GridCardSubscribeProps = {
@@ -39,7 +38,10 @@ export const GridCardSubscribe = ({
       className={cn("col-start-1 col-end-2 row-start-2 row-end-3", className)}
     >
       <GridCardSection
-        className={`row-start-1 ${state.message ? "row-end-2" : "row-end-3"} col-start-1 col-end-4 flex flex-col items-center justify-center gap-2 text-center`}
+        className={cn(
+          "col-start-1 col-end-4 flex flex-col items-center justify-center gap-2 text-center",
+          state.message ? "row-start-1 row-end-2" : "row-start-1 row-end-3"
+        )}
       >
         <div
           aria-label="Greeting"
@@ -53,9 +55,7 @@ export const GridCardSubscribe = ({
       </GridCardSection>
       {state.message && (
         <GridCardSection
-          className={cn(
-            "glass-interactive col-start-1 col-end-4 row-start-2 row-end-3 flex items-center justify-center"
-          )}
+          className="col-start-1 col-end-4 row-start-2 row-end-3 flex items-center justify-center"
         >
           {state.success && (
             <div className={cn("glass-text text-center font-bold text-2xl")}>
@@ -71,9 +71,7 @@ export const GridCardSubscribe = ({
       )}
 
       <GridCardSection
-        className={
-          "glass-interactive col-start-1 col-end-4 row-start-3 row-end-4"
-        }
+        className="col-start-1 col-end-4 row-start-3 row-end-4"
       >
         <SubscribeForm
           action={formAction}

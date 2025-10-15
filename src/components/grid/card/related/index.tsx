@@ -1,9 +1,7 @@
 import Link from "next/link";
-
-import { cn } from "@/lib/utils";
-
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
+import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
 
 export const GridCardRelatedPosts = ({
@@ -25,7 +23,7 @@ export const GridCardRelatedPosts = ({
           <Link
             aria-label={`Read related post: ${post.title}`}
             className={cn(
-              "col-start-1 col-end-4 group glass-interactive",
+              "group glass-interactive col-start-1 col-end-4",
               rowClass,
               staggerClass
             )}

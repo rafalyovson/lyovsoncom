@@ -1,5 +1,5 @@
-import { Search } from "@/search/Component";
 import { cn } from "@/lib/utils";
+import { Search } from "@/search/Component";
 import { GridCardNavItem } from "./grid-card-nav-item";
 
 export const SearchInput = ({ className }: { className?: string }) => {

@@ -22,7 +22,7 @@ export const GridCardNavItem = ({
     return (
       <GridCardSection
         asChild
-        className={cn("group glass-interactive", className)}
+        className={cn("group", className)}
         interactive
       >
         <Link
@@ -37,7 +37,7 @@ export const GridCardNavItem = ({
   return (
     <GridCardSection
       className={cn(
-        "glass-interactive glass-text flex h-full cursor-pointer flex-col items-center justify-center gap-2",
+        "glass-text flex h-full cursor-pointer flex-col items-center justify-center gap-2",
         className
       )}
       interactive

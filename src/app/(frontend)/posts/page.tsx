@@ -7,10 +7,9 @@ import type { Metadata } from "next/types";
 import { Suspense } from "react";
 
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid/skeleton";
+import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -51,13 +50,9 @@ export default async function Page() {
         <CollectionArchive posts={docs} />
       </Suspense>
 
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination page={page} totalPages={totalPages} />
-          </Suspense>
-        )}
-      </div>
+      {totalPages > 1 && page && (
+        <Pagination page={page} totalPages={totalPages} />
+      )}
     </>
   );
 }

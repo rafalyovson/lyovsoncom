@@ -69,11 +69,25 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   return (
     <>
       <CollectionArchive posts={docs as unknown as Post[]} search />
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Pagination page={page} totalPages={totalPages} />
-        )}
-      </div>
+      {totalPages > 1 && page && (
+        <Pagination
+          createHref={(target) => {
+            const params = new URLSearchParams();
+            if (query) {
+              params.set("q", query);
+            }
+            if (target > 1) {
+              params.set("page", String(target));
+            } else {
+              params.delete("page");
+            }
+            const queryString = params.toString();
+            return `/search${queryString ? `?${queryString}` : ""}`;
+          }}
+          page={page}
+          totalPages={totalPages}
+        />
+      )}
     </>
   );
 }

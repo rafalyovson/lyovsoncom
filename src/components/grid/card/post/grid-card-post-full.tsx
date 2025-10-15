@@ -59,7 +59,7 @@ export const GridCardPostFull = ({
 
       <GridCardSection
         className={
-          "glass-interactive col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
+          "col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
         }
       >
         <Link className="group block" href={postUrl}>

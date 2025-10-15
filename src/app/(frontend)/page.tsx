@@ -5,9 +5,8 @@ import {
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonGrid } from "@/components/grid/skeleton";
+import { SkeletonGrid } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getLatestPosts } from "@/utilities/get-post";
 
 // Number of posts to display on the homepage
@@ -29,13 +28,9 @@ export default async function Page() {
         <CollectionArchive posts={posts.docs} />
       </Suspense>
 
-      <div className="container">
-        {posts.totalPages > 1 && posts.page && (
-          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination page={posts.page} totalPages={posts.totalPages} />
-          </Suspense>
-        )}
-      </div>
+      {posts.totalPages > 1 && posts.page && (
+        <Pagination page={posts.page} totalPages={posts.totalPages} />
+      )}
     </>
   );
 }

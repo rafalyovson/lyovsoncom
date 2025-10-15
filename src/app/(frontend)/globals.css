@@ -43,8 +43,8 @@
   --secondary-foreground: oklch(0.35 0.12 315);
   --secondary-hover: oklch(0.89 0.04 310);
 
-  --accent: oklch(0.86 0.10 330);
-  --accent-foreground: oklch(0.20 0.03 320);
+  --accent: oklch(0.86 0.1 330);
+  --accent-foreground: oklch(0.2 0.03 320);
   --accent-hover: oklch(0.84 0.12 330);
 
   /* === Semantic Colors === */
@@ -78,7 +78,7 @@
   --chart-1: oklch(0.66 0.19 315); /* Primary violet */
   --chart-2: oklch(0.68 0.18 275); /* Cool blue-violet */
   --chart-3: oklch(0.62 0.17 350); /* Warm magenta */
-  --chart-4: oklch(0.60 0.18 295); /* Deep purple */
+  --chart-4: oklch(0.6 0.18 295); /* Deep purple */
   --chart-5: oklch(0.61 0.12 255); /* Blue accent */
   --chart-6: oklch(0.69 0.22 335); /* Pink highlight */
 
@@ -212,8 +212,8 @@
   --secondary-hover: oklch(0.19 0.05 315);
 
   --accent: oklch(0.78 0.14 330);
-  --accent-foreground: oklch(0.10 0.01 285);
-  --accent-hover: oklch(0.80 0.16 330);
+  --accent-foreground: oklch(0.1 0.01 285);
+  --accent-hover: oklch(0.8 0.16 330);
 
   /* === Semantic Colors - Dark Theme Optimized === */
   --success: oklch(0.58 0.12 142);
@@ -295,7 +295,7 @@
   );
 
   /* === Refined Dark Glassmorphism Core === */
-  --glass-bg-refined: oklch(0.8 0.05 320 / 0.10);
+  --glass-bg-refined: oklch(0.8 0.05 320 / 0.1);
   --glass-bg-hover-refined: oklch(0.8 0.05 320 / 0.14);
   --glass-bg-active-refined: oklch(0.8 0.05 320 / 0.18);
   --glass-border-refined: oklch(0.8 0.05 320 / 0.26);

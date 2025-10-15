@@ -7,10 +7,9 @@ import { Suspense } from "react";
 import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
-  GridCardJess,
-  GridCardRafa,
   GridCardSection,
   GridCardSubscribe,
+  GridCardUser,
   GridCardUserSocial,
   SkeletonCard,
 } from "@/components/grid";
@@ -53,8 +52,7 @@ async function Playground() {
         projectId={project.id}
         title="Media Musings"
       />
-      <GridCardJess />
-      <GridCardRafa />
+
       <GridCardUserSocial />
     </>
   );

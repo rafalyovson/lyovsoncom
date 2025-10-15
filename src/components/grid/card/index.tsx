@@ -42,7 +42,7 @@ export const GridCard = <T extends ElementType = "div">({
     "grid gap-2 p-2",
     variant === "default"
       ? "aspect-square grid-cols-3 grid-rows-3"
-      : "grid-cols-1 auto-rows-auto",
+      : "auto-rows-auto grid-cols-1",
     interactive && "glass-interactive",
     className
   );

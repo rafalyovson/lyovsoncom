@@ -2,10 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
-
-import { cn } from "@/lib/utils";
-
 import { GridCard } from "@/components/grid";
+import { cn } from "@/lib/utils";
 import { HeroMode } from "./hero-mode";
 import { MenuMode } from "./menu-mode";
 import { SearchMode } from "./search-mode";

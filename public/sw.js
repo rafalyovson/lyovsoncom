@@ -60,7 +60,7 @@ async function limitCacheSize(cacheName, maxSize) {
   if (keys.length > maxSize) {
     // Delete oldest entries
     const keysToDelete = keys.slice(0, keys.length - maxSize);
-    await Promise.all(keysToDelete.map(key => cache.delete(key)));
+    await Promise.all(keysToDelete.map((key) => cache.delete(key)));
   }
 }
 
@@ -156,7 +156,10 @@ self.addEventListener("fetch", (event) => {
           }
 
           // Fetch from network
-          const networkResponse = await fetchWithTimeout(event.request, NETWORK_TIMEOUT);
+          const networkResponse = await fetchWithTimeout(
+            event.request,
+            NETWORK_TIMEOUT
+          );
 
           // Cache successful responses
           if (networkResponse.status === HTTP_OK) {
@@ -169,10 +172,13 @@ self.addEventListener("fetch", (event) => {
         } catch (error) {
           // Return cached version or fallback
           const cachedResponse = await caches.match(event.request);
-          return cachedResponse || new Response("Offline", {
-            status: 503,
-            statusText: "Service Unavailable",
-          });
+          return (
+            cachedResponse ||
+            new Response("Offline", {
+              status: 503,
+              statusText: "Service Unavailable",
+            })
+          );
         }
       })()
     );
@@ -190,7 +196,10 @@ self.addEventListener("fetch", (event) => {
         // Fetch from network in the background
         const fetchPromise = (async () => {
           try {
-            const networkResponse = await fetchWithTimeout(event.request, NETWORK_TIMEOUT);
+            const networkResponse = await fetchWithTimeout(
+              event.request,
+              NETWORK_TIMEOUT
+            );
 
             // Update cache with new response (don't await)
             if (networkResponse.status < HTTP_REDIRECT) {
@@ -202,10 +211,13 @@ self.addEventListener("fetch", (event) => {
           } catch (error) {
             // Network failed, return cached or offline page
             if (event.request.mode === "navigate") {
-              return cache.match(OFFLINE_URL) || new Response("Offline", {
-                status: 503,
-                statusText: "Service Unavailable",
-              });
+              return (
+                cache.match(OFFLINE_URL) ||
+                new Response("Offline", {
+                  status: 503,
+                  statusText: "Service Unavailable",
+                })
+              );
             }
             throw error;
           }
@@ -216,10 +228,13 @@ self.addEventListener("fetch", (event) => {
       } catch (error) {
         // If all fails, show offline page for navigation
         if (event.request.mode === "navigate") {
-          return caches.match(OFFLINE_URL) || new Response("Offline", {
-            status: 503,
-            statusText: "Service Unavailable",
-          });
+          return (
+            caches.match(OFFLINE_URL) ||
+            new Response("Offline", {
+              status: 503,
+              statusText: "Service Unavailable",
+            })
+          );
         }
 
         return new Response("Offline", {
