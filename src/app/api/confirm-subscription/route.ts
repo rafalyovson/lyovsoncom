@@ -34,6 +34,7 @@ export async function GET(request: Request) {
         status: { equals: "pending" },
       },
       limit: 1,
+      showHiddenFields: true, // Include hidden fields (confirmationToken, confirmationExpiry)
     });
 
     if (!contacts.docs.length) {
@@ -48,7 +49,7 @@ export async function GET(request: Request) {
     const contact = contacts.docs[0] as Contact;
     // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
     console.log(
-      `[Confirm] Found contact: ${contact.email}, status: ${contact.status}`
+      `[Confirm] Found contact: ${contact.email}, status: ${contact.status}, expiry: ${contact.confirmationExpiry}`
     );
 
     // Check if token is expired
