@@ -1,15 +1,12 @@
 import configPromise from "@payload-config";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 
 export async function GET(_request: NextRequest) {
-  "use cache";
-  cacheTag("api-docs");
-  cacheLife("static");
+  // NOTE: "use cache" removed due to Next.js 16 canary bug
+  // See: https://github.com/vercel/next.js/issues/76612
+  // Route handlers with "use cache" throw: "Only plain objects can be passed to Client Components"
+  // Using traditional HTTP caching via Cache-Control headers instead (line 362)
 
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
