@@ -1,370 +1,290 @@
 import configPromise from "@payload-config";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
-import type { Payload } from "payload";
 
-// Cached data-fetching function (idiomatic Next.js 15/16 pattern)
-// This works around Next.js 16 canary bug #76612 where "use cache" on route handlers causes serialization errors
-// Pattern: Extract data-fetching logic into separate cached function, route handler returns Response
-async function getApiDocumentation(
-  payload: Payload,
-  SITE_URL: string
-): Promise<Record<string, unknown>> {
-  "use cache";
-  cacheTag("api-docs");
-  cacheLife("static");
-
-  // Get content statistics for AI context
-  const [posts, projects, topics] = await Promise.all([
-    payload.find({
-      collection: "posts",
-      where: { _status: { equals: "published" } },
-      limit: 1,
-      pagination: false,
-    }),
-    payload.find({
-      collection: "projects",
-      limit: 1,
-      pagination: false,
-    }),
-    payload.find({
-      collection: "topics",
-      limit: 1,
-      pagination: false,
-    }),
-  ]);
-
-  return {
-    site: {
-      name: "Lyovson.com",
-      description:
-        "Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research",
-      url: SITE_URL,
-      authors: ["Rafa Lyovson", "Jess Lyovson"],
-      topics: [
-        "programming",
-        "design",
-        "philosophy",
-        "technology",
-        "research",
-      ],
-      contentStats: {
-        totalPosts: posts.totalDocs,
-        totalProjects: projects.totalDocs,
-        totalTopics: topics.totalDocs,
-      },
-    },
-
-    // OpenAPI-style specification for programmatic access
-    openapi: "3.0.3",
-    info: {
-      title: "Lyovson.com API",
-      description:
-        "API for accessing content from Lyovson.com - optimized for AI and automated consumption",
-      version: "1.0.0",
-      contact: {
-        email: "hello@lyovson.com",
-        url: `${SITE_URL}/contact`,
-      },
-      license: {
-        name: "Content License",
-        url: `${SITE_URL}/privacy-policy`,
-      },
-    },
-
-    servers: [
-      {
-        url: SITE_URL,
-        description: "Production server",
-      },
-    ],
-
-    // Available content access methods
-    contentAccess: {
-      feeds: {
-        rss: `${SITE_URL}/feed.xml`,
-        json: `${SITE_URL}/feed.json`,
-        atom: `${SITE_URL}/atom.xml`,
-        description: "Syndication feeds with latest 50 posts, updated hourly",
-      },
-
-      api: {
-        graphql: {
-          endpoint: `${SITE_URL}/api/graphql`,
-          playground: `${SITE_URL}/api/graphql-playground`,
-          description: "Full GraphQL API for querying all content types",
-          authentication: "Optional for public content, required for drafts",
-        },
-
-        rest: {
-          baseUrl: `${SITE_URL}/api`,
-          endpoints: {
-            posts: "/api/posts",
-            projects: "/api/projects",
-            topics: "/api/topics",
-            media: "/api/media",
-            search: "/api/search",
-            embeddings: "/api/embeddings",
-          },
-          description: "RESTful API endpoints for all collections",
-          authentication: "Optional for public content",
-        },
-
-        embeddings: {
-          baseUrl: `${SITE_URL}/api/embeddings`,
-          endpoints: {
-            bulk: "/api/embeddings?type=posts&limit=50",
-            posts: "/api/embeddings/posts/{id}",
-            books: "/api/embeddings/books/{id}",
-            notes: "/api/embeddings/notes/{id}",
-            query: "/api/embeddings?q={text}",
-            status: "/api/embeddings/status",
-          },
-          description:
-            "High-performance pre-computed vector embeddings for AI applications across all collections",
-          authentication: "Not required",
-          model: "text-embedding-3-small (OpenAI) with fallback system",
-          features: [
-            "Pre-computed embeddings (~50ms response)",
-            "Smart content change detection",
-            "Bulk access for training",
-            "Semantic search & similarity",
-            "Real-time query embedding",
-            "System health monitoring",
-          ],
-          performance: {
-            responseTime: "Sub-100ms for pre-computed, 1-2s for on-demand",
-            dimensions: "1536D (OpenAI) or 384D (fallback)",
-            coverage: "Automatic generation on post publish/update",
-          },
-        },
-      },
-
-      sitemap: {
-        url: `${SITE_URL}/sitemap.xml`,
-        description:
-          "Complete sitemap with all public pages, updated every 2 hours",
-      },
-
-      llmsTxt: {
-        url: `${SITE_URL}/llms.txt`,
-        description:
-          "AI discovery guide following llms.txt standard (2025) - comprehensive guide for AI systems and language models",
-      },
-
-      search: {
-        url: `${SITE_URL}/search`,
-        api: `${SITE_URL}/api/search`,
-        description: "Full-text search across all content",
-        parameters: {
-          q: "Search query string",
-          limit: "Number of results (max 50)",
-          offset: "Pagination offset",
-        },
-      },
-    },
-
-    // Content structure for AI understanding
-    contentStructure: {
-      posts: {
-        description: "Blog posts and articles",
-        fields: [
-          "title",
-          "slug",
-          "content",
-          "publishedAt",
-          "authors",
-          "project",
-          "topics",
-          "description",
-          "featuredImage",
-        ],
-        relationships: ["authors (users)", "project", "topics"],
-        access: "Public for published posts",
-      },
-
-      projects: {
-        description: "Project categories and collections",
-        fields: ["name", "slug", "description", "color"],
-        relationships: ["posts (many)"],
-        access: "Public",
-      },
-
-      topics: {
-        description: "Content categorization tags",
-        fields: ["name", "slug", "description"],
-        relationships: ["posts (many)"],
-        access: "Public",
-      },
-    },
-
-    // Usage examples for AI systems
-    usageExamples: {
-      "Get latest posts": {
-        graphql: `
-            query LatestPosts {
-              Posts(limit: 10, sort: "-publishedAt", where: { _status: { equals: "published" } }) {
-                docs {
-                  title
-                  slug
-                  publishedAt
-                  populatedAuthors {
-                    name
-                    username
-                  }
-                  project {
-                    name
-                    slug
-                  }
-                  topics {
-                    name
-                  }
-                  meta {
-                    description
-                  }
-                }
-              }
-            }
-          `,
-        rest: `${SITE_URL}/api/posts?limit=10&sort=-publishedAt&where[_status][equals]=published`,
-      },
-
-      "Search content": {
-        graphql: `
-            query SearchContent($query: String!) {
-              Search(where: { title: { contains: $query } }) {
-                docs {
-                  title
-                  slug
-                  doc {
-                    relationTo
-                    value {
-                      ... on Post {
-                        title
-                        publishedAt
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          `,
-        rest: `${SITE_URL}/api/search?q={query}`,
-      },
-
-      "Get all projects": {
-        graphql: `
-            query AllProjects {
-              Projects {
-                docs {
-                  name
-                  slug
-                  description
-                  posts {
-                    title
-                    slug
-                  }
-                }
-              }
-            }
-          `,
-        rest: `${SITE_URL}/api/projects?depth=1`,
-      },
-
-      "Get embeddings for semantic search": {
-        posts: `${SITE_URL}/api/embeddings/posts/123`,
-        books: `${SITE_URL}/api/embeddings/books/456`,
-        notes: `${SITE_URL}/api/embeddings/notes/789`,
-        bulk: `${SITE_URL}/api/embeddings?type=posts&limit=10`,
-        query: `${SITE_URL}/api/embeddings?q=programming tutorials`,
-        withContent: `${SITE_URL}/api/embeddings/posts/123?content=true&format=full`,
-        regenerate: `${SITE_URL}/api/embeddings/books/456?regenerate=true`,
-      },
-
-      "Semantic similarity search": {
-        description: "Use embeddings to find similar content",
-        steps: [
-          "1. Get query embedding: GET /api/embeddings?q=your-search-query",
-          "2. Get all post embeddings: GET /api/embeddings?type=posts",
-          "3. Calculate cosine similarity between query and post vectors",
-          "4. Return posts with highest similarity scores",
-        ],
-        example: `
-            // 1. Get query embedding
-            const queryResponse = await fetch('/api/embeddings?q=machine learning');
-            const { embedding: queryVector } = await queryResponse.json();
-
-            // 2. Get post embeddings
-            const postsResponse = await fetch('/api/embeddings?type=posts');
-            const { embeddings } = await postsResponse.json();
-
-            // 3. Calculate similarities (pseudo-code)
-            const similarities = embeddings.map(post => ({
-              ...post.metadata,
-              similarity: cosineSimilarity(queryVector, post.embedding)
-            })).sort((a, b) => b.similarity - a.similarity);
-          `,
-      },
-    },
-
-    // Rate limiting and best practices
-    bestPractices: {
-      rateLimit: {
-        requests: "1000 per hour for feeds, 100 per hour for API",
-        respectCacheHeaders: true,
-        preferFeeds: "Use RSS/JSON feeds for bulk content access",
-      },
-
-      caching: {
-        feeds: "Updated every hour, cache for 1 hour",
-        api: "Varies by endpoint, respect Cache-Control headers",
-        sitemap: "Updated every 2 hours, cache for 2 hours",
-      },
-
-      authentication: {
-        public: "No auth required for published content",
-        headers: "Include User-Agent identifying your bot/service",
-        contact: "Contact hello@lyovson.com for high-volume access",
-      },
-    },
-
-    // Structured data schema information
-    structuredData: {
-      organization: "https://schema.org/Organization",
-      website: "https://schema.org/WebSite",
-      article: "https://schema.org/Article",
-      person: "https://schema.org/Person",
-      searchAction: "https://schema.org/SearchAction",
-      breadcrumb: "https://schema.org/BreadcrumbList",
-    },
-
-    // Content licensing and usage
-    contentLicense: {
-      type: "Copyright",
-      owner: "Rafa & Jess Lyovson",
-      year: new Date().getFullYear(),
-      usage: "Content may be referenced with proper attribution",
-      contact: "hello@lyovson.com for licensing questions",
-      attribution: "Lyovson.com - https://lyovson.com",
-    },
-
-    // Last updated timestamp
-    lastUpdated: new Date().toISOString(),
-    generated: "This documentation is generated dynamically",
-  };
-}
-
-// Route handler - thin wrapper that calls cached function and returns Response
 export async function GET(_request: NextRequest) {
+  // NOTE: "use cache" removed due to Next.js 16 canary bug
+  // See: https://github.com/vercel/next.js/issues/76612
+  // Route handlers with "use cache" throw: "Only plain objects can be passed to Client Components"
+  // Additionally, cached functions cannot accept non-serializable parameters like Payload instances
+  // Using traditional HTTP caching via Cache-Control headers instead (line 365)
+
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
-    const apiDocumentation = await getApiDocumentation(payload, SITE_URL);
+
+    // Get content statistics for AI context
+    const [posts, projects, topics] = await Promise.all([
+      payload.find({
+        collection: "posts",
+        where: { _status: { equals: "published" } },
+        limit: 1,
+        pagination: false,
+      }),
+      payload.find({
+        collection: "projects",
+        limit: 1,
+        pagination: false,
+      }),
+      payload.find({
+        collection: "topics",
+        limit: 1,
+        pagination: false,
+      }),
+    ]);
+
+    const apiDocumentation = {
+      site: {
+        name: "Lyovson.com",
+        description:
+          "Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research",
+        url: SITE_URL,
+        authors: ["Rafa Lyovson", "Jess Lyovson"],
+        topics: [
+          "programming",
+          "design",
+          "philosophy",
+          "technology",
+          "research",
+        ],
+        contentStats: {
+          totalPosts: posts.totalDocs,
+          totalProjects: projects.totalDocs,
+          totalTopics: topics.totalDocs,
+        },
+      },
+      openapi: "3.1.0",
+      contentAccess: {
+        description:
+          "All content is accessible via standard HTTP GET requests to documented endpoints",
+        api: {
+          type: "REST",
+          description: "RESTful API for accessing posts, projects, and topics",
+          rest: {
+            endpoints: [
+              {
+                path: "/",
+                method: "GET",
+                description: "Homepage with latest posts and featured projects",
+                response: "HTML page",
+                access: "public",
+              },
+              {
+                path: "/{projectSlug}/{postSlug}",
+                method: "GET",
+                description: "Individual post pages",
+                parameters: {
+                  projectSlug: "URL-friendly project identifier",
+                  postSlug: "URL-friendly post identifier",
+                },
+                response: "HTML page with full post content",
+                access: "public",
+              },
+              {
+                path: "/api/docs",
+                method: "GET",
+                description: "API documentation (this endpoint)",
+                response: "JSON",
+                access: "public",
+                caching: "3600s",
+              },
+            ],
+          },
+        },
+        collections: {
+          description:
+            "Content organized into collections accessible through Payload CMS",
+          available: [
+            {
+              name: "posts",
+              endpoint: `${SITE_URL}/posts`,
+              description: "Blog posts and articles",
+              fields: [
+                "title",
+                "content",
+                "authors",
+                "project",
+                "topics",
+                "meta",
+              ],
+              access: "published posts are public",
+              sorting: "newest first by default",
+            },
+            {
+              name: "projects",
+              endpoint: `${SITE_URL}/projects`,
+              description: "Project collections and categories",
+              fields: ["name", "slug", "description"],
+              access: "public",
+            },
+            {
+              name: "topics",
+              endpoint: `${SITE_URL}/topics`,
+              description: "Content categorization tags",
+              fields: ["name", "description", "color"],
+              access: "public",
+            },
+          ],
+        },
+        embeddings: {
+          description:
+            "Semantic search using pgvector embeddings for posts, notes, and books",
+          model: "text-embedding-3-small (OpenAI)",
+          dimensions: 1536,
+          endpoints: {
+            embeddings: {
+              path: "/api/embeddings",
+              methods: {
+                bulk: {
+                  description:
+                    "Get embeddings for multiple items (posts, books, notes)",
+                  parameters: {
+                    type: "posts | books | notes | all (optional, defaults to 'all')",
+                    limit: "number (optional, max 100, defaults to 50)",
+                    vector:
+                      "boolean (optional, include vector data, defaults to true)",
+                    content:
+                      "boolean (optional, include full content, defaults to false)",
+                  },
+                  examples: [
+                    `${SITE_URL}/api/embeddings?type=posts&limit=10`,
+                    `${SITE_URL}/api/embeddings?type=books&vector=false`,
+                    `${SITE_URL}/api/embeddings?type=all&limit=25`,
+                  ],
+                  caching: "3600s",
+                  notes:
+                    "Returns pre-computed embeddings only for fast response times",
+                },
+                specific: {
+                  description: "Get embedding for a specific item by ID",
+                  parameters: {
+                    type: "posts | books | notes (required)",
+                    id: "item ID (required)",
+                  },
+                  example: `${SITE_URL}/api/embeddings?type=posts&id=123`,
+                  caching: "3600s",
+                },
+                query: {
+                  description:
+                    "Generate embedding for a text query (on-demand)",
+                  parameters: {
+                    q: "text query (required)",
+                  },
+                  example: `${SITE_URL}/api/embeddings?q=programming+philosophy`,
+                  caching: "3600s",
+                  notes: "Generates embedding on-the-fly using OpenAI API",
+                },
+              },
+            },
+            status: {
+              path: "/api/embeddings/status",
+              description:
+                "Get embedding system health and coverage statistics",
+              response: {
+                system: "health status and configuration",
+                statistics: "coverage percentages per collection",
+                recommendations: "actionable improvement suggestions",
+              },
+              caching: "300s",
+            },
+            search: {
+              path: "/api/search",
+              description: "Semantic search across all content using embeddings",
+              parameters: {
+                q: "search query (required)",
+                limit: "number of results (optional, defaults to 10)",
+                threshold:
+                  "similarity threshold 0-1 (optional, defaults to 0.7)",
+              },
+              example: `${SITE_URL}/api/search?q=web+development&limit=5`,
+              response: "ranked results with similarity scores",
+              caching: "300s",
+            },
+          },
+          features: [
+            "Pre-computed embeddings for fast bulk access",
+            "On-demand embedding generation for queries",
+            "Automatic embedding updates on content changes",
+            "HNSW indexing for sub-100ms vector search",
+            "Cosine similarity ranking",
+            "Collection-specific coverage tracking",
+          ],
+          storage: "PostgreSQL with pgvector extension",
+          indexing: "HNSW (Hierarchical Navigable Small World)",
+        },
+      },
+      dataFormat: {
+        posts: {
+          structure: "Lexical rich text format (JSON)",
+          features: [
+            "Nested block structure",
+            "Custom components (banners, code blocks, media)",
+            "Relationship links to other content",
+            "Version control via _status field",
+          ],
+          serialization: {
+            internal: "Lexical JSON",
+            public: "Converted to HTML/Markdown for display",
+          },
+        },
+      },
+      rateLimits: {
+        default: "No explicit limits in development",
+        production: "Subject to Vercel edge function limits",
+        caching: "Aggressive caching via Cache-Control headers",
+      },
+      metadata: {
+        framework: "Next.js 15 with App Router",
+        cms: "Payload CMS 3.x",
+        database: "Vercel Postgres with pgvector",
+        hosting: "Vercel",
+        search: "Semantic search via OpenAI embeddings",
+      },
+      usage: {
+        aiAgents: {
+          description:
+            "This API is designed for AI agents to understand and access site content",
+          recommendations: [
+            "Use /api/docs to understand available endpoints",
+            "Use /api/embeddings for semantic search",
+            "Use /api/search for natural language queries",
+            "Use /api/embeddings/status to check system health",
+            "Access individual posts via /{projectSlug}/{postSlug}",
+            "Respect Cache-Control headers for optimal performance",
+          ],
+          bestPractices: [
+            "Start with /api/search for content discovery",
+            "Use embeddings similarity scores to rank relevance",
+            "Filter by topics for focused content areas",
+            "Check embedding coverage before bulk operations",
+            "Use vector=false parameter when vectors aren't needed",
+          ],
+        },
+        humanDevelopers: {
+          description: "Standard REST API access patterns apply",
+          recommendations: [
+            "All GET endpoints return JSON",
+            "CORS enabled for public endpoints",
+            "Standard HTTP status codes (200, 404, 500)",
+            "Errors include descriptive messages",
+          ],
+        },
+      },
+      contact: {
+        general: "hello@lyovson.com",
+        technical: "rafa@lyovson.com",
+        github: "https://github.com/rafalyovson",
+      },
+      links: {
+        documentation: `${SITE_URL}/api/docs`,
+        embeddingStatus: `${SITE_URL}/api/embeddings/status`,
+        search: `${SITE_URL}/api/search`,
+        home: SITE_URL,
+      },
+      version: "3.0.0",
+      lastUpdated: new Date().toISOString(),
+    };
 
     return new Response(JSON.stringify(apiDocumentation, null, 2), {
       status: 200,

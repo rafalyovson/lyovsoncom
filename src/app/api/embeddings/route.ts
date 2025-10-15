@@ -13,7 +13,7 @@ type ItemWithEmbedding = (Post | Note | Project) & {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get("type"); // 'posts', 'projects', 'all'
+  const type = searchParams.get("type") || "all"; // 'posts', 'projects', 'all' - defaults to 'all'
   const id = searchParams.get("id"); // specific item ID
   const query = searchParams.get("q"); // text query to embed
   const includeContent = searchParams.get("content") === "true";
