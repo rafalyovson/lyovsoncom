@@ -9,9 +9,11 @@ import {
   GridCard,
   GridCardSection,
   GridCardSubscribe,
+  GridCardSubscribeConfirmed,
   GridCardUserSocial,
   SkeletonCard,
 } from "@/components/grid";
+import { SubscribeDemoStates } from "@/components/grid/card/subscribe/demo-states";
 
 export default function SuspensePlayground() {
   return (
@@ -37,11 +39,35 @@ async function Playground() {
           {`Welcome, ${user.user?.name} `}
         </GridCardSection>
       </GridCard>
+
+      <GridCard>
+        <GridCardSection className="col-span-3 row-span-3 flex flex-col items-center justify-center gap-4 text-center">
+          <h2 className="glass-text font-bold text-2xl">
+            Subscribe Card States Demo
+          </h2>
+          <p className="glass-text-secondary text-sm">
+            Form, Success, Error, Info, and Confirmed states
+          </p>
+        </GridCardSection>
+      </GridCard>
+
+      <SubscribeDemoStates />
+
+      <GridCardSubscribeConfirmed />
+
+      <GridCard>
+        <GridCardSection className="col-span-3 row-span-3 flex flex-col items-center justify-center gap-4 text-center">
+          <h2 className="glass-text font-bold text-2xl">Live Subscribe Card</h2>
+          <p className="glass-text-secondary text-sm">
+            This one actually works
+          </p>
+        </GridCardSection>
+      </GridCard>
+
       <GridCardSubscribe
-        description="Stay up to date with our latest posts and projects."
-        emoji="👋"
+        description="Get notified about new posts and projects"
         handleSubmit={createContactAction}
-        title="Subscribe to Lyovson.com"
+        title="Subscribe to updates"
       />
 
       <GridCardUserSocial />

@@ -7,11 +7,12 @@ import {
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
 import { Suspense } from "react";
-
+import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCardContent,
   GridCardHero,
   GridCardRelatedPosts,
+  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -151,8 +152,8 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
       <aside
         className={cn(
-          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3 g2:self-start",
-          "g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2"
+          "col-start-1 col-end-2 row-start-6 row-end-7 grid grid-rows-2 gap-4 self-start",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-4"
         )}
       >
         {post.relatedPosts && post.relatedPosts.length > 0 && (
@@ -166,6 +167,8 @@ export default async function PostPage({ params: paramsPromise }: Args) {
             <GridCardRelatedPosts posts={post.relatedPosts} />
           </Suspense>
         )}
+
+        <GridCardSubscribe handleSubmit={createContactAction} />
       </aside>
     </>
   );

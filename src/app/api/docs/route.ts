@@ -190,7 +190,8 @@ export async function GET(_request: NextRequest) {
             },
             search: {
               path: "/api/search",
-              description: "Semantic search across all content using embeddings",
+              description:
+                "Semantic search across all content using embeddings",
               parameters: {
                 q: "search query (required)",
                 limit: "number of results (optional, defaults to 10)",
