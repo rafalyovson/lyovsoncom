@@ -14,7 +14,7 @@ type Args = {
   }>;
 };
 
-export default async function SuspendedSearchPage({
+export default function SuspendedSearchPage({
   searchParams: searchParamsPromise,
 }: Args) {
   return (

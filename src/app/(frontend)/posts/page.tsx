@@ -14,6 +14,8 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
+const POSTS_PER_PAGE = 12;
+
 export default async function Page() {
   "use cache";
 
@@ -22,7 +24,7 @@ export default async function Page() {
   cacheTag("posts-page");
   cacheLife("posts");
 
-  const response = await getLatestPosts(12);
+  const response = await getLatestPosts(POSTS_PER_PAGE);
 
   if (!response) {
     return notFound();

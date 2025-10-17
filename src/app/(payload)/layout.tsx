@@ -13,6 +13,7 @@ type Args = {
   children: React.ReactNode;
 };
 
+// biome-ignore lint/suspicious/useAwait: <3rd party code>
 const serverFunction: ServerFunctionClient = async (args) => {
   "use server";
   return handleServerFunctions({

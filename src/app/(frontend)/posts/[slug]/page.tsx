@@ -132,6 +132,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
     <>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
+      <SchemaArticle post={post} url={`${getServerSideURL()}/posts/${slug}`} />
 
       <GridCardHero className={""} post={post} />
       <GridCardContent
@@ -156,22 +157,53 @@ export default async function PostPage({ params: paramsPromise }: Args) {
           "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-4"
         )}
       >
-        {post.relatedPosts && post.relatedPosts.length > 0 && (
-          <Suspense
-            fallback={
-              <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
-                <Skeleton className="glass-badge h-full w-full" />
-              </div>
-            }
-          >
-            <GridCardRelatedPosts posts={post.relatedPosts} />
-          </Suspense>
-        )}
+        <Suspense
+          fallback={
+            <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+              <Skeleton className="glass-badge h-full w-full" />
+            </div>
+          }
+        >
+          <RecommendedPosts
+            recommendedIds={post.recommended_post_ids as number[] | undefined}
+          />
+        </Suspense>
 
         <GridCardSubscribe handleSubmit={createContactAction} />
       </aside>
     </>
   );
+}
+
+async function RecommendedPosts({
+  recommendedIds,
+}: {
+  recommendedIds?: number[];
+}) {
+  // Early return if no recommendations stored
+  if (!recommendedIds || recommendedIds.length === 0) {
+    return null;
+  }
+
+  // Fetch the recommended posts by their stored IDs
+  // No caching needed - these are pre-computed and stored in DB
+  const payload = await getPayload({ config: configPromise });
+  const posts = await payload.find({
+    collection: "posts",
+    where: {
+      id: {
+        in: recommendedIds,
+      },
+    },
+    depth: 1, // Include featuredImage, etc.
+    limit: recommendedIds.length,
+  });
+
+  if (posts.docs.length === 0) {
+    return null;
+  }
+
+  return <GridCardRelatedPosts posts={posts.docs} />;
 }
 
 export async function generateStaticParams() {

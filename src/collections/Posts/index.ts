@@ -5,6 +5,7 @@ import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
+import { computeRecommendations } from "./hooks/computeRecommendations";
 import { generateEmbeddingHook } from "./hooks/generateEmbedding";
 import { populateAuthors } from "./hooks/populateAuthors";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
@@ -217,22 +218,6 @@ export const Posts: CollectionConfig<"posts"> = {
                 description: "Notes that connect to this post",
               },
             },
-            {
-              name: "relatedPosts",
-              type: "relationship",
-              admin: {
-                description: "Other posts that are related to this one",
-              },
-              filterOptions: ({ id }) => {
-                return {
-                  id: {
-                    not_in: [id],
-                  },
-                };
-              },
-              hasMany: true,
-              relationTo: "posts",
-            },
           ],
           label: "Connections",
           description:
@@ -299,6 +284,19 @@ export const Posts: CollectionConfig<"posts"> = {
         },
       ],
     },
+    // Pre-computed recommendations (stored as JSON array of post IDs)
+    {
+      name: "recommended_post_ids",
+      type: "json",
+      access: {
+        update: () => false, // Only updated via hooks
+      },
+      admin: {
+        hidden: true,
+        description:
+          "Pre-computed recommended post IDs based on semantic similarity",
+      },
+    },
     // Pre-computed embedding for semantic search
     {
       name: "embedding_vector",
@@ -355,7 +353,7 @@ export const Posts: CollectionConfig<"posts"> = {
   ],
   hooks: {
     beforeChange: [generateEmbeddingHook],
-    afterChange: [revalidatePost],
+    afterChange: [revalidatePost, computeRecommendations],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },

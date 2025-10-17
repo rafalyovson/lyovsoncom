@@ -80,8 +80,9 @@ Main collections with relationships:
 - **Projects/Topics** - Content taxonomy and organization
 
 **Collection Hooks:**
-- `generateEmbedding` - Creates pgvector embeddings on save
-- `revalidatePost` - Clears Next.js cache
+- `generateEmbedding` - Creates pgvector embeddings on save (Posts & Notes)
+- `computeRecommendations` - Generates similar post recommendations (Posts only)
+- `revalidatePost` - Clears Next.js cache (Posts only)
 - `populateAuthors` - Hydrates user data
 
 ### Lexical Editor Configuration
@@ -164,9 +165,119 @@ pnpm dev                         # Restart server
 4. **Semantic Search**: Embeddings auto-generated for posts and notes
 5. **Type Safety**: Strict TypeScript with generated Payload types
 
+### Embedding & Recommendation System
+
+This project implements a sophisticated **semantic search and recommendation system** using OpenAI embeddings and PostgreSQL pgvector.
+
+#### Architecture
+
+**1. Embedding Generation** ([generateEmbedding.ts](src/collections/Posts/hooks/generateEmbedding.ts))
+- Triggered automatically on post/note save via `afterChange` hook
+- Uses OpenAI `text-embedding-3-small` model (1536 dimensions)
+- Extracts plain text from Lexical rich text using `extractLexicalText()`
+- Stores embedding as VARCHAR in `embedding_vector` column (JSON array format)
+- Skips generation if content hasn't changed (checks hash)
+
+**2. Recommendation System** ([computeRecommendations.ts](src/collections/Posts/hooks/computeRecommendations.ts))
+- Runs after embedding generation on Posts
+- Finds 3 most similar posts using cosine similarity
+- Pre-computes and caches recommendations in `recommended_post_ids` field
+- Excludes the current post from results
+- Only runs for published posts with embeddings
+
+**3. Similarity Search** ([get-similar-posts.ts](src/utilities/get-similar-posts.ts))
+- Direct database query using pgvector's `<=>` cosine distance operator
+- Critical: Requires `::vector(1536)` casting since embeddings stored as VARCHAR
+- Uses HNSW index for sub-100ms performance (~430x faster than sequential scan)
+- Returns post IDs in order of similarity
+
+#### Database Setup
+
+**pgvector Extension:**
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+**HNSW Index for Performance:**
+```sql
+CREATE INDEX IF NOT EXISTS posts_embedding_vector_cosine_idx
+ON posts USING hnsw ((embedding_vector::vector(1536)) vector_cosine_ops);
+```
+
+**Why VARCHAR Storage:**
+- Drizzle ORM doesn't have native vector type support
+- Stored as JSON array string: `"[0.123, -0.456, ...]"`
+- Cast to vector type at query time: `embedding_vector::vector(1536)`
+
+#### Hook Context Flags
+
+To prevent infinite loops and unwanted side effects during migrations:
+
+- **`skipRecommendationCompute`** - Prevents computeRecommendations hook from running
+- **`skipRevalidation`** - Prevents revalidatePost hook from running (Next.js cache clearing)
+
+Example usage in migrations:
+```typescript
+await payload.update({
+  collection: 'posts',
+  id: post.id,
+  data: { recommended_post_ids: ids },
+  context: {
+    skipRecommendationCompute: true,
+    skipRevalidation: true,
+  },
+});
+```
+
+#### Migration Scripts
+
+**Populate Recommendations for Existing Posts:**
+```bash
+pnpm tsx src/utilities/migrate-recommendations.ts
+```
+
+This script:
+1. Finds all published posts with embeddings
+2. Computes 3 similar posts for each
+3. Updates `recommended_post_ids` field
+4. Bypasses both recommendation and revalidation hooks
+
+**Test Similarity Search:**
+```bash
+pnpm tsx src/utilities/test-similar-posts.ts
+```
+
+#### Key Files
+
+- [src/collections/Posts/hooks/generateEmbedding.ts](src/collections/Posts/hooks/generateEmbedding.ts) - Embedding generation
+- [src/collections/Posts/hooks/computeRecommendations.ts](src/collections/Posts/hooks/computeRecommendations.ts) - Recommendation computation
+- [src/utilities/generate-embedding.ts](src/utilities/generate-embedding.ts) - OpenAI API integration
+- [src/utilities/get-similar-posts.ts](src/utilities/get-similar-posts.ts) - Similarity search query
+- [src/utilities/extract-lexical-text.ts](src/utilities/extract-lexical-text.ts) - Lexical to plain text
+- [src/utilities/migrate-recommendations.ts](src/utilities/migrate-recommendations.ts) - Migration script
+
+#### Performance
+
+- **HNSW Index**: 1.5ms average query time
+- **Sequential Scan**: 650ms average query time
+- **Improvement**: ~430x faster with index
+
+#### Notes Collection
+
+Notes also have embeddings generated via the same `generateEmbedding` hook, but do NOT have recommendations computed (Notes collection doesn't have `recommended_post_ids` field).
+
 ### Database Considerations
 
-The project uses Vercel Postgres with pgvector extension. The configuration filters out PostgreSQL extension objects to prevent Drizzle conflicts (see `tablesFilter` in payload.config.ts).
+**PostgreSQL with pgvector Extension:**
+- Database: Vercel Postgres (pgvector version 0.8.0)
+- Connection: Use Neon MCP to interact with database
+- Configuration: Filters out PostgreSQL extension objects to prevent Drizzle conflicts (see `tablesFilter` in payload.config.ts)
+
+**Finding the Database via Neon MCP:**
+1. List projects: Use `mcp__neon__list_projects` tool
+2. Look for project with name matching "lyovsoncom" or check `POSTGRES_URL` in environment
+3. Project ID starts with `prj_` prefix
+4. Use project ID with other Neon MCP tools for database operations
 
 ### Environment Variables
 

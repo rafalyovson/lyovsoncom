@@ -1,5 +1,6 @@
 import configPromise from "@payload-config";
 import { NextResponse } from "next/server";
+import type { Payload } from "payload";
 import { getPayload } from "payload";
 import { Resend } from "resend";
 import type { Contact } from "@/payload-types";
@@ -11,20 +12,27 @@ export const dynamic = "force-dynamic";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Route handler needs multiple validation and error handling steps
 export async function GET(request: Request) {
+  let logger: Payload["logger"] | undefined;
   try {
     const { searchParams } = new URL(request.url);
     const token = searchParams.get("token");
+    const payload = await getPayload({ config: configPromise });
+    logger = payload.logger;
+    const logInfo = (message: string) => {
+      logger?.info?.(message);
+    };
+    const logWarn = (message: string) => {
+      logger?.warn?.(message);
+    };
+    const logError = (message: string, detail?: unknown) => {
+      logger?.error?.(message, detail);
+    };
 
     if (!token) {
-      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-      console.log("[Confirm] No token provided");
+      logWarn("[Confirm] No token provided");
       return NextResponse.json({ error: "Token is required" }, { status: 400 });
     }
-
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log("[Confirm] Processing confirmation request");
-
-    const payload = await getPayload({ config: configPromise });
+    logInfo("[Confirm] Processing confirmation request");
 
     // Find contact by token
     const contacts = await payload.find({
@@ -38,8 +46,7 @@ export async function GET(request: Request) {
     });
 
     if (!contacts.docs.length) {
-      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-      console.log("[Confirm] Invalid or expired token");
+      logWarn("[Confirm] Invalid or expired token");
       return NextResponse.json(
         { error: "Invalid or expired token" },
         { status: 400 }
@@ -47,8 +54,7 @@ export async function GET(request: Request) {
     }
 
     const contact = contacts.docs[0] as Contact;
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log(
+    logInfo(
       `[Confirm] Found contact: ${contact.email}, status: ${contact.status}, expiry: ${contact.confirmationExpiry}`
     );
 
@@ -69,8 +75,7 @@ export async function GET(request: Request) {
 
     // Check if already confirmed (idempotency)
     if (contact.status === "active" && contact.resendContactId) {
-      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-      console.log(`[Confirm] Contact ${contact.email} already confirmed`);
+      logInfo(`[Confirm] Contact ${contact.email} already confirmed`);
       return NextResponse.redirect(
         new URL("/subscription-confirmed", request.url)
       );
@@ -100,16 +105,14 @@ export async function GET(request: Request) {
 
       // Check for API errors
       if (resendContact.error) {
-        // biome-ignore lint/suspicious/noConsole: Server-side error logging
-        console.error("[Confirm] Resend API error:", resendContact.error);
+        logError("[Confirm] Resend API error", resendContact.error);
         // If contact already exists, that's okay - just update our database
         const errorMessage = resendContact.error.message?.toLowerCase() || "";
         if (
           errorMessage.includes("already exists") ||
           errorMessage.includes("duplicate")
         ) {
-          // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-          console.log(
+          logInfo(
             `[Confirm] Contact ${contact.email} already exists in Resend - continuing`
           );
           // Try to find existing Resend contact ID
@@ -119,8 +122,7 @@ export async function GET(request: Request) {
         }
       }
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Server-side error logging
-      console.error("[Confirm] Failed to create contact in Resend:", error);
+      logError("[Confirm] Failed to create contact in Resend", error);
       // Continue anyway - we can sync later via webhook
       // Don't block user confirmation due to Resend issues
     }
@@ -137,16 +139,14 @@ export async function GET(request: Request) {
       },
     });
 
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log(`[Confirm] Successfully confirmed ${contact.email}`);
+    logInfo(`[Confirm] Successfully confirmed ${contact.email}`);
 
     // Redirect to success page
     return NextResponse.redirect(
       new URL("/subscription-confirmed", request.url)
     );
   } catch (_error) {
-    // biome-ignore lint/suspicious/noConsole: Server-side error logging
-    console.error("[Confirm] Error:", _error);
+    logger?.error?.("[Confirm] Error", _error);
     return NextResponse.json(
       { error: "Failed to confirm subscription" },
       { status: 500 }

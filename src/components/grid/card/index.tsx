@@ -33,9 +33,12 @@ export const GridCard = <T extends ElementType = "div">({
 }: GridCardProps<T>) => {
   const Component = (as ?? "div") as ElementType;
 
-  const baseStyle: CSSProperties = {
-    minHeight: "var(--grid-card-size)",
-  };
+  const baseStyle: CSSProperties =
+    variant === "default"
+      ? {
+          minHeight: "var(--grid-card-size)",
+        }
+      : {};
 
   const cardClassName = cn(
     "glass-card rounded-xl",
@@ -46,10 +49,6 @@ export const GridCard = <T extends ElementType = "div">({
     interactive && "glass-interactive",
     className
   );
-
-  if (variant === "content") {
-    delete baseStyle.minHeight;
-  }
 
   return (
     <Component

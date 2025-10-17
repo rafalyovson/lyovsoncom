@@ -287,10 +287,6 @@ export interface Post {
    */
   notesReferenced?: (number | Note)[] | null;
   /**
-   * Other posts that are related to this one
-   */
-  relatedPosts?: (number | Post)[] | null;
-  /**
    * When this post should be published
    */
   publishedAt?: string | null;
@@ -304,6 +300,18 @@ export interface Post {
         name?: string | null;
         username?: string | null;
       }[]
+    | null;
+  /**
+   * Pre-computed recommended post IDs based on semantic similarity
+   */
+  recommended_post_ids?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
     | null;
   /**
    * Vector embedding for semantic search (pgvector format)
@@ -1758,7 +1766,6 @@ export interface PostsSelect<T extends boolean = true> {
   references?: T;
   personsMentioned?: T;
   notesReferenced?: T;
-  relatedPosts?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -1768,6 +1775,7 @@ export interface PostsSelect<T extends boolean = true> {
         name?: T;
         username?: T;
       };
+  recommended_post_ids?: T;
   embedding_vector?: T;
   embedding_model?: T;
   embedding_dimensions?: T;

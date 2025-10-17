@@ -11,6 +11,9 @@ import { SkeletonGrid } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 
+const POSTS_PER_PAGE = 12;
+const MAX_INDEXED_PAGE = 3;
+
 type Args = {
   params: Promise<{
     pageNumber: string;
@@ -32,7 +35,7 @@ export default async function Page({ params: paramsPromise }: Args) {
     notFound();
   }
 
-  const response = await getPaginatedPosts(sanitizedPageNumber, 12);
+  const response = await getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE);
 
   if (!response) {
     return notFound();
@@ -97,7 +100,7 @@ export async function generateMetadata({
       site: "@lyovson",
     },
     robots: {
-      index: pageNum <= 3, // Only index first 3 pages to avoid duplicate content issues
+      index: pageNum <= MAX_INDEXED_PAGE, // Only index first 3 pages to avoid duplicate content issues
       follow: true,
       noarchive: pageNum > 1, // Don't archive pagination pages
     },
@@ -110,7 +113,7 @@ export async function generateStaticParams() {
   cacheLife("static"); // Build-time data doesn't change often
 
   const { totalDocs } = await getPostCount();
-  const totalPages = Math.ceil(totalDocs / 12);
+  const totalPages = Math.ceil(totalDocs / POSTS_PER_PAGE);
 
   const pages: { pageNumber: string }[] = [];
 

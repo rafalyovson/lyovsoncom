@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-export async function GET(_request: NextRequest) {
+export function GET(_request: NextRequest) {
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
   const aiResources = {

@@ -9,6 +9,7 @@ const TAILWIND_REGEX = /[\\/]node_modules[\\/]tailwindcss[\\/]/;
 const MOTION_REGEX = /[\\/]node_modules[\\/]motion[\\/]/;
 
 // Image quality presets for Next.js Image Optimization
+/* biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit quality breakpoints */
 const IMAGE_QUALITIES: number[] = [25, 50, 75, 80, 90, 100];
 
 const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL

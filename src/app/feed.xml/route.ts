@@ -77,7 +77,7 @@ export async function GET(_request: NextRequest) {
 
         // Extract full content from Lexical format for AI consumption
         const fullContent = post.content
-          ? extractLexicalText(post.content as any)
+          ? extractLexicalText(post.content)
           : "";
 
         // Use description as summary, full content as main content

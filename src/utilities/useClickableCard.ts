@@ -51,30 +51,35 @@ function useClickableCard<T extends HTMLElement>({
     }
   }, []); // Refs don't need to be in dependencies
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Click detection requires multiple conditions to handle edge cases properly
   const handleMouseUp = useCallback(
-    (e: MouseEvent) => {
-      if (link.current?.href) {
-        const timeNow = Date.now();
-        const difference = timeNow - timeDown.current;
-
-        if (
-          link.current?.href &&
-          difference <= CLICK_DELAY_THRESHOLD_MS &&
-          !hasActiveParent.current &&
-          pressedButton.current === 0 &&
-          !e.ctrlKey
-        ) {
-          if (external) {
-            const target = newTab ? "_blank" : "_self";
-            window.open(link.current.href, target);
-          } else {
-            router.push(link.current.href, { scroll });
-          }
-        }
+    (event: MouseEvent) => {
+      const linkElement = link.current;
+      if (!linkElement?.href) {
+        return;
       }
+
+      const elapsed = Date.now() - timeDown.current;
+      const isPrimaryButton = pressedButton.current === 0;
+      const clickedQuickly = elapsed <= CLICK_DELAY_THRESHOLD_MS;
+      const shouldNavigate =
+        clickedQuickly &&
+        isPrimaryButton &&
+        !hasActiveParent.current &&
+        !event.ctrlKey;
+
+      if (!shouldNavigate) {
+        return;
+      }
+
+      if (external) {
+        const target = newTab ? "_blank" : "_self";
+        window.open(linkElement.href, target);
+        return;
+      }
+
+      router.push(linkElement.href, { scroll });
     },
-    [router, external, newTab, scroll] // Include all props and context used
+    [external, newTab, router, scroll]
   );
 
   useEffect(() => {

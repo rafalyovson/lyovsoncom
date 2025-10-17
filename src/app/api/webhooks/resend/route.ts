@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import { render } from "@react-email/render";
 import { NextResponse } from "next/server";
+import type { Payload } from "payload";
 import { getPayload } from "payload";
 import { Webhook } from "svix";
 import { WelcomeEmail } from "@/emails/welcome-email";
@@ -29,15 +30,26 @@ type ResendWebhookEvent = {
 };
 
 export async function POST(request: Request) {
+  let logger: Payload["logger"] | undefined;
   try {
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log("[Webhook] Received Resend webhook request");
+    const payload = await getPayload({ config: configPromise });
+    logger = payload.logger;
+    const logInfo = (message: string) => {
+      logger?.info?.(message);
+    };
+    const logWarn = (message: string) => {
+      logger?.warn?.(message);
+    };
+    const logError = (message: string, detail?: unknown) => {
+      logger?.error?.(message, detail);
+    };
+
+    logInfo("[Webhook] Received Resend webhook request");
 
     // Verify webhook signature
     const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      // biome-ignore lint/suspicious/noConsole: Server-side error logging
-      console.error("[Webhook] RESEND_WEBHOOK_SECRET not configured");
+      logError("[Webhook] RESEND_WEBHOOK_SECRET not configured");
       return NextResponse.json(
         { error: "Webhook secret not configured" },
         { status: 500 }
@@ -51,8 +63,7 @@ export async function POST(request: Request) {
     const svixSignature = request.headers.get("svix-signature");
 
     if (!(svixId && svixTimestamp && svixSignature)) {
-      // biome-ignore lint/suspicious/noConsole: Server-side error logging
-      console.error("[Webhook] Missing svix headers");
+      logError("[Webhook] Missing svix headers");
       return NextResponse.json(
         { error: "Missing svix headers" },
         { status: 401 }
@@ -69,16 +80,11 @@ export async function POST(request: Request) {
         "svix-timestamp": svixTimestamp,
         "svix-signature": svixSignature,
       }) as ResendWebhookEvent;
-      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-      console.log(`[Webhook] Verified event type: ${event.type}`);
+      logInfo(`[Webhook] Verified event type: ${event.type}`);
     } catch (error) {
-      // biome-ignore lint/suspicious/noConsole: Server-side error logging
-      console.error("[Webhook] Verification failed:", error);
+      logError("[Webhook] Verification failed", error);
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
-
-    // Get Payload instance
-    const payload = await getPayload({ config: configPromise });
 
     // Handle different event types
     switch (event.type) {
@@ -92,14 +98,12 @@ export async function POST(request: Request) {
               where: { email: { equals: event.data.email } },
               data: { status: "unsubscribed" },
             });
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(
+            logInfo(
               `[Webhook] Marked ${event.data.email} as unsubscribed due to ${event.type}`
             );
           }
         } catch (error) {
-          // biome-ignore lint/suspicious/noConsole: Server-side error logging
-          console.error(`[Webhook] Error handling ${event.type}:`, error);
+          logError(`[Webhook] Error handling ${event.type}`, error);
         }
         break;
 
@@ -108,8 +112,7 @@ export async function POST(request: Request) {
         try {
           // Send welcome email when contact is created in Resend
           if (event.data.email && event.data.first_name) {
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(
+            logInfo(
               `[Webhook] Processing contact.created for ${event.data.email}`
             );
 
@@ -130,12 +133,10 @@ export async function POST(request: Request) {
               html: welcomeHtml,
             });
 
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(`[Webhook] Sent welcome email to ${event.data.email}`);
+            logInfo(`[Webhook] Sent welcome email to ${event.data.email}`);
           }
         } catch (error) {
-          // biome-ignore lint/suspicious/noConsole: Server-side error logging
-          console.error("[Webhook] Error handling contact.created:", error);
+          logError("[Webhook] Error handling contact.created", error);
         }
         break;
 
@@ -143,8 +144,7 @@ export async function POST(request: Request) {
         try {
           // Sync unsubscribe status
           if (event.data.email && event.data.unsubscribed !== undefined) {
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(
+            logInfo(
               `[Webhook] Processing contact.updated for ${event.data.email}`
             );
 
@@ -157,14 +157,12 @@ export async function POST(request: Request) {
               },
             });
 
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(
+            logInfo(
               `[Webhook] Updated ${event.data.email} subscription status to ${event.data.unsubscribed ? "unsubscribed" : "active"}`
             );
           }
         } catch (error) {
-          // biome-ignore lint/suspicious/noConsole: Server-side error logging
-          console.error("[Webhook] Error handling contact.updated:", error);
+          logError("[Webhook] Error handling contact.updated", error);
         }
         break;
 
@@ -172,8 +170,7 @@ export async function POST(request: Request) {
         try {
           // Mark as deleted in database (soft delete)
           if (event.data.email) {
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(
+            logInfo(
               `[Webhook] Processing contact.deleted for ${event.data.email}`
             );
 
@@ -186,29 +183,24 @@ export async function POST(request: Request) {
               },
             });
 
-            // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-            console.log(`[Webhook] Marked ${event.data.email} as deleted`);
+            logInfo(`[Webhook] Marked ${event.data.email} as deleted`);
           }
         } catch (error) {
-          // biome-ignore lint/suspicious/noConsole: Server-side error logging
-          console.error("[Webhook] Error handling contact.deleted:", error);
+          logError("[Webhook] Error handling contact.deleted", error);
         }
         break;
 
       default:
-        // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-        console.log(`[Webhook] Unhandled event type: ${event.type}`);
+        logWarn(`[Webhook] Unhandled event type: ${event.type}`);
     }
 
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log("[Webhook] Successfully processed webhook");
+    logInfo("[Webhook] Successfully processed webhook");
     return NextResponse.json(
       { message: "Webhook processed successfully" },
       { status: 200 }
     );
   } catch (error) {
-    // biome-ignore lint/suspicious/noConsole: Server-side error logging
-    console.error("[Webhook] Processing error:", error);
+    logger?.error?.("[Webhook] Processing error", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

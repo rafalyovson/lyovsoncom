@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { ErrorMode } from "./error-mode";
 import { FormMode } from "./form-mode";
@@ -53,10 +53,7 @@ const DemoSubscribeCard = ({ mode, className }: DemoCardProps) => {
             />
           ),
           error: (
-            <ErrorMode
-              message={demoMessages.error}
-              setMode={setCurrentMode}
-            />
+            <ErrorMode message={demoMessages.error} setMode={setCurrentMode} />
           ),
           info: (
             <InfoMode message={demoMessages.info} setMode={setCurrentMode} />

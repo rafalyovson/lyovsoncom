@@ -26,6 +26,11 @@ export async function createContactAction(
 ): Promise<ActionResponse> {
   try {
     const payload = await getPayload({ config: configPromise });
+    const logInfo = (message: string) => {
+      if (payload.logger?.info) {
+        payload.logger.info(message);
+      }
+    };
 
     // Validate input
     const result = contactSchema.safeParse({
@@ -59,8 +64,7 @@ export async function createContactAction(
     if (existingContact.docs.length) {
       const contact = existingContact.docs[0] as Contact;
 
-      // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-      console.log(
+      logInfo(
         `[Subscribe] Found existing contact: ${email}, status: ${contact.status}`
       );
 
@@ -76,10 +80,7 @@ export async function createContactAction(
 
       // If pending or unsubscribed, allow re-subscription
       if (contact.status === "pending" || contact.status === "unsubscribed") {
-        // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-        console.log(
-          `[Subscribe] Re-subscribing ${email} (was ${contact.status})`
-        );
+        logInfo(`[Subscribe] Re-subscribing ${email} (was ${contact.status})`);
 
         // Generate new confirmation token
         const confirmationToken = generateToken();
@@ -103,20 +104,20 @@ export async function createContactAction(
         });
 
         // Send fresh confirmation email
-        const { html, subject } = await getSubscriptionConfirmationEmail({
-          firstName,
-          confirmationToken,
-        });
+        const { html: resubscribeHtml, subject: resubscribeSubject } =
+          await getSubscriptionConfirmationEmail({
+            firstName,
+            confirmationToken,
+          });
 
         await payload.sendEmail({
           to: email,
           from: "notifications@mail.lyovson.com",
-          subject,
-          html,
+          subject: resubscribeSubject,
+          html: resubscribeHtml,
         });
 
-        // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-        console.log(`[Subscribe] Sent confirmation email to ${email}`);
+        logInfo(`[Subscribe] Sent confirmation email to ${email}`);
 
         return {
           success: true,
@@ -127,8 +128,7 @@ export async function createContactAction(
     }
 
     // If no existing contact, create new one
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log(`[Subscribe] Creating new contact: ${email}`);
+    logInfo(`[Subscribe] Creating new contact: ${email}`);
 
     // Generate confirmation token
     const confirmationToken = generateToken();
@@ -150,7 +150,10 @@ export async function createContactAction(
     });
 
     // Send confirmation email
-    const { html, subject } = await getSubscriptionConfirmationEmail({
+    const {
+      html: initialConfirmationHtml,
+      subject: initialConfirmationSubject,
+    } = await getSubscriptionConfirmationEmail({
       firstName,
       confirmationToken,
     });
@@ -158,12 +161,11 @@ export async function createContactAction(
     await payload.sendEmail({
       to: email,
       from: "notifications@mail.lyovson.com",
-      subject,
-      html,
+      subject: initialConfirmationSubject,
+      html: initialConfirmationHtml,
     });
 
-    // biome-ignore lint/suspicious/noConsole: Server-side logging for debugging
-    console.log(`[Subscribe] Sent confirmation email to ${email}`);
+    logInfo(`[Subscribe] Sent confirmation email to ${email}`);
 
     return {
       success: true,

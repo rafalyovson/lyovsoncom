@@ -8,6 +8,35 @@ const HTTP_OK = 200;
 const HTTP_REDIRECT = 300;
 const CACHE_MAX_SIZE = 50; // Maximum number of items in runtime cache
 const NETWORK_TIMEOUT = 3000; // 3 seconds
+const STATIC_ASSET_PATTERN =
+  /\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|otf|ico)$/i;
+const IS_DEV = self.location.hostname === "localhost";
+
+/**
+ * @param {"warn" | "error" | "info"} level
+ * @param {string} message
+ * @param {unknown} [detail]
+ */
+function swLog(level, message, detail) {
+  if (!IS_DEV) {
+    return;
+  }
+
+  if (level === "warn") {
+    /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
+    console.warn(message, detail);
+    return;
+  }
+
+  if (level === "error") {
+    /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
+    console.error(message, detail);
+    return;
+  }
+
+  /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
+  console.info(message, detail);
+}
 
 // Essential URLs to precache on install
 const urlsToCache = [
@@ -22,7 +51,7 @@ const urlsToCache = [
 
 // Helper: Check if request is for a static asset
 function isStaticAsset(url) {
-  return /\.(png|jpg|jpeg|svg|gif|webp|woff|woff2|ttf|otf|ico)$/i.test(url);
+  return STATIC_ASSET_PATTERN.test(url);
 }
 
 // Helper: Check if request should be handled by service worker
@@ -91,7 +120,11 @@ self.addEventListener("install", (event) => {
           try {
             await cache.add(url);
           } catch (error) {
-            console.warn(`Failed to cache ${url}:`, error.message);
+            swLog(
+              "warn",
+              `Failed to cache ${url}`,
+              error instanceof Error ? error.message : error
+            );
             // Continue even if one URL fails
           }
         });
@@ -101,7 +134,7 @@ self.addEventListener("install", (event) => {
         // Skip waiting to activate immediately
         await self.skipWaiting();
       } catch (error) {
-        console.error("Service worker installation failed:", error);
+        swLog("error", "Service worker installation failed", error);
       }
     })()
   );
@@ -124,7 +157,7 @@ self.addEventListener("activate", (event) => {
         // Take control of all clients
         await self.clients.claim();
       } catch (error) {
-        console.error("Service worker activation failed:", error);
+        swLog("error", "Service worker activation failed", error);
       }
     })()
   );
@@ -169,7 +202,7 @@ self.addEventListener("fetch", (event) => {
           }
 
           return networkResponse;
-        } catch (error) {
+        } catch (_error) {
           // Return cached version or fallback
           const cachedResponse = await caches.match(event.request);
           return (
@@ -210,6 +243,11 @@ self.addEventListener("fetch", (event) => {
             return networkResponse;
           } catch (error) {
             // Network failed, return cached or offline page
+            swLog(
+              "warn",
+              `Network fetch failed during revalidation: ${event.request.url}`,
+              error
+            );
             if (event.request.mode === "navigate") {
               return (
                 cache.match(OFFLINE_URL) ||
@@ -227,6 +265,11 @@ self.addEventListener("fetch", (event) => {
         return cachedResponse || fetchPromise;
       } catch (error) {
         // If all fails, show offline page for navigation
+        swLog(
+          "error",
+          `Stale-while-revalidate failed completely: ${event.request.url}`,
+          error
+        );
         if (event.request.mode === "navigate") {
           return (
             caches.match(OFFLINE_URL) ||
@@ -268,14 +311,18 @@ self.addEventListener("message", (event) => {
             try {
               await cache.add(url);
             } catch (error) {
-              console.warn(`Failed to cache ${url}:`, error.message);
+              swLog(
+                "warn",
+                `Failed to cache ${url}`,
+                error instanceof Error ? error.message : error
+              );
             }
           });
 
           await Promise.allSettled(cachePromises);
           await limitCacheSize(CACHE_NAME, CACHE_MAX_SIZE);
         } catch (error) {
-          console.error("Failed to cache URLs:", error);
+          swLog("error", "Failed to cache URLs", error);
         }
       })()
     );

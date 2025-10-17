@@ -6,14 +6,11 @@ export async function GET(_request: NextRequest) {
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
 
   try {
-    console.log("[Status] Getting payload instance...");
     const payload = await getPayload({ config: configPromise });
-    console.log("[Status] Payload instance obtained");
 
     // Get embedding statistics
     // Note: embedding_vector is a direct PostgreSQL column, not a Payload field
     // We need to fetch all items and check the embedding fields manually
-    console.log("[Status] Fetching collection stats...");
     const [allPosts, allBooks, allNotes] = await Promise.all([
       payload.find({
         collection: "posts",
@@ -34,11 +31,9 @@ export async function GET(_request: NextRequest) {
         pagination: false,
       }),
     ]);
-    console.log("[Status] Collection stats fetched successfully");
 
     // Sample a few embeddings to check models from multiple collections
     // Fetch actual posts to check which ones have embeddings
-    console.log("[Status] Sampling embeddings...");
     const sampleEmbeddings = await payload.find({
       collection: "posts",
       where: { _status: { equals: "published" } },
@@ -216,7 +211,6 @@ export async function GET(_request: NextRequest) {
       }
     );
 
-    console.log("[Status] Returning successful response");
     return new Response(JSON.stringify(status, null, 2), {
       status: 200,
       headers: {
@@ -225,8 +219,7 @@ export async function GET(_request: NextRequest) {
         "Access-Control-Allow-Origin": "*",
       },
     });
-  } catch (error) {
-    console.error("[Status] Error occurred:", error);
+  } catch (_error) {
     return new Response(
       JSON.stringify({
         system: {

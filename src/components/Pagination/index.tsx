@@ -15,18 +15,19 @@ type PaginationProps = {
 };
 
 const MAX_WINDOW_SIZE = 7;
+const WINDOW_RADIUS = Math.floor(MAX_WINDOW_SIZE / 2);
 
 const buildWindow = (page: number, totalPages: number): (number | null)[] => {
   if (totalPages <= 0) {
-    return Array(MAX_WINDOW_SIZE).fill(null);
+    return new Array(MAX_WINDOW_SIZE).fill(null);
   }
 
   if (totalPages <= MAX_WINDOW_SIZE) {
     const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-    return [...pages, ...Array(MAX_WINDOW_SIZE - pages.length).fill(null)];
+    return [...pages, ...new Array(MAX_WINDOW_SIZE - pages.length).fill(null)];
   }
 
-  let start = page - 3;
+  let start = page - WINDOW_RADIUS;
   if (start < 1) {
     start = 1;
   }

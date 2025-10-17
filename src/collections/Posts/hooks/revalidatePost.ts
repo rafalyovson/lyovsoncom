@@ -60,7 +60,13 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
   doc,
   previousDoc,
   req,
+  context,
 }) => {
+  // Skip revalidation during migration or other system operations
+  if (context?.skipRevalidation) {
+    return doc;
+  }
+
   const { payload } = req;
 
   if (doc._status === "published") {

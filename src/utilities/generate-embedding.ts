@@ -2,10 +2,9 @@ import crypto from "node:crypto";
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
 import type { CollectionBeforeChangeHook } from "payload";
-import { extractLexicalText } from "./extract-lexical-text";
 
 // Re-export extractLexicalText as extractTextFromContent for backwards compatibility
-export { extractLexicalText as extractTextFromContent };
+export { extractLexicalText as extractTextFromContent } from "./extract-lexical-text";
 
 // Generate a simple hash-based fallback embedding
 function generateFallbackEmbedding(text: string): number[] {

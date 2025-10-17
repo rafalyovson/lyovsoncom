@@ -8,8 +8,6 @@
  * @module extract-lexical-text
  */
 
-import type { LexicalContent } from "@/types/lexical";
-
 /**
  * Extract plain text from Lexical rich text content
  *
@@ -35,7 +33,7 @@ import type { LexicalContent } from "@/types/lexical";
  * // Returns: "Hello World"
  * ```
  */
-export function extractLexicalText(content: LexicalContent): string {
+export function extractLexicalText(content: unknown): string {
   // Handle null/undefined
   if (!content) {
     return "";
@@ -60,17 +58,17 @@ export function extractLexicalText(content: LexicalContent): string {
 
     // Handle root document with 'root' property
     if ("root" in content && content.root) {
-      return extractLexicalText(content.root as LexicalContent);
+      return extractLexicalText(content.root);
     }
 
     // Handle nodes with 'children' property
     if ("children" in content && content.children) {
-      return extractLexicalText(content.children as LexicalContent);
+      return extractLexicalText(content.children);
     }
 
     // Handle nodes with 'content' property
     if ("content" in content && content.content) {
-      return extractLexicalText(content.content as LexicalContent);
+      return extractLexicalText(content.content);
     }
   }
 

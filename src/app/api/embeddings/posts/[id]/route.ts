@@ -32,7 +32,7 @@ function extractPostsText(
 
   // Extract content from Lexical JSONB format
   if (post.content) {
-    const contentText = extractTextFromContent(post.content as any);
+    const contentText = extractTextFromContent(post.content);
     if (contentText) {
       parts.push(contentText);
     }
