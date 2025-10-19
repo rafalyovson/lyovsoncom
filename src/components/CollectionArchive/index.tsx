@@ -1,22 +1,19 @@
 import type React from "react";
-import { GridCardPostFull, GridCardPostSearch } from "@/components/grid";
+import { GridCardPostFull } from "@/components/grid";
 import type { Post } from "@/payload-types";
 
 export type Props = {
   posts: Post[];
-  search?: boolean;
 };
 
 export const CollectionArchive: React.FC<Props> = (props) => {
-  const { posts, search } = props;
+  const { posts } = props;
 
   return (
     <>
       {posts?.map((result, index) => {
         if (typeof result === "object" && result !== null) {
-          return search ? (
-            <GridCardPostSearch key={result.slug} post={result} />
-          ) : (
+          return (
             <GridCardPostFull
               key={result.slug}
               post={result}

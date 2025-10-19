@@ -8,6 +8,7 @@ import { getServerSideURL } from "@/utilities/getURL";
 import { computeRecommendations } from "./hooks/computeRecommendations";
 import { generateEmbeddingHook } from "./hooks/generateEmbedding";
 import { populateAuthors } from "./hooks/populateAuthors";
+import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
 
 export const Posts: CollectionConfig<"posts"> = {
@@ -297,6 +298,19 @@ export const Posts: CollectionConfig<"posts"> = {
           "Pre-computed recommended post IDs based on semantic similarity",
       },
     },
+    // Extracted plain text from Lexical content for full-text search
+    {
+      name: "content_text",
+      type: "text",
+      access: {
+        update: () => false, // Only updated via hooks
+      },
+      admin: {
+        hidden: true,
+        description:
+          "Plain text extracted from rich text content for full-text search indexing",
+      },
+    },
     // Pre-computed embedding for semantic search
     {
       name: "embedding_vector",
@@ -352,7 +366,7 @@ export const Posts: CollectionConfig<"posts"> = {
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [generateEmbeddingHook],
+    beforeChange: [populateContentTextHook, generateEmbeddingHook],
     afterChange: [revalidatePost, computeRecommendations],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

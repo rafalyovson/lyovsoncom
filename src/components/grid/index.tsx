@@ -38,7 +38,7 @@ export { GridCard, GridCardContent } from "./card";
 export { GridCardHero } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
-export { GridCardPostFull, GridCardPostSearch } from "./card/post";
+export { GridCardPostFull } from "./card/post";
 export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
 export { GridCardSubscribe } from "./card/subscribe";

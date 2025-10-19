@@ -36,5 +36,11 @@
     "next.config.ts",
     ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "src/utilities/test-*.ts",
+    "src/utilities/check-*.ts",
+    "src/utilities/migrations/run-*.ts",
+    "src/utilities/migrate-*.ts"
+  ]
 }

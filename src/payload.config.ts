@@ -2,11 +2,14 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sql } from "drizzle-orm";
+import { varchar } from "drizzle-orm/pg-core";
 import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp"; // sharp-import
+import { tsvector } from "@/db/custom-types";
 
 import { Books } from "@/collections/Books";
 import { Contacts } from "@/collections/Contacts";
@@ -79,6 +82,7 @@ export default buildConfig({
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: vercelPostgresAdapter({
+    push: true, // Enable schema push - custom columns are now protected via afterSchemaInit
     pool: {
       connectionString: process.env.POSTGRES_URL || "",
       // Optimized settings for faster schema introspection
@@ -109,17 +113,31 @@ export default buildConfig({
       // Include all other tables with wildcard
       "*",
     ],
-    beforeSchemaInit: [
-      ({ schema }) => {
-        // Preserve PostgreSQL extension objects that shouldn't be managed by Payload CMS
-        // Combined with tablesFilter above, this ensures extensions work properly
+    // Use afterSchemaInit to extend schema with custom columns (official Payload pattern)
+    afterSchemaInit: [
+      ({ schema, extendTable }) => {
+        // Add content_text column to store extracted plain text from Lexical content
+        // This is populated via Payload hook (see Posts collection)
+        // Add tsvector column for hybrid full-text search
+        // This prevents Drizzle from deleting the column while allowing schema push
+        extendTable({
+          table: schema.tables.posts,
+          columns: {
+            content_text: varchar("content_text"),
+            search_vector: tsvector("search_vector")
+              .notNull()
+              .generatedAlwaysAs(
+                () =>
+                  sql`to_tsvector('english',
+                    coalesce(${schema.tables.posts.title}, '') || ' ' ||
+                    coalesce(${schema.tables.posts.description}, '') || ' ' ||
+                    coalesce(${schema.tables.posts.content_text}, '')
+                  )`,
+              ),
+          },
+        });
 
-        // Extensions in this database: pg_stat_statements, vector (pgvector), plpgsql
-        const preservedSchema = {
-          ...schema,
-        };
-
-        return preservedSchema;
+        return schema;
       },
     ],
   }),

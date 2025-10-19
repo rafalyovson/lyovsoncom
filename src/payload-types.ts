@@ -314,6 +314,10 @@ export interface Post {
     | boolean
     | null;
   /**
+   * Plain text extracted from rich text content for full-text search indexing
+   */
+  content_text?: string | null;
+  /**
    * Vector embedding for semantic search (pgvector format)
    */
   embedding_vector?: string | null;
@@ -1776,6 +1780,7 @@ export interface PostsSelect<T extends boolean = true> {
         username?: T;
       };
   recommended_post_ids?: T;
+  content_text?: T;
   embedding_vector?: T;
   embedding_model?: T;
   embedding_dimensions?: T;

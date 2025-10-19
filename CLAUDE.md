@@ -273,11 +273,34 @@ Notes also have embeddings generated via the same `generateEmbedding` hook, but 
 - Connection: Use Neon MCP to interact with database
 - Configuration: Filters out PostgreSQL extension objects to prevent Drizzle conflicts (see `tablesFilter` in payload.config.ts)
 
-**Finding the Database via Neon MCP:**
-1. List projects: Use `mcp__neon__list_projects` tool
-2. Look for project with name matching "lyovsoncom" or check `POSTGRES_URL` in environment
-3. Project ID starts with `prj_` prefix
-4. Use project ID with other Neon MCP tools for database operations
+**Accessing the Database via Neon MCP:**
+
+The database is NOT in the default Neon organization. Follow this workflow:
+
+1. **List Organizations:**
+   ```
+   mcp__neon__list_organizations → Find "Vercel: RoadCorp" (org-dry-credit-92650987)
+   ```
+
+2. **List Projects in Organization:**
+   ```
+   mcp__neon__list_projects with org_id: "org-dry-credit-92650987"
+   → Find "lyovsoncom-postgres" (silent-recipe-86860418)
+   ```
+
+3. **Database Identifiers:**
+   - Organization: `org-dry-credit-92650987` (Vercel: RoadCorp)
+   - Project ID: `silent-recipe-86860418` (lyovsoncom-postgres)
+   - Main Branch: `br-frosty-field-04223759` (main)
+   - Database Name: Use default (usually `neondb`) or omit parameter
+
+4. **Execute SQL Operations:**
+   ```
+   mcp__neon__run_sql(projectId, branchId, sql)
+   mcp__neon__run_sql_transaction(projectId, branchId, sqlStatements)
+   ```
+
+**Important:** Always use `org_id` filter when listing projects, as the default organization is different from where the database actually lives.
 
 ### Environment Variables
 
