@@ -17,3 +17,9 @@ tsconfig.tsbuildinfo
 
 # Payload auto-generated files
 src/payload-generated-schema.ts
+
+# Development utility scripts
+src/utilities/test-*.ts
+src/utilities/check-*.ts
+src/utilities/migrations/run-*.ts
+src/utilities/migrate-*.ts
