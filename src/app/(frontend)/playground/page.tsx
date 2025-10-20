@@ -34,6 +34,8 @@ async function Playground() {
 
   return (
     <>
+      <h1 className="sr-only">Playground - Interactive Demos</h1>
+
       <GridCard>
         <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-4 grid place-items-center">
           {`Welcome, ${user.user?.name} `}
@@ -76,9 +78,9 @@ async function Playground() {
 }
 
 export const metadata: Metadata = {
-  title: "Playground - Interactive Demos | Lyovson.com",
+  title: "Playground - Interactive Demos | Lyóvson.com",
   description:
-    "Explore interactive demos, experiments, and test features on the Lyovson.com playground. Try out new components and functionality.",
+    "Explore interactive demos, experiments, and test features on the Lyóvson.com playground. Try out new components and functionality.",
   keywords: [
     "playground",
     "interactive demos",
@@ -90,18 +92,35 @@ export const metadata: Metadata = {
     canonical: "/playground",
   },
   openGraph: {
+    siteName: "Lyóvson.com",
     title: "Playground - Interactive Demos",
     description:
-      "Explore interactive demos, experiments, and test features on the Lyovson.com playground.",
+      "Explore interactive demos, experiments, and test features on the Lyóvson.com playground.",
     type: "website",
     url: "/playground",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Playground - Interactive Demos - Lyóvson.com",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Playground - Interactive Demos",
-    description: "Explore interactive demos and experiments on Lyovson.com.",
+    description: "Explore interactive demos and experiments on Lyóvson.com.",
     creator: "@lyovson",
     site: "@lyovson",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "Playground - Interactive Demos - Lyóvson.com",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   robots: {
     index: true,

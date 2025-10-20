@@ -9,7 +9,7 @@ import { extractLexicalText } from "@/utilities/extract-lexical-text";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -36,24 +36,24 @@ export async function GET(_request: NextRequest) {
     });
 
     const feed = new Feed({
-      title: "Lyovson.com - Writing, Projects & Research",
+      title: "Lyóvson.com - Writing, Projects & Research",
       description:
-        "Latest posts and articles from Rafa and Jess Lyovson covering programming, design, philosophy, and technology.",
+        "Latest posts and articles from Rafa and Jess Lyóvson covering programming, design, philosophy, and technology.",
       id: SITE_URL,
       link: SITE_URL,
       language: "en-US",
       image: `${SITE_URL}/og-image.png`,
       favicon: `${SITE_URL}/favicon.ico`,
-      copyright: `All rights reserved ${new Date().getFullYear()}, Lyovson.com`,
+      copyright: `All rights reserved ${new Date().getFullYear()}, Lyóvson.com`,
       updated: new Date(),
-      generator: "Next.js JSON Feed for Lyovson.com",
+      generator: "Next.js JSON Feed for Lyóvson.com",
       feedLinks: {
         rss2: `${SITE_URL}/feed.xml`,
         json: `${SITE_URL}/feed.json`,
         atom: `${SITE_URL}/atom.xml`,
       },
       author: {
-        name: "Rafa & Jess Lyovson",
+        name: "Rafa & Jess Lyóvson",
         email: "hello@lyovson.com",
         link: SITE_URL,
       },
@@ -69,7 +69,7 @@ export async function GET(_request: NextRequest) {
         const description = post.description || "";
         const link = `${SITE_URL}/posts/${post.slug}`;
         const projectSlug = (post.project as any)?.slug || "";
-        const author = post.populatedAuthors?.[0]?.name || "Lyovson Team";
+        const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
 
         // Extract full content from Lexical format for AI consumption
         const fullContent = post.content
@@ -78,7 +78,7 @@ export async function GET(_request: NextRequest) {
 
         let contentText = description || fullContent;
         if (!contentText) {
-          contentText = "Read the full article on Lyovson.com";
+          contentText = "Read the full article on Lyóvson.com";
         }
 
         // Enhanced feed item with AI-friendly metadata
@@ -92,7 +92,7 @@ export async function GET(_request: NextRequest) {
             {
               name: author,
               email: "hello@lyovson.com",
-              link: `${SITE_URL}/${author.toLowerCase().replace(" ", "")}`,
+              link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
             },
           ],
           date: new Date(post.publishedAt || post.updatedAt),
@@ -149,13 +149,13 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     const fallbackJson = {
       version: "https://jsonfeed.org/version/1.1",
-      title: "Lyovson.com",
+      title: "Lyóvson.com",
       home_page_url: SITE_URL,
       feed_url: `${SITE_URL}/feed.json`,
-      description: "Writing, Projects & Research by Rafa and Jess Lyovson",
+      description: "Writing, Projects & Research by Rafa and Jess Lyóvson",
       authors: [
         {
-          name: "Rafa & Jess Lyovson",
+          name: "Rafa & Jess Lyóvson",
           url: SITE_URL,
         },
       ],

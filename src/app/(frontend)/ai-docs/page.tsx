@@ -3,9 +3,9 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { getServerSideURL } from "@/utilities/getURL";
 
 export const metadata: Metadata = {
-  title: "AI & Bot Access Documentation | Lyovson.com",
+  title: "AI & Bot Access Documentation | Lyóvson.com",
   description:
-    "Comprehensive guide for AI systems, bots, and crawlers to access and consume content from Lyovson.com. Includes API endpoints, feeds, and best practices.",
+    "Comprehensive guide for AI systems, bots, and crawlers to access and consume content from Lyóvson.com. Includes API endpoints, feeds, and best practices.",
   keywords: [
     "AI access",
     "bot documentation",
@@ -19,17 +19,35 @@ export const metadata: Metadata = {
     canonical: "/ai-docs",
   },
   openGraph: {
+    siteName: "Lyóvson.com",
     title: "AI & Bot Access Documentation",
     description:
-      "Comprehensive guide for AI systems and bots to access content from Lyovson.com",
+      "Comprehensive guide for AI systems and bots to access content from Lyóvson.com",
     type: "website",
     url: "/ai-docs",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "AI & Bot Access Documentation - Lyóvson.com",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "AI & Bot Access Documentation",
-    description: "Guide for AI systems to access Lyovson.com content",
+    description: "Guide for AI systems to access Lyóvson.com content",
     site: "@lyovson",
+    creator: "@lyovson",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "AI & Bot Access Documentation - Lyóvson.com",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   robots: {
     index: true,
@@ -81,7 +99,7 @@ export default function AIDocsPage() {
         </h1>
         <p className="text-gray-600 text-lg dark:text-gray-300">
           Comprehensive guide for AI systems, research bots, and automated tools
-          to access and consume content from Lyovson.com.
+          to access and consume content from Lyóvson.com.
         </p>
       </div>
 
@@ -477,10 +495,10 @@ GET ${SITE_URL}/api/embeddings/books/456?regenerate=true
             <div>
               <h3 className="mb-2 font-medium">🤝 Attribution</h3>
               <ul className="list-inside list-disc space-y-1 text-gray-700 text-sm dark:text-gray-300">
-                <li>Content copyright: Rafa & Jess Lyovson</li>
+                <li>Content copyright: Rafa & Jess Lyóvson</li>
                 <li>
-                  Attribution required: &quot;Lyovson.com -
-                  https://lyovson.com&quot;
+                  Attribution required: &quot;Lyóvson.com -
+                  https://www.lyovson.com&quot;
                 </li>
                 <li>Contact hello@lyovson.com for licensing questions</li>
                 <li>
@@ -558,13 +576,13 @@ GET ${SITE_URL}/api/embeddings/books/456?regenerate=true
             </p>
             <p>
               🐛 Issues:{" "}
-              <ExternalLink href="https://github.com/lyovson">
+              <ExternalLink href="https://github.com/rafalyovson">
                 GitHub
               </ExternalLink>
             </p>
             <p>
               📱 Twitter:{" "}
-              <ExternalLink href="https://twitter.com/lyovson">
+              <ExternalLink href="https://x.com/rafalyovson">
                 @lyovson
               </ExternalLink>
             </p>

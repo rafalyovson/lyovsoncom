@@ -54,7 +54,7 @@ export default async function Page({ params: paramsPromise }: PageProps) {
     return notFound();
   }
 
-  const _topicName = topic.name || slug;
+  const topicName = topic.name || slug;
 
   const response = await getTopicPosts(slug);
 
@@ -66,6 +66,8 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 
   return (
     <>
+      <h1 className="sr-only">{topicName}</h1>
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts} />
       </Suspense>
@@ -92,18 +94,49 @@ export async function generateMetadata({
 
   if (!topic) {
     return {
-      title: "Topic Not Found | Lyovson.com",
+      title: "Topic Not Found | Lyóvson.com",
       description: "The requested topic could not be found",
     };
   }
 
   const topicName = topic.name || slug;
+  const topicDescription = topic.description || `Posts about ${topicName}`;
 
   return {
-    title: `${topicName} | Lyovson.com`,
-    description: topic.description || `Posts about ${topicName}`,
+    title: `${topicName} | Lyóvson.com`,
+    description: topicDescription,
     alternates: {
       canonical: `/topics/${slug}`,
+    },
+    openGraph: {
+      siteName: "Lyóvson.com",
+      title: `${topicName} | Lyóvson.com`,
+      description: topicDescription,
+      type: "website",
+      url: `/topics/${slug}`,
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${topicName} | Lyóvson.com`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${topicName} | Lyóvson.com`,
+      description: topicDescription,
+      creator: "@lyovson",
+      site: "@lyovson",
+      images: [
+        {
+          url: "/og-image.png",
+          alt: `${topicName} | Lyóvson.com`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }

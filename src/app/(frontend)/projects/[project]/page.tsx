@@ -31,6 +31,12 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   cacheTag(`project-${projectSlug}`);
   cacheLife("posts");
 
+  const project = await getProject(projectSlug);
+
+  if (!project) {
+    return notFound();
+  }
+
   const response = await getProjectPosts(projectSlug);
 
   if (!response) {
@@ -41,6 +47,8 @@ export default async function Page({ params: paramsPromise }: PageProps) {
 
   return (
     <>
+      <h1 className="sr-only">{project.name}</h1>
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>
@@ -67,7 +75,7 @@ export async function generateMetadata({
 
   if (!project) {
     return {
-      title: "Project Not Found | Lyovson.com",
+      title: "Project Not Found | Lyóvson.com",
       description: "The requested project could not be found",
     };
   }
@@ -76,7 +84,7 @@ export async function generateMetadata({
     project.description || `Posts and content from the ${project.name} project`;
 
   return {
-    title: `${project.name} | Lyovson.com`,
+    title: `${project.name} | Lyóvson.com`,
     description,
     keywords: [
       project.name,
@@ -84,24 +92,40 @@ export async function generateMetadata({
       "collection",
       "posts",
       "articles",
-      "Lyovson",
+      "Lyóvson",
     ],
     alternates: {
       canonical: `/projects/${projectSlug}`,
     },
     openGraph: {
-      title: `${project.name}`,
+      siteName: "Lyóvson.com",
+      title: `${project.name} | Lyóvson.com`,
       description,
       type: "website",
       url: `/projects/${projectSlug}`,
-      siteName: "Lyovson.com",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: `${project.name} | Lyóvson.com`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${project.name}`,
+      title: `${project.name} | Lyóvson.com`,
       description,
       site: "@lyovson",
       creator: "@lyovson",
+      images: [
+        {
+          url: "/og-image.png",
+          alt: `${project.name} | Lyóvson.com`,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
   };
 }

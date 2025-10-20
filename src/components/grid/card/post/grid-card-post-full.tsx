@@ -79,7 +79,7 @@ export const GridCardPostFull = ({
         }
       >
         {topics?.map((topic, index) => {
-          if (typeof topic !== "object") {
+          if (typeof topic !== "object" || !topic.slug) {
             return null;
           }
           return (

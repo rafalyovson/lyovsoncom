@@ -104,15 +104,15 @@ All feeds include complete article content for optimal AI consumption:
 - Regular updates to maintain relevance
 
 ### Authors
-- **Rafa Lyóvson**: https://lyovson.com/rafa - Developer, designer, and writer
-- **Jess Lyóvson**: https://lyovson.com/jess - Researcher and creative professional
+- **Rafa Lyóvson**: https://www.lyovson.com/rafa - Developer, designer, and writer
+- **Jess Lyóvson**: https://www.lyovson.com/jess - Researcher and creative professional
 
 ## Contact & Support
 
 - Email: hello@lyovson.com
-- Website: https://lyovson.com
-- Twitter/X: https://twitter.com/lyovson
-- GitHub: https://github.com/lyovson
+- Website: https://www.lyovson.com
+- Twitter/X: https://x.com/rafalyovson
+- GitHub: https://github.com/rafalyovson
 
 For questions about:
 - API access and integration

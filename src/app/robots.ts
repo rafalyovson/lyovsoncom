@@ -9,7 +9,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
   cacheTag("robots");
   cacheLife("static"); // Robots.txt changes very rarely
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   return {
     rules: [
@@ -19,9 +19,9 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         disallow: [
           "/api/*",
           "/admin/*",
-          "/_next/*",
-          "/next/*",
-          "*.json",
+          "/playground",
+          "/search?*",
+          "/vercel-blob-client-upload-route",
           "/private/*",
           "/temp/*",
           "/drafts/*",

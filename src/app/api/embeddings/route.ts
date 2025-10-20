@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     100
   );
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });

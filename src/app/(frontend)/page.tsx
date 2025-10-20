@@ -22,6 +22,8 @@ export default async function Page() {
 
   return (
     <>
+      <h1 className="sr-only">Lyóvson.com - Latest Posts & Articles</h1>
+
       {/* <PWAInstall /> */}
 
       <Suspense fallback={<SkeletonGrid />}>
@@ -37,9 +39,9 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: "Lyovson.com",
+    title: "Lyóvson.com",
     description:
-      "Official website of Rafa and Jess Lyóvson — featuring writing, projects, and research on programming, design, philosophy, and technology.",
+      "Official website of Rafa and Jess Lyóvson",
     keywords: [
       "Rafa Lyóvson",
       "Jess Lyóvson",
@@ -56,9 +58,10 @@ export function generateMetadata(): Metadata {
       canonical: "/",
     },
     openGraph: {
-      title: "Lyóvson.com - Writing, Projects & Research",
+      siteName: "Lyóvson.com",
+      title: "Lyóvson.com",
       description:
-        "Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.",
+        "Official website of Rafa and Jess Lyóvson",
       type: "website",
       url: "/",
       images: [
@@ -72,9 +75,9 @@ export function generateMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Lyovson.com - Writing, Projects & Research",
+      title: "Lyóvson.com",
       description:
-        "Official website of Rafa and Jess Lyóvson featuring writing, projects, and research on programming, design, philosophy, and technology.",
+        "Official website of Rafa and Jess Lyóvson",
       creator: "@lyovson",
       site: "@lyovson",
       images: [

@@ -1,13 +1,13 @@
 import type { NextRequest } from "next/server";
 
 export function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   const aiResources = {
     // Standard identification
     site: {
-      name: "Lyovson.com",
-      description: "Website and blog of Rafa and Jess Lyovson",
+      name: "Lyóvson.com",
+      description: "Official website of Rafa and Jess Lyóvson",
       url: SITE_URL,
       type: "blog",
       language: "en",
@@ -115,11 +115,11 @@ export function GET(_request: NextRequest) {
 
     // Content licensing
     licensing: {
-      copyright: "Rafa & Jess Lyovson",
+      copyright: "Rafa & Jess Lyóvson",
       year: 2025,
       usage: "Attribution required for content use",
       contact: "hello@lyovson.com",
-      attribution: "Lyovson.com - https://lyovson.com",
+      attribution: "Lyóvson.com - https://www.lyovson.com",
     },
 
     // Technical metadata

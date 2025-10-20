@@ -53,11 +53,11 @@ export function WelcomeEmail({
           <Hr style={hr} />
           <Text style={h2}>Connect with us</Text>
           <Section>
-            <Link href="https://twitter.com/lyovson" style={socialLink}>
+            <Link href="https://x.com/rafalyovson" style={socialLink}>
               Twitter
             </Link>
             {" • "}
-            <Link href="https://github.com/lyovson" style={socialLink}>
+            <Link href="https://github.com/rafalyovson" style={socialLink}>
               GitHub
             </Link>
           </Section>

@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("topics");
   cacheLife("sitemap"); // Use sitemap-specific cache life
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   // Get all cached sitemap data
   const { posts, projects, topics } = await getSitemapData();

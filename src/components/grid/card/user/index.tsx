@@ -58,6 +58,7 @@ export const GridCardUser = ({ user, className }: Props) => {
           alt={avatarData.alt}
           className="h-full w-full rounded-md object-cover"
           height={400}
+          priority={true}
           src={avatarData.url}
           width={400}
         />

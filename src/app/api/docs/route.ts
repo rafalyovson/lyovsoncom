@@ -9,7 +9,7 @@ export async function GET(_request: NextRequest) {
   // Additionally, cached functions cannot accept non-serializable parameters like Payload instances
   // Using traditional HTTP caching via Cache-Control headers instead (line 365)
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -36,11 +36,11 @@ export async function GET(_request: NextRequest) {
 
     const apiDocumentation = {
       site: {
-        name: "Lyovson.com",
+        name: "Lyóvson.com",
         description:
-          "Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research",
+          "Official website of Rafa and Jess Lyóvson",
         url: SITE_URL,
-        authors: ["Rafa Lyovson", "Jess Lyovson"],
+        authors: ["Rafa Lyóvson", "Jess Lyóvson"],
         topics: [
           "programming",
           "design",

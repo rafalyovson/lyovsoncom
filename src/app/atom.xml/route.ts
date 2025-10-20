@@ -10,7 +10,7 @@ import { extractLexicalText } from "@/utilities/extract-lexical-text";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://lyovson.com";
+  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -36,24 +36,24 @@ export async function GET(_request: NextRequest) {
     });
 
     const feed = new Feed({
-      title: "Lyovson.com - Writing, Projects & Research",
+      title: "Lyóvson.com - Writing, Projects & Research",
       description:
-        "Latest posts and articles from Rafa and Jess Lyovson covering programming, design, philosophy, and technology.",
+        "Latest posts and articles from Rafa and Jess Lyóvson covering programming, design, philosophy, and technology.",
       id: SITE_URL,
       link: SITE_URL,
       language: "en-US",
       image: `${SITE_URL}/og-image.png`,
       favicon: `${SITE_URL}/favicon.ico`,
-      copyright: `All rights reserved ${new Date().getFullYear()}, Lyovson.com`,
+      copyright: `All rights reserved ${new Date().getFullYear()}, Lyóvson.com`,
       updated: new Date(),
-      generator: "Next.js Atom Feed for Lyovson.com",
+      generator: "Next.js Atom Feed for Lyóvson.com",
       feedLinks: {
         rss2: `${SITE_URL}/feed.xml`,
         json: `${SITE_URL}/feed.json`,
         atom: `${SITE_URL}/atom.xml`,
       },
       author: {
-        name: "Rafa & Jess Lyovson",
+        name: "Rafa & Jess Lyóvson",
         email: "hello@lyovson.com",
         link: SITE_URL,
       },
@@ -72,7 +72,7 @@ export async function GET(_request: NextRequest) {
           typeof post.project === "object" && post.project !== null
             ? (post.project as Project).slug || ""
             : "";
-        const author = post.populatedAuthors?.[0]?.name || "Lyovson Team";
+        const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
 
         // Extract full content from Lexical format for AI consumption
         const fullContent = post.content
@@ -81,7 +81,7 @@ export async function GET(_request: NextRequest) {
 
         let contentText = description || fullContent;
         if (!contentText) {
-          contentText = "Read the full article on Lyovson.com";
+          contentText = "Read the full article on Lyóvson.com";
         }
 
         feed.addItem({
@@ -94,7 +94,7 @@ export async function GET(_request: NextRequest) {
             {
               name: author,
               email: "hello@lyovson.com",
-              link: `${SITE_URL}/${author.toLowerCase().replace(" ", "")}`,
+              link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
             },
           ],
           date: new Date(post.publishedAt || post.updatedAt),
@@ -117,13 +117,13 @@ export async function GET(_request: NextRequest) {
   } catch (_error) {
     const fallbackAtom = `<?xml version="1.0" encoding="UTF-8" ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Lyovson.com</title>
+  <title>Lyóvson.com</title>
   <link href="${SITE_URL}" />
   <link href="${SITE_URL}/atom.xml" rel="self" />
   <id>${SITE_URL}</id>
   <updated>${new Date().toISOString()}</updated>
   <author>
-    <name>Rafa &amp; Jess Lyovson</name>
+    <name>Rafa &amp; Jess Lyóvson</name>
   </author>
   <entry>
     <title>Feed Temporarily Unavailable</title>

@@ -238,7 +238,7 @@ export default async function PrivacyPolicy() {
           <strong>Email:</strong> privacy@lyovson.com
           <br />
           <strong>Website:</strong>{" "}
-          <a href="https://lyovson.com">https://lyovson.com</a>
+          <a href="https://www.lyovson.com">https://www.lyovson.com</a>
         </p>
       </section>
 

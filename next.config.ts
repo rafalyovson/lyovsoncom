@@ -45,6 +45,66 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              // Removed platform.twitter.com - replaced by react-tweet (no external scripts)
+              // Removed *.tenor.com from script-src - replaced by direct video URLs
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.google-analytics.com *.googletagmanager.com *.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
+              "font-src 'self' fonts.gstatic.com data:",
+              // Added cdn.syndication.twimg.com, pbs.twimg.com, abs.twimg.com for react-tweet
+              // Kept media.tenor.com for video sources (GIF optimization)
+              "img-src 'self' data: blob: *.vercel-insights.com *.google-analytics.com *.googletagmanager.com pbs.twimg.com abs.twimg.com *.twimg.com media.tenor.com",
+              // Kept media.tenor.com for MP4/WebM videos (GIF optimization)
+              "media-src 'self' blob: video.twimg.com media.tenor.com",
+              // Added cdn.syndication.twimg.com for react-tweet API
+              "connect-src 'self' *.vercel-insights.com *.google-analytics.com *.googletagmanager.com cdn.syndication.twimg.com vitals.vercel-insights.com",
+              // Removed platform.twitter.com and tenor.com - no longer needed (eliminated iframes)
+              "frame-src 'self' www.youtube.com youtube.com",
+              "worker-src 'self' blob:",
+              "child-src 'self' blob:",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'self'",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
+          {
+            key: "X-Frame-Options",
+            value: "SAMEORIGIN",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
   reactCompiler: true,
   experimental: {
     // Forward browser logs to the terminal for easier debugging

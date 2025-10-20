@@ -33,6 +33,7 @@ export const GridCardHero = ({
             className="glass-media flex h-full items-center justify-center"
             imgClassName="object-cover h-full"
             pictureClassName="h-full"
+            priority={true}
             resource={post.featuredImage}
           />
         </GridCardSection>

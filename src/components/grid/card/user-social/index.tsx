@@ -28,21 +28,21 @@ type SocialLink = {
 const socialLinks: SocialLink[] = [
   {
     name: "X (Twitter)",
-    url: "https://twitter.com/lyovson",
+    url: "https://x.com/rafalyovson",
     icon: SiX,
     useDefaultColor: false,
     iconType: "simple",
   },
   {
     name: "Instagram",
-    url: "https://instagram.com/lyovson",
+    url: "https://instagram.com/rafalyovson",
     icon: SiInstagram,
     useDefaultColor: false,
     iconType: "simple",
   },
   {
     name: "GitHub",
-    url: "https://github.com/lyovson",
+    url: "https://github.com/rafalyovson",
     icon: SiGithub,
     useDefaultColor: false,
     iconType: "simple",

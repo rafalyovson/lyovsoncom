@@ -42,6 +42,8 @@ export default async function Page() {
 
   return (
     <>
+      <h1 className="sr-only">Projects & Research</h1>
+
       <JsonLd data={collectionPageSchema} />
 
       <Suspense fallback={<SkeletonGrid />}>
@@ -54,9 +56,9 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
-  title: "Projects & Research | Lyovson.com",
+  title: "Projects & Research | Lyóvson.com",
   description:
-    "Explore projects and research by Rafa and Jess Lyovson covering technology, programming, design, and creative endeavors.",
+    "Explore projects and research by Rafa and Jess Lyóvson covering technology, programming, design, and creative endeavors.",
   keywords: [
     "projects",
     "research",
@@ -64,29 +66,46 @@ export const metadata: Metadata = {
     "programming",
     "design",
     "creative projects",
-    "Rafa Lyovson",
-    "Jess Lyovson",
+    "Rafa Lyóvson",
+    "Jess Lyóvson",
   ],
   alternates: {
     canonical: "/projects",
   },
   openGraph: {
-    title: "Projects & Research - Lyovson.com",
+    siteName: "Lyóvson.com",
+    title: "Projects & Research - Lyóvson.com",
     description:
       "Explore projects and research covering technology, programming, design, and creative endeavors.",
     type: "website",
     url: "/projects",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Projects & Research - Lyóvson.com",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Projects & Research - Lyovson.com",
+    title: "Projects & Research - Lyóvson.com",
     description:
       "Explore projects and research covering technology, programming, design, and creative endeavors.",
     creator: "@lyovson",
     site: "@lyovson",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: "Projects & Research - Lyóvson.com",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   other: {
     "article:section": "Projects",
-    "article:author": "Rafa Lyovson, Jess Lyovson",
+    "article:author": "Rafa Lyóvson, Jess Lyóvson",
   },
 };

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function LoginText() {
   return (
-    <Link href="https://lyovson.com" target="_blank">
+    <Link href="https://www.lyovson.com" target="_blank">
       <p
         style={{
           textAlign: "center",

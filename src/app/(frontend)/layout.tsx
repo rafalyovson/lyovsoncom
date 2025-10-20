@@ -1,8 +1,8 @@
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
 import { draftMode } from "next/headers";
+import Script from "next/script";
 import type React from "react";
 import { Suspense } from "react";
 import { Grid, GridCardNav, SkeletonCard } from "@/components/grid";
@@ -91,10 +91,10 @@ export default async function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              name: "Lyovson.com",
+              name: "Lyóvson.com",
               url: getServerSideURL(),
               description:
-                "Website and blog of Rafa and Jess Lyóvson — featuring writing, projects, and research.",
+                "Official website of Rafa and Jess Lyóvson",
               inLanguage: "en-US",
               potentialAction: {
                 "@type": "SearchAction",
@@ -103,7 +103,7 @@ export default async function RootLayout({
               },
               publisher: {
                 "@type": "Organization",
-                name: "Lyovson.com",
+                name: "Lyóvson.com",
                 url: getServerSideURL(),
                 logo: {
                   "@type": "ImageObject",
@@ -112,8 +112,8 @@ export default async function RootLayout({
                   height: 60,
                 },
                 sameAs: [
-                  "https://twitter.com/lyovson",
-                  "https://github.com/lyovson",
+                  "https://x.com/rafalyovson",
+                  "https://github.com/rafalyovson",
                 ],
               },
               author: [
@@ -155,7 +155,24 @@ export default async function RootLayout({
         </Providers>
         <Analytics />
       </body>
-      <GoogleAnalytics gaId="G-R4R3XJRY28" />
+      <Script
+        id="google-analytics-init"
+        strategy="lazyOnload"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for GA initialization
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-R4R3XJRY28');
+          `,
+        }}
+      />
+      <Script
+        id="google-analytics-script"
+        src="https://www.googletagmanager.com/gtag/js?id=G-R4R3XJRY28"
+        strategy="lazyOnload"
+      />
     </html>
   );
 }
@@ -174,12 +191,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    default: "Lyovson.com",
-    template: "%s | Lyovson.com",
+    default: "Lyóvson.com",
+    template: "%s | Lyóvson.com",
   },
   description:
-    "Website and blog of Rafa and Jess Lyóvson — featuring writing, projects, and research.",
-  applicationName: "Lyovson.com",
+    "Official website of Rafa and Jess Lyóvson",
+  applicationName: "Lyóvson.com",
   authors: [
     { name: "Rafa Lyóvson", url: `${getServerSideURL()}/rafa` },
     { name: "Jess Lyóvson", url: `${getServerSideURL()}/jess` },
@@ -195,7 +212,7 @@ export const metadata: Metadata = {
   ],
   referrer: "origin-when-cross-origin",
   creator: "Rafa & Jess Lyóvson",
-  publisher: "Lyovson.com",
+  publisher: "Lyóvson.com",
   formatDetection: {
     email: false,
     address: false,
@@ -236,10 +253,10 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: getServerSideURL(),
-    siteName: "Lyovson.com",
-    title: "Lyovson.com",
+    siteName: "Lyóvson.com",
+    title: "Lyóvson.com",
     description:
-      "Website and blog of Rafa and Jess Lyovson — featuring writing, projects, and research.",
+      "Official website of Rafa and Jess Lyóvson",
   }),
   twitter: {
     card: "summary_large_image",
@@ -250,13 +267,13 @@ export const metadata: Metadata = {
     canonical: getServerSideURL(),
     types: {
       "application/rss+xml": [
-        { url: "/feed.xml", title: "Lyovson.com RSS Feed" },
+        { url: "/feed.xml", title: "Lyóvson.com RSS Feed" },
       ],
       "application/feed+json": [
-        { url: "/feed.json", title: "Lyovson.com JSON Feed" },
+        { url: "/feed.json", title: "Lyóvson.com JSON Feed" },
       ],
       "application/atom+xml": [
-        { url: "/atom.xml", title: "Lyovson.com Atom Feed" },
+        { url: "/atom.xml", title: "Lyóvson.com Atom Feed" },
       ],
     },
   },

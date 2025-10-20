@@ -45,9 +45,18 @@ export default function SuspendedSearchPage({
 async function SearchPage({ searchParams: searchParamsPromise }: Args) {
   const { q: query } = await searchParamsPromise;
 
+  const headingText = query?.trim()
+    ? `Search Results for "${query.trim()}"`
+    : "Search";
+
   // If no query, return empty results
   if (!query?.trim()) {
-    return <CollectionArchive posts={[]} />;
+    return (
+      <>
+        <h1 className="sr-only">{headingText}</h1>
+        <CollectionArchive posts={[]} />
+      </>
+    );
   }
 
   // Call hybrid search API endpoint
@@ -71,18 +80,33 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
       console.error(
         `[Search Page] API error: ${response.status} ${response.statusText}`
       );
-      return <CollectionArchive posts={[]} />;
+      return (
+        <>
+          <h1 className="sr-only">{headingText}</h1>
+          <CollectionArchive posts={[]} />
+        </>
+      );
     }
 
     searchResults = await response.json();
   } catch (error) {
     console.error("[Search Page] Failed to fetch search results:", error);
-    return <CollectionArchive posts={[]} />;
+    return (
+      <>
+        <h1 className="sr-only">{headingText}</h1>
+        <CollectionArchive posts={[]} />
+      </>
+    );
   }
 
   // If no results, return empty
   if (!searchResults.results || searchResults.results.length === 0) {
-    return <CollectionArchive posts={[]} />;
+    return (
+      <>
+        <h1 className="sr-only">{headingText}</h1>
+        <CollectionArchive posts={[]} />
+      </>
+    );
   }
 
   // Extract post IDs from search results (ordered by combined_score)
@@ -111,7 +135,12 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
     .map((id) => postsMap.get(id))
     .filter((post): post is Post => post !== undefined);
 
-  return <CollectionArchive posts={sortedPosts} />;
+  return (
+    <>
+      <h1 className="sr-only">{headingText}</h1>
+      <CollectionArchive posts={sortedPosts} />
+    </>
+  );
 }
 
 export async function generateMetadata({
@@ -120,12 +149,12 @@ export async function generateMetadata({
   const { q: query } = await searchParamsPromise;
 
   const title = query
-    ? `Search results for "${query}" | Lyovson.com`
-    : "Search | Lyovson.com";
+    ? `Search results for "${query}" | Lyóvson.com`
+    : "Search | Lyóvson.com";
 
   const description = query
-    ? `Find posts, articles, and content related to "${query}" on Lyovson.com`
-    : "Search for posts, articles, and content on Lyovson.com";
+    ? `Find posts, articles, and content related to "${query}" on Lyóvson.com`
+    : "Search for posts, articles, and content on Lyóvson.com";
 
   return {
     title,
@@ -134,15 +163,34 @@ export async function generateMetadata({
       canonical: query ? `/search?q=${encodeURIComponent(query)}` : "/search",
     },
     openGraph: {
+      siteName: "Lyóvson.com",
       title,
       description,
       type: "website",
       url: query ? `/search?q=${encodeURIComponent(query)}` : "/search",
+      images: [
+        {
+          url: "/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
+      creator: "@lyovson",
+      site: "@lyovson",
+      images: [
+        {
+          url: "/og-image.png",
+          alt: title,
+          width: 1200,
+          height: 630,
+        },
+      ],
     },
     robots: {
       index: !query, // Don't index search result pages, only the main search page

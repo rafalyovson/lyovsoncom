@@ -34,7 +34,7 @@ const organizationData: OrganizationSchema = {
     width: 600,
     height: 60,
   },
-  sameAs: ["https://twitter.com/lyovson", "https://github.com/lyovson"],
+  sameAs: ["https://x.com/rafalyovson", "https://github.com/rafalyovson"],
   description:
     "Website and blog of Rafa and Jess Lyóvson featuring writing, projects, and research.",
 };
@@ -75,7 +75,7 @@ type ArticleDataParams = {
  *   slug: "modern-web-apps",
  *   publishedAt: "2025-01-14T10:00:00Z",
  *   authors: [{ name: "Rafa Lyovson", username: "rafa" }],
- *   imageUrl: "https://lyovson.com/images/article.jpg",
+ *   imageUrl: "https://www.lyovson.com/images/article.jpg",
  *   keywords: ["nextjs", "react", "web-development"],
  *   wordCount: 2500
  * });
@@ -164,11 +164,11 @@ type PersonDataParams = {
  *   name: "Rafa Lyovson",
  *   username: "rafa",
  *   bio: "Software engineer and writer",
- *   avatarUrl: "https://lyovson.com/images/rafa.jpg",
+ *   avatarUrl: "https://www.lyovson.com/images/rafa.jpg",
  *   jobTitle: "Full-stack Developer",
  *   socialLinks: {
- *     twitter: "https://twitter.com/lyovson",
- *     github: "https://github.com/lyovson"
+ *     twitter: "https://x.com/rafalyovson",
+ *     github: "https://github.com/rafalyovson"
  *   },
  *   expertise: ["JavaScript", "React", "Next.js"]
  * });
@@ -220,8 +220,8 @@ type BreadcrumbItem = {
  * @example
  * ```typescript
  * const schema = generateBreadcrumbSchema([
- *   { name: "Home", url: "https://lyovson.com" },
- *   { name: "Posts", url: "https://lyovson.com/posts" },
+ *   { name: "Home", url: "https://www.lyovson.com" },
+ *   { name: "Posts", url: "https://www.lyovson.com/posts" },
  *   { name: "Article Title" } // Current page (no URL)
  * ]);
  * ```
@@ -267,11 +267,11 @@ type CollectionPageDataParams = {
  * const schema = generateCollectionPageSchema({
  *   name: "All Blog Posts",
  *   description: "Browse all articles and writing",
- *   url: "https://lyovson.com/posts",
+ *   url: "https://www.lyovson.com/posts",
  *   itemCount: 42,
  *   items: [
- *     { url: "https://lyovson.com/posts/article-1" },
- *     { url: "https://lyovson.com/posts/article-2" }
+ *     { url: "https://www.lyovson.com/posts/article-1" },
+ *     { url: "https://www.lyovson.com/posts/article-2" }
  *   ]
  * });
  * ```

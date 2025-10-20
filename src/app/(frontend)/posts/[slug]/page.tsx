@@ -400,7 +400,7 @@ function SchemaArticle({ post, url }: { post: Post; url: string }) {
             return {
               "@type": "Person" as const,
               name: author.name,
-              url: `https://lyovson.com/${author.username}`,
+              url: `https://www.lyovson.com/${author.username}`,
               sameAs: author.socialLinks
                 ? Object.values(author.socialLinks).filter(Boolean)
                 : undefined,
@@ -412,14 +412,14 @@ function SchemaArticle({ post, url }: { post: Post; url: string }) {
     publisher: {
       "@type": "Organization",
       name: "Lyovson.com",
-      url: "https://lyovson.com",
+      url: "https://www.lyovson.com",
       logo: {
         "@type": "ImageObject",
-        url: "https://lyovson.com/logo-black.webp",
+        url: "https://www.lyovson.com/logo-black.webp",
         width: 600,
         height: 60,
       },
-      sameAs: ["https://twitter.com/lyovson", "https://github.com/lyovson"],
+      sameAs: ["https://x.com/rafalyovson", "https://github.com/rafalyovson"],
     },
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -439,7 +439,7 @@ function SchemaArticle({ post, url }: { post: Post; url: string }) {
     isPartOf: {
       "@type": "WebSite",
       name: "Lyovson.com",
-      url: "https://lyovson.com",
+      url: "https://www.lyovson.com",
     },
     about:
       post.topics
