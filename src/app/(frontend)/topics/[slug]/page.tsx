@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
+  cacheLife,
+  cacheTag,
 } from "next/cache";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";

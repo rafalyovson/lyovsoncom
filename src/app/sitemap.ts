@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
+  cacheLife,
+  cacheTag,
 } from "next/cache";
 import type { Post, Project, Topic } from "@/payload-types";
 import { getSitemapData } from "@/utilities/get-sitemap-data";

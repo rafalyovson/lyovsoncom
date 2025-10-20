@@ -1,7 +1,7 @@
 import configPromise from "@payload-config";
 import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
+  cacheLife,
+  cacheTag,
 } from "next/cache";
 import { getPayload } from "payload";
 import type { Post, Project, Topic } from "@/payload-types";

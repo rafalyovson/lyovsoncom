@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
+  cacheLife,
+  cacheTag,
 } from "next/cache";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {

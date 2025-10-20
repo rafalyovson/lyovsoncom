@@ -1,7 +1,7 @@
 import configPromise from "@payload-config";
 import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
+  cacheLife,
+  cacheTag,
 } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
