@@ -10,7 +10,6 @@ export type GridCardPostProps = {
   post: Post;
   className?: string;
   loading?: "lazy" | "eager";
-  fetchPriority?: "high" | "low" | "auto";
   priority?: boolean;
 };
 
@@ -18,7 +17,6 @@ export const GridCardPostFull = ({
   post,
   className,
   loading,
-  fetchPriority,
   priority,
 }: GridCardPostProps) => {
   const {
@@ -50,7 +48,6 @@ export const GridCardPostFull = ({
               pictureClassName="h-full"
               resource={featuredImage}
               {...(loading ? { loading } : {})}
-              {...(fetchPriority ? { fetchPriority } : {})}
               {...(priority ? { priority } : {})}
             />
           </Link>

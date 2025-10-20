@@ -42,6 +42,11 @@ const nextConfig: NextConfig = {
     ],
     // Add quality configuration to fix Next.js 16 warnings
     qualities: IMAGE_QUALITIES,
+    // Optimize image sizes for 400px grid system
+    // Includes 400px (1x), 800px (2x retina), 1200px (3x high-DPI)
+    // This ensures Next.js serves appropriately-sized images for our grid cards
+    // instead of defaulting to 640px (smallest deviceSize)
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 400, 800, 1200],
   },
   reactStrictMode: true,
   redirects,

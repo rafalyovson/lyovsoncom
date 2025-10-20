@@ -18,8 +18,6 @@ export const CollectionArchive: React.FC<Props> = (props) => {
               key={result.slug}
               post={result}
               {...(index === 0 && {
-                loading: "eager",
-                fetchPriority: "high",
                 priority: true,
               })}
             />
