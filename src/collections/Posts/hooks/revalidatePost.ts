@@ -1,4 +1,4 @@
-import { revalidatePath, updateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
@@ -78,11 +78,11 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     revalidatePath(path);
 
     // Update cache tags with immediate refresh for instant visibility
-    updateTag("posts");
-    updateTag(`post-${doc.slug}`);
-    updateTag("homepage"); // Homepage shows latest posts
-    updateTag("sitemap");
-    updateTag("rss"); // Explicitly invalidate RSS feeds for immediate SEO indexing
+    revalidateTag("posts", "max");
+    revalidateTag(`post-${doc.slug}`, "max");
+    revalidateTag("homepage", "max"); // Homepage shows latest posts
+    revalidateTag("sitemap", "max");
+    revalidateTag("rss", "max"); // Explicitly invalidate RSS feeds for immediate SEO indexing
     // Belt-and-suspenders: explicitly revalidate key listing paths
     revalidatePath("/");
     revalidatePath("/posts");
@@ -94,7 +94,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
     // If post belongs to a project, invalidate project cache
     if (doc.project && typeof doc.project === "object") {
-      updateTag(`project-${doc.project.slug}`);
+      revalidateTag(`project-${doc.project.slug}`, "max");
       // Also revalidate the project landing page path if present
       revalidatePath(`/projects/${doc.project.slug}`);
     }
@@ -107,9 +107,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (doc as any).populatedAuthors
       );
       if (authorUsernames.length) {
-        updateTag("users");
+        revalidateTag("users", "max");
         for (const username of authorUsernames) {
-          updateTag(`author-${username}`);
+          revalidateTag(`author-${username}`, "max");
           // Revalidate well-known author paths (e.g., /rafa, /jess)
           revalidatePath(`/${username}`);
         }
@@ -131,17 +131,17 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     );
 
     revalidatePath(oldPath);
-    updateTag("posts");
-    updateTag(`post-${previousDoc.slug}`);
-    updateTag("homepage");
-    updateTag("sitemap");
+    revalidateTag("posts", "max");
+    revalidateTag(`post-${previousDoc.slug}`, "max");
+    revalidateTag("homepage", "max");
+    revalidateTag("sitemap", "max");
     // Also revalidate main listing paths
     revalidatePath("/");
     revalidatePath("/posts");
 
     // Also update old project and author pages
     if (previousDoc.project && typeof previousDoc.project === "object") {
-      updateTag(`project-${previousDoc.project.slug}`);
+      revalidateTag(`project-${previousDoc.project.slug}`, "max");
       revalidatePath(`/projects/${previousDoc.project.slug}`);
     }
 
@@ -152,9 +152,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (previousDoc as any).populatedAuthors
       );
       if (prevAuthorUsernames.length) {
-        updateTag("users");
+        revalidateTag("users", "max");
         for (const username of prevAuthorUsernames) {
-          updateTag(`author-${username}`);
+          revalidateTag(`author-${username}`, "max");
           revalidatePath(`/${username}`);
         }
         payload.logger.info(
@@ -181,17 +181,17 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   const path = `/posts/${doc?.slug}`;
 
   revalidatePath(path);
-  updateTag("posts");
-  updateTag(`post-${doc?.slug}`);
-  updateTag("homepage"); // Homepage shows latest posts
-  updateTag("sitemap");
+  revalidateTag("posts", "max");
+  revalidateTag(`post-${doc?.slug}`, "max");
+  revalidateTag("homepage", "max"); // Homepage shows latest posts
+  revalidateTag("sitemap", "max");
   // Also revalidate main listing paths
   revalidatePath("/");
   revalidatePath("/posts");
 
   // If post belonged to a project, invalidate project cache
   if (doc?.project && typeof doc.project === "object") {
-    updateTag(`project-${doc.project.slug}`);
+    revalidateTag(`project-${doc.project.slug}`, "max");
     revalidatePath(`/projects/${doc.project.slug}`);
   }
 
@@ -203,9 +203,9 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
       (doc as any)?.populatedAuthors
     );
     if (authorUsernames.length) {
-      updateTag("users");
+      revalidateTag("users", "max");
       for (const username of authorUsernames) {
-        updateTag(`author-${username}`);
+        revalidateTag(`author-${username}`, "max");
         revalidatePath(`/${username}`);
       }
     }

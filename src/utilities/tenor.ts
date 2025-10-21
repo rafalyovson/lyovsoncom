@@ -78,6 +78,19 @@ function getTenorDirectUrl(postId: string): TenorVideoData {
 }
 
 /**
+ * Calculate aspect ratio from dimensions
+ * @param dims - [width, height] array from Tenor API
+ * @returns Aspect ratio as decimal string (e.g., "1.7777")
+ */
+export function calculateAspectRatio(dims: [number, number]): string {
+  const [width, height] = dims;
+  if (!width || !height || height === 0) {
+    return "1"; // Default to square
+  }
+  return String(width / height);
+}
+
+/**
  * Convert aspect ratio string to Next.js aspect ratio format
  * @param ratio - Aspect ratio string (e.g., "1.7777" or "16:9")
  * @returns Normalized aspect ratio string ("16:9", "4:3", or "1:1")

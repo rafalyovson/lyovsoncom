@@ -2527,11 +2527,11 @@ export interface QuoteBlock {
  * via the `definition` "GIFBlock".
  */
 export interface GIFBlock {
-  embedCode: {
+  embedCode?: {
     /**
-     * Paste the full embed code from Tenor (click Share > Embed)
+     * Fallback option: Paste the full embed code from Tenor (click Share > Embed)
      */
-    raw: string;
+    raw?: string | null;
     postId?: string | null;
     aspectRatio?: string | null;
   };

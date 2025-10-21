@@ -39,13 +39,22 @@ export const GIF: Block = {
       type: "group",
       fields: [
         {
+          name: "gifPicker",
+          type: "ui",
+          admin: {
+            components: {
+              Field: "@/blocks/GIF/GifPicker#GifPicker",
+            },
+          },
+        },
+        {
           name: "raw",
           type: "textarea",
-          required: true,
-          label: "Tenor GIF Embed Code",
+          required: false,
+          label: "Or paste Tenor embed code",
           admin: {
             description:
-              "Paste the full embed code from Tenor (click Share > Embed)",
+              "Fallback option: Paste the full embed code from Tenor (click Share > Embed)",
           },
           hooks: {
             beforeValidate: [
@@ -81,13 +90,21 @@ export const GIF: Block = {
       hooks: {
         beforeChange: [
           ({ value }) => {
+            // If postId is already set (from picker), preserve it
+            if (value?.postId && !value?.raw) {
+              return value;
+            }
+
+            // If raw embed code exists, extract and use that
             if (!value?.raw) {
               return value;
             }
+
             const info = extractTenorInfo(value.raw);
             if (!info) {
               return value;
             }
+
             return {
               raw: value.raw,
               ...info,
