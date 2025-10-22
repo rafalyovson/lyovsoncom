@@ -5,8 +5,6 @@ import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
-import { computeRecommendations } from "./hooks/computeRecommendations";
-import { generateEmbeddingHook } from "./hooks/generateEmbedding";
 import { populateAuthors } from "./hooks/populateAuthors";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
@@ -366,8 +364,35 @@ export const Posts: CollectionConfig<"posts"> = {
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [populateContentTextHook, generateEmbeddingHook],
-    afterChange: [revalidatePost, computeRecommendations],
+    beforeChange: [populateContentTextHook], // Keep this - it's fast
+    afterChange: [
+      revalidatePost, // Keep this - cache needs immediate update
+      // Queue workflow for background processing
+      async ({ doc, req, operation }) => {
+        // Only queue for create/update operations
+        if (operation !== 'create' && operation !== 'update') {
+          return
+        }
+
+        // Only queue for published posts
+        if (doc._status !== 'published') {
+          return
+        }
+
+        req.payload.logger.info(
+          `[Hook] Queueing embedding workflow for post ${doc.id}`
+        )
+
+        // Queue the workflow - this returns immediately!
+        await req.payload.jobs.queue({
+          workflow: 'processPostEmbeddings',
+          input: {
+            postId: doc.id,
+          },
+          queue: 'default', // runs every 5 minutes via Vercel Cron
+        })
+      },
+    ],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },

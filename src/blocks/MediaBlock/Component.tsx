@@ -16,7 +16,7 @@ type Props = MediaBlockProps & {
   disableInnerContainer?: boolean;
 };
 
-export const MediaBlock: React.FC<Props> = (props) => {
+export const MediaBlock = async (props: Props) => {
   const { captionClassName, className, imgClassName, media, staticImage } =
     props;
 

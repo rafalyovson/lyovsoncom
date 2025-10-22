@@ -2,7 +2,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
   "files": {
-    "ignore": [
+    "experimentalScannerIgnores": [
       "src/utilities/test-*.ts",
       "src/utilities/check-*.ts",
       "src/utilities/migrations/run-*.ts",

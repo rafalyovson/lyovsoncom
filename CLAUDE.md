@@ -169,23 +169,58 @@ pnpm dev                         # Restart server
 
 This project implements a sophisticated **semantic search and recommendation system** using OpenAI embeddings and PostgreSQL pgvector.
 
-#### Architecture
+#### Architecture - Jobs Queue Background Processing ✅
 
-**1. Embedding Generation** ([generateEmbedding.ts](src/collections/Posts/hooks/generateEmbedding.ts))
-- Triggered automatically on post/note save via `afterChange` hook
-- Uses OpenAI `text-embedding-3-small` model (1536 dimensions)
-- Extracts plain text from Lexical rich text using `extractLexicalText()`
-- Stores embedding as VARCHAR in `embedding_vector` column (JSON array format)
-- Skips generation if content hasn't changed (checks hash)
+**Production System Verified:** Post #30 test (2025-10-21)
+- Post created: 10:49:35 UTC → Embeddings generated: 10:52:21 UTC (~3 min)
+- Post updated: 11:06:58 UTC → Embeddings re-generated: 11:07:24 UTC (~26 sec)
+- All 15 published posts have embeddings and recommendations
 
-**2. Recommendation System** ([computeRecommendations.ts](src/collections/Posts/hooks/computeRecommendations.ts))
-- Runs after embedding generation on Posts
-- Finds 3 most similar posts using cosine similarity
-- Pre-computes and caches recommendations in `recommended_post_ids` field
-- Excludes the current post from results
-- Only runs for published posts with embeddings
+**Background Processing Workflow:**
 
-**3. Similarity Search** ([get-similar-posts.ts](src/utilities/get-similar-posts.ts))
+1. User publishes/updates post in Payload admin
+2. `afterChange` hook queues job: `req.payload.jobs.queue({ workflow: 'processPostEmbeddings', input: { postId } })`
+3. Job stored in `payload_jobs` table (queue: "default")
+4. Vercel Cron triggers `/api/payload-jobs/run?queue=default` hourly
+5. Workflow executes sequentially:
+   - **Step 1:** Generate embedding (1536D via OpenAI text-embedding-3-small)
+   - **Step 2:** Compute 3 similar posts using cosine similarity
+6. Results stored in post, job deleted from queue
+
+**Job Definitions:**
+
+**Task: generateEmbedding** ([src/jobs/tasks/generate-embedding.ts](src/jobs/tasks/generate-embedding.ts))
+- Generic task for Posts & Notes collections
+- Validates content, extracts text via `extractLexicalText()`
+- Generates OpenAI embedding (1536 dimensions)
+- Skips if content hash unchanged (optimization)
+- Stores: `embedding_vector`, `embedding_dimensions`, `embedding_model`, `embedding_generated_at`, `embedding_text_hash`
+- Retry logic: Up to 2 retries on failure
+
+**Task: computeRecommendations** ([src/jobs/tasks/compute-recommendations.ts](src/jobs/tasks/compute-recommendations.ts))
+- Posts-only task for similarity-based recommendations
+- Queries 3 most similar posts via cosine distance
+- Uses `getSimilarPosts()` utility with HNSW index
+- Stores: `recommended_post_ids` (array in similarity order)
+- Retry logic: Up to 2 retries on failure
+
+**Workflow: processPostEmbeddings** ([src/jobs/workflows/process-post-embeddings.ts](src/jobs/workflows/process-post-embeddings.ts))
+- Orchestrates sequential execution: embedding → recommendations
+- Smart skip: If embedding unchanged, skips recommendations
+- Automatic retry from failure point
+
+**Collection Hooks:**
+- [Posts](src/collections/Posts/index.ts#L370-L394): Queues workflow on publish/update
+- [Notes](src/collections/Notes/index.ts#L268-L293): Queues task on publish/update (no recommendations)
+
+**Configuration:**
+- **Vercel Cron:** Hourly ([vercel.json](vercel.json): `"0 * * * *"`)
+- **Queue:** "default" queue for all jobs
+- **No autoRun:** Incompatible with Vercel serverless
+- **Access Control:** Requires `CRON_SECRET` environment variable
+- **Endpoint:** `GET /api/payload-jobs/run?queue=default`
+
+**Similarity Search** ([get-similar-posts.ts](src/utilities/get-similar-posts.ts))
 - Direct database query using pgvector's `<=>` cosine distance operator
 - Critical: Requires `::vector(1536)` casting since embeddings stored as VARCHAR
 - Uses HNSW index for sub-100ms performance (~430x faster than sequential scan)

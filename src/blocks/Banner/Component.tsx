@@ -7,7 +7,7 @@ type Props = {
   className?: string;
 } & BannerBlockProps;
 
-export const BannerBlock: React.FC<Props> = ({ className, content, style }) => {
+export const BannerBlock = async ({ className, content, style }: Props) => {
   const styleClasses = {
     info: "border-glass-border-hover bg-glass-bg",
     error: "border-red-400/50 bg-red-500/10 glass-bg",

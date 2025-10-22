@@ -9,15 +9,22 @@ type Props = {
   enableProse?: boolean;
 };
 
-const RichText: React.FC<Props> = ({
+const RichText = async ({
   className,
   content,
   enableGutter = true,
   enableProse = true,
-}) => {
+}: Props) => {
   if (!content) {
     return null;
   }
+
+  const serializedContent = content &&
+    !Array.isArray(content) &&
+    typeof content === "object" &&
+    "root" in content
+      ? await serializeLexical({ nodes: content?.root?.children })
+      : null;
 
   return (
     <div
@@ -30,11 +37,7 @@ const RichText: React.FC<Props> = ({
         className
       )}
     >
-      {content &&
-        !Array.isArray(content) &&
-        typeof content === "object" &&
-        "root" in content &&
-        serializeLexical({ nodes: content?.root?.children })}
+      {serializedContent}
     </div>
   );
 };

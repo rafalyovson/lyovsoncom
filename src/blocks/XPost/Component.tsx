@@ -1,4 +1,3 @@
-import type React from "react";
 import { Tweet } from "react-tweet";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -15,7 +14,7 @@ import type { XPostBlock as XPostBlockType } from "@/payload-types";
  * - Zero client-side JavaScript overhead
  * - SEO-friendly with static HTML content
  */
-export const XPostBlock: React.FC<XPostBlockType> = ({ postId, caption }) => {
+export const XPostBlock = async ({ postId, caption }: XPostBlockType) => {
   if (!postId) {
     return null;
   }

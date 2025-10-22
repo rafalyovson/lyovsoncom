@@ -20,37 +20,55 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * Note: This is a server component that fetches video URLs
  * and passes them to the client-side LazyVideo component
  */
-export const GIFBlock: React.FC<GIFBlockType> = async ({
-  embedCode,
-  caption,
-}) => {
-  if (!embedCode?.postId) {
-    return null;
+export const GIFBlock: React.FC<GIFBlockType> = async (props) => {
+  let mp4Url = props.mp4Url;
+  let webmUrl = props.webmUrl;
+  let posterUrl = props.posterUrl;
+  let aspectRatio = props.aspectRatio;
+
+  // Backwards compatibility: migrate old embedCode format to new URL format
+  if (!mp4Url && props.embedCode?.postId) {
+    console.warn(
+      "[GIFBlock] Legacy embedCode detected, migrating to URL format"
+    );
+    const videoData = await getTenorVideoUrl(props.embedCode.postId);
+    mp4Url = videoData.mp4Url;
+    webmUrl = videoData.webmUrl;
+    posterUrl = videoData.posterUrl;
+    aspectRatio = props.embedCode.aspectRatio || videoData.aspectRatio;
   }
 
-  // Fetch video URLs from Tenor API (server-side, cached for 24 hours)
-  const videoData = await getTenorVideoUrl(embedCode.postId);
+  // Validation with helpful error messages
+  if (!mp4Url) {
+    console.error("[GIFBlock] Missing mp4Url");
+    return (
+      <div className="rounded-lg border border-red-500 bg-red-50 p-4 text-red-700">
+        <p className="font-semibold">GIF Block Error</p>
+        <p className="text-sm">
+          Missing video URL. Please select a GIF in the admin panel.
+        </p>
+      </div>
+    );
+  }
 
-  // Use provided aspect ratio or fall back to API data
-  const aspectRatio = normalizeAspectRatio(
-    embedCode.aspectRatio || videoData.aspectRatio
-  );
+  // Normalize aspect ratio
+  const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "1");
 
   return (
     <Card className="glass-interactive glass-stagger-1 py-0 transition-all duration-300">
       <CardContent className="px-0">
         <div className="glass-media overflow-hidden rounded-lg">
           <LazyVideo
-            mp4Src={videoData.mp4Url}
-            webmSrc={videoData.webmUrl}
-            poster={videoData.posterUrl}
-            aspectRatio={aspectRatio}
+            mp4Src={mp4Url}
+            webmSrc={webmUrl || undefined}
+            poster={posterUrl || undefined}
+            aspectRatio={normalizedAspectRatio}
             alt="Animated GIF"
           />
         </div>
       </CardContent>
 
-      {caption && (
+      {props.caption && (
         <CardFooter
           className={cn(
             "glass-section rounded-lg p-2 transition-all duration-300",
@@ -60,7 +78,7 @@ export const GIFBlock: React.FC<GIFBlockType> = async ({
         >
           <RichText
             className="glass-text-secondary w-full text-center text-sm italic"
-            content={caption}
+            content={props.caption}
           />
         </CardFooter>
       )}

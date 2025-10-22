@@ -21,7 +21,8 @@ export const generateMetadata = ({
 }: Args): Promise<Metadata> =>
   generatePageMetadata({ config, params, searchParams });
 
-const Page = ({ params, searchParams }: Args) =>
-  RootPage({ config, params, searchParams, importMap });
+const Page = ({ params, searchParams }: Args) => (
+  <RootPage config={config} params={params} searchParams={searchParams} importMap={importMap} />
+);
 
 export default Page;

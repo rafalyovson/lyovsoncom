@@ -14,8 +14,6 @@ import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { generateEmbedding } from "@/utilities/generate-embedding";
 
-export const dynamic = "force-dynamic";
-
 interface SearchResult {
   id: number;
   title: string;

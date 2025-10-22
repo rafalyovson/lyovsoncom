@@ -1,8 +1,8 @@
 export type GIFBlock = {
-  embedCode: {
-    postId: string;
-    aspectRatio: string;
-  };
+  mp4Url?: string | null;
+  webmUrl?: string | null;
+  posterUrl?: string | null;
+  aspectRatio?: string | null;
   caption?: {
     root: {
       // biome-ignore lint/suspicious/noExplicitAny: <!-- Ignore -->
@@ -15,4 +15,10 @@ export type GIFBlock = {
     };
   };
   blockType: "gif";
+  // Legacy fields for backwards compatibility (deprecated)
+  embedCode?: {
+    raw?: string | null;
+    postId?: string | null;
+    aspectRatio?: string | null;
+  };
 };

@@ -7,11 +7,11 @@ type Props = {
   className?: string;
 } & QuoteBlockType;
 
-export const QuoteBlock: React.FC<Props> = ({
+export const QuoteBlock = async ({
   className,
   quote,
   attribution,
-}) => {
+}: Props) => {
   return (
     <div className={cn("container", className)}>
       <blockquote className="glass-section glass-premium relative mt-0 mb-0 rounded-lg border-glass-border-hover border-l-4 py-6 pl-6 italic">

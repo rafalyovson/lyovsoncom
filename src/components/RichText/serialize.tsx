@@ -45,11 +45,9 @@ type Props = {
   nodes: NodeTypes[];
 };
 
-export function serializeLexical({ nodes }: Props): JSX.Element {
-  return (
-    <>
-      {/* biome-ignore lint/suspicious/noArrayIndexKey: Lexical nodes are stable and ordered in the document tree */}
-      {nodes?.map((node, index): JSX.Element | null => {
+export async function serializeLexical({ nodes }: Props): Promise<JSX.Element> {
+  const serializedNodes = await Promise.all(
+    nodes?.map(async (node, index): Promise<JSX.Element | null> => {
         if (node == null) {
           return null;
         }
@@ -99,7 +97,7 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
         // NOTE: Hacky fix for
         // https://github.com/facebook/lexical/blob/d10c4e6e55261b2fdd7d1845aed46151d0f06a8c/packages/lexical-list/src/LexicalListItemNode.ts#L133
         // which does not return checked: false (only true - i.e. there is no prop for false)
-        const serializedChildrenFn = (node: NodeTypes): JSX.Element | null => {
+        const serializedChildrenFn = async (node: NodeTypes): Promise<JSX.Element | null> => {
           if (!("children" in node) || node.children == null) {
             return null;
           }
@@ -110,11 +108,11 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
               }
             }
           }
-          return serializeLexical({ nodes: node.children as NodeTypes[] });
+          return await serializeLexical({ nodes: node.children as NodeTypes[] });
         };
 
         const serializedChildren =
-          "children" in node ? serializedChildrenFn(node) : "";
+          "children" in node ? await serializedChildrenFn(node) : "";
 
         if (node.type === "block") {
           const block = node.fields;
@@ -271,7 +269,16 @@ export function serializeLexical({ nodes }: Props): JSX.Element {
           default:
             return null;
         }
-      })}
+      }
+    ) ?? []
+  );
+
+  return (
+    <>
+      {/* biome-ignore lint/suspicious/noArrayIndexKey: Lexical nodes are stable and ordered in the document tree */}
+      {serializedNodes.map((node, index) => (
+        <React.Fragment key={index}>{node}</React.Fragment>
+      ))}
     </>
   );
 }

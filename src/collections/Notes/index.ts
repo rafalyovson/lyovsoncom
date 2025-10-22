@@ -6,7 +6,6 @@ import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
-import { generateEmbeddingHook } from "./hooks/generateEmbedding";
 
 export const Notes: CollectionConfig = {
   slug: "notes",
@@ -261,11 +260,36 @@ export const Notes: CollectionConfig = {
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [generateEmbeddingHook],
     afterChange: [
       async ({ doc, req }) => {
         req.payload.logger.info(`Revalidating note: ${doc.slug}`);
         // TODO: Add revalidation logic for notes when we have note pages
+      },
+      // Queue task for background embedding generation
+      async ({ doc, req, operation }) => {
+        // Only queue for create/update operations
+        if (operation !== 'create' && operation !== 'update') {
+          return
+        }
+
+        // Only queue for published notes
+        if (doc._status !== 'published') {
+          return
+        }
+
+        req.payload.logger.info(
+          `[Hook] Queueing embedding task for note ${doc.id}`
+        )
+
+        // Queue the task - this returns immediately!
+        await req.payload.jobs.queue({
+          task: 'generateEmbedding',
+          input: {
+            collection: 'notes',
+            docId: doc.id,
+          },
+          queue: 'default', // runs every 5 minutes via Vercel Cron
+        })
       },
     ],
   },

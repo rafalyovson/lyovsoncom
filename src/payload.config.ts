@@ -27,6 +27,9 @@ import { Topics } from "@/collections/Topics";
 import { TvShows } from "@/collections/TvShows";
 import { VideoGames } from "@/collections/VideoGames";
 import { defaultLexical } from "@/fields/defaultLexical";
+import { GenerateEmbedding } from "@/jobs/tasks/generate-embedding";
+import { ComputeRecommendations } from "@/jobs/tasks/compute-recommendations";
+import { ProcessPostEmbeddings } from "@/jobs/workflows/process-post-embeddings";
 import { plugins } from "@/plugins";
 import { getServerSideURL } from "@/utilities/getURL";
 
@@ -158,6 +161,25 @@ export default buildConfig({
     Notes,
     Links,
   ],
+  jobs: {
+    // Register tasks (reusable building blocks)
+    tasks: [GenerateEmbedding, ComputeRecommendations],
+
+    // Register workflows (orchestrate tasks)
+    workflows: [ProcessPostEmbeddings],
+
+    // Access control - secure the jobs endpoint
+    access: {
+      run: ({ req }) => {
+        // Allow authenticated admins or requests with valid CRON_SECRET
+        const cronSecret = req.headers.get('authorization')?.replace('Bearer ', '')
+        return Boolean(
+          req.user ||
+          (cronSecret && cronSecret === process.env.CRON_SECRET)
+        )
+      },
+    },
+  },
   cors: [getServerSideURL()].filter(Boolean),
   globals: [],
   plugins: [
