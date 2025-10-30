@@ -36,6 +36,7 @@ export const GIF: Block = {
     {
       name: "posterUrl",
       type: "text",
+      required: true,
       admin: {
         hidden: true,
       },
@@ -46,37 +47,6 @@ export const GIF: Block = {
       admin: {
         hidden: true,
       },
-    },
-    // Legacy fields for backwards compatibility with old GIFs
-    {
-      name: "embedCode",
-      type: "group",
-      admin: {
-        hidden: true,
-      },
-      fields: [
-        {
-          name: "postId",
-          type: "text",
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: "raw",
-          type: "text",
-          admin: {
-            hidden: true,
-          },
-        },
-        {
-          name: "aspectRatio",
-          type: "text",
-          admin: {
-            hidden: true,
-          },
-        },
-      ],
     },
     {
       name: "caption",

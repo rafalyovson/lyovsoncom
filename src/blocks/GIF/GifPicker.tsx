@@ -4,7 +4,7 @@ import { Button, FieldLabel, TextInput, useForm, useFormFields } from "@payloadc
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 
-import { extractVideoUrls, fetchGifByPostId, searchGifs } from "./actions";
+import { extractVideoUrls, searchGifs } from "./actions";
 
 /**
  * GIF Picker Component for Payload Admin
@@ -45,9 +45,6 @@ export const GifPicker: React.FC = () => {
   const existingPosterUrl = useFormFields(([fields]) => fields[posterUrlFieldPath]?.value as string | undefined);
   const existingAspectRatio = useFormFields(([fields]) => fields[aspectRatioFieldPath]?.value as string | undefined);
 
-  // Read legacy embedCode.postId field for old GIFs
-  const legacyPostId = useFormFields(([fields]) => fields["embedCode.postId"]?.value as string | undefined);
-
   // Local state
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<TenorResult[]>([]);
@@ -55,8 +52,6 @@ export const GifPicker: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedGifId, setSelectedGifId] = useState<string | null>(null);
   const [showSearchMode, setShowSearchMode] = useState(false);
-  const [legacyPreviewUrl, setLegacyPreviewUrl] = useState<string | null>(null);
-  const [fetchingLegacy, setFetchingLegacy] = useState(false);
 
   // Handlers
   const handleSearch = useCallback(async () => {
@@ -168,34 +163,12 @@ export const GifPicker: React.FC = () => {
     };
   }, [searchTerm, handleSearch]);
 
-  // Fetch legacy GIF preview data if we have a postId but no direct URLs
-  useEffect(() => {
-    const fetchLegacyPreview = async () => {
-      // Only fetch if we have legacy postId but no direct URLs
-      if (legacyPostId && !existingMp4Url && !fetchingLegacy) {
-        setFetchingLegacy(true);
-        try {
-          const gifData = await fetchGifByPostId(legacyPostId);
-          setLegacyPreviewUrl(gifData.posterUrl);
-        } catch (error) {
-          console.error("Failed to fetch legacy GIF preview:", error);
-          setLegacyPreviewUrl(null);
-        } finally {
-          setFetchingLegacy(false);
-        }
-      }
-    };
-
-    fetchLegacyPreview();
-  }, [legacyPostId, existingMp4Url, fetchingLegacy]);
-
   // Determine if we should show preview mode
   const hasExistingGif = existingMp4Url && existingPosterUrl;
-  const hasLegacyGif = legacyPostId && legacyPreviewUrl;
-  const shouldShowPreview = (hasExistingGif || hasLegacyGif) && !showSearchMode;
+  const shouldShowPreview = hasExistingGif && !showSearchMode;
 
-  // Determine which preview URL to use
-  const previewUrl = existingPosterUrl || legacyPreviewUrl;
+  // Preview URL
+  const previewUrl = existingPosterUrl;
 
   // Render
   return (

@@ -3,7 +3,7 @@ import { LazyVideo } from "@/components/LazyVideo";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { getTenorVideoUrl, normalizeAspectRatio } from "@/utilities/tenor";
+import { normalizeAspectRatio } from "@/utilities/tenor";
 import type { GIFBlock as GIFBlockType } from "./types";
 
 /**
@@ -21,22 +21,7 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * and passes them to the client-side LazyVideo component
  */
 export const GIFBlock: React.FC<GIFBlockType> = async (props) => {
-  let mp4Url = props.mp4Url;
-  let webmUrl = props.webmUrl;
-  let posterUrl = props.posterUrl;
-  let aspectRatio = props.aspectRatio;
-
-  // Backwards compatibility: migrate old embedCode format to new URL format
-  if (!mp4Url && props.embedCode?.postId) {
-    console.warn(
-      "[GIFBlock] Legacy embedCode detected, migrating to URL format"
-    );
-    const videoData = await getTenorVideoUrl(props.embedCode.postId);
-    mp4Url = videoData.mp4Url;
-    webmUrl = videoData.webmUrl;
-    posterUrl = videoData.posterUrl;
-    aspectRatio = props.embedCode.aspectRatio || videoData.aspectRatio;
-  }
+  const { mp4Url, webmUrl, posterUrl, aspectRatio } = props;
 
   // Validation with helpful error messages
   if (!mp4Url) {

@@ -1,7 +1,7 @@
 export type GIFBlock = {
-  mp4Url?: string | null;
+  mp4Url: string;
   webmUrl?: string | null;
-  posterUrl?: string | null;
+  posterUrl: string;
   aspectRatio?: string | null;
   caption?: {
     root: {
@@ -15,10 +15,4 @@ export type GIFBlock = {
     };
   };
   blockType: "gif";
-  // Legacy fields for backwards compatibility (deprecated)
-  embedCode?: {
-    raw?: string | null;
-    postId?: string | null;
-    aspectRatio?: string | null;
-  };
 };
