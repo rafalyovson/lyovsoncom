@@ -86,12 +86,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/api/docs`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
       url: `${SITE_URL}/.well-known/ai-resources`,
       lastModified: new Date(),
       changeFrequency: "monthly",
@@ -103,19 +97,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.9,
     },
-    // Embeddings API documentation
-    {
-      url: `${SITE_URL}/api/embeddings`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${SITE_URL}/api/embeddings/status`,
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.5,
-    },
+    // Note: API endpoints removed from sitemap to prevent crawler-induced database wake-ups
+    // API docs are still accessible but not indexed as sitemap entries
   ];
 
   // Add posts with enhanced metadata

@@ -174,8 +174,7 @@ export function createEmbeddingHook(
       );
     } catch (error) {
       req.payload.logger.error(
-        `[Background] Failed to generate ${collectionName} embedding:`,
-        error
+        `[Background] Failed to generate ${collectionName} embedding: ${error instanceof Error ? error.message : String(error)}`,
       );
       // Don't throw - this runs after response sent, so errors shouldn't affect user
     }

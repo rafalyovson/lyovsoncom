@@ -52,7 +52,9 @@ export async function GET(req: NextRequest): Promise<Response> {
   try {
     user = jwt.verify(token, payload.secret);
   } catch (error) {
-    payload.logger.error("Error verifying token for live preview:", error);
+    payload.logger.error(
+      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   const draft = await draftMode();
@@ -86,7 +88,9 @@ export async function GET(req: NextRequest): Promise<Response> {
       return new Response("Document not found", { status: 404 });
     }
   } catch (error) {
-    payload.logger.error("Error verifying token for live preview:", error);
+    payload.logger.error(
+      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   draft.enable();

@@ -71,31 +71,45 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
   if (doc._status === "published") {
     const path = `/posts/${doc.slug}`;
+    const isNewPublish = previousDoc?._status !== "published";
 
-    payload.logger.info(`Revalidating post at path: ${path}`);
+    payload.logger.info(
+      `Revalidating post at path: ${path} (${isNewPublish ? "NEW PUBLISH" : "EDIT"})`
+    );
 
     // Revalidate the specific post path
     revalidatePath(path);
 
-    // Update cache tags with immediate refresh for instant visibility
-    revalidateTag("posts", "max");
-    revalidateTag(`post-${doc.slug}`, "max");
-    revalidateTag("homepage", "max"); // Homepage shows latest posts
-    revalidateTag("sitemap", "max");
-    revalidateTag("rss", "max"); // Explicitly invalidate RSS feeds for immediate SEO indexing
-    // Belt-and-suspenders: explicitly revalidate key listing paths
-    revalidatePath("/");
-    revalidatePath("/posts");
+    // Update cache tags - selective invalidation based on publish status to reduce database wake-ups
+    if (isNewPublish) {
+      // New publish: full invalidation including feeds for immediate SEO indexing
+      revalidateTag("posts", { expire: 0 }); // Immediate invalidation
+      revalidateTag(`post-${doc.slug}`, { expire: 0 });
+      revalidateTag("homepage", { expire: 0 });
+      revalidateTag("sitemap", { expire: 0 });
+      revalidateTag("rss", { expire: 0 }); // Invalidate feeds for new content
+      revalidatePath("/");
+      revalidatePath("/posts");
 
-    // Log cache invalidation for monitoring
-    payload.logger.info(
-      `✅ Cache updated for new post: "${doc.title}" - RSS feeds, sitemap, and homepage refreshed immediately`
-    );
+      payload.logger.info(
+        `✅ NEW POST published: "${doc.title}" - Full cache invalidation including feeds`
+      );
+    } else {
+      // Edit to published post: use configured cache profiles, skip feed invalidation
+      // This prevents every typo fix from waking the database for all feed readers
+      revalidateTag("posts", "posts"); // Use posts profile (30min stale, 1hr revalidate)
+      revalidateTag(`post-${doc.slug}`, "posts");
+      revalidateTag("homepage", "homepage"); // Use homepage profile (30min stale)
+      // Skip RSS/sitemap invalidation for edits - feeds will update on next natural refresh (6-12hr cache)
+
+      payload.logger.info(
+        `✅ EDITED published post: "${doc.title}" - Cache refreshed (feeds unchanged to reduce DB wake-ups)`
+      );
+    }
 
     // If post belongs to a project, invalidate project cache
     if (doc.project && typeof doc.project === "object") {
-      revalidateTag(`project-${doc.project.slug}`, "max");
-      // Also revalidate the project landing page path if present
+      revalidateTag(`project-${doc.project.slug}`, "projects");
       revalidatePath(`/projects/${doc.project.slug}`);
     }
 
@@ -107,10 +121,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (doc as any).populatedAuthors
       );
       if (authorUsernames.length) {
-        revalidateTag("users", "max");
+        revalidateTag("users", "authors"); // Use authors profile
         for (const username of authorUsernames) {
-          revalidateTag(`author-${username}`, "max");
-          // Revalidate well-known author paths (e.g., /rafa, /jess)
+          revalidateTag(`author-${username}`, "authors");
           revalidatePath(`/${username}`);
         }
         payload.logger.info(
@@ -118,7 +131,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         );
       }
     } catch (e) {
-      payload.logger.error("Failed to update author pages for post change", e);
+      payload.logger.error(
+        `Failed to update author pages for post change: ${e instanceof Error ? e.message : String(e)}`,
+      );
     }
   }
 
@@ -131,17 +146,17 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     );
 
     revalidatePath(oldPath);
-    revalidateTag("posts", "max");
-    revalidateTag(`post-${previousDoc.slug}`, "max");
-    revalidateTag("homepage", "max");
-    revalidateTag("sitemap", "max");
-    // Also revalidate main listing paths
+    revalidateTag("posts", "posts"); // Use configured profile for gentler invalidation
+    revalidateTag(`post-${previousDoc.slug}`, "posts");
+    revalidateTag("homepage", "homepage");
+    revalidateTag("sitemap", "sitemap");
+    revalidateTag("rss", "rss"); // Update feeds with configured profile
     revalidatePath("/");
     revalidatePath("/posts");
 
     // Also update old project and author pages
     if (previousDoc.project && typeof previousDoc.project === "object") {
-      revalidateTag(`project-${previousDoc.project.slug}`, "max");
+      revalidateTag(`project-${previousDoc.project.slug}`, "projects");
       revalidatePath(`/projects/${previousDoc.project.slug}`);
     }
 
@@ -152,9 +167,9 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
         (previousDoc as any).populatedAuthors
       );
       if (prevAuthorUsernames.length) {
-        revalidateTag("users", "max");
+        revalidateTag("users", "authors");
         for (const username of prevAuthorUsernames) {
-          revalidateTag(`author-${username}`, "max");
+          revalidateTag(`author-${username}`, "authors");
           revalidatePath(`/${username}`);
         }
         payload.logger.info(
@@ -165,8 +180,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
       }
     } catch (e) {
       payload.logger.error(
-        "Failed to update author pages for previous post state",
-        e
+        `Failed to update author pages for previous post state: ${e instanceof Error ? e.message : String(e)}`,
       );
     }
   }
@@ -181,17 +195,17 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   const path = `/posts/${doc?.slug}`;
 
   revalidatePath(path);
-  revalidateTag("posts", "max");
-  revalidateTag(`post-${doc?.slug}`, "max");
-  revalidateTag("homepage", "max"); // Homepage shows latest posts
-  revalidateTag("sitemap", "max");
-  // Also revalidate main listing paths
+  revalidateTag("posts", "posts"); // Use configured profile for gentler invalidation
+  revalidateTag(`post-${doc?.slug}`, "posts");
+  revalidateTag("homepage", "homepage");
+  revalidateTag("sitemap", "sitemap");
+  revalidateTag("rss", "rss"); // Update feeds with configured profile
   revalidatePath("/");
   revalidatePath("/posts");
 
   // If post belonged to a project, invalidate project cache
   if (doc?.project && typeof doc.project === "object") {
-    revalidateTag(`project-${doc.project.slug}`, "max");
+    revalidateTag(`project-${doc.project.slug}`, "projects");
     revalidatePath(`/projects/${doc.project.slug}`);
   }
 
@@ -203,9 +217,9 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
       (doc as any)?.populatedAuthors
     );
     if (authorUsernames.length) {
-      revalidateTag("users", "max");
+      revalidateTag("users", "authors");
       for (const username of authorUsernames) {
-        revalidateTag(`author-${username}`, "max");
+        revalidateTag(`author-${username}`, "authors");
         revalidatePath(`/${username}`);
       }
     }

@@ -141,11 +141,20 @@ export async function GET(request: NextRequest) {
 
     console.log(`[Search API] Found ${results.length} results`);
 
-    return NextResponse.json({
-      results,
-      query: trimmedQuery,
-      count: results.length,
-    });
+    return NextResponse.json(
+      {
+        results,
+        query: trimmedQuery,
+        count: results.length,
+      },
+      {
+        headers: {
+          "Cache-Control":
+            "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
+          "Access-Control-Allow-Origin": "*",
+        },
+      },
+    );
   } catch (error) {
     console.error("[Search API] Error:", error);
 

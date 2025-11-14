@@ -5,9 +5,9 @@ import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
-// Force dynamic rendering for Atom feeds (2025 best practice)
-// This ensures fresh content on every request while HTTP Cache-Control handles caching
-export const dynamic = "force-dynamic";
+// Note: Removed force-dynamic to allow Next.js ISR caching
+// With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
+// This prevents Atom feed readers from waking the database on every poll
 
 export async function GET(_request: NextRequest) {
   const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
@@ -111,7 +111,7 @@ export async function GET(_request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/atom+xml; charset=utf-8",
-        "Cache-Control": "public, max-age=3600, s-maxage=3600",
+        "Cache-Control": "public, max-age=21600, s-maxage=43200", // Cache for 6-12 hours (weekly publishing pattern)
       },
     });
   } catch (_error) {

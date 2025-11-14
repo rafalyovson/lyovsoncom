@@ -25,7 +25,10 @@ export async function GET(request: Request) {
       logger?.warn?.(message);
     };
     const logError = (message: string, detail?: unknown) => {
-      logger?.error?.(message, detail);
+      const errorMessage = detail
+        ? `${message} ${detail instanceof Error ? detail.message : String(detail)}`
+        : message;
+      logger?.error?.(errorMessage);
     };
 
     if (!token) {
@@ -146,7 +149,9 @@ export async function GET(request: Request) {
       new URL("/subscription-confirmed", request.url)
     );
   } catch (_error) {
-    logger?.error?.("[Confirm] Error", _error);
+    logger?.error?.(
+      `[Confirm] Error: ${_error instanceof Error ? _error.message : String(_error)}`,
+    );
     return NextResponse.json(
       { error: "Failed to confirm subscription" },
       { status: 500 }

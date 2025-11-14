@@ -8,27 +8,20 @@ export async function GET(_request: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise });
 
-    // Get embedding statistics
-    // Note: embedding_vector is a direct PostgreSQL column, not a Payload field
-    // We need to fetch all items and check the embedding fields manually
-    const [allPosts, allBooks, allNotes] = await Promise.all([
-      payload.find({
+    // Get embedding statistics using count() instead of fetching all records
+    // This prevents expensive limit: 0 queries that fetch entire collections
+    const [allPostsCount, allBooksCount, allNotesCount] = await Promise.all([
+      payload.count({
         collection: "posts",
         where: { _status: { equals: "published" } },
-        limit: 0,
-        pagination: false,
       }),
-      payload.find({
+      payload.count({
         collection: "books",
         where: { _status: { equals: "published" } },
-        limit: 0,
-        pagination: false,
       }),
-      payload.find({
+      payload.count({
         collection: "notes",
         where: { _status: { equals: "published" } },
-        limit: 0,
-        pagination: false,
       }),
     ]);
 
@@ -63,7 +56,7 @@ export async function GET(_request: NextRequest) {
     // Note: We can only accurately count posts with embeddings since we sampled them
     // For books and notes, we'll estimate or fetch them similarly
     const totalPublished =
-      allPosts.totalDocs + allBooks.totalDocs + allNotes.totalDocs;
+      allPostsCount.totalDocs + allBooksCount.totalDocs + allNotesCount.totalDocs;
     const totalWithEmbeddings = postsWithEmbeddings.length; // Only have accurate count for posts
 
     const status = {
@@ -91,27 +84,27 @@ export async function GET(_request: NextRequest) {
         // Collection-specific stats
         collections: {
           posts: {
-            totalPublished: allPosts.totalDocs,
+            totalPublished: allPostsCount.totalDocs,
             withEmbeddings: postsWithEmbeddings.length,
             coveragePercentage:
-              allPosts.totalDocs > 0
+              allPostsCount.totalDocs > 0
                 ? Math.round(
-                    (postsWithEmbeddings.length / allPosts.totalDocs) * 100
+                    (postsWithEmbeddings.length / allPostsCount.totalDocs) * 100
                   )
                 : 0,
-            needingEmbeddings: allPosts.totalDocs - postsWithEmbeddings.length,
+            needingEmbeddings: allPostsCount.totalDocs - postsWithEmbeddings.length,
           },
           books: {
-            totalPublished: allBooks.totalDocs,
+            totalPublished: allBooksCount.totalDocs,
             withEmbeddings: 0, // Would need to sample books similarly
             coveragePercentage: 0,
-            needingEmbeddings: allBooks.totalDocs,
+            needingEmbeddings: allBooksCount.totalDocs,
           },
           notes: {
-            totalPublished: allNotes.totalDocs,
+            totalPublished: allNotesCount.totalDocs,
             withEmbeddings: 0, // Would need to sample notes similarly
             coveragePercentage: 0,
-            needingEmbeddings: allNotes.totalDocs,
+            needingEmbeddings: allNotesCount.totalDocs,
           },
         },
       },
@@ -215,8 +208,9 @@ export async function GET(_request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Cache-Control": "public, max-age=300, s-maxage=300", // Cache for 5 minutes
+        "Cache-Control": "public, max-age=7200, s-maxage=14400, stale-while-revalidate=28800", // Cache for 2-4 hours, stale up to 8 hours
         "Access-Control-Allow-Origin": "*",
+        "X-Robots-Tag": "noindex, nofollow", // Prevent search engine indexing
       },
     });
   } catch (_error) {

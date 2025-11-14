@@ -41,7 +41,10 @@ export async function POST(request: Request) {
       logger?.warn?.(message);
     };
     const logError = (message: string, detail?: unknown) => {
-      logger?.error?.(message, detail);
+      const errorMessage = detail
+        ? `${message} ${detail instanceof Error ? detail.message : String(detail)}`
+        : message;
+      logger?.error?.(errorMessage);
     };
 
     logInfo("[Webhook] Received Resend webhook request");
@@ -200,7 +203,9 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    logger?.error?.("[Webhook] Processing error", error);
+    logger?.error?.(
+      `[Webhook] Processing error: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
