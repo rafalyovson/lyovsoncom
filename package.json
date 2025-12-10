@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
-    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --turbo",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "lint": "ultracite check",
@@ -20,7 +20,7 @@
     "@ai-sdk/openai": "^1.3.24",
     "@hookform/resolvers": "^4.1.3",
     "@icons-pack/react-simple-icons": "^13.8.0",
-    "@next/third-parties": "15.5.1-canary.30",
+    "@next/third-parties": "^16.0.8",
     "@payloadcms/db-vercel-postgres": "^3.68.1",
     "@payloadcms/email-resend": "^3.68.1",
     "@payloadcms/live-preview-react": "^3.68.1",
@@ -42,7 +42,7 @@
     "@types/pg": "^8.15.6",
     "@vercel/analytics": "^1.6.1",
     "ai": "^4.3.19",
-    "babel-plugin-react-compiler": "19.1.0-rc.2",
+    "babel-plugin-react-compiler": "^1.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -58,15 +58,15 @@
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.482.0",
     "motion": "^12.23.26",
-    "next": "16.0.0-canary.18",
+    "next": "16.1.0-canary.16",
     "next-themes": "^0.4.6",
     "payload": "^3.68.1",
     "payload-admin-bar": "^1.0.7",
     "prism-react-renderer": "^2.4.1",
     "radix-ui": "latest",
-    "react": "19.3.0-canary-71b3a03c-20251021",
+    "react": "19.3.0-canary-55480b4d-20251208",
     "react-day-picker": "^9.12.0",
-    "react-dom": "19.3.0-canary-71b3a03c-20251021",
+    "react-dom": "19.3.0-canary-55480b4d-20251208",
     "react-hook-form": "^7.68.0",
     "react-resizable-panels": "^2.1.9",
     "react-tweet": "^3.2.2",
@@ -98,7 +98,7 @@
     "ultracite": "5.3.9"
   },
   "engines": {
-    "node": "^22"
+    "node": "^24"
   },
   "packageManager": "pnpm@10.18.3",
   "browserslist": [

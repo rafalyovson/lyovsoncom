@@ -118,8 +118,6 @@ const nextConfig: NextConfig = {
     // Enable new caching and pre-rendering behavior
     useCache: true, // will be renamed to cacheComponents in Next.js 16
 
-    // Activate new client-side router improvements
-    clientSegmentCache: true,
 
     // Enable persistent caching for the turbopack dev server and build.
     cacheLife: {
