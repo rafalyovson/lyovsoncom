@@ -47,6 +47,8 @@ const nextConfig: NextConfig = {
     // This ensures Next.js serves appropriately-sized images for our grid cards
     // instead of defaulting to 640px (smallest deviceSize)
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 400, 800, 1200],
+    // Next.js 16 default: 4 hours (14_400 seconds) - reduces CPU usage and costs
+    minimumCacheTTL: 14_400,
   },
   reactStrictMode: true,
   redirects,
@@ -111,81 +113,85 @@ const nextConfig: NextConfig = {
     ];
   },
   reactCompiler: true,
+  // Enable persistent caching for the turbopack dev server and build.
+  cacheLife: {
+    static: {
+      stale: 7200, // 2 hours stale (was 30 minutes)
+      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
+      expire: 86_400, // 24 hours max
+    },
+    homepage: {
+      stale: 1800, // 30 minutes stale
+      revalidate: 3600, // 1 hour revalidate
+      expire: 7200, // 2 hours max
+    },
+    posts: {
+      stale: 1800, // 30 minutes stale (was 5 minutes)
+      revalidate: 3600, // 1 hour revalidate (was 10 minutes)
+      expire: 7200, // 2 hours max (was 1 hour)
+    },
+    "grid-cards": {
+      stale: 1800, // 30 minutes stale (was 10 minutes)
+      revalidate: 3600, // 1 hour revalidate (was 20 minutes)
+      expire: 7200, // 2 hours max (was 1 hour)
+    },
+    "user-session": {
+      stale: 60, // 1 minute stale
+      revalidate: 300, // 5 minutes revalidate
+      expire: 1800, // 30 minutes max
+    },
+    projects: {
+      stale: 14_400, // 4 hours stale (was 1 hour)
+      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
+      expire: 86_400, // 24 hours max
+    },
+    topics: {
+      stale: 7200, // 2 hours stale (was 30 minutes)
+      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
+      expire: 86_400, // 24 hours max (was 12 hours)
+    },
+    authors: {
+      stale: 7200, // 2 hours stale (was 30 minutes)
+      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
+      expire: 86_400, // 24 hours max
+    },
+    sitemap: {
+      stale: 14_400, // 4 hours stale (was 1 hour)
+      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
+      expire: 172_800, // 48 hours max (was 24 hours)
+    },
+    search: {
+      stale: 1800, // 30 minutes stale (was 10 minutes)
+      revalidate: 3600, // 1 hour revalidate (was 20 minutes)
+      expire: 7200, // 2 hours max (was 1 hour)
+    },
+    rss: {
+      stale: 14_400, // 4 hours stale (was 1 hour)
+      revalidate: 28_800, // 8 hours revalidate (was 2 hours)
+      expire: 172_800, // 48 hours max (was 24 hours)
+    },
+    redirects: {
+      stale: 14_400, // 4 hours stale
+      revalidate: 28_800, // 8 hours revalidate
+      expire: 172_800, // 48 hours max
+    },
+  },
   experimental: {
     // Forward browser logs to the terminal for easier debugging
     browserDebugInfoInTerminal: true,
 
     // Enable new caching and pre-rendering behavior
-    useCache: true, // will be renamed to cacheComponents in Next.js 16
+    useCache: true,
 
-
-    // Enable persistent caching for the turbopack dev server and build.
-    cacheLife: {
-      static: {
-        stale: 7200, // 2 hours stale (was 30 minutes)
-        revalidate: 14_400, // 4 hours revalidate (was 1 hour)
-        expire: 86_400, // 24 hours max
-      },
-      homepage: {
-        stale: 1800, // 30 minutes stale
-        revalidate: 3600, // 1 hour revalidate
-        expire: 7200, // 2 hours max
-      },
-      posts: {
-        stale: 1800, // 30 minutes stale (was 5 minutes)
-        revalidate: 3600, // 1 hour revalidate (was 10 minutes)
-        expire: 7200, // 2 hours max (was 1 hour)
-      },
-      "grid-cards": {
-        stale: 1800, // 30 minutes stale (was 10 minutes)
-        revalidate: 3600, // 1 hour revalidate (was 20 minutes)
-        expire: 7200, // 2 hours max (was 1 hour)
-      },
-      "user-session": {
-        stale: 60, // 1 minute stale
-        revalidate: 300, // 5 minutes revalidate
-        expire: 1800, // 30 minutes max
-      },
-      projects: {
-        stale: 14_400, // 4 hours stale (was 1 hour)
-        revalidate: 28_800, // 8 hours revalidate (was 2 hours)
-        expire: 86_400, // 24 hours max
-      },
-      topics: {
-        stale: 7200, // 2 hours stale (was 30 minutes)
-        revalidate: 14_400, // 4 hours revalidate (was 1 hour)
-        expire: 86_400, // 24 hours max (was 12 hours)
-      },
-      authors: {
-        stale: 7200, // 2 hours stale (was 30 minutes)
-        revalidate: 14_400, // 4 hours revalidate (was 1 hour)
-        expire: 86_400, // 24 hours max
-      },
-      sitemap: {
-        stale: 14_400, // 4 hours stale (was 1 hour)
-        revalidate: 28_800, // 8 hours revalidate (was 2 hours)
-        expire: 172_800, // 48 hours max (was 24 hours)
-      },
-      search: {
-        stale: 1800, // 30 minutes stale (was 10 minutes)
-        revalidate: 3600, // 1 hour revalidate (was 20 minutes)
-        expire: 7200, // 2 hours max (was 1 hour)
-      },
-      rss: {
-        stale: 14_400, // 4 hours stale (was 1 hour)
-        revalidate: 28_800, // 8 hours revalidate (was 2 hours)
-        expire: 172_800, // 48 hours max (was 24 hours)
-      },
-      redirects: {
-        stale: 14_400, // 4 hours stale
-        revalidate: 28_800, // 8 hours revalidate
-        expire: 172_800, // 48 hours max
-      },
-    },
+    // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
+    turbopackFileSystemCacheForDev: true,
   },
+  // Turbopack is now the default bundler for both dev and prod in Next.js 16
   turbopack: {
     resolveExtensions: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".json"],
   },
+  // Webpack config kept as fallback for --webpack flag or if Turbopack isn't used
+  // Turbopack handles chunking automatically, but this ensures compatibility
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.optimization.splitChunks.cacheGroups = {

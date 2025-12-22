@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers";
 import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
@@ -265,31 +266,20 @@ export const Notes: CollectionConfig = {
         req.payload.logger.info(`Revalidating note: ${doc.slug}`);
         // TODO: Add revalidation logic for notes when we have note pages
       },
-      // Queue task for background embedding generation
+      // Generate embeddings inline (fire-and-forget)
       async ({ doc, req, operation }) => {
-        // Only queue for create/update operations
-        if (operation !== 'create' && operation !== 'update') {
-          return
+        // Only for create/update of published notes
+        if (
+          (operation === 'create' || operation === 'update') &&
+          doc._status === 'published'
+        ) {
+          // Fire and forget - doesn't block publish response
+          generateEmbeddingForNote(doc.id, req).catch((err) => {
+            req.payload.logger.error(
+              `[Embedding] Failed for note ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
+            )
+          })
         }
-
-        // Only queue for published notes
-        if (doc._status !== 'published') {
-          return
-        }
-
-        req.payload.logger.info(
-          `[Hook] Queueing embedding task for note ${doc.id}`
-        )
-
-        // Queue the task - this returns immediately!
-        await req.payload.jobs.queue({
-          task: 'generateEmbedding',
-          input: {
-            collection: 'notes',
-            docId: doc.id,
-          },
-          queue: 'default', // runs every 5 minutes via Vercel Cron
-        })
       },
     ],
   },

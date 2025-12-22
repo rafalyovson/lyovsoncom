@@ -8,6 +8,7 @@ import { getServerSideURL } from "@/utilities/getURL";
 import { populateAuthors } from "./hooks/populateAuthors";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
+import { generateEmbeddingForPost } from "@/utilities/generate-embedding-helpers";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
@@ -367,30 +368,20 @@ export const Posts: CollectionConfig<"posts"> = {
     beforeChange: [populateContentTextHook], // Keep this - it's fast
     afterChange: [
       revalidatePost, // Keep this - cache needs immediate update
-      // Queue workflow for background processing
+      // Generate embeddings inline (fire-and-forget)
       async ({ doc, req, operation }) => {
-        // Only queue for create/update operations
-        if (operation !== 'create' && operation !== 'update') {
-          return
+        // Only for create/update of published posts
+        if (
+          (operation === 'create' || operation === 'update') &&
+          doc._status === 'published'
+        ) {
+          // Fire and forget - doesn't block publish response
+          generateEmbeddingForPost(doc.id, req).catch((err) => {
+            req.payload.logger.error(
+              `[Embedding] Failed for post ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
+            )
+          })
         }
-
-        // Only queue for published posts
-        if (doc._status !== 'published') {
-          return
-        }
-
-        req.payload.logger.info(
-          `[Hook] Queueing embedding workflow for post ${doc.id}`
-        )
-
-        // Queue the workflow - this returns immediately!
-        await req.payload.jobs.queue({
-          workflow: 'processPostEmbeddings',
-          input: {
-            postId: doc.id,
-          },
-          queue: 'default', // runs every 5 minutes via Vercel Cron
-        })
       },
     ],
     afterRead: [populateAuthors],

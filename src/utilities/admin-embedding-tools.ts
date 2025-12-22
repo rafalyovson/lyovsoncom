@@ -2,33 +2,10 @@ import configPromise from "@payload-config";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
 import {
-  createTextHash,
-  extractTextFromContent,
-  generateEmbedding,
-} from "./generate-embedding";
-
-// Posts-specific text extraction for admin tools
-function extractPostsText(post: any): string {
-  const parts: string[] = [];
-
-  if (post.title) {
-    parts.push(post.title);
-  }
-
-  if (post.description) {
-    parts.push(post.description);
-  }
-
-  // Extract content from Lexical JSONB format
-  if (post.content) {
-    const contentText = extractTextFromContent(post.content);
-    if (contentText) {
-      parts.push(contentText);
-    }
-  }
-
-  return parts.filter(Boolean).join(" ");
-}
+  generateEmbeddingForPost,
+  generateEmbeddingForNote,
+} from "./generate-embedding-helpers";
+import { generateEmbedding } from "./generate-embedding";
 
 // Get embedding statistics for all posts
 export async function getEmbeddingStats() {
@@ -107,33 +84,35 @@ export async function regenerateEmbeddingForPost(postId: number) {
       throw new Error(`Post ${postId} is not published`);
     }
 
-    const textContent = extractPostsText(post);
-    if (!textContent.trim()) {
-      throw new Error(`Post ${postId} has no content to embed`);
+    // Use the helper function
+    const mockReq = {
+      payload,
+      user: null,
+    } as any;
+
+    const result = await generateEmbeddingForPost(postId, mockReq);
+
+    if (!result.success) {
+      throw new Error(result.error || "Failed to generate embedding");
     }
 
-    const { vector, model, dimensions } = await generateEmbedding(textContent);
-    const textHash = createTextHash(textContent);
-
-    const _updatedPost = await payload.update({
+    // Fetch updated post to get embedding details
+    const updatedPost = await payload.findByID({
       collection: "posts",
       id: postId,
-      data: {
-        embedding_vector: `[${vector.join(",")}]`, // pgvector format
-        embedding_model: model,
-        embedding_dimensions: dimensions,
-        embedding_generated_at: new Date().toISOString(),
-        embedding_text_hash: textHash,
-      } as any, // Type assertion for new pgvector fields
+      select: {
+        title: true,
+        embedding_model: true,
+        embedding_dimensions: true,
+      },
     });
 
     return {
       success: true,
       postId,
-      title: post.title,
-      model,
-      dimensions,
-      wordCount: textContent.split(" ").length,
+      title: updatedPost.title,
+      model: (updatedPost as any).embedding_model || "unknown",
+      dimensions: (updatedPost as any).embedding_dimensions || 0,
     };
   } catch (error) {
     return {
