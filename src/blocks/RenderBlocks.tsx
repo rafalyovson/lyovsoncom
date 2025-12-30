@@ -24,7 +24,7 @@ type BlockWithType = {
 export const RenderBlocks = (props: { blocks: BlockWithType[] }) => {
   const { blocks } = props;
 
-  const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0;
+  const hasBlocks = Array.isArray(blocks) && blocks.length > 0;
 
   if (hasBlocks) {
     return (
@@ -37,48 +37,49 @@ export const RenderBlocks = (props: { blocks: BlockWithType[] }) => {
           }
 
           const key = block.id || `${blockType}-${index}`;
+          const blockProps = block as unknown as Record<string, unknown>;
 
           switch (blockType) {
             case "mediaBlock":
               return (
                 <div className="my-16" key={key}>
-                  <MediaBlock {...(block as any)} />
+                  <MediaBlock {...(blockProps as any)} />
                 </div>
               );
             case "youtube":
               return (
                 <div className="my-16" key={key}>
-                  <YouTubeBlock {...(block as any)} />
+                  <YouTubeBlock {...(blockProps as any)} />
                 </div>
               );
             case "gif":
               return (
                 <div className="my-16" key={key}>
-                  <GIFBlock {...(block as any)} />
+                  <GIFBlock {...(blockProps as any)} />
                 </div>
               );
             case "banner":
               return (
                 <div className="my-16" key={key}>
-                  <BannerBlock {...(block as any)} />
+                  <BannerBlock {...(blockProps as any)} />
                 </div>
               );
             case "code":
               return (
                 <div className="my-16" key={key}>
-                  <CodeBlock {...(block as any)} />
+                  <CodeBlock {...(blockProps as any)} />
                 </div>
               );
             case "quote":
               return (
                 <div className="my-16" key={key}>
-                  <QuoteBlock {...(block as any)} />
+                  <QuoteBlock {...(blockProps as any)} />
                 </div>
               );
             case "xpost":
               return (
                 <div className="my-16" key={key}>
-                  <XPostBlock {...(block as any)} />
+                  <XPostBlock {...(blockProps as any)} />
                 </div>
               );
             default:

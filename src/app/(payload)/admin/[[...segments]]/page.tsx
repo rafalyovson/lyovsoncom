@@ -22,7 +22,12 @@ export const generateMetadata = ({
   generatePageMetadata({ config, params, searchParams });
 
 const Page = ({ params, searchParams }: Args) => (
-  <RootPage config={config} params={params} searchParams={searchParams} importMap={importMap} />
+  <RootPage
+    config={config}
+    importMap={importMap}
+    params={params}
+    searchParams={searchParams}
+  />
 );
 
 export default Page;

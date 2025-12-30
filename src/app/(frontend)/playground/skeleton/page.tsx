@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
 
 export default async function SkeletonPlayground() {
   "use cache";
+  await Promise.resolve();
   cacheTag("playground");
   cacheTag("skeleton-playground");
   cacheLife("static"); // Static testing page

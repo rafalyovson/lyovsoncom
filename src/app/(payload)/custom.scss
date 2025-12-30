@@ -1,0 +1,51 @@
+// Custom dashboard styling
+.p-admin__dashboard {
+  .custom-dashboard {
+    padding: 2rem;
+  }
+
+  .collection-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .collection-group-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .collection-card {
+    display: block;
+    padding: 1rem;
+    background-color: var(--theme-elevation-50);
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+      background-color: var(--theme-elevation-100);
+      border-color: var(--theme-elevation-300);
+    }
+  }
+
+  .collection-card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--theme-elevation-900);
+    margin-bottom: 0.25rem;
+  }
+
+  .collection-card-description {
+    font-size: 0.875rem;
+    color: var(--theme-elevation-600);
+  }
+}
+
+
+

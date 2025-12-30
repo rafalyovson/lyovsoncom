@@ -47,6 +47,7 @@ type Args = {
   }>;
 };
 
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This endpoint supports multiple output formats and optional regeneration paths */
 export async function GET(
   request: NextRequest,
   { params: paramsPromise }: Args
@@ -57,7 +58,8 @@ export async function GET(
   const format = searchParams.get("format") || "full"; // 'full', 'vector-only', 'metadata-only'
   const regenerate = searchParams.get("regenerate") === "true"; // Force regenerate
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });

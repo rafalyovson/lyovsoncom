@@ -11,6 +11,7 @@ export const Contacts: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    group: "Media & Settings",
     useAsTitle: "email",
     defaultColumns: ["email", "firstName", "lastName", "status"],
   },

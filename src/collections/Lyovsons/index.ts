@@ -1,4 +1,4 @@
-import { revalidatePath, updateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
@@ -14,6 +14,7 @@ export const Lyovsons: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    group: "People",
     defaultColumns: ["avatar", "name", "username", "email"],
     useAsTitle: "name",
     description: "Lyovson family members",
@@ -144,11 +145,11 @@ export const Lyovsons: CollectionConfig = {
         if (doc.username) {
           req.payload.logger.info(`Updating cache for author: ${doc.username}`);
 
-          // Update lyovson-related cache tags with immediate refresh
-          updateTag("lyovsons");
-          updateTag(`lyovson-${doc.username}`);
-          updateTag("posts"); // Posts may reference this author
-          updateTag("sitemap");
+          // Revalidate lyovson-related cache tags
+          revalidateTag("lyovsons", { expire: 0 });
+          revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
+          revalidateTag("posts", { expire: 0 }); // Posts may reference this author
+          revalidateTag("sitemap", { expire: 0 });
 
           // Revalidate author page path
           revalidatePath(`/${doc.username}`);
@@ -162,11 +163,11 @@ export const Lyovsons: CollectionConfig = {
             `Updating cache after user deletion: ${doc.username}`
           );
 
-          // Update lyovson-related cache tags with immediate refresh
-          updateTag("lyovsons");
-          updateTag(`lyovson-${doc.username}`);
-          updateTag("posts"); // Posts may reference this author
-          updateTag("sitemap");
+          // Revalidate lyovson-related cache tags
+          revalidateTag("lyovsons", { expire: 0 });
+          revalidateTag(`lyovson-${doc.username}`, { expire: 0 });
+          revalidateTag("posts", { expire: 0 }); // Posts may reference this author
+          revalidateTag("sitemap", { expire: 0 });
 
           // Revalidate author page path
           revalidatePath(`/${doc.username}`);

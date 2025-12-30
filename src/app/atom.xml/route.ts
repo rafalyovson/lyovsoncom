@@ -9,8 +9,10 @@ import { extractLexicalText } from "@/utilities/extract-lexical-text";
 // With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
 // This prevents Atom feed readers from waking the database on every poll
 
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Feed generation includes multiple formatting and fallback branches */
 export async function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -60,52 +62,50 @@ export async function GET(_request: NextRequest) {
     });
 
     // Add posts to feed (same logic as RSS)
-    posts.docs
-      .filter((post) => {
-        return post.slug;
-      })
-      .forEach((post) => {
-        const title = post.title;
-        const description = post.description || "";
-        const link = `${SITE_URL}/posts/${post.slug}`;
-        const projectSlug =
-          typeof post.project === "object" && post.project !== null
-            ? (post.project as Project).slug || ""
-            : "";
-        const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
+    for (const post of posts.docs) {
+      if (!post.slug) {
+        continue;
+      }
 
-        // Extract full content from Lexical format for AI consumption
-        const fullContent = post.content
-          ? extractLexicalText(post.content)
+      const title = post.title;
+      const description = post.description || "";
+      const link = `${SITE_URL}/posts/${post.slug}`;
+      const projectSlug =
+        typeof post.project === "object" && post.project !== null
+          ? (post.project as Project).slug || ""
           : "";
+      const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
 
-        let contentText = description || fullContent;
-        if (!contentText) {
-          contentText = "Read the full article on Lyóvson.com";
-        }
+      // Extract full content from Lexical format for AI consumption
+      const fullContent = post.content ? extractLexicalText(post.content) : "";
 
-        feed.addItem({
-          title,
-          id: link,
-          link,
-          description: contentText,
-          content: fullContent || contentText,
-          author: [
-            {
-              name: author,
-              email: "hello@lyovson.com",
-              link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
-            },
-          ],
-          date: new Date(post.publishedAt || post.updatedAt),
-          category: [
-            {
-              name: projectSlug,
-              domain: `${SITE_URL}/projects`,
-            },
-          ],
-        });
+      let contentText = description || fullContent;
+      if (!contentText) {
+        contentText = "Read the full article on Lyóvson.com";
+      }
+
+      feed.addItem({
+        title,
+        id: link,
+        link,
+        description: contentText,
+        content: fullContent || contentText,
+        author: [
+          {
+            name: author,
+            email: "hello@lyovson.com",
+            link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
+          },
+        ],
+        date: new Date(post.publishedAt || post.updatedAt),
+        category: [
+          {
+            name: projectSlug,
+            domain: `${SITE_URL}/projects`,
+          },
+        ],
       });
+    }
 
     return new Response(feed.atom1(), {
       status: 200,

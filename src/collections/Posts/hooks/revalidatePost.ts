@@ -132,7 +132,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
       }
     } catch (e) {
       payload.logger.error(
-        `Failed to update author pages for post change: ${e instanceof Error ? e.message : String(e)}`,
+        `Failed to update author pages for post change: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }
@@ -180,7 +180,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
       }
     } catch (e) {
       payload.logger.error(
-        `Failed to update author pages for previous post state: ${e instanceof Error ? e.message : String(e)}`,
+        `Failed to update author pages for previous post state: ${e instanceof Error ? e.message : String(e)}`
       );
     }
   }

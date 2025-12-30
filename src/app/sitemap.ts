@@ -1,23 +1,22 @@
 import type { MetadataRoute } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
-import type { Post, Project, Topic } from "@/payload-types";
+import { cacheLife, cacheTag } from "next/cache";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
 
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Sitemap generation aggregates multiple collections and routes */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   "use cache";
   cacheTag("sitemap");
   cacheTag("posts");
   cacheTag("projects");
   cacheTag("topics");
-  cacheLife("sitemap"); // Use sitemap-specific cache life
+  cacheTag("notes");
+  cacheTag("activities");
+  cacheLife("sitemap");
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
-  // Get all cached sitemap data
-  const { posts, projects, topics } = await getSitemapData();
+  const { posts, projects, topics, notes, activities } = await getSitemapData();
 
   const routes: MetadataRoute.Sitemap = [
     // Homepage - highest priority
@@ -30,6 +29,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Main section pages - high priority
     {
       url: `${SITE_URL}/posts`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/notes`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/activities`,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 0.9,
@@ -102,40 +113,74 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Add posts with enhanced metadata
-  posts
-    .filter((post): post is Post => Boolean(post?.slug))
-    .forEach((post) => {
-      routes.push({
-        url: `${SITE_URL}/posts/${post.slug}`,
-        lastModified: new Date(post.updatedAt),
-        changeFrequency: "monthly", // Articles change less frequently after publication
-        priority: 0.8,
-      });
+  for (const post of posts) {
+    if (!post?.slug) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/posts/${post.slug}`,
+      lastModified: new Date(post.updatedAt),
+      changeFrequency: "monthly", // Articles change less frequently after publication
+      priority: 0.8,
     });
+  }
 
   // Add projects with better change frequency
-  projects
-    .filter((project): project is Project => Boolean(project?.slug))
-    .forEach((project) => {
-      routes.push({
-        url: `${SITE_URL}/projects/${project.slug}`,
-        lastModified: new Date(project.updatedAt),
-        changeFrequency: "weekly",
-        priority: 0.9,
-      });
+  for (const project of projects) {
+    if (!project?.slug) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/projects/${project.slug}`,
+      lastModified: new Date(project.updatedAt),
+      changeFrequency: "weekly",
+      priority: 0.9,
     });
+  }
 
   // Add topics with appropriate priority
-  topics
-    .filter((topic): topic is Topic => Boolean(topic?.slug))
-    .forEach((topic) => {
-      routes.push({
-        url: `${SITE_URL}/topics/${topic.slug}`,
-        lastModified: new Date(topic.updatedAt),
-        changeFrequency: "monthly",
-        priority: 0.7,
-      });
+  for (const topic of topics) {
+    if (!topic?.slug) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/topics/${topic.slug}`,
+      lastModified: new Date(topic.updatedAt),
+      changeFrequency: "monthly",
+      priority: 0.7,
     });
+  }
+
+  // Add notes
+  for (const note of notes) {
+    if (!note?.slug) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/notes/${note.slug}`,
+      lastModified: new Date(note.updatedAt),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    });
+  }
+
+  // Add activities
+  for (const activity of activities) {
+    if (!activity?.slug) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/activities/${activity.slug}`,
+      lastModified: new Date(activity.updatedAt),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
+  }
 
   return routes;
 }

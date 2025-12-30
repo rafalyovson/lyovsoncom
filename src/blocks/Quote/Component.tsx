@@ -1,4 +1,3 @@
-import type React from "react";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { QuoteBlock as QuoteBlockType } from "@/payload-types";
@@ -7,11 +6,7 @@ type Props = {
   className?: string;
 } & QuoteBlockType;
 
-export const QuoteBlock = async ({
-  className,
-  quote,
-  attribution,
-}: Props) => {
+export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
     <div className={cn("container", className)}>
       <blockquote className="glass-section glass-premium relative mt-0 mb-0 rounded-lg border-glass-border-hover border-l-4 py-6 pl-6 italic">
@@ -30,4 +25,4 @@ export const QuoteBlock = async ({
       </blockquote>
     </div>
   );
-};
+}

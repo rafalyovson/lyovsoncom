@@ -1,9 +1,6 @@
 import configPromise from "@payload-config";
 import type { Metadata } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
 import { Suspense } from "react";
@@ -11,6 +8,7 @@ import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCardContent,
   GridCardHero,
+  GridCardReferences,
   GridCardRelatedPosts,
   GridCardSubscribe,
 } from "@/components/grid";
@@ -153,10 +151,22 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
       <aside
         className={cn(
-          "col-start-1 col-end-2 row-start-6 row-end-7 grid grid-rows-2 gap-4 self-start",
-          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-4"
+          "col-start-1 col-end-2 row-start-6 row-end-7 grid grid-rows-3 gap-4 self-start",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
         )}
       >
+        {post.references && post.references.length > 0 && (
+          <Suspense
+            fallback={
+              <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+                <Skeleton className="glass-badge h-full w-full" />
+              </div>
+            }
+          >
+            <GridCardReferences references={post.references} />
+          </Suspense>
+        )}
+
         <Suspense
           fallback={
             <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">

@@ -7,14 +7,19 @@
  * GET /api/search?q=query&limit=10
  */
 
-import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import configPromise from "@payload-config";
+import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
 import { generateEmbedding } from "@/utilities/generate-embedding";
 
-interface SearchResult {
+const MIN_SEARCH_LIMIT = 1;
+const MAX_SEARCH_LIMIT = 50;
+const EMBEDDING_DIMENSIONS = 1536;
+
+type SearchResult = {
+  collection: string;
   id: number;
   title: string;
   slug: string;
@@ -26,9 +31,10 @@ interface SearchResult {
   fts_rank: number | null;
   fuzzy_rank: number | null;
   combined_score: number;
-}
+};
 
-interface HybridSearchRow {
+type HybridSearchRow = {
+  collection: string;
   id: number;
   title: string;
   slug: string;
@@ -40,7 +46,7 @@ interface HybridSearchRow {
   fts_rank: bigint | null;
   fuzzy_rank: bigint | null;
   combined_score: string; // PostgreSQL numeric type comes as string
-}
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -57,14 +63,14 @@ export async function GET(request: NextRequest) {
           count: 0,
           message: "No search query provided",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     const trimmedQuery = query.trim();
 
     // Validate limit
-    if (limit < 1 || limit > 50) {
+    if (limit < MIN_SEARCH_LIMIT || limit > MAX_SEARCH_LIMIT) {
       return NextResponse.json(
         {
           results: [],
@@ -72,16 +78,17 @@ export async function GET(request: NextRequest) {
           count: 0,
           message: "Limit must be between 1 and 50",
         },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
     // Generate embedding for semantic search
-    console.log(`[Search API] Generating embedding for: "${trimmedQuery}"`);
     const embeddingResult = await generateEmbedding(trimmedQuery);
 
-    if (!embeddingResult?.vector || embeddingResult.vector.length !== 1536) {
-      console.error("[Search API] Failed to generate embedding");
+    if (
+      !embeddingResult?.vector ||
+      embeddingResult.vector.length !== EMBEDDING_DIMENSIONS
+    ) {
       return NextResponse.json(
         {
           results: [],
@@ -89,13 +96,11 @@ export async function GET(request: NextRequest) {
           count: 0,
           message: "Failed to generate search embedding",
         },
-        { status: 500 },
+        { status: 500 }
       );
     }
 
     const embedding = embeddingResult.vector;
-
-    console.log("[Search API] Executing hybrid search...");
 
     // Get Payload instance to access database
     const payload = await getPayload({ config: configPromise });
@@ -105,26 +110,25 @@ export async function GET(request: NextRequest) {
     const vectorString = `[${embedding.join(",")}]`;
     const result = await payload.db.drizzle.execute(
       sql.raw(`
-        SELECT * FROM hybrid_search_posts(
+        SELECT * FROM hybrid_search_content(
           '${trimmedQuery.replace(/'/g, "''")}',
-          '${vectorString}'::vector(1536),
+          '${vectorString}'::vector(${EMBEDDING_DIMENSIONS}),
           ${limit},
           60
         )
-      `),
+      `)
     );
 
     const rows = result.rows as unknown as HybridSearchRow[];
 
-    console.log(`[Search API] Found ${rows.length} results`);
-
     // Transform results
     const results: SearchResult[] = rows.map((row) => ({
+      collection: row.collection || "posts",
       id: row.id,
-      title: row.title,
-      slug: row.slug,
-      description: row.description,
-      featured_image_id: row.featured_image_id,
+      title: row.title || "",
+      slug: row.slug || "",
+      description: row.description || null,
+      featured_image_id: row.featured_image_id || null,
       created_at:
         row.created_at instanceof Date
           ? row.created_at.toISOString()
@@ -139,8 +143,6 @@ export async function GET(request: NextRequest) {
       combined_score: Number.parseFloat(row.combined_score),
     }));
 
-    console.log(`[Search API] Found ${results.length} results`);
-
     return NextResponse.json(
       {
         results,
@@ -153,11 +155,9 @@ export async function GET(request: NextRequest) {
             "public, max-age=300, s-maxage=600, stale-while-revalidate=1800", // Cache 5-10 min, stale up to 30 min
           "Access-Control-Allow-Origin": "*",
         },
-      },
+      }
     );
   } catch (error) {
-    console.error("[Search API] Error:", error);
-
     return NextResponse.json(
       {
         results: [],
@@ -166,7 +166,7 @@ export async function GET(request: NextRequest) {
         message: "Search failed",
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

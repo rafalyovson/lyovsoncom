@@ -53,7 +53,7 @@ export async function GET(req: NextRequest): Promise<Response> {
     user = jwt.verify(token, payload.secret);
   } catch (error) {
     payload.logger.error(
-      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`,
+      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`
     );
   }
 
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest): Promise<Response> {
     }
   } catch (error) {
     payload.logger.error(
-      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`,
+      `Error verifying token for live preview: ${error instanceof Error ? error.message : String(error)}`
     );
   }
 

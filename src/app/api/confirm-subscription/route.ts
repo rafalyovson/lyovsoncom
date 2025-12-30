@@ -150,7 +150,7 @@ export async function GET(request: Request) {
     );
   } catch (_error) {
     logger?.error?.(
-      `[Confirm] Error: ${_error instanceof Error ? _error.message : String(_error)}`,
+      `[Confirm] Error: ${_error instanceof Error ? _error.message : String(_error)}`
     );
     return NextResponse.json(
       { error: "Failed to confirm subscription" },

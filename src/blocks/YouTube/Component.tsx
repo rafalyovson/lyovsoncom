@@ -19,11 +19,11 @@ import { YouTubePlayer } from "./YouTubePlayer";
  * but includes custom styling and caption support specific to this design system.
  */
 
-export const YouTubeBlock = async ({
+export function YouTubeBlock({
   videoId,
   caption,
   aspectRatio = "16:9",
-}: YouTubeBlockType) => {
+}: YouTubeBlockType) {
   if (!videoId) {
     return null;
   }
@@ -31,7 +31,10 @@ export const YouTubeBlock = async ({
   return (
     <Card className="glass-interactive glass-stagger-1 transition-all duration-300">
       <CardContent className="p-4">
-        <YouTubePlayer videoId={videoId} aspectRatio={aspectRatio || undefined} />
+        <YouTubePlayer
+          aspectRatio={aspectRatio || undefined}
+          videoId={videoId}
+        />
       </CardContent>
 
       {caption && (
@@ -50,4 +53,4 @@ export const YouTubeBlock = async ({
       )}
     </Card>
   );
-};
+}

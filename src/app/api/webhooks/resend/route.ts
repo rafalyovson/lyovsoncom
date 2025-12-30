@@ -29,6 +29,7 @@ type ResendWebhookEvent = {
   };
 };
 
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Webhook handler has multiple validation and event-type branches */
 export async function POST(request: Request) {
   let logger: Payload["logger"] | undefined;
   try {
@@ -204,7 +205,7 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     logger?.error?.(
-      `[Webhook] Processing error: ${error instanceof Error ? error.message : String(error)}`,
+      `[Webhook] Processing error: ${error instanceof Error ? error.message : String(error)}`
     );
     return NextResponse.json(
       { error: "Internal Server Error" },

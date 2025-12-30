@@ -11,6 +11,30 @@ const MOTION_REGEX = /[\\/]node_modules[\\/]motion[\\/]/;
 // Image quality presets for Next.js Image Optimization
 /* biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit quality breakpoints */
 const IMAGE_QUALITIES: number[] = [25, 50, 75, 80, 90, 100];
+const IMAGE_SIZES: number[] = [
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  16,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  32,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  48,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  64,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  96,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  128,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  256,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  384,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  400,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  800,
+  // biome-ignore lint/style/noMagicNumbers: Image optimization requires explicit breakpoints
+  1200,
+];
 
 const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -46,14 +70,14 @@ const nextConfig: NextConfig = {
     // Includes 400px (1x), 800px (2x retina), 1200px (3x high-DPI)
     // This ensures Next.js serves appropriately-sized images for our grid cards
     // instead of defaulting to 640px (smallest deviceSize)
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 400, 800, 1200],
+    imageSizes: IMAGE_SIZES,
     // Next.js 16 default: 4 hours (14_400 seconds) - reduces CPU usage and costs
     minimumCacheTTL: 14_400,
   },
   reactStrictMode: true,
   redirects,
   async headers() {
-    return [
+    return await Promise.resolve([
       {
         source: "/:path*",
         headers: [
@@ -110,7 +134,7 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-    ];
+    ]);
   },
   reactCompiler: true,
   // Enable persistent caching for the turbopack dev server and build.
@@ -129,6 +153,16 @@ const nextConfig: NextConfig = {
       stale: 1800, // 30 minutes stale (was 5 minutes)
       revalidate: 3600, // 1 hour revalidate (was 10 minutes)
       expire: 7200, // 2 hours max (was 1 hour)
+    },
+    notes: {
+      stale: 1800, // 30 minutes stale
+      revalidate: 3600, // 1 hour revalidate
+      expire: 7200, // 2 hours max
+    },
+    activities: {
+      stale: 1800, // 30 minutes stale
+      revalidate: 3600, // 1 hour revalidate
+      expire: 7200, // 2 hours max
     },
     "grid-cards": {
       stale: 1800, // 30 minutes stale (was 10 minutes)

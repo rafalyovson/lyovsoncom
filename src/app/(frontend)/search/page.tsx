@@ -1,11 +1,15 @@
 import configPromise from "@payload-config";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { SkeletonCard } from "@/components/grid";
-import type { Post } from "@/payload-types";
+import {
+  GridCardActivityFull,
+  GridCardNoteFull,
+  GridCardPostFull,
+  SkeletonCard,
+} from "@/components/grid";
+import type { Activity, Note, Post } from "@/payload-types";
 import { getServerSideURL } from "@/utilities/getURL";
 
 type Args = {
@@ -16,6 +20,7 @@ type Args = {
 
 type SearchAPIResponse = {
   results: Array<{
+    collection: string;
     id: number;
     title: string;
     slug: string;
@@ -77,9 +82,6 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
     });
 
     if (!response.ok) {
-      console.error(
-        `[Search Page] API error: ${response.status} ${response.statusText}`
-      );
       return (
         <>
           <h1 className="sr-only">{headingText}</h1>
@@ -89,8 +91,7 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
     }
 
     searchResults = await response.json();
-  } catch (error) {
-    console.error("[Search Page] Failed to fetch search results:", error);
+  } catch (_error) {
     return (
       <>
         <h1 className="sr-only">{headingText}</h1>
@@ -109,36 +110,115 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
     );
   }
 
-  // Extract post IDs from search results (ordered by combined_score)
-  const postIds = searchResults.results.map((result) => result.id);
+  // Group results by collection
+  const postsResults = searchResults.results.filter(
+    (r) => r.collection === "posts"
+  );
+  const notesResults = searchResults.results.filter(
+    (r) => r.collection === "notes"
+  );
+  const activitiesResults = searchResults.results.filter(
+    (r) => r.collection === "activities"
+  );
 
-  // Fetch full post objects with populated relations (for featured images)
   const payload = await getPayload({ config: configPromise });
-  const postsResponse = await payload.find({
-    collection: "posts",
-    where: {
-      id: {
-        in: postIds,
-      },
-    },
-    depth: 1, // Populate featuredImage relation
-    limit: postIds.length,
-  });
 
-  if (!postsResponse?.docs) {
-    return notFound();
-  }
+  // Fetch posts
+  const postsResponse =
+    postsResults.length > 0
+      ? await payload.find({
+          collection: "posts",
+          where: {
+            id: {
+              in: postsResults.map((r) => r.id),
+            },
+          },
+          depth: 1,
+          limit: postsResults.length,
+        })
+      : { docs: [] };
 
-  // Sort posts to match search result order (by combined_score from API)
+  // Fetch notes
+  const notesResponse =
+    notesResults.length > 0
+      ? await payload.find({
+          collection: "notes",
+          where: {
+            id: {
+              in: notesResults.map((r) => r.id),
+            },
+          },
+          depth: 1,
+          limit: notesResults.length,
+        })
+      : { docs: [] };
+
+  // Fetch activities
+  const activitiesResponse =
+    activitiesResults.length > 0
+      ? await payload.find({
+          collection: "activities",
+          where: {
+            id: {
+              in: activitiesResults.map((r) => r.id),
+            },
+          },
+          depth: 1,
+          limit: activitiesResults.length,
+        })
+      : { docs: [] };
+
+  // Create maps for sorting
   const postsMap = new Map(postsResponse.docs.map((post) => [post.id, post]));
-  const sortedPosts = postIds
-    .map((id) => postsMap.get(id))
-    .filter((post): post is Post => post !== undefined);
+  const notesMap = new Map(notesResponse.docs.map((note) => [note.id, note]));
+  const activitiesMap = new Map(
+    activitiesResponse.docs.map((activity) => [activity.id, activity])
+  );
+
+  // Sort results to match search order
+  const sortedItems = searchResults.results
+    .map((result) => {
+      if (result.collection === "posts") {
+        return { type: "post" as const, data: postsMap.get(result.id) };
+      }
+      if (result.collection === "notes") {
+        return { type: "note" as const, data: notesMap.get(result.id) };
+      }
+      if (result.collection === "activities") {
+        return {
+          type: "activity" as const,
+          data: activitiesMap.get(result.id),
+        };
+      }
+      return null;
+    })
+    .filter(
+      (
+        item
+      ): item is
+        | { type: "post"; data: Post }
+        | { type: "note"; data: Note }
+        | { type: "activity"; data: Activity } =>
+        item !== null && item.data !== undefined
+    );
 
   return (
     <>
       <h1 className="sr-only">{headingText}</h1>
-      <CollectionArchive posts={sortedPosts} />
+      {sortedItems.map((item) => {
+        if (item.type === "post") {
+          return <GridCardPostFull key={item.data.slug} post={item.data} />;
+        }
+        if (item.type === "note") {
+          return <GridCardNoteFull key={item.data.slug} note={item.data} />;
+        }
+        if (item.type === "activity") {
+          return (
+            <GridCardActivityFull activity={item.data} key={item.data.slug} />
+          );
+        }
+        return null;
+      })}
     </>
   );
 }

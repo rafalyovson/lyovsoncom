@@ -73,15 +73,9 @@ export interface Config {
     projects: Project;
     lyovsons: Lyovson;
     contacts: Contact;
-    books: Book;
-    movies: Movie;
-    tvShows: TvShow;
-    videoGames: VideoGame;
-    music: Music;
-    podcasts: Podcast;
-    persons: Person;
+    references: Reference;
+    activities: Activity;
     notes: Note;
-    links: Link;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -100,15 +94,9 @@ export interface Config {
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
     lyovsons: LyovsonsSelect<false> | LyovsonsSelect<true>;
     contacts: ContactsSelect<false> | ContactsSelect<true>;
-    books: BooksSelect<false> | BooksSelect<true>;
-    movies: MoviesSelect<false> | MoviesSelect<true>;
-    tvShows: TvShowsSelect<false> | TvShowsSelect<true>;
-    videoGames: VideoGamesSelect<false> | VideoGamesSelect<true>;
-    music: MusicSelect<false> | MusicSelect<true>;
-    podcasts: PodcastsSelect<false> | PodcastsSelect<true>;
-    persons: PersonsSelect<false> | PersonsSelect<true>;
+    references: ReferencesSelect<false> | ReferencesSelect<true>;
+    activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     notes: NotesSelect<false> | NotesSelect<true>;
-    links: LinksSelect<false> | LinksSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -217,34 +205,7 @@ export interface Post {
   /**
    * What are you reviewing? (can select multiple)
    */
-  reference?:
-    | (
-        | {
-            relationTo: 'books';
-            value: number | Book;
-          }
-        | {
-            relationTo: 'movies';
-            value: number | Movie;
-          }
-        | {
-            relationTo: 'tvShows';
-            value: number | TvShow;
-          }
-        | {
-            relationTo: 'videoGames';
-            value: number | VideoGame;
-          }
-        | {
-            relationTo: 'music';
-            value: number | Music;
-          }
-        | {
-            relationTo: 'podcasts';
-            value: number | Podcast;
-          }
-      )[]
-    | null;
+  reference?: (number | Reference)[] | null;
   /**
    * YouTube, Vimeo, or other video embed URL
    */
@@ -262,40 +223,9 @@ export interface Post {
    */
   project?: (number | null) | Project;
   /**
-   * Books, movies, shows, games, music, podcasts referenced in this post
+   * People, companies, works, and web media referenced in this post
    */
-  references?:
-    | (
-        | {
-            relationTo: 'books';
-            value: number | Book;
-          }
-        | {
-            relationTo: 'movies';
-            value: number | Movie;
-          }
-        | {
-            relationTo: 'tvShows';
-            value: number | TvShow;
-          }
-        | {
-            relationTo: 'videoGames';
-            value: number | VideoGame;
-          }
-        | {
-            relationTo: 'music';
-            value: number | Music;
-          }
-        | {
-            relationTo: 'podcasts';
-            value: number | Podcast;
-          }
-      )[]
-    | null;
-  /**
-   * People mentioned or discussed in this post
-   */
-  personsMentioned?: (number | Person)[] | null;
+  references?: (number | Reference)[] | null;
   /**
    * Notes that connect to this post
    */
@@ -430,113 +360,145 @@ export interface Media {
   };
 }
 /**
- * Manage books, series, and comics for reviews and references
+ * Unified references for people, companies, works, and web media
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "books".
+ * via the `definition` "references".
  */
-export interface Book {
+export interface Reference {
   id: number;
   /**
-   * The title of the book
+   * The title or name of this reference
    */
   title: string;
   /**
-   * What type of publication is this?
+   * What type of reference is this?
    */
-  type: 'book' | 'series' | 'comics';
+  type:
+    | 'book'
+    | 'movie'
+    | 'tvShow'
+    | 'videoGame'
+    | 'music'
+    | 'podcast'
+    | 'series'
+    | 'person'
+    | 'company'
+    | 'website'
+    | 'article'
+    | 'video'
+    | 'repository'
+    | 'tool'
+    | 'social'
+    | 'other';
   /**
-   * Brief description or summary of the book
+   * Image for this reference (cover, photo, logo, etc.)
+   */
+  image: number | Media;
+  /**
+   * Brief description or summary
    */
   description?: string | null;
-  /**
-   * Book cover image
-   */
-  coverImage?: (number | null) | Media;
-  /**
-   * Publication date
-   */
-  releaseDate?: string | null;
-  /**
-   * Authors, illustrators, etc.
-   */
-  creators?: (number | Person)[] | null;
   /**
    * ISBN number
    */
   isbn?: string | null;
   /**
-   * Book genres
+   * Publisher name
    */
-  genre?:
-    | (
-        | 'fiction'
-        | 'non-fiction'
-        | 'sci-fi'
-        | 'fantasy'
-        | 'mystery'
-        | 'romance'
-        | 'thriller'
-        | 'biography'
-        | 'history'
-        | 'self-help'
-        | 'technical'
-      )[]
-    | null;
+  publisher?: string | null;
   /**
-   * Family rating (1-10)
+   * Number of pages
    */
-  familyRating?: number | null;
+  pageCount?: number | null;
   /**
-   * Reading status
+   * Language
    */
-  readStatus?: ('want_to_read' | 'reading' | 'read' | 'abandoned') | null;
+  language?: string | null;
   /**
-   * Google Books API ID
+   * Book format
    */
-  googleBooksId?: string | null;
+  format?: ('hardcover' | 'paperback' | 'ebook' | 'audiobook') | null;
   /**
-   * Full API response data
+   * Series this item belongs to
    */
-  apiData?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Central registry for all creators and contributors
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "persons".
- */
-export interface Person {
-  id: number;
+  series?: (number | null) | Reference;
   /**
-   * Full name of the person
+   * Runtime in minutes
    */
-  name: string;
+  runtime?: number | null;
   /**
-   * Biography or description
+   * MPAA rating
    */
-  bio?: string | null;
+  mpaaRating?: ('g' | 'pg' | 'pg13' | 'r' | 'nc17' | 'nr') | null;
   /**
-   * Person's photo
+   * Network or streaming service
    */
-  photo?: (number | null) | Media;
+  networkOrService?: string | null;
+  /**
+   * Show status
+   */
+  status?: ('ongoing' | 'ended' | 'cancelled') | null;
+  /**
+   * Season number
+   */
+  seasonNumber?: number | null;
+  /**
+   * Episode number
+   */
+  episodeNumber?: number | null;
+  /**
+   * Gaming platforms
+   */
+  platforms?: ('pc' | 'playstation' | 'xbox' | 'switch' | 'mobile' | 'vr')[] | null;
+  /**
+   * ESRB rating
+   */
+  esrbRating?: ('e' | 'e10' | 't' | 'm' | 'ao') | null;
+  /**
+   * Metacritic score
+   */
+  metacriticScore?: number | null;
+  /**
+   * Game developer
+   */
+  developer?: string | null;
+  /**
+   * Album this song belongs to
+   */
+  album?: (number | null) | Reference;
+  /**
+   * Track number
+   */
+  trackNumber?: number | null;
+  /**
+   * Record label
+   */
+  label?: string | null;
+  /**
+   * Barcode/UPC
+   */
+  barcode?: string | null;
+  /**
+   * Podcast show this episode belongs to
+   */
+  show?: (number | null) | Reference;
   /**
    * What roles does this person have?
    */
   roles?: ('author' | 'director' | 'actor' | 'musician' | 'developer' | 'host' | 'publicFigure')[] | null;
+  /**
+   * Birth date
+   */
+  birthDate?: string | null;
+  /**
+   * Death date
+   */
+  deathDate?: string | null;
+  /**
+   * Nationality
+   */
+  nationality?: string | null;
   /**
    * Personal or professional website
    */
@@ -553,457 +515,98 @@ export interface Person {
     | number
     | boolean
     | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * Manage movies, documentaries, and short films
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "movies".
- */
-export interface Movie {
-  id: number;
   /**
-   * The title of the movie
+   * Industry
    */
-  title: string;
+  industry?: string | null;
   /**
-   * What type of film is this?
+   * Founded date
    */
-  type: 'movie' | 'documentary' | 'short_film';
+  foundedDate?: string | null;
   /**
-   * Plot summary or description
+   * URL for this web/media reference
    */
-  description?: string | null;
+  url?: string | null;
   /**
-   * Movie poster image
+   * Site or platform name
    */
-  coverImage?: (number | null) | Media;
+  siteName?: string | null;
   /**
-   * Release date
+   * Article author
    */
-  releaseDate?: string | null;
+  author?: string | null;
   /**
-   * Directors, writers, actors, etc.
+   * Publication date
    */
-  creators?: (number | Person)[] | null;
+  publishedAt?: string | null;
   /**
-   * Movie genres
+   * Video platform (YouTube, Vimeo, etc.)
    */
-  genre?:
-    | (
-        | 'action'
-        | 'comedy'
-        | 'drama'
-        | 'horror'
-        | 'sci-fi'
-        | 'romance'
-        | 'thriller'
-        | 'documentary'
-        | 'animation'
-        | 'family'
-      )[]
-    | null;
+  platform?: string | null;
   /**
-   * Family rating (1-10)
+   * Video ID
    */
-  familyRating?: number | null;
+  videoId?: string | null;
   /**
-   * Watch status
+   * Additional links (purchase, streaming, etc.)
    */
-  watchStatus?: ('want_to_watch' | 'watching' | 'watched') | null;
-  /**
-   * OMDB API ID
-   */
-  omdbId?: string | null;
-  /**
-   * Full API response data
-   */
-  apiData?:
+  links?:
     | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Manage TV shows, seasons, and episodes
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tvShows".
- */
-export interface TvShow {
-  id: number;
-  /**
-   * The title of the TV show, season, or episode
-   */
-  title: string;
-  /**
-   * What type of TV content is this?
-   */
-  type: 'show' | 'season' | 'episode';
-  /**
-   * Show summary or description
-   */
-  description?: string | null;
-  /**
-   * TV show poster image
-   */
-  coverImage?: (number | null) | Media;
-  /**
-   * First air date or episode air date
-   */
-  releaseDate?: string | null;
-  /**
-   * Season number
-   */
-  seasonNumber?: number | null;
-  /**
-   * Episode number within season
-   */
-  episodeNumber?: number | null;
-  /**
-   * Duration in minutes
-   */
-  duration?: number | null;
-  /**
-   * Creators, showrunners, actors, etc.
-   */
-  creators?: (number | Person)[] | null;
-  /**
-   * TV show genres
-   */
-  genre?:
-    | (
-        | 'action'
-        | 'comedy'
-        | 'drama'
-        | 'horror'
-        | 'sci-fi'
-        | 'romance'
-        | 'thriller'
-        | 'documentary'
-        | 'animation'
-        | 'family'
-        | 'reality'
-      )[]
+        label: string;
+        url: string;
+        kind?: ('purchase' | 'streaming' | 'official' | 'social' | 'other') | null;
+        id?: string | null;
+      }[]
     | null;
   /**
-   * Family rating (1-10)
+   * External service IDs
    */
-  familyRating?: number | null;
+  externalIds?: {
+    /**
+     * IMDB ID
+     */
+    imdbId?: string | null;
+    /**
+     * TVDB ID
+     */
+    tvdbId?: string | null;
+    /**
+     * Spotify ID
+     */
+    spotifyId?: string | null;
+    /**
+     * Apple Music ID
+     */
+    appleMusicId?: string | null;
+    /**
+     * Spotify URL
+     */
+    spotifyUrl?: string | null;
+    /**
+     * Apple Podcasts URL
+     */
+    applePodcastsUrl?: string | null;
+    /**
+     * Website URL
+     */
+    websiteUrl?: string | null;
+    /**
+     * Steam ID
+     */
+    steamId?: string | null;
+    /**
+     * IGDB ID
+     */
+    igdbId?: string | null;
+    /**
+     * Google Books ID
+     */
+    googleBooksId?: string | null;
+  };
   /**
-   * Watch status
+   * Tags for this reference
    */
-  watchStatus?: ('want_to_watch' | 'watching' | 'watched') | null;
-  /**
-   * Full API response data
-   */
-  apiData?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Manage video games, DLC, and expansions
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "videoGames".
- */
-export interface VideoGame {
-  id: number;
-  /**
-   * The title of the video game
-   */
-  title: string;
-  /**
-   * What type of video game content is this?
-   */
-  type: 'game' | 'dlc' | 'expansion';
-  /**
-   * Game description or summary
-   */
-  description?: string | null;
-  /**
-   * Game cover or poster image
-   */
-  coverImage?: (number | null) | Media;
-  /**
-   * Release date
-   */
-  releaseDate?: string | null;
-  /**
-   * Developers, publishers, designers, etc.
-   */
-  creators?: (number | Person)[] | null;
-  /**
-   * Gaming platforms
-   */
-  platforms?: ('pc' | 'playstation' | 'xbox' | 'switch' | 'mobile' | 'vr')[] | null;
-  /**
-   * Game genres
-   */
-  genre?:
-    | (
-        | 'action'
-        | 'adventure'
-        | 'rpg'
-        | 'strategy'
-        | 'simulation'
-        | 'sports'
-        | 'racing'
-        | 'puzzle'
-        | 'horror'
-        | 'indie'
-      )[]
-    | null;
-  /**
-   * Family rating (1-10)
-   */
-  familyRating?: number | null;
-  /**
-   * Play status
-   */
-  playStatus?: ('want_to_play' | 'playing' | 'completed' | 'abandoned') | null;
-  /**
-   * ESRB rating
-   */
-  esrbRating?: ('e' | 'e10' | 't' | 'm' | 'ao') | null;
-  /**
-   * Metacritic score
-   */
-  metacriticScore?: number | null;
-  /**
-   * Full API response data
-   */
-  apiData?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Manage albums, songs, and soundtracks
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "music".
- */
-export interface Music {
-  id: number;
-  /**
-   * The title of the album or song
-   */
-  title: string;
-  /**
-   * What type of music content is this?
-   */
-  type: 'album' | 'song' | 'soundtrack';
-  /**
-   * Description or notes about this music
-   */
-  description?: string | null;
-  /**
-   * Album art or cover image
-   */
-  coverImage?: (number | null) | Media;
-  /**
-   * Artists, musicians, composers, etc.
-   */
-  artists?: (number | Person)[] | null;
-  /**
-   * Duration in seconds
-   */
-  duration?: number | null;
-  /**
-   * Release date
-   */
-  releaseDate?: string | null;
-  /**
-   * Music genres
-   */
-  genre?:
-    | (
-        | 'rock'
-        | 'pop'
-        | 'hip-hop'
-        | 'electronic'
-        | 'jazz'
-        | 'classical'
-        | 'country'
-        | 'rnb'
-        | 'folk'
-        | 'indie'
-        | 'alternative'
-        | 'soundtrack'
-      )[]
-    | null;
-  /**
-   * Spotify track/album ID
-   */
-  spotifyId?: string | null;
-  /**
-   * Apple Music ID
-   */
-  appleMusicId?: string | null;
-  /**
-   * Family rating (1-10)
-   */
-  familyRating?: number | null;
-  /**
-   * Listen status
-   */
-  listenStatus?: ('want_to_listen' | 'listening' | 'listened') | null;
-  /**
-   * Full API response data from streaming services
-   */
-  apiData?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  slug?: string | null;
-  slugLock?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * Manage podcast episodes and shows
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "podcasts".
- */
-export interface Podcast {
-  id: number;
-  /**
-   * The title of the podcast episode
-   */
-  episodeTitle: string;
-  /**
-   * Is this an episode or show-level entry?
-   */
-  type: 'episode' | 'show';
-  /**
-   * The name of the podcast show
-   */
-  showTitle: string;
-  /**
-   * Episode number (if applicable)
-   */
-  episodeNumber?: number | null;
-  /**
-   * Season number (if applicable)
-   */
-  seasonNumber?: number | null;
-  /**
-   * Episode description or show notes
-   */
-  description?: string | null;
-  /**
-   * Podcast artwork or episode image
-   */
-  coverImage?: (number | null) | Media;
-  /**
-   * Podcast hosts
-   */
-  hosts?: (number | Person)[] | null;
-  /**
-   * Episode guests
-   */
-  guests?: (number | Person)[] | null;
-  /**
-   * Duration in seconds
-   */
-  duration?: number | null;
-  /**
-   * Episode release date
-   */
-  releaseDate?: string | null;
-  /**
-   * Podcast genres/categories
-   */
-  genre?:
-    | (
-        | 'technology'
-        | 'business'
-        | 'comedy'
-        | 'education'
-        | 'news'
-        | 'society-culture'
-        | 'science'
-        | 'health-fitness'
-        | 'arts'
-        | 'true-crime'
-        | 'history'
-        | 'sports'
-      )[]
-    | null;
-  /**
-   * Spotify episode URL
-   */
-  spotifyUrl?: string | null;
-  /**
-   * Apple Podcasts URL
-   */
-  applePodcastsUrl?: string | null;
-  /**
-   * Official podcast website URL
-   */
-  websiteUrl?: string | null;
-  /**
-   * Family rating (1-10)
-   */
-  familyRating?: number | null;
-  /**
-   * Listen status
-   */
-  listenStatus?: ('want_to_listen' | 'listening' | 'listened') | null;
-  /**
-   * Full API response data from podcast platforms
-   */
-  apiData?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
+  tags?: string[] | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1112,7 +715,7 @@ export interface Note {
   /**
    * What type of note is this?
    */
-  type: 'literature' | 'permanent' | 'fleeting' | 'index';
+  type: 'quote' | 'thought';
   /**
    * Who wrote this note?
    */
@@ -1137,41 +740,21 @@ export interface Note {
     [k: string]: unknown;
   };
   /**
-   * What book, movie, show, game, music, or podcast is this note about?
+   * What reference is this quote from?
    */
-  sourceReference?:
-    | ({
-        relationTo: 'books';
-        value: number | Book;
-      } | null)
-    | ({
-        relationTo: 'movies';
-        value: number | Movie;
-      } | null)
-    | ({
-        relationTo: 'tvShows';
-        value: number | TvShow;
-      } | null)
-    | ({
-        relationTo: 'videoGames';
-        value: number | VideoGame;
-      } | null)
-    | ({
-        relationTo: 'music';
-        value: number | Music;
-      } | null)
-    | ({
-        relationTo: 'podcasts';
-        value: number | Podcast;
-      } | null);
+  sourceReference?: (number | null) | Reference;
   /**
-   * The actual quote or passage from the source
+   * Who said this quote? (e.g., author name, speaker)
    */
-  quoteText?: string | null;
+  quotedPerson?: string | null;
   /**
    * Page number, timestamp, or location reference
    */
   pageNumber?: string | null;
+  /**
+   * What topics does this note cover?
+   */
+  topics?: (number | Topic)[] | null;
   /**
    * Connect this note to other content in your knowledge base
    */
@@ -1182,32 +765,8 @@ export interface Note {
             value: number | Post;
           }
         | {
-            relationTo: 'books';
-            value: number | Book;
-          }
-        | {
-            relationTo: 'movies';
-            value: number | Movie;
-          }
-        | {
-            relationTo: 'tvShows';
-            value: number | TvShow;
-          }
-        | {
-            relationTo: 'videoGames';
-            value: number | VideoGame;
-          }
-        | {
-            relationTo: 'music';
-            value: number | Music;
-          }
-        | {
-            relationTo: 'podcasts';
-            value: number | Podcast;
-          }
-        | {
-            relationTo: 'persons';
-            value: number | Person;
+            relationTo: 'references';
+            value: number | Reference;
           }
         | {
             relationTo: 'notes';
@@ -1227,6 +786,10 @@ export interface Note {
   embedding_dimensions?: number | null;
   embedding_generated_at?: string | null;
   embedding_text_hash?: string | null;
+  /**
+   * Plain text extracted from rich text content for full-text search indexing
+   */
+  content_text?: string | null;
   slug?: string | null;
   slugLock?: boolean | null;
   updatedAt: string;
@@ -1305,97 +868,97 @@ export interface Lyovson {
   password?: string | null;
 }
 /**
- * Manage web links, articles, and external references
+ * Log reading, watching, listening, and playing activities
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "links".
+ * via the `definition` "activities".
  */
-export interface Link {
+export interface Activity {
   id: number;
   /**
-   * Description of what this link is
+   * What are you reading/watching/listening to/playing?
    */
-  label: string;
+  reference: number | Reference;
   /**
-   * What type of link is this?
+   * Type of activity
    */
-  type: 'website' | 'article' | 'video' | 'youtube' | 'social_media' | 'documentation' | 'tool' | 'repository';
+  activityType: 'read' | 'watch' | 'listen' | 'play';
   /**
-   * The URL this link points to
+   * Who participated in this activity?
    */
-  url: string;
+  participants?: (number | Lyovson)[] | null;
   /**
-   * What type of content is this link attached to?
+   * When did you start?
    */
-  referenceType:
-    | 'books'
-    | 'movies'
-    | 'tvShows'
-    | 'videoGames'
-    | 'music'
-    | 'podcasts'
-    | 'posts'
-    | 'persons'
-    | 'notes'
-    | 'projects';
+  startedAt?: string | null;
   /**
-   * The specific item this link is attached to
+   * When did you finish?
    */
-  reference:
-    | {
-        relationTo: 'books';
-        value: number | Book;
-      }
-    | {
-        relationTo: 'movies';
-        value: number | Movie;
-      }
-    | {
-        relationTo: 'tvShows';
-        value: number | TvShow;
-      }
-    | {
-        relationTo: 'videoGames';
-        value: number | VideoGame;
-      }
-    | {
-        relationTo: 'music';
-        value: number | Music;
-      }
-    | {
-        relationTo: 'podcasts';
-        value: number | Podcast;
-      }
-    | {
-        relationTo: 'posts';
-        value: number | Post;
-      }
-    | {
-        relationTo: 'persons';
-        value: number | Person;
-      }
-    | {
-        relationTo: 'notes';
-        value: number | Note;
-      }
-    | {
-        relationTo: 'projects';
-        value: number | Project;
-      };
+  finishedAt?: string | null;
   /**
-   * Additional details about this link
+   * Who can see this activity?
    */
-  description?: string | null;
+  visibility?: ('public' | 'private') | null;
   /**
-   * Family rating (1-10)
+   * Your thoughts, review, or notes about this activity
    */
-  familyRating?: number | null;
+  notes?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   /**
-   * Tags for this link
+   * Ratings from family members (out of 10)
    */
-  tags?: string[] | null;
+  ratings?:
+    | {
+        /**
+         * Who is rating this?
+         */
+        lyovson: number | Lyovson;
+        /**
+         * Rating out of 10
+         */
+        rating: number;
+        /**
+         * Optional comment about the rating
+         */
+        comment?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * When this activity should be published
+   */
+  publishedAt?: string | null;
+  slugSource?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  /**
+   * Vector embedding for semantic search (pgvector format)
+   */
+  embedding_vector?: string | null;
+  embedding_model?: string | null;
+  embedding_dimensions?: number | null;
+  embedding_generated_at?: string | null;
+  embedding_text_hash?: string | null;
+  /**
+   * Plain text extracted from activity content for full-text search indexing
+   */
+  content_text?: string | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1782,40 +1345,16 @@ export interface PayloadLockedDocument {
         value: number | Contact;
       } | null)
     | ({
-        relationTo: 'books';
-        value: number | Book;
+        relationTo: 'references';
+        value: number | Reference;
       } | null)
     | ({
-        relationTo: 'movies';
-        value: number | Movie;
-      } | null)
-    | ({
-        relationTo: 'tvShows';
-        value: number | TvShow;
-      } | null)
-    | ({
-        relationTo: 'videoGames';
-        value: number | VideoGame;
-      } | null)
-    | ({
-        relationTo: 'music';
-        value: number | Music;
-      } | null)
-    | ({
-        relationTo: 'podcasts';
-        value: number | Podcast;
-      } | null)
-    | ({
-        relationTo: 'persons';
-        value: number | Person;
+        relationTo: 'activities';
+        value: number | Activity;
       } | null)
     | ({
         relationTo: 'notes';
         value: number | Note;
-      } | null)
-    | ({
-        relationTo: 'links';
-        value: number | Link;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1892,7 +1431,6 @@ export interface PostsSelect<T extends boolean = true> {
   topics?: T;
   project?: T;
   references?: T;
-  personsMentioned?: T;
   notesReferenced?: T;
   publishedAt?: T;
   authors?: T;
@@ -2092,165 +1630,110 @@ export interface ContactsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "books_select".
+ * via the `definition` "references_select".
  */
-export interface BooksSelect<T extends boolean = true> {
+export interface ReferencesSelect<T extends boolean = true> {
   title?: T;
   type?: T;
+  image?: T;
   description?: T;
-  coverImage?: T;
-  releaseDate?: T;
-  creators?: T;
   isbn?: T;
-  genre?: T;
-  familyRating?: T;
-  readStatus?: T;
-  googleBooksId?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "movies_select".
- */
-export interface MoviesSelect<T extends boolean = true> {
-  title?: T;
-  type?: T;
-  description?: T;
-  coverImage?: T;
-  releaseDate?: T;
-  creators?: T;
-  genre?: T;
-  familyRating?: T;
-  watchStatus?: T;
-  omdbId?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tvShows_select".
- */
-export interface TvShowsSelect<T extends boolean = true> {
-  title?: T;
-  type?: T;
-  description?: T;
-  coverImage?: T;
-  releaseDate?: T;
+  publisher?: T;
+  pageCount?: T;
+  language?: T;
+  format?: T;
+  series?: T;
+  runtime?: T;
+  mpaaRating?: T;
+  networkOrService?: T;
+  status?: T;
   seasonNumber?: T;
   episodeNumber?: T;
-  duration?: T;
-  creators?: T;
-  genre?: T;
-  familyRating?: T;
-  watchStatus?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "videoGames_select".
- */
-export interface VideoGamesSelect<T extends boolean = true> {
-  title?: T;
-  type?: T;
-  description?: T;
-  coverImage?: T;
-  releaseDate?: T;
-  creators?: T;
   platforms?: T;
-  genre?: T;
-  familyRating?: T;
-  playStatus?: T;
   esrbRating?: T;
   metacriticScore?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "music_select".
- */
-export interface MusicSelect<T extends boolean = true> {
-  title?: T;
-  type?: T;
-  description?: T;
-  coverImage?: T;
-  artists?: T;
-  duration?: T;
-  releaseDate?: T;
-  genre?: T;
-  spotifyId?: T;
-  appleMusicId?: T;
-  familyRating?: T;
-  listenStatus?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "podcasts_select".
- */
-export interface PodcastsSelect<T extends boolean = true> {
-  episodeTitle?: T;
-  type?: T;
-  showTitle?: T;
-  episodeNumber?: T;
-  seasonNumber?: T;
-  description?: T;
-  coverImage?: T;
-  hosts?: T;
-  guests?: T;
-  duration?: T;
-  releaseDate?: T;
-  genre?: T;
-  spotifyUrl?: T;
-  applePodcastsUrl?: T;
-  websiteUrl?: T;
-  familyRating?: T;
-  listenStatus?: T;
-  apiData?: T;
-  slug?: T;
-  slugLock?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "persons_select".
- */
-export interface PersonsSelect<T extends boolean = true> {
-  name?: T;
-  bio?: T;
-  photo?: T;
+  developer?: T;
+  album?: T;
+  trackNumber?: T;
+  label?: T;
+  barcode?: T;
+  show?: T;
   roles?: T;
+  birthDate?: T;
+  deathDate?: T;
+  nationality?: T;
   website?: T;
   socialLinks?: T;
+  industry?: T;
+  foundedDate?: T;
+  url?: T;
+  siteName?: T;
+  author?: T;
+  publishedAt?: T;
+  platform?: T;
+  videoId?: T;
+  links?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        kind?: T;
+        id?: T;
+      };
+  externalIds?:
+    | T
+    | {
+        imdbId?: T;
+        tvdbId?: T;
+        spotifyId?: T;
+        appleMusicId?: T;
+        spotifyUrl?: T;
+        applePodcastsUrl?: T;
+        websiteUrl?: T;
+        steamId?: T;
+        igdbId?: T;
+        googleBooksId?: T;
+      };
+  tags?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities_select".
+ */
+export interface ActivitiesSelect<T extends boolean = true> {
+  reference?: T;
+  activityType?: T;
+  participants?: T;
+  startedAt?: T;
+  finishedAt?: T;
+  visibility?: T;
+  notes?: T;
+  ratings?:
+    | T
+    | {
+        lyovson?: T;
+        rating?: T;
+        comment?: T;
+        id?: T;
+      };
+  publishedAt?: T;
+  slugSource?: T;
+  slug?: T;
+  slugLock?: T;
+  embedding_vector?: T;
+  embedding_model?: T;
+  embedding_dimensions?: T;
+  embedding_generated_at?: T;
+  embedding_text_hash?: T;
+  content_text?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2263,8 +1746,9 @@ export interface NotesSelect<T extends boolean = true> {
   visibility?: T;
   content?: T;
   sourceReference?: T;
-  quoteText?: T;
+  quotedPerson?: T;
   pageNumber?: T;
+  topics?: T;
   connections?: T;
   publishedAt?: T;
   embedding_vector?: T;
@@ -2272,27 +1756,12 @@ export interface NotesSelect<T extends boolean = true> {
   embedding_dimensions?: T;
   embedding_generated_at?: T;
   embedding_text_hash?: T;
+  content_text?: T;
   slug?: T;
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "links_select".
- */
-export interface LinksSelect<T extends boolean = true> {
-  label?: T;
-  type?: T;
-  url?: T;
-  referenceType?: T;
-  reference?: T;
-  description?: T;
-  familyRating?: T;
-  tags?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

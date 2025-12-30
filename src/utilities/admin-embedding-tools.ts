@@ -1,11 +1,11 @@
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
-import {
-  generateEmbeddingForPost,
-  generateEmbeddingForNote,
-} from "./generate-embedding-helpers";
 import { generateEmbedding } from "./generate-embedding";
+import {
+  generateEmbeddingForNote,
+  generateEmbeddingForPost,
+} from "./generate-embedding-helpers";
 
 // Get embedding statistics for all posts
 export async function getEmbeddingStats() {

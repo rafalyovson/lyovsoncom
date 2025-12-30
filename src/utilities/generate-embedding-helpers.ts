@@ -1,7 +1,11 @@
-import type { PayloadRequest } from 'payload'
-import { extractLexicalText } from '@/utilities/extract-lexical-text'
-import { generateEmbedding, createTextHash } from '@/utilities/generate-embedding'
-import { getSimilarPosts } from '@/utilities/get-similar-posts'
+import type { PayloadRequest } from "payload";
+import type { Activity } from "@/payload-types";
+import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import {
+  createTextHash,
+  generateEmbedding,
+} from "@/utilities/generate-embedding";
+import { getSimilarPosts } from "@/utilities/get-similar-posts";
 
 /**
  * Generate embedding for a post and optionally compute recommendations
@@ -13,55 +17,63 @@ export async function generateEmbeddingForPost(
   try {
     // Fetch the post
     const post = await req.payload.findByID({
-      collection: 'posts',
+      collection: "posts",
       id: postId,
-    })
+    });
 
     // Validation checks
     if (!post) {
-      req.payload.logger.error(`[Embedding] Post ${postId} not found`)
-      return { success: false, error: 'Post not found' }
+      req.payload.logger.error(`[Embedding] Post ${postId} not found`);
+      return { success: false, error: "Post not found" };
     }
 
-    if (post._status !== 'published') {
-      req.payload.logger.info(`[Embedding] Post ${postId} is not published, skipping`)
-      return { success: false, error: 'Post is not published' }
+    if (post._status !== "published") {
+      req.payload.logger.info(
+        `[Embedding] Post ${postId} is not published, skipping`
+      );
+      return { success: false, error: "Post is not published" };
     }
 
     if (!post.content) {
-      req.payload.logger.info(`[Embedding] Post ${postId} has no content, skipping`)
-      return { success: false, error: 'Post has no content' }
+      req.payload.logger.info(
+        `[Embedding] Post ${postId} has no content, skipping`
+      );
+      return { success: false, error: "Post has no content" };
     }
 
     // Extract text from Lexical content
-    const textContent = extractLexicalText(post.content)
+    const textContent = extractLexicalText(post.content);
     if (!textContent.trim()) {
-      req.payload.logger.info(`[Embedding] Post ${postId} has no text content, skipping`)
-      return { success: false, error: 'Post has no text content' }
+      req.payload.logger.info(
+        `[Embedding] Post ${postId} has no text content, skipping`
+      );
+      return { success: false, error: "Post has no text content" };
     }
 
     // Check if embedding already up to date
-    const currentTextHash = createTextHash(textContent)
+    const currentTextHash = createTextHash(textContent);
     if (post.embedding_text_hash === currentTextHash) {
       req.payload.logger.info(
         `[Embedding] Post ${postId} embedding already up to date, skipping generation`
-      )
+      );
       // Still compute recommendations in case other posts changed
-      await computeRecommendationsForPost(postId, req)
-      return { success: true }
+      await computeRecommendationsForPost(postId, req);
+      return { success: true };
     }
 
     // Generate embedding
-    req.payload.logger.info(`[Embedding] Generating embedding for post ${postId}`)
+    req.payload.logger.info(
+      `[Embedding] Generating embedding for post ${postId}`
+    );
 
-    const { vector, model, dimensions } = await generateEmbedding(textContent)
+    const { vector, model, dimensions } = await generateEmbedding(textContent);
 
     // Update post with embedding
     await req.payload.update({
-      collection: 'posts',
+      collection: "posts",
       id: postId,
       data: {
-        embedding_vector: `[${vector.join(',')}]`,
+        embedding_vector: `[${vector.join(",")}]`,
         embedding_model: model,
         embedding_dimensions: dimensions,
         embedding_generated_at: new Date().toISOString(),
@@ -72,20 +84,22 @@ export async function generateEmbeddingForPost(
         skipRecommendationCompute: true,
         skipRevalidation: true,
       },
-    })
+    });
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for post ${postId}`
-    )
+    );
 
     // Compute recommendations after embedding is saved
-    await computeRecommendationsForPost(postId, req)
+    await computeRecommendationsForPost(postId, req);
 
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    req.payload.logger.error(`[Embedding] Failed to generate embedding for post ${postId}: ${errorMessage}`)
-    return { success: false, error: errorMessage }
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    req.payload.logger.error(
+      `[Embedding] Failed to generate embedding for post ${postId}: ${errorMessage}`
+    );
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -99,53 +113,61 @@ export async function generateEmbeddingForNote(
   try {
     // Fetch the note
     const note = await req.payload.findByID({
-      collection: 'notes',
+      collection: "notes",
       id: noteId,
-    })
+    });
 
     // Validation checks
     if (!note) {
-      req.payload.logger.error(`[Embedding] Note ${noteId} not found`)
-      return { success: false, error: 'Note not found' }
+      req.payload.logger.error(`[Embedding] Note ${noteId} not found`);
+      return { success: false, error: "Note not found" };
     }
 
-    if (note._status !== 'published') {
-      req.payload.logger.info(`[Embedding] Note ${noteId} is not published, skipping`)
-      return { success: false, error: 'Note is not published' }
+    if (note._status !== "published") {
+      req.payload.logger.info(
+        `[Embedding] Note ${noteId} is not published, skipping`
+      );
+      return { success: false, error: "Note is not published" };
     }
 
     if (!note.content) {
-      req.payload.logger.info(`[Embedding] Note ${noteId} has no content, skipping`)
-      return { success: false, error: 'Note has no content' }
+      req.payload.logger.info(
+        `[Embedding] Note ${noteId} has no content, skipping`
+      );
+      return { success: false, error: "Note has no content" };
     }
 
     // Extract text from Lexical content
-    const textContent = extractLexicalText(note.content)
+    const textContent = extractLexicalText(note.content);
     if (!textContent.trim()) {
-      req.payload.logger.info(`[Embedding] Note ${noteId} has no text content, skipping`)
-      return { success: false, error: 'Note has no text content' }
+      req.payload.logger.info(
+        `[Embedding] Note ${noteId} has no text content, skipping`
+      );
+      return { success: false, error: "Note has no text content" };
     }
 
     // Check if embedding already up to date
-    const currentTextHash = createTextHash(textContent)
+    const currentTextHash = createTextHash(textContent);
     if (note.embedding_text_hash === currentTextHash) {
       req.payload.logger.info(
         `[Embedding] Note ${noteId} embedding already up to date, skipping generation`
-      )
-      return { success: true }
+      );
+      return { success: true };
     }
 
     // Generate embedding
-    req.payload.logger.info(`[Embedding] Generating embedding for note ${noteId}`)
+    req.payload.logger.info(
+      `[Embedding] Generating embedding for note ${noteId}`
+    );
 
-    const { vector, model, dimensions } = await generateEmbedding(textContent)
+    const { vector, model, dimensions } = await generateEmbedding(textContent);
 
     // Update note with embedding
     await req.payload.update({
-      collection: 'notes',
+      collection: "notes",
       id: noteId,
       data: {
-        embedding_vector: `[${vector.join(',')}]`,
+        embedding_vector: `[${vector.join(",")}]`,
         embedding_model: model,
         embedding_dimensions: dimensions,
         embedding_generated_at: new Date().toISOString(),
@@ -155,17 +177,124 @@ export async function generateEmbeddingForNote(
         skipEmbeddingGeneration: true,
         skipRevalidation: true,
       },
-    })
+    });
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for note ${noteId}`
-    )
+    );
 
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    req.payload.logger.error(`[Embedding] Failed to generate embedding for note ${noteId}: ${errorMessage}`)
-    return { success: false, error: errorMessage }
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    req.payload.logger.error(
+      `[Embedding] Failed to generate embedding for note ${noteId}: ${errorMessage}`
+    );
+    return { success: false, error: errorMessage };
+  }
+}
+
+/**
+ * Generate embedding for an activity
+ */
+export async function generateEmbeddingForActivity(
+  activityId: number,
+  req: PayloadRequest
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Fetch the activity
+    const activity = await req.payload.findByID({
+      collection: "activities",
+      id: activityId,
+      depth: 1, // Need reference for title
+    });
+
+    // Validation checks
+    if (!activity) {
+      req.payload.logger.error(`[Embedding] Activity ${activityId} not found`);
+      return { success: false, error: "Activity not found" };
+    }
+
+    if (activity._status !== "published") {
+      req.payload.logger.info(
+        `[Embedding] Activity ${activityId} is not published, skipping`
+      );
+      return { success: false, error: "Activity is not published" };
+    }
+
+    // Build embedding text from activity title and notes
+    const referenceObj =
+      typeof activity.reference === "object" && activity.reference !== null
+        ? activity.reference
+        : null;
+
+    const activityTypeLabels: Record<string, string> = {
+      read: "Read",
+      watch: "Watched",
+      listen: "Listened",
+      play: "Played",
+    };
+
+    const title = referenceObj?.title
+      ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
+      : "Activity";
+
+    const notesText = activity.notes ? extractLexicalText(activity.notes) : "";
+    const textContent = [title, notesText].filter(Boolean).join(" ");
+
+    if (!textContent.trim()) {
+      req.payload.logger.info(
+        `[Embedding] Activity ${activityId} has no text content, skipping`
+      );
+      return { success: false, error: "Activity has no text content" };
+    }
+
+    // Check if embedding already up to date
+    const currentTextHash = createTextHash(textContent);
+    const activityWithEmbedding = activity as Activity & {
+      embedding_text_hash?: string | null;
+    };
+    if (activityWithEmbedding.embedding_text_hash === currentTextHash) {
+      req.payload.logger.info(
+        `[Embedding] Activity ${activityId} embedding already up to date, skipping generation`
+      );
+      return { success: true };
+    }
+
+    // Generate embedding
+    req.payload.logger.info(
+      `[Embedding] Generating embedding for activity ${activityId}`
+    );
+
+    const { vector, model, dimensions } = await generateEmbedding(textContent);
+
+    // Update activity with embedding
+    await req.payload.update({
+      collection: "activities",
+      id: activityId,
+      data: {
+        embedding_vector: `[${vector.join(",")}]`,
+        embedding_model: model,
+        embedding_dimensions: dimensions,
+        embedding_generated_at: new Date().toISOString(),
+        embedding_text_hash: currentTextHash,
+      } as any,
+      context: {
+        skipEmbeddingGeneration: true,
+        skipRevalidation: true,
+      },
+    });
+
+    req.payload.logger.info(
+      `[Embedding] ✅ Generated ${dimensions}D embedding for activity ${activityId}`
+    );
+
+    return { success: true };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    req.payload.logger.error(
+      `[Embedding] Failed to generate embedding for activity ${activityId}: ${errorMessage}`
+    );
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -179,29 +308,31 @@ async function computeRecommendationsForPost(
   try {
     // Verify post has embedding
     const post = await req.payload.findByID({
-      collection: 'posts',
+      collection: "posts",
       id: postId,
       select: {
         embedding_vector: true,
       },
-    })
+    });
 
     if (!post?.embedding_vector) {
       req.payload.logger.info(
         `[Recommendations] Post ${postId} has no embedding, skipping recommendations`
-      )
-      return
+      );
+      return;
     }
 
     // Compute similar posts
-    req.payload.logger.info(`[Recommendations] Computing recommendations for post ${postId}`)
+    req.payload.logger.info(
+      `[Recommendations] Computing recommendations for post ${postId}`
+    );
 
-    const similarPosts = await getSimilarPosts(postId, 3)
-    const recommendedIds = similarPosts.map((p) => p.id)
+    const similarPosts = await getSimilarPosts(postId, 3);
+    const recommendedIds = similarPosts.map((p) => p.id);
 
     // Update post with recommendations
     await req.payload.update({
-      collection: 'posts',
+      collection: "posts",
       id: postId,
       data: {
         recommended_post_ids: recommendedIds,
@@ -211,16 +342,15 @@ async function computeRecommendationsForPost(
         skipRecommendationCompute: true,
         skipRevalidation: true,
       },
-    })
+    });
 
     req.payload.logger.info(
       `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for post ${postId}`
-    )
+    );
   } catch (error) {
     req.payload.logger.error(
       `[Recommendations] Failed to compute recommendations for post ${postId}: ${error instanceof Error ? error.message : String(error)}`
-    )
+    );
     // Don't throw - recommendations are non-critical
   }
 }
-

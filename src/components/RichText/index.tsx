@@ -19,7 +19,8 @@ const RichText = async ({
     return null;
   }
 
-  const serializedContent = content &&
+  const serializedContent =
+    content &&
     !Array.isArray(content) &&
     typeof content === "object" &&
     "root" in content

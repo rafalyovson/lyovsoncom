@@ -14,7 +14,7 @@ import type { XPostBlock as XPostBlockType } from "@/payload-types";
  * - Zero client-side JavaScript overhead
  * - SEO-friendly with static HTML content
  */
-export const XPostBlock = async ({ postId, caption }: XPostBlockType) => {
+export function XPostBlock({ postId, caption }: XPostBlockType) {
   if (!postId) {
     return null;
   }
@@ -43,4 +43,4 @@ export const XPostBlock = async ({ postId, caption }: XPostBlockType) => {
       )}
     </Card>
   );
-};
+}

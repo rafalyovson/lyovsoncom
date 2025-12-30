@@ -93,8 +93,7 @@ export default async function RootLayout({
               "@type": "WebSite",
               name: "Lyóvson.com",
               url: getServerSideURL(),
-              description:
-                "Official website of Rafa and Jess Lyóvson",
+              description: "Official website of Rafa and Jess Lyóvson",
               inLanguage: "en-US",
               potentialAction: {
                 "@type": "SearchAction",
@@ -156,8 +155,6 @@ export default async function RootLayout({
         <Analytics />
       </body>
       <Script
-        id="google-analytics-init"
-        strategy="lazyOnload"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: Required for GA initialization
         dangerouslySetInnerHTML={{
           __html: `
@@ -167,6 +164,8 @@ export default async function RootLayout({
             gtag('config', 'G-R4R3XJRY28');
           `,
         }}
+        id="google-analytics-init"
+        strategy="lazyOnload"
       />
       <Script
         id="google-analytics-script"
@@ -194,8 +193,7 @@ export const metadata: Metadata = {
     default: "Lyóvson.com",
     template: "%s | Lyóvson.com",
   },
-  description:
-    "Official website of Rafa and Jess Lyóvson",
+  description: "Official website of Rafa and Jess Lyóvson",
   applicationName: "Lyóvson.com",
   authors: [
     { name: "Rafa Lyóvson", url: `${getServerSideURL()}/rafa` },
@@ -255,8 +253,7 @@ export const metadata: Metadata = {
     url: getServerSideURL(),
     siteName: "Lyóvson.com",
     title: "Lyóvson.com",
-    description:
-      "Official website of Rafa and Jess Lyóvson",
+    description: "Official website of Rafa and Jess Lyóvson",
   }),
   twitter: {
     card: "summary_large_image",

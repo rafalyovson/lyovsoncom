@@ -2,14 +2,19 @@ import configPromise from "@payload-config";
 import { Feed } from "feed";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import type { Project, Topic } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
 // Note: Removed force-dynamic to allow Next.js ISR caching
 // With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
 // This prevents JSON feed readers from waking the database on every poll
 
+const WORDS_PER_MINUTE = 200;
+
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Feed generation includes multiple formatting, metadata, and fallback branches */
 export async function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -60,84 +65,90 @@ export async function GET(_request: NextRequest) {
     });
 
     // Add posts to feed (same logic as RSS)
-    posts.docs
-      .filter((post) => {
-        return post.slug;
-      })
-      .forEach((post) => {
-        const title = post.title;
-        const description = post.description || "";
-        const link = `${SITE_URL}/posts/${post.slug}`;
-        const projectSlug = (post.project as any)?.slug || "";
-        const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
+    for (const post of posts.docs) {
+      if (!post.slug) {
+        continue;
+      }
 
-        // Extract full content from Lexical format for AI consumption
-        const fullContent = post.content
-          ? extractLexicalText(post.content)
+      const title = post.title;
+      const description = post.description || "";
+      const link = `${SITE_URL}/posts/${post.slug}`;
+      const projectSlug =
+        typeof post.project === "object" && post.project !== null
+          ? (post.project as Project).slug || ""
           : "";
+      const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
 
-        let contentText = description || fullContent;
-        if (!contentText) {
-          contentText = "Read the full article on Lyóvson.com";
+      // Extract full content from Lexical format for AI consumption
+      const fullContent = post.content ? extractLexicalText(post.content) : "";
+
+      let contentText = description || fullContent;
+      if (!contentText) {
+        contentText = "Read the full article on Lyóvson.com";
+      }
+
+      // Enhanced feed item with AI-friendly metadata
+      const feedItem = {
+        title,
+        id: link,
+        link,
+        description: contentText,
+        content: fullContent || contentText, // Full content for AI consumption
+        author: [
+          {
+            name: author,
+            email: "hello@lyovson.com",
+            link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
+          },
+        ],
+        date: new Date(post.publishedAt || post.updatedAt),
+        category: [
+          {
+            name: projectSlug,
+            domain: `${SITE_URL}/projects`,
+          },
+        ],
+      };
+
+      // Add topics as additional categories for AI understanding
+      if (post.topics && Array.isArray(post.topics)) {
+        for (const topic of post.topics) {
+          const topicObj =
+            typeof topic === "object" && topic !== null
+              ? (topic as Topic)
+              : null;
+          const topicName = topicObj?.name || topicObj?.slug || String(topic);
+          if (topicName) {
+            feedItem.category.push({
+              name: topicName,
+              domain: `${SITE_URL}/topics`,
+            });
+          }
         }
+      }
 
-        // Enhanced feed item with AI-friendly metadata
-        const feedItem = {
-          title,
-          id: link,
-          link,
-          description: contentText,
-          content: fullContent || contentText, // Full content for AI consumption
-          author: [
-            {
-              name: author,
-              email: "hello@lyovson.com",
-              link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
-            },
-          ],
-          date: new Date(post.publishedAt || post.updatedAt),
-          category: [
-            {
-              name: projectSlug,
-              domain: `${SITE_URL}/projects`,
-            },
-          ],
-        };
+      // Add custom metadata for AI systems
+      const fullContentWordCount = fullContent
+        ? Math.ceil(fullContent.split(" ").length)
+        : undefined;
 
-        // Add topics as additional categories for AI understanding
-        if (post.topics && Array.isArray(post.topics)) {
-          post.topics.forEach((topic: any) => {
-            const topicName =
-              typeof topic === "object" ? topic.name || topic.slug : topic;
-            if (topicName) {
-              feedItem.category.push({
-                name: topicName,
-                domain: `${SITE_URL}/topics`,
-              });
-            }
-          });
-        }
+      const customMetadata = {
+        wordCount: fullContentWordCount,
+        readingTime: fullContentWordCount
+          ? Math.ceil(fullContentWordCount / WORDS_PER_MINUTE)
+          : undefined,
+        contentType: "article",
+        language: "en",
+        projectSlug,
+        originalUrl: link,
+        apiUrl: `${SITE_URL}/api/posts/${post.id}`,
+      };
 
-        // Add custom metadata for AI systems
-        const customMetadata = {
-          wordCount: fullContent
-            ? Math.ceil(fullContent.split(" ").length)
-            : undefined,
-          readingTime: fullContent
-            ? Math.ceil(fullContent.split(" ").length / 200)
-            : undefined,
-          contentType: "article",
-          language: "en",
-          projectSlug,
-          originalUrl: link,
-          apiUrl: `${SITE_URL}/api/posts/${post.id}`,
-        };
+      // Add metadata as extensions (JSON Feed 1.1 supports extensions)
+      Object.assign(feedItem, { _lyovson_metadata: customMetadata });
 
-        // Add metadata as extensions (JSON Feed 1.1 supports extensions)
-        Object.assign(feedItem, { _lyovson_metadata: customMetadata });
-
-        feed.addItem(feedItem);
-      });
+      feed.addItem(feedItem);
+    }
 
     return new Response(feed.json1(), {
       status: 200,

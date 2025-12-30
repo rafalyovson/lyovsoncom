@@ -1,8 +1,5 @@
 import configPromise from "@payload-config";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
 import type { Topic } from "@/payload-types";

@@ -1,8 +1,5 @@
 import configPromise from "@payload-config";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
@@ -36,15 +33,24 @@ export async function getTopicPosts(
 
   const result = await payload.find({
     collection: "posts",
-    depth: 1,
+    depth: 2,
     limit: 12,
     where: {
-      topics: {
-        contains: topicId,
-      },
+      AND: [
+        {
+          topics: {
+            contains: topicId,
+          },
+        },
+        {
+          _status: {
+            equals: "published",
+          },
+        },
+      ],
     },
-    overrideAccess: false,
     sort: "-publishedAt",
+    overrideAccess: true,
   });
 
   return {

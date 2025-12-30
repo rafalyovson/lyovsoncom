@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 
 export function GET(_request: NextRequest) {
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   const aiResources = {
     // Standard identification
@@ -56,8 +57,8 @@ export function GET(_request: NextRequest) {
           endpoint: `${SITE_URL}/api/embeddings`,
           collections: {
             posts: `${SITE_URL}/api/embeddings/posts/{id}`,
-            books: `${SITE_URL}/api/embeddings/books/{id}`,
             notes: `${SITE_URL}/api/embeddings/notes/{id}`,
+            activities: `${SITE_URL}/api/embeddings/activities/{id}`,
           },
           authentication: "not-required",
           model: "text-embedding-3-small or fallback",
@@ -69,7 +70,7 @@ export function GET(_request: NextRequest) {
           ],
           usage: [
             "query-text",
-            "bulk-posts",
+            "bulk-posts-notes-activities",
             "individual-items",
             "collection-specific",
           ],

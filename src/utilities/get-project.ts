@@ -1,8 +1,5 @@
 import configPromise from "@payload-config";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getPayload } from "payload";
 import type { Project } from "@/payload-types";
 

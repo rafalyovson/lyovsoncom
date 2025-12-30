@@ -11,7 +11,7 @@
 import type { CollectionBeforeChangeHook } from "payload";
 import { extractTextFromContent } from "@/utilities/generate-embedding";
 
-export const populateContentTextHook: CollectionBeforeChangeHook = async ({
+export const populateContentTextHook: CollectionBeforeChangeHook = ({
   data,
   operation,
 }) => {

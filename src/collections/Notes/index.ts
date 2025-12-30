@@ -2,11 +2,12 @@ import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
-import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers";
 import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
+import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
+import { populateContentTextHook } from "./hooks/populateContentText";
 
 export const Notes: CollectionConfig = {
   slug: "notes",
@@ -22,9 +23,11 @@ export const Notes: CollectionConfig = {
     author: true,
     visibility: true,
     type: true,
+    topics: true,
     connections: true,
   },
   admin: {
+    group: "Content",
     useAsTitle: "title",
     defaultColumns: ["title", "type", "author", "visibility", "updatedAt"],
     livePreview: {
@@ -59,12 +62,10 @@ export const Notes: CollectionConfig = {
       name: "type",
       type: "select",
       options: [
-        { label: "Literature Note", value: "literature" },
-        { label: "Permanent Note", value: "permanent" },
-        { label: "Fleeting Note", value: "fleeting" },
-        { label: "Index Note", value: "index" },
+        { label: "Quote", value: "quote" },
+        { label: "Thought", value: "thought" },
       ],
-      defaultValue: "fleeting",
+      defaultValue: "thought",
       required: true,
       admin: {
         position: "sidebar",
@@ -119,27 +120,19 @@ export const Notes: CollectionConfig = {
             {
               name: "sourceReference",
               type: "relationship",
-              relationTo: [
-                "books",
-                "movies",
-                "tvShows",
-                "videoGames",
-                "music",
-                "podcasts",
-              ],
+              relationTo: "references",
               admin: {
-                description:
-                  "What book, movie, show, game, music, or podcast is this note about?",
-                condition: (data) => data.type === "literature",
+                description: "What reference is this quote from?",
+                condition: (data) => data.type === "quote",
               },
             },
             {
-              name: "quoteText",
-              type: "textarea",
+              name: "quotedPerson",
+              type: "text",
               admin: {
-                description: "The actual quote or passage from the source",
-                condition: (data) => data.type === "literature",
-                placeholder: "Enter the quote...",
+                description: "Who said this quote? (e.g., author name, speaker)",
+                condition: (data) => data.type === "quote",
+                placeholder: "e.g., Jane Austen, Albert Einstein",
               },
             },
             {
@@ -147,31 +140,30 @@ export const Notes: CollectionConfig = {
               type: "text",
               admin: {
                 description: "Page number, timestamp, or location reference",
-                condition: (data) => data.type === "literature",
+                condition: (data) => data.type === "quote",
                 placeholder: "Page 42, 1:23:45, etc.",
               },
             },
           ],
-          label: "Literature Note Details",
+          label: "Quote Details",
           description:
-            "Specific fields for literature notes (quotes and references)",
+            "Additional information for quote-type notes",
         },
         {
           fields: [
             {
+              name: "topics",
+              type: "relationship",
+              relationTo: "topics",
+              hasMany: true,
+              admin: {
+                description: "What topics does this note cover?",
+              },
+            },
+            {
               name: "connections",
               type: "relationship",
-              relationTo: [
-                "posts",
-                "books",
-                "movies",
-                "tvShows",
-                "videoGames",
-                "music",
-                "podcasts",
-                "persons",
-                "notes",
-              ],
+              relationTo: ["posts", "references", "notes"],
               hasMany: true,
               admin: {
                 description:
@@ -258,9 +250,23 @@ export const Notes: CollectionConfig = {
         hidden: true,
       },
     },
+    // Extracted plain text from Lexical content for full-text search
+    {
+      name: "content_text",
+      type: "text",
+      access: {
+        update: () => false, // Only updated via hooks
+      },
+      admin: {
+        hidden: true,
+        description:
+          "Plain text extracted from rich text content for full-text search indexing",
+      },
+    },
     ...slugField(),
   ],
   hooks: {
+    beforeChange: [populateContentTextHook],
     afterChange: [
       async ({ doc, req }) => {
         req.payload.logger.info(`Revalidating note: ${doc.slug}`);
@@ -270,15 +276,15 @@ export const Notes: CollectionConfig = {
       async ({ doc, req, operation }) => {
         // Only for create/update of published notes
         if (
-          (operation === 'create' || operation === 'update') &&
-          doc._status === 'published'
+          (operation === "create" || operation === "update") &&
+          doc._status === "published"
         ) {
           // Fire and forget - doesn't block publish response
           generateEmbeddingForNote(doc.id, req).catch((err) => {
             req.payload.logger.error(
               `[Embedding] Failed for note ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
-            )
-          })
+            );
+          });
         }
       },
     ],

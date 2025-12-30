@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 export default async function PrivacyPolicy() {
   "use cache";
+  await Promise.resolve();
   cacheTag("privacy-policy");
   cacheLife("static"); // Static content changes very rarely
 

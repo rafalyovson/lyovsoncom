@@ -1,4 +1,13 @@
-import { BriefcaseBusiness, Calendar, PenTool } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  Calendar,
+  Camera,
+  FileText,
+  Mic,
+  PenTool,
+  Star,
+  Video,
+} from "lucide-react";
 import Link from "next/link";
 
 import { GridCard, GridCardSection } from "@/components/grid";
@@ -11,6 +20,14 @@ export type GridCardPostProps = {
   className?: string;
   loading?: "lazy" | "eager";
   priority?: boolean;
+};
+
+const postTypeIcons: Record<string, typeof FileText> = {
+  article: FileText,
+  review: Star,
+  video: Video,
+  podcast: Mic,
+  photo: Camera,
 };
 
 export const GridCardPostFull = ({
@@ -27,9 +44,12 @@ export const GridCardPostFull = ({
     publishedAt,
     title,
     slug,
+    type,
   } = post;
 
   const postUrl = `/posts/${slug}`;
+  const PostIcon = postTypeIcons[type || "article"] || FileText;
+  const postTypeLabel = type || "article";
 
   return (
     <GridCard className={className}>
@@ -56,7 +76,7 @@ export const GridCardPostFull = ({
 
       <GridCardSection
         className={
-          "col-start-1 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
+          "col-start-1 col-end-3 row-start-3 row-end-4 flex h-full flex-col justify-center"
         }
       >
         <Link className="group block" href={postUrl}>
@@ -72,11 +92,27 @@ export const GridCardPostFull = ({
 
       <GridCardSection
         className={
+          "col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
+        }
+      >
+        <Link className="group block flex flex-col items-center gap-1" href={postUrl}>
+          <PostIcon
+            aria-hidden="true"
+            className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+          />
+          <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            {postTypeLabel}
+          </span>
+        </Link>
+      </GridCardSection>
+
+      <GridCardSection
+        className={
           "col-start-3 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-end gap-2"
         }
       >
         {topics?.map((topic, index) => {
-          if (typeof topic !== "object" || !topic.slug) {
+          if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
             return null;
           }
           return (

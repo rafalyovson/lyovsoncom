@@ -1,8 +1,5 @@
 import configPromise from "@payload-config";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
 import type { Lyovson, Post } from "@/payload-types";
@@ -32,6 +29,7 @@ export async function getAuthorPosts(
       },
     },
     limit: 1,
+    overrideAccess: true,
   });
 
   if (!userResult?.docs?.[0]) {
@@ -44,15 +42,24 @@ export async function getAuthorPosts(
   // Then query posts using the author ID
   const result = await payload.find({
     collection: "posts",
-    depth: 1,
+    depth: 2,
     limit: 12,
     where: {
-      authors: {
-        contains: authorId,
-      },
+      AND: [
+        {
+          authors: {
+            contains: authorId,
+          },
+        },
+        {
+          _status: {
+            equals: "published",
+          },
+        },
+      ],
     },
-    overrideAccess: false,
     sort: "-publishedAt",
+    overrideAccess: true,
   });
 
   return {

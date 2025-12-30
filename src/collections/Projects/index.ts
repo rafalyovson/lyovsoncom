@@ -1,4 +1,4 @@
-import { revalidatePath, updateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 import { anyone } from "@/access/anyone";
@@ -14,6 +14,7 @@ export const Projects: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    group: "Organization",
     useAsTitle: "name",
     defaultColumns: ["name", "slug", "resendAudienceId"],
   },
@@ -58,12 +59,12 @@ export const Projects: CollectionConfig = {
       async ({ doc, req }) => {
         req.payload.logger.info(`Updating cache for project: ${doc.slug}`);
 
-        // Update project-related cache tags with immediate refresh
-        updateTag("projects");
-        updateTag(`project-${doc.slug}`);
-        updateTag("posts"); // Posts may reference this project
-        updateTag("sitemap");
-        updateTag("playground"); // Playground uses project data
+        // Revalidate project-related cache tags
+        revalidateTag("projects", { expire: 0 });
+        revalidateTag(`project-${doc.slug}`, { expire: 0 });
+        revalidateTag("posts", { expire: 0 }); // Posts may reference this project
+        revalidateTag("sitemap", { expire: 0 });
+        revalidateTag("playground", { expire: 0 }); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc.slug}`);
@@ -76,12 +77,12 @@ export const Projects: CollectionConfig = {
           `Updating cache after project deletion: ${doc?.slug}`
         );
 
-        // Update project-related cache tags with immediate refresh
-        updateTag("projects");
-        updateTag(`project-${doc?.slug}`);
-        updateTag("posts"); // Posts may reference this project
-        updateTag("sitemap");
-        updateTag("playground"); // Playground uses project data
+        // Revalidate project-related cache tags
+        revalidateTag("projects", { expire: 0 });
+        revalidateTag(`project-${doc?.slug}`, { expire: 0 });
+        revalidateTag("posts", { expire: 0 }); // Posts may reference this project
+        revalidateTag("sitemap", { expire: 0 });
+        revalidateTag("playground", { expire: 0 }); // Playground uses project data
 
         // Revalidate project paths
         revalidatePath(`/projects/${doc?.slug}`);

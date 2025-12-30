@@ -1,60 +1,77 @@
-import configPromise from '@payload-config'
-import type { NextRequest } from 'next/server'
-import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
+import configPromise from "@payload-config";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import type { PayloadRequest } from "payload";
+import { getPayload } from "payload";
 import {
-  generateEmbeddingForPost,
+  generateEmbeddingForActivity,
   generateEmbeddingForNote,
-} from '@/utilities/generate-embedding-helpers'
+  generateEmbeddingForPost,
+} from "@/utilities/generate-embedding-helpers";
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
+type RegenerateEmbeddingBody = {
+  collection?: "posts" | "notes" | "activities";
+  id?: number | string;
+  force?: boolean;
+};
+
+type EmbeddingResult = {
+  success: boolean;
+  error?: string;
+};
+
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Endpoint handles validation + auth + multiple collection paths */
 export async function POST(request: NextRequest) {
   try {
-    const payload = await getPayload({ config: configPromise })
+    const payload = await getPayload({ config: configPromise });
 
     // Parse request body
-    let body
+    let body: RegenerateEmbeddingBody | null = null;
     try {
-      body = await request.json()
+      const parsed = (await request.json()) as unknown;
+      if (parsed && typeof parsed === "object") {
+        body = parsed as RegenerateEmbeddingBody;
+      }
     } catch {
-      return NextResponse.json(
-        { error: 'Invalid JSON body' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    const { collection, id, force } = body
+    const { collection, id, force } = body || {};
 
     // Validate required fields
-    if (!collection || !id) {
+    if (!(collection && id)) {
       return NextResponse.json(
-        { error: 'collection and id are required' },
+        { error: "collection and id are required" },
         { status: 400 }
-      )
+      );
     }
 
-    if (collection !== 'posts' && collection !== 'notes') {
+    if (
+      collection !== "posts" &&
+      collection !== "notes" &&
+      collection !== "activities"
+    ) {
       return NextResponse.json(
-        { error: 'collection must be "posts" or "notes"' },
+        { error: 'collection must be "posts", "notes", or "activities"' },
         { status: 400 }
-      )
+      );
     }
 
-    const docId = Number.parseInt(String(id), 10)
+    const docId = Number.parseInt(String(id), 10);
     if (Number.isNaN(docId)) {
       return NextResponse.json(
-        { error: 'id must be a valid number' },
+        { error: "id must be a valid number" },
         { status: 400 }
-      )
+      );
     }
 
     // Authentication check
     // Allow authenticated admins or requests with valid CRON_SECRET
-    const authHeader = request.headers.get('authorization')
-    const cronSecret = authHeader?.replace('Bearer ', '')
-    const hasValidSecret =
-      cronSecret && cronSecret === process.env.CRON_SECRET
+    const authHeader = request.headers.get("authorization");
+    const cronSecret = authHeader?.replace("Bearer ", "");
+    const hasValidSecret = cronSecret && cronSecret === process.env.CRON_SECRET;
 
     // Create a mock request object for the helper functions
     // In a real Payload request context, req.user would be available
@@ -62,28 +79,31 @@ export async function POST(request: NextRequest) {
     const mockReq = {
       payload,
       user: null, // Will be set if authenticated via Payload session
-    } as any
+    } as unknown as PayloadRequest;
 
     // Try to get authenticated user from Payload session
     // This allows calling from Payload admin UI
     try {
-      const { user } = await payload.auth({ headers: request.headers })
+      const { user } = await payload.auth({ headers: request.headers });
       if (user) {
-        mockReq.user = user
+        mockReq.user = user;
       }
     } catch {
       // Not authenticated via Payload session, check CRON_SECRET
       if (!hasValidSecret) {
         return NextResponse.json(
-          { error: 'Unauthorized. Requires admin authentication or valid CRON_SECRET' },
+          {
+            error:
+              "Unauthorized. Requires admin authentication or valid CRON_SECRET",
+          },
           { status: 401 }
-        )
+        );
       }
     }
 
     // Fetch document to get current embedding info
     const doc = await payload.findByID({
-      collection: collection as 'posts' | 'notes',
+      collection: collection as "posts" | "notes" | "activities",
       id: docId,
       select: {
         id: true,
@@ -91,93 +111,88 @@ export async function POST(request: NextRequest) {
         embedding_model: true,
         embedding_dimensions: true,
       },
-    })
+    });
 
     if (!doc) {
       return NextResponse.json(
         { error: `${collection} not found` },
         { status: 404 }
-      )
+      );
     }
 
     // If force is true, clear the hash to force regeneration
-    if (force && collection === 'posts') {
+    if (force) {
       await payload.update({
-        collection: 'posts',
+        collection: collection as "posts" | "notes" | "activities",
         id: docId,
         data: {
           embedding_text_hash: null,
         },
         context: {
           skipEmbeddingGeneration: true,
-          skipRecommendationCompute: true,
+          skipRecommendationCompute: collection === "posts",
           skipRevalidation: true,
         },
-      })
-    } else if (force && collection === 'notes') {
-      await payload.update({
-        collection: 'notes',
-        id: docId,
-        data: {
-          embedding_text_hash: null,
-        },
-        context: {
-          skipEmbeddingGeneration: true,
-          skipRevalidation: true,
-        },
-      })
+      });
     }
 
     // Call appropriate helper function
-    let result
-    if (collection === 'posts') {
-      result = await generateEmbeddingForPost(docId, mockReq)
+    let result: EmbeddingResult;
+    if (collection === "posts") {
+      result = await generateEmbeddingForPost(docId, mockReq);
+    } else if (collection === "notes") {
+      result = await generateEmbeddingForNote(docId, mockReq);
     } else {
-      result = await generateEmbeddingForNote(docId, mockReq)
+      result = await generateEmbeddingForActivity(docId, mockReq);
     }
 
     if (!result.success) {
       return NextResponse.json(
         {
           success: false,
-          error: result.error || 'Failed to regenerate embedding',
+          error: result.error || "Failed to regenerate embedding",
         },
         { status: 500 }
-      )
+      );
     }
 
     // Fetch updated document to get embedding details
     const updatedDoc = await payload.findByID({
-      collection: collection as 'posts' | 'notes',
+      collection: collection as "posts" | "notes" | "activities",
       id: docId,
       select: {
         embedding_model: true,
         embedding_dimensions: true,
         recommended_post_ids: true,
       },
-    })
+    });
+
+    const updatedEmbedding = updatedDoc as unknown as {
+      embedding_model?: string | null;
+      embedding_dimensions?: number | null;
+      recommended_post_ids?: unknown;
+    };
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Embedding regenerated successfully',
-        model: (updatedDoc as any).embedding_model || 'unknown',
-        dimensions: (updatedDoc as any).embedding_dimensions || 0,
-        recommendationsUpdated:
-          collection === 'posts' && (updatedDoc as any).recommended_post_ids
-            ? true
-            : false,
+        message: "Embedding regenerated successfully",
+        model: updatedEmbedding.embedding_model || "unknown",
+        dimensions: updatedEmbedding.embedding_dimensions || 0,
+        recommendationsUpdated: !!(
+          collection === "posts" && updatedEmbedding.recommended_post_ids
+        ),
       },
       {
         status: 200,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
-    )
+    );
   } catch (error) {
     const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error'
+      error instanceof Error ? error.message : "Unknown error";
 
     return NextResponse.json(
       {
@@ -185,7 +200,6 @@ export async function POST(request: NextRequest) {
         error: errorMessage,
       },
       { status: 500 }
-    )
+    );
   }
 }
-

@@ -22,13 +22,15 @@ type TenorVideoData = {
 export async function getTenorVideoUrl(
   postId: string
 ): Promise<TenorVideoData> {
+  const TENOR_REVALIDATE_SECONDS = 86_400;
+
   // If TENOR_API_KEY is available, use the official API
   if (process.env.TENOR_API_KEY) {
     try {
       const response = await fetch(
         `https://tenor.googleapis.com/v2/posts?ids=${postId}&key=${process.env.TENOR_API_KEY}`,
         {
-          next: { revalidate: 86_400 }, // 24 hour cache
+          next: { revalidate: TENOR_REVALIDATE_SECONDS }, // 24 hour cache
         }
       );
 
@@ -49,13 +51,11 @@ export async function getTenorVideoUrl(
         mp4Url: media.mp4?.url || media.tinygif?.url,
         webmUrl: media.webm?.url,
         posterUrl: media.tinygif_transparent?.url || media.tinygif?.url,
-        aspectRatio:
-          media.mp4?.dims
-            ? `${media.mp4.dims[0]}:${media.mp4.dims[1]}`
-            : "1:1",
+        aspectRatio: media.mp4?.dims
+          ? `${media.mp4.dims[0]}:${media.mp4.dims[1]}`
+          : "1:1",
       };
-    } catch (error) {
-      console.error("Tenor API fetch failed, falling back to direct URL:", error);
+    } catch (_error) {
       // Fall through to direct URL pattern
     }
   }
@@ -84,7 +84,7 @@ function getTenorDirectUrl(postId: string): TenorVideoData {
  */
 export function calculateAspectRatio(dims: [number, number]): string {
   const [width, height] = dims;
-  if (!width || !height || height === 0) {
+  if (!(width && height) || height === 0) {
     return "1"; // Default to square
   }
   return String(width / height);
@@ -96,10 +96,19 @@ export function calculateAspectRatio(dims: [number, number]): string {
  * @returns Normalized aspect ratio string ("16:9", "4:3", or "1:1")
  */
 export function normalizeAspectRatio(ratio: string): "16:9" | "4:3" | "1:1" {
+  const RATIO_16_9_MIN = 1.7;
+  const RATIO_16_9_MAX = 1.8;
+  const RATIO_4_3_MIN = 1.3;
+  const RATIO_4_3_MAX = 1.4;
+
   // If it's already in ratio format, return as is
   if (ratio.includes(":")) {
-    if (ratio === "16:9") return "16:9";
-    if (ratio === "4:3") return "4:3";
+    if (ratio === "16:9") {
+      return "16:9";
+    }
+    if (ratio === "4:3") {
+      return "4:3";
+    }
     return "1:1";
   }
 
@@ -111,10 +120,10 @@ export function normalizeAspectRatio(ratio: string): "16:9" | "4:3" | "1:1" {
   }
 
   // Common aspect ratios
-  if (numericRatio >= 1.7 && numericRatio <= 1.8) {
+  if (numericRatio >= RATIO_16_9_MIN && numericRatio <= RATIO_16_9_MAX) {
     return "16:9";
   }
-  if (numericRatio >= 1.3 && numericRatio <= 1.4) {
+  if (numericRatio >= RATIO_4_3_MIN && numericRatio <= RATIO_4_3_MAX) {
     return "4:3";
   }
 

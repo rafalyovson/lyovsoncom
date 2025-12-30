@@ -39,7 +39,9 @@ export const LazyVideo = ({
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement) return;
+    if (!videoElement) {
+      return;
+    }
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -73,18 +75,18 @@ export const LazyVideo = ({
 
   return (
     <video
-      ref={videoRef}
-      autoPlay
-      loop
-      muted
-      playsInline
-      poster={poster}
       aria-label={alt}
+      autoPlay
       className={cn(
         "glass-media w-full rounded-lg",
         getAspectRatioClass(),
         className
       )}
+      loop
+      muted
+      playsInline
+      poster={poster}
+      ref={videoRef}
     >
       {isLoaded && (
         <>

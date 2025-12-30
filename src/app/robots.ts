@@ -1,15 +1,14 @@
 import type { MetadataRoute } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   "use cache";
+  await Promise.resolve();
   cacheTag("robots");
   cacheLife("static"); // Robots.txt changes very rarely
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   return {
     rules: [

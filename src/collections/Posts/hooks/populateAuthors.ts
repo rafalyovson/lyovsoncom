@@ -19,6 +19,7 @@ export const populateAuthors: CollectionAfterReadHook = async ({
         collection: "lyovsons",
         depth: 0,
         req,
+        overrideAccess: true,
       });
 
       if (authorDoc) {

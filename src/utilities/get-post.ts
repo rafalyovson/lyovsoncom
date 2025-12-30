@@ -1,8 +1,5 @@
 import configPromise from "@payload-config";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
@@ -70,10 +67,14 @@ export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
     collection: "posts",
-    depth: 1,
+    depth: 2,
     limit,
-    overrideAccess: false,
     sort: "-publishedAt",
+    where: {
+      _status: {
+        equals: "published",
+      },
+    },
   });
 
   return {
@@ -94,11 +95,15 @@ export async function getPaginatedPosts(
   const payload = await getPayload({ config: configPromise });
   const result = await payload.find({
     collection: "posts",
-    depth: 1,
+    depth: 2,
     limit,
     page: pageNumber,
-    overrideAccess: false,
     sort: "-publishedAt",
+    where: {
+      _status: {
+        equals: "published",
+      },
+    },
   });
 
   return {
@@ -116,6 +121,10 @@ export async function getPostCount() {
   const payload = await getPayload({ config: configPromise });
   return await payload.count({
     collection: "posts",
-    overrideAccess: false,
+    where: {
+      _status: {
+        equals: "published",
+      },
+    },
   });
 }

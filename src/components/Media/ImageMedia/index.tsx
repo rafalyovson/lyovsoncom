@@ -46,16 +46,12 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
   // Use eager loading for priority images (e.g., hero images) to improve LCP
   const isHero = priority === true;
-  const loading = isHero ? "eager" : (loadingFromProps || "lazy");
+  const loading = isHero ? "eager" : loadingFromProps || "lazy";
 
   // Optimized sizes attribute for 400px grid system
   // All grid cards are exactly 400px wide at all breakpoints
   // Hero cards and full-width images pass custom size prop or use fill
-  const sizes = sizeFromProps
-    ? sizeFromProps
-    : fill
-      ? "100vw"
-      : "400px";
+  const sizes = sizeFromProps ? sizeFromProps : fill ? "100vw" : "400px";
 
   return (
     <picture
@@ -69,8 +65,8 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         alt={alt || ""}
         blurDataURL={placeholderBlur}
         className={cn(imgClassName, "h-full w-full")}
-        fill={fill}
         fetchPriority={priority ? "high" : "auto"}
+        fill={fill}
         height={fill ? undefined : height}
         loading={loading}
         placeholder="blur"

@@ -1,3 +1,4 @@
+import configPromise from "@payload-config";
 import {
   and,
   asc,
@@ -6,7 +7,6 @@ import {
   ne,
   sql,
 } from "@payloadcms/db-vercel-postgres/drizzle";
-import configPromise from "@payload-config";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
 
@@ -29,7 +29,7 @@ import type { Post } from "@/payload-types";
  */
 export async function getSimilarPosts(
   postId: number,
-  limit = 3,
+  limit = 3
 ): Promise<Post[]> {
   const payload = await getPayload({ config: configPromise });
 
@@ -65,14 +65,16 @@ export async function getSimilarPosts(
       and(
         ne(postsTable.id, postId), // Exclude current post
         eq(postsTable._status, "published"), // Only published posts
-        isNotNull(postsTable.embedding_vector), // Only posts with embeddings
-      ),
+        isNotNull(postsTable.embedding_vector) // Only posts with embeddings
+      )
     )
     // Order by cosine distance ascending = most similar first
     // Uses HNSW index for O(log n) performance
     // IMPORTANT: Cast VARCHAR to vector type for <=> operator
     .orderBy(
-      asc(sql`${postsTable.embedding_vector}::vector <=> ${JSON.stringify(embedding)}::vector`),
+      asc(
+        sql`${postsTable.embedding_vector}::vector <=> ${JSON.stringify(embedding)}::vector`
+      )
     )
     .limit(limit);
 
@@ -84,8 +86,8 @@ export async function getSimilarPosts(
         collection: "posts",
         id: p.id,
         depth: 1, // Include related data like featuredImage, topics
-      }),
-    ),
+      })
+    )
   );
 
   // Filter out any null results and return typed array

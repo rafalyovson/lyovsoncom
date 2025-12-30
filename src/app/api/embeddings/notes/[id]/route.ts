@@ -9,6 +9,7 @@ import {
 
 // Regex for word counting
 const WORD_SPLIT_REGEX = /\s+/;
+const WORDS_PER_MINUTE = 200;
 
 // Extended Note type with pgvector fields
 type NoteWithEmbedding = Note & {
@@ -44,6 +45,7 @@ type Args = {
   }>;
 };
 
+/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This endpoint supports multiple output formats and optional regeneration paths */
 export async function GET(
   request: NextRequest,
   { params: paramsPromise }: Args
@@ -54,7 +56,8 @@ export async function GET(
   const format = searchParams.get("format") || "full"; // 'full', 'vector-only', 'metadata-only'
   const regenerate = searchParams.get("regenerate") === "true"; // Force regenerate
 
-  const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
 
   try {
     const payload = await getPayload({ config: configPromise });
@@ -171,7 +174,7 @@ export async function GET(
     // Calculate content statistics for Notes
     const contentText = extractNotesText(note);
     const wordCount = contentText.split(WORD_SPLIT_REGEX).length;
-    const readingTime = Math.ceil(wordCount / 200); // ~200 words per minute
+    const readingTime = Math.ceil(wordCount / WORDS_PER_MINUTE); // ~200 words per minute
 
     // Format response based on requested format
     type EmbeddingData =

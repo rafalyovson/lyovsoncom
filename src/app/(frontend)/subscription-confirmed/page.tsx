@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
-import {
-  cacheLife,
-  cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { GridCardSubscribeConfirmed } from "@/components/grid";
 
 export default async function SubscriptionConfirmed() {
   "use cache";
+  await Promise.resolve();
   cacheTag("subscription-confirmed");
   cacheLife("static"); // Static confirmation page
 

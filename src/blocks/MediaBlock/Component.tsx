@@ -1,5 +1,4 @@
 import type { StaticImageData } from "next/image";
-import type React from "react";
 import { Media } from "@/components/Media";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -16,7 +15,7 @@ type Props = MediaBlockProps & {
   disableInnerContainer?: boolean;
 };
 
-export const MediaBlock = async (props: Props) => {
+export function MediaBlock(props: Props) {
   const { captionClassName, className, imgClassName, media, staticImage } =
     props;
 
@@ -67,4 +66,4 @@ export const MediaBlock = async (props: Props) => {
       )}
     </Card>
   );
-};
+}

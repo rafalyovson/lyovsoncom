@@ -3,12 +3,12 @@ import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
+import { generateEmbeddingForPost } from "@/utilities/generate-embedding-helpers";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
 import { populateAuthors } from "./hooks/populateAuthors";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
-import { generateEmbeddingForPost } from "@/utilities/generate-embedding-helpers";
 
 export const Posts: CollectionConfig<"posts"> = {
   slug: "posts",
@@ -18,18 +18,8 @@ export const Posts: CollectionConfig<"posts"> = {
     read: authenticatedOrPublished,
     update: authenticated,
   },
-  // Clean structure: title, featuredImage, and description at root level
-  // SEO metadata is automatically generated from these main fields
-  defaultPopulate: {
-    title: true,
-    slug: true,
-    featuredImage: true,
-    description: true,
-    topics: true,
-    project: true,
-    type: true,
-  },
   admin: {
+    group: "Content",
     defaultColumns: ["title", "type", "slug", "updatedAt"],
     livePreview: {
       url: ({ data }) => {
@@ -126,14 +116,7 @@ export const Posts: CollectionConfig<"posts"> = {
             {
               name: "reference",
               type: "relationship",
-              relationTo: [
-                "books",
-                "movies",
-                "tvShows",
-                "videoGames",
-                "music",
-                "podcasts",
-              ],
+              relationTo: "references",
               hasMany: true,
               admin: {
                 description: "What are you reviewing? (can select multiple)",
@@ -186,27 +169,11 @@ export const Posts: CollectionConfig<"posts"> = {
             {
               name: "references",
               type: "relationship",
-              relationTo: [
-                "books",
-                "movies",
-                "tvShows",
-                "videoGames",
-                "music",
-                "podcasts",
-              ],
+              relationTo: "references",
               hasMany: true,
               admin: {
                 description:
-                  "Books, movies, shows, games, music, podcasts referenced in this post",
-              },
-            },
-            {
-              name: "personsMentioned",
-              type: "relationship",
-              relationTo: "persons",
-              hasMany: true,
-              admin: {
-                description: "People mentioned or discussed in this post",
+                  "People, companies, works, and web media referenced in this post",
               },
             },
             {
@@ -372,15 +339,15 @@ export const Posts: CollectionConfig<"posts"> = {
       async ({ doc, req, operation }) => {
         // Only for create/update of published posts
         if (
-          (operation === 'create' || operation === 'update') &&
-          doc._status === 'published'
+          (operation === "create" || operation === "update") &&
+          doc._status === "published"
         ) {
           // Fire and forget - doesn't block publish response
           generateEmbeddingForPost(doc.id, req).catch((err) => {
             req.payload.logger.error(
               `[Embedding] Failed for post ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
-            )
-          })
+            );
+          });
         }
       },
     ],

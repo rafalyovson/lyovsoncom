@@ -1,4 +1,3 @@
-import type React from "react";
 import { LazyVideo } from "@/components/LazyVideo";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -20,12 +19,11 @@ import type { GIFBlock as GIFBlockType } from "./types";
  * Note: This is a server component that fetches video URLs
  * and passes them to the client-side LazyVideo component
  */
-export const GIFBlock: React.FC<GIFBlockType> = async (props) => {
+export function GIFBlock(props: GIFBlockType) {
   const { mp4Url, webmUrl, posterUrl, aspectRatio } = props;
 
   // Validation with helpful error messages
   if (!mp4Url) {
-    console.error("[GIFBlock] Missing mp4Url");
     return (
       <div className="rounded-lg border border-red-500 bg-red-50 p-4 text-red-700">
         <p className="font-semibold">GIF Block Error</p>
@@ -44,11 +42,11 @@ export const GIFBlock: React.FC<GIFBlockType> = async (props) => {
       <CardContent className="px-0">
         <div className="glass-media overflow-hidden rounded-lg">
           <LazyVideo
-            mp4Src={mp4Url}
-            webmSrc={webmUrl || undefined}
-            poster={posterUrl || undefined}
-            aspectRatio={normalizedAspectRatio}
             alt="Animated GIF"
+            aspectRatio={normalizedAspectRatio}
+            mp4Src={mp4Url}
+            poster={posterUrl || undefined}
+            webmSrc={webmUrl || undefined}
           />
         </div>
       </CardContent>
@@ -69,4 +67,4 @@ export const GIFBlock: React.FC<GIFBlockType> = async (props) => {
       )}
     </Card>
   );
-};
+}

@@ -1,6 +1,12 @@
 "use client";
 
-import { Button, FieldLabel, TextInput, useForm, useFormFields } from "@payloadcms/ui";
+import {
+  Button,
+  FieldLabel,
+  TextInput,
+  useForm,
+  useFormFields,
+} from "@payloadcms/ui";
 import type React from "react";
 import { useCallback, useEffect, useState } from "react";
 
@@ -15,7 +21,7 @@ import { extractVideoUrls, searchGifs } from "./actions";
  */
 
 // Types
-interface TenorResult {
+type TenorResult = {
   id: string;
   media_formats: {
     tinygif: {
@@ -27,7 +33,7 @@ interface TenorResult {
       dims: [number, number];
     };
   };
-}
+};
 
 // Component
 export const GifPicker: React.FC = () => {
@@ -41,9 +47,12 @@ export const GifPicker: React.FC = () => {
   const { dispatchFields } = useForm();
 
   // Read existing field values to check if GIF is already selected
-  const existingMp4Url = useFormFields(([fields]) => fields[mp4UrlFieldPath]?.value as string | undefined);
-  const existingPosterUrl = useFormFields(([fields]) => fields[posterUrlFieldPath]?.value as string | undefined);
-  const existingAspectRatio = useFormFields(([fields]) => fields[aspectRatioFieldPath]?.value as string | undefined);
+  const existingMp4Url = useFormFields(
+    ([fields]) => fields[mp4UrlFieldPath]?.value as string | undefined
+  );
+  const existingPosterUrl = useFormFields(
+    ([fields]) => fields[posterUrlFieldPath]?.value as string | undefined
+  );
 
   // Local state
   const [searchTerm, setSearchTerm] = useState("");
@@ -113,13 +122,7 @@ export const GifPicker: React.FC = () => {
       setSearchTerm("");
       setShowSearchMode(false);
     },
-    [
-      mp4UrlFieldPath,
-      webmUrlFieldPath,
-      posterUrlFieldPath,
-      aspectRatioFieldPath,
-      dispatchFields,
-    ]
+    [dispatchFields]
   );
 
   const handleChangeGif = useCallback(() => {
@@ -135,7 +138,7 @@ export const GifPicker: React.FC = () => {
     dispatchFields({ type: "UPDATE", path: aspectRatioFieldPath, value: null });
     setShowSearchMode(false);
     setSelectedGifId(null);
-  }, [mp4UrlFieldPath, webmUrlFieldPath, posterUrlFieldPath, aspectRatioFieldPath, dispatchFields]);
+  }, [dispatchFields]);
 
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
@@ -148,6 +151,7 @@ export const GifPicker: React.FC = () => {
   );
 
   // Debounced auto-search
+  const DEBOUNCE_DELAY_MS = 500;
   useEffect(() => {
     if (!searchTerm || searchTerm.trim().length === 0) {
       setResults([]);
@@ -156,7 +160,7 @@ export const GifPicker: React.FC = () => {
 
     const timeoutId = setTimeout(() => {
       handleSearch();
-    }, 500); // 500ms debounce delay
+    }, DEBOUNCE_DELAY_MS);
 
     return () => {
       clearTimeout(timeoutId);
@@ -201,14 +205,17 @@ export const GifPicker: React.FC = () => {
               }}
             >
               {previewUrl ? (
+                // biome-ignore lint/performance/noImgElement: Payload admin component cannot use Next.js Image
                 <img
-                  src={previewUrl}
                   alt="Selected GIF preview"
+                  height={120}
+                  src={previewUrl}
                   style={{
                     width: "100%",
                     height: "auto",
                     display: "block",
                   }}
+                  width={120}
                 />
               ) : (
                 <div
@@ -229,7 +236,7 @@ export const GifPicker: React.FC = () => {
             </div>
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
               <Button onClick={handleChangeGif}>Change GIF</Button>
-              <Button onClick={handleRemoveGif} buttonStyle="secondary">
+              <Button buttonStyle="secondary" onClick={handleRemoveGif}>
                 Remove GIF
               </Button>
             </div>
@@ -243,7 +250,6 @@ export const GifPicker: React.FC = () => {
           <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
             <div style={{ flex: 1 }}>
               <TextInput
-                value={searchTerm}
                 onChange={(e: string | React.ChangeEvent<HTMLInputElement>) => {
                   if (typeof e === "string") {
                     setSearchTerm(e);
@@ -252,11 +258,12 @@ export const GifPicker: React.FC = () => {
                   }
                 }}
                 onKeyDown={handleKeyPress}
-                placeholder="Search for GIFs..."
                 path="gifSearchTerm"
+                placeholder="Search for GIFs..."
+                value={searchTerm}
               />
             </div>
-            <Button onClick={handleSearch} disabled={loading || !searchTerm}>
+            <Button disabled={loading || !searchTerm} onClick={handleSearch}>
               {loading ? "Searching..." : "Search"}
             </Button>
           </div>
@@ -291,19 +298,9 @@ export const GifPicker: React.FC = () => {
 
                 return (
                   <button
-                    key={result.id}
-                    type="button"
-                    onClick={() => handleSelectGif(result)}
                     className="gif-result-item"
-                    style={{
-                      border: isSelected ? "3px solid #0066ff" : "2px solid #ddd",
-                      borderRadius: "8px",
-                      padding: "4px",
-                      cursor: "pointer",
-                      backgroundColor: isSelected ? "#f0f8ff" : "white",
-                      overflow: "hidden",
-                      transition: "all 0.2s ease",
-                    }}
+                    key={result.id}
+                    onClick={() => handleSelectGif(result)}
                     onMouseEnter={(e) => {
                       if (!isSelected) {
                         e.currentTarget.style.borderColor = "#999";
@@ -314,16 +311,31 @@ export const GifPicker: React.FC = () => {
                         e.currentTarget.style.borderColor = "#ddd";
                       }
                     }}
+                    style={{
+                      border: isSelected
+                        ? "3px solid #0066ff"
+                        : "2px solid #ddd",
+                      borderRadius: "8px",
+                      padding: "4px",
+                      cursor: "pointer",
+                      backgroundColor: isSelected ? "#f0f8ff" : "white",
+                      overflow: "hidden",
+                      transition: "all 0.2s ease",
+                    }}
+                    type="button"
                   >
+                    {/* biome-ignore lint/performance/noImgElement: Payload admin component cannot use Next.js Image */}
                     <img
-                      src={result.media_formats.tinygif.url}
                       alt="GIF preview"
+                      height={result.media_formats.tinygif.dims[1]}
+                      src={result.media_formats.tinygif.url}
                       style={{
                         width: "100%",
                         height: "auto",
                         display: "block",
                         borderRadius: "4px",
                       }}
+                      width={result.media_formats.tinygif.dims[0]}
                     />
                   </button>
                 );

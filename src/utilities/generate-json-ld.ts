@@ -54,6 +54,8 @@ type ArticleDataParams = {
   authors?: Array<{ name: string; username: string }>;
   keywords?: string[];
   wordCount?: number;
+  pathPrefix?: string; // e.g., '/posts', '/notes', '/activities' (defaults to '/posts')
+  url?: string; // Full URL override (takes precedence over pathPrefix)
 };
 
 /**
@@ -82,7 +84,9 @@ type ArticleDataParams = {
  * ```
  */
 export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
-  const articleUrl = `${getServerSideURL()}/posts/${data.slug}`;
+  const pathPrefix = data.pathPrefix || "/posts";
+  const articleUrl =
+    data.url || `${getServerSideURL()}${pathPrefix}/${data.slug}`;
 
   const imageObject = data.imageUrl
     ? {

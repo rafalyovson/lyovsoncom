@@ -3,14 +3,13 @@ import { redirect } from "next/navigation";
 import type { Lyovson } from "@/payload-types";
 import { getClientSideURL } from "./getURL";
 
-export const getMeUser = async (args?: {
-  nullUserRedirect?: string;
-  validUserRedirect?: string;
-}): Promise<{
+export const getMeUser = async (
+  args: { nullUserRedirect?: string; validUserRedirect?: string } = {}
+): Promise<{
   token: string;
   user: Lyovson;
 }> => {
-  const { nullUserRedirect, validUserRedirect } = args || {};
+  const { nullUserRedirect, validUserRedirect } = args;
   const cookieStore = await cookies();
   const token = cookieStore.get("payload-token")?.value;
 

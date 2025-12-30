@@ -2,33 +2,26 @@
 
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { sql } from "drizzle-orm";
-import { varchar } from "drizzle-orm/pg-core";
 import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
 import { resendAdapter } from "@payloadcms/email-resend";
 import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { sql } from "drizzle-orm";
+import { varchar } from "drizzle-orm/pg-core";
 import { buildConfig } from "payload";
 import sharp from "sharp"; // sharp-import
-import { tsvector } from "@/db/custom-types";
-
-import { Books } from "@/collections/Books";
+import { Activities } from "@/collections/Activities";
 import { Contacts } from "@/collections/Contacts";
-import { Links } from "@/collections/Links";
 import { Lyovsons } from "@/collections/Lyovsons";
 import { Media } from "@/collections/Media";
-import { Movies } from "@/collections/Movies";
-import { Music } from "@/collections/Music";
 import { Notes } from "@/collections/Notes";
-import { Persons } from "@/collections/Persons";
-import { Podcasts } from "@/collections/Podcasts";
 import { Posts } from "@/collections/Posts";
 import { Projects } from "@/collections/Projects";
+import { References } from "@/collections/References";
 import { Topics } from "@/collections/Topics";
-import { TvShows } from "@/collections/TvShows";
-import { VideoGames } from "@/collections/VideoGames";
+import { tsvector } from "@/db/custom-types";
 import { defaultLexical } from "@/fields/defaultLexical";
-import { GenerateEmbedding } from "@/jobs/tasks/generate-embedding";
 import { ComputeRecommendations } from "@/jobs/tasks/compute-recommendations";
+import { GenerateEmbedding } from "@/jobs/tasks/generate-embedding";
 import { ProcessPostEmbeddings } from "@/jobs/workflows/process-post-embeddings";
 import { plugins } from "@/plugins";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -135,7 +128,40 @@ export default buildConfig({
                     coalesce(${schema.tables.posts.title}, '') || ' ' ||
                     coalesce(${schema.tables.posts.description}, '') || ' ' ||
                     coalesce(${schema.tables.posts.content_text}, '')
-                  )`,
+                  )`
+              ),
+          },
+        });
+
+        // Add search columns for Notes
+        extendTable({
+          table: schema.tables.notes,
+          columns: {
+            content_text: varchar("content_text"),
+            search_vector: tsvector("search_vector")
+              .notNull()
+              .generatedAlwaysAs(
+                () =>
+                  sql`to_tsvector('english',
+                    coalesce(${schema.tables.notes.title}, '') || ' ' ||
+                    coalesce(${schema.tables.notes.content_text}, '')
+                  )`
+              ),
+          },
+        });
+
+        // Add search columns for Activities
+        extendTable({
+          table: schema.tables.activities,
+          columns: {
+            content_text: varchar("content_text"),
+            search_vector: tsvector("search_vector")
+              .notNull()
+              .generatedAlwaysAs(
+                () =>
+                  sql`to_tsvector('english',
+                    coalesce(${schema.tables.activities.content_text}, '')
+                  )`
               ),
           },
         });
@@ -151,15 +177,9 @@ export default buildConfig({
     Projects,
     Lyovsons,
     Contacts,
-    Books,
-    Movies,
-    TvShows,
-    VideoGames,
-    Music,
-    Podcasts,
-    Persons,
+    References,
+    Activities,
     Notes,
-    Links,
   ],
   jobs: {
     // Register tasks (reusable building blocks)
@@ -172,11 +192,12 @@ export default buildConfig({
     access: {
       run: ({ req }) => {
         // Allow authenticated admins or requests with valid CRON_SECRET
-        const cronSecret = req.headers.get('authorization')?.replace('Bearer ', '')
+        const cronSecret = req.headers
+          .get("authorization")
+          ?.replace("Bearer ", "");
         return Boolean(
-          req.user ||
-          (cronSecret && cronSecret === process.env.CRON_SECRET)
-        )
+          req.user || (cronSecret && cronSecret === process.env.CRON_SECRET)
+        );
       },
     },
   },

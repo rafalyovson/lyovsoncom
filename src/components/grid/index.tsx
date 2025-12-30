@@ -35,10 +35,13 @@ export const Grid = ({ children }: { children: ReactNode }) => {
 };
 
 export { GridCard, GridCardContent } from "./card";
-export { GridCardHero } from "./card/hero";
+export { GridCardActivityFull } from "./card/activity";
+export { GridCardHero, GridCardHeroActivity, GridCardHeroNote } from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
+export { GridCardNoteFull } from "./card/note";
 export { GridCardPostFull } from "./card/post";
+export { GridCardReferences } from "./card/references";
 export { GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
 export { GridCardSubscribe } from "./card/subscribe";

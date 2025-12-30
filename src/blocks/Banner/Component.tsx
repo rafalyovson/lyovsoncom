@@ -1,4 +1,3 @@
-import type React from "react";
 import type { BannerBlock as BannerBlockProps } from "src/payload-types";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
@@ -7,7 +6,7 @@ type Props = {
   className?: string;
 } & BannerBlockProps;
 
-export const BannerBlock = async ({ className, content, style }: Props) => {
+export function BannerBlock({ className, content, style }: Props) {
   const styleClasses = {
     info: "border-glass-border-hover bg-glass-bg",
     error: "border-red-400/50 bg-red-500/10 glass-bg",
@@ -46,4 +45,4 @@ export const BannerBlock = async ({ className, content, style }: Props) => {
       </div>
     </div>
   );
-};
+}
