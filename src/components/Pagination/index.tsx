@@ -147,7 +147,7 @@ export const Pagination = ({
   ];
 
   return (
-    <div className={cn("mx-auto my-12 flex justify-center", className)}>
+    <div className={cn("mx-auto flex justify-center", className)}>
       <GridCard interactive={false}>
         {gridCells.map((cell, index) => {
           const positionClass = cellPositions[index];

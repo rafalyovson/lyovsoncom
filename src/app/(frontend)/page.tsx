@@ -96,16 +96,14 @@ export default async function Page() {
       </Suspense>
 
       {hasMore && (
-        <div className="col-span-full">
-          <Pagination
-            page={1}
-            totalPages={Math.max(
-              posts.totalPages || 1,
-              notes.totalPages || 1,
-              activities.totalPages || 1
-            )}
-          />
-        </div>
+        <Pagination
+          page={1}
+          totalPages={Math.max(
+            posts.totalPages || 1,
+            notes.totalPages || 1,
+            activities.totalPages || 1
+          )}
+        />
       )}
     </>
   );
