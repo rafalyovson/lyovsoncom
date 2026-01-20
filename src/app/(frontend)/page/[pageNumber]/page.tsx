@@ -64,8 +64,27 @@ export default async function Page({ params: paramsPromise }: Args) {
   ];
 
   mixedItems.sort((a, b) => {
-    const dateA = a.data.publishedAt || a.data.updatedAt || "";
-    const dateB = b.data.publishedAt || b.data.updatedAt || "";
+    let dateA: string;
+    let dateB: string;
+
+    if (a.type === "activity") {
+      dateA = a.data.finishedAt || a.data.startedAt || a.data.publishedAt || "";
+    } else if (a.type === "note") {
+      dateA = a.data.createdAt || a.data.publishedAt || "";
+    } else {
+      // post
+      dateA = a.data.createdAt || a.data.publishedAt || "";
+    }
+
+    if (b.type === "activity") {
+      dateB = b.data.finishedAt || b.data.startedAt || b.data.publishedAt || "";
+    } else if (b.type === "note") {
+      dateB = b.data.createdAt || b.data.publishedAt || "";
+    } else {
+      // post
+      dateB = b.data.createdAt || b.data.publishedAt || "";
+    }
+
     return new Date(dateB).getTime() - new Date(dateA).getTime();
   });
 
