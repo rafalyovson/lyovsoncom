@@ -52,7 +52,12 @@ export default async function Page() {
       </Suspense>
 
       {totalPages > 1 && page && (
-        <Pagination page={page} totalPages={totalPages} />
+        <Pagination
+          basePath="/posts/page"
+          firstPagePath="/posts"
+          page={page}
+          totalPages={totalPages}
+        />
       )}
     </>
   );

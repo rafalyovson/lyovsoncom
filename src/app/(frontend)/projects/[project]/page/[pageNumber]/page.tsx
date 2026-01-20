@@ -61,7 +61,12 @@ export default async function Page({ params: paramsPromise }: Args) {
       <div className="container">
         {totalPages > 1 && page && (
           <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination page={page} totalPages={totalPages} />
+            <Pagination
+              basePath={`/projects/${projectSlug}/page`}
+              firstPagePath={`/projects/${projectSlug}`}
+              page={page}
+              totalPages={totalPages}
+            />
           </Suspense>
         )}
       </div>

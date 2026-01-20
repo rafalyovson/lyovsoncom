@@ -45,7 +45,12 @@ export default async function Page({ params: paramsPromise }: Args) {
       </Suspense>
 
       {totalPages > 1 && page && (
-        <Pagination page={page} totalPages={totalPages} />
+        <Pagination
+          basePath="/notes/page"
+          firstPagePath="/notes"
+          page={page}
+          totalPages={totalPages}
+        />
       )}
     </>
   );

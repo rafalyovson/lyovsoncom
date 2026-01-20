@@ -11,7 +11,8 @@ type PaginationProps = {
   className?: string;
   page: number;
   totalPages: number;
-  createHref?: (page: number) => string;
+  basePath?: string;
+  firstPagePath?: string;
 };
 
 const MAX_WINDOW_SIZE = 7;
@@ -47,9 +48,21 @@ const buildWindow = (page: number, totalPages: number): (number | null)[] => {
   return pages;
 };
 
-const defaultHrefBuilder = (page: number) => {
+const buildHref = (
+  page: number,
+  basePath?: string,
+  firstPagePath?: string
+): string => {
   if (page <= 1) {
-    return "/posts";
+    return firstPagePath ?? basePath ?? "/posts";
+  }
+
+  if (basePath) {
+    // If basePath is exactly "/page" or ends with "/page", use it directly
+    if (basePath === "/page" || basePath.endsWith("/page")) {
+      return `${basePath}/${page}`;
+    }
+    return `${basePath}/page/${page}`;
   }
 
   return `/posts/page/${page}`;
@@ -71,7 +84,8 @@ export const Pagination = ({
   className,
   page,
   totalPages,
-  createHref,
+  basePath,
+  firstPagePath,
 }: PaginationProps) => {
   const router = useRouter();
 
@@ -88,8 +102,7 @@ export const Pagination = ({
       return;
     }
 
-    const hrefBuilder = createHref ?? defaultHrefBuilder;
-    router.push(hrefBuilder(target));
+    router.push(buildHref(target, basePath, firstPagePath));
   };
 
   const windowCells = [...windowPages];

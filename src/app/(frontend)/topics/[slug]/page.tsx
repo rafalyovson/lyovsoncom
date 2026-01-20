@@ -69,7 +69,12 @@ export default async function Page({ params: paramsPromise }: PageProps) {
         <CollectionArchive posts={posts} />
       </Suspense>
       {totalPages > 1 && page && (
-        <Pagination page={page} totalPages={totalPages} />
+        <Pagination
+          basePath={`/topics/${slug}/page`}
+          firstPagePath={`/topics/${slug}`}
+          page={page}
+          totalPages={totalPages}
+        />
       )}
     </>
   );

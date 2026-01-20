@@ -1,4 +1,5 @@
 import { cacheLife, cacheTag } from "next/cache";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import {
@@ -9,9 +10,9 @@ import {
 } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import type { Activity, Note, Post } from "@/payload-types";
-import { getLatestActivities } from "@/utilities/get-activity";
-import { getLatestNotes } from "@/utilities/get-note";
-import { getLatestPosts } from "@/utilities/get-post";
+import { getPaginatedActivities } from "@/utilities/get-activity";
+import { getPaginatedNotes } from "@/utilities/get-note";
+import { getPaginatedPosts } from "@/utilities/get-post";
 
 const HOMEPAGE_ITEMS_LIMIT = 12;
 
@@ -20,9 +21,20 @@ type MixedFeedItem =
   | { type: "note"; data: Note }
   | { type: "activity"; data: Activity };
 
-export default async function Page() {
+type Args = {
+  params: Promise<{
+    pageNumber: string;
+  }>;
+};
+
+export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
+
+  const { pageNumber } = await paramsPromise;
+  const sanitizedPageNumber = Number(pageNumber);
+
   cacheTag("homepage");
+  cacheTag(`homepage-page-${pageNumber}`);
   cacheTag("posts");
   cacheTag("notes");
   cacheTag("activities");
@@ -30,12 +42,18 @@ export default async function Page() {
   cacheLife("notes");
   cacheLife("activities");
 
+  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
+    notFound();
+  }
+
+  // Fetch paginated items from each collection
   const [posts, notes, activities] = await Promise.all([
-    getLatestPosts(HOMEPAGE_ITEMS_LIMIT),
-    getLatestNotes(HOMEPAGE_ITEMS_LIMIT),
-    getLatestActivities(HOMEPAGE_ITEMS_LIMIT),
+    getPaginatedPosts(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
+    getPaginatedNotes(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
+    getPaginatedActivities(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
   ]);
 
+  // Merge and sort by date
   const mixedItems: MixedFeedItem[] = [
     ...posts.docs.map((post) => ({ type: "post" as const, data: post })),
     ...notes.docs.map((note) => ({ type: "note" as const, data: note })),
@@ -51,16 +69,22 @@ export default async function Page() {
     return new Date(dateB).getTime() - new Date(dateA).getTime();
   });
 
-  const hasMore =
-    posts.totalPages > 1 || notes.totalPages > 1 || activities.totalPages > 1;
+  const maxTotalPages = Math.max(
+    posts.totalPages || 1,
+    notes.totalPages || 1,
+    activities.totalPages || 1
+  );
+
+  // If requested page is beyond available pages, 404
+  if (sanitizedPageNumber > maxTotalPages) {
+    notFound();
+  }
 
   return (
     <>
       <h1 className="sr-only">
-        Lyóvson.com - Latest Posts, Notes & Activities
+        Lyóvson.com - Latest Posts, Notes & Activities - Page {pageNumber}
       </h1>
-
-      {/* <PWAInstall /> */}
 
       <Suspense fallback={<SkeletonGrid />}>
         {mixedItems.map((item, index) => {
@@ -95,25 +119,36 @@ export default async function Page() {
         })}
       </Suspense>
 
-      {hasMore && (
+      {maxTotalPages > 1 && (
         <Pagination
           basePath="/page"
           firstPagePath="/"
-          page={1}
-          totalPages={Math.max(
-            posts.totalPages || 1,
-            notes.totalPages || 1,
-            activities.totalPages || 1
-          )}
+          page={sanitizedPageNumber}
+          totalPages={maxTotalPages}
         />
       )}
     </>
   );
 }
 
-export function generateMetadata(): Metadata {
+export async function generateMetadata({
+  params: paramsPromise,
+}: Args): Promise<Metadata> {
+  "use cache";
+
+  const { pageNumber } = await paramsPromise;
+  const pageNum = Number(pageNumber);
+
+  cacheTag("homepage");
+  cacheLife("static");
+
+  const isFirstPage = pageNum === 1;
+  const title = isFirstPage
+    ? "Lyóvson.com"
+    : `Lyóvson.com - Page ${pageNumber}`;
+
   return {
-    title: "Lyóvson.com",
+    title,
     description: "Official website of Rafa and Jess Lyóvson",
     keywords: [
       "Rafa Lyóvson",
@@ -128,14 +163,17 @@ export function generateMetadata(): Metadata {
       "blog",
     ],
     alternates: {
-      canonical: "/",
+      canonical: isFirstPage ? "/" : `/page/${pageNumber}`,
+      ...(pageNum > 1 && {
+        prev: pageNum === 2 ? "/" : `/page/${pageNum - 1}`,
+      }),
     },
     openGraph: {
       siteName: "Lyóvson.com",
-      title: "Lyóvson.com",
+      title,
       description: "Official website of Rafa and Jess Lyóvson",
       type: "website",
-      url: "/",
+      url: isFirstPage ? "/" : `/page/${pageNumber}`,
       images: [
         {
           url: "/og-image.png",
@@ -147,7 +185,7 @@ export function generateMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: "Lyóvson.com",
+      title,
       description: "Official website of Rafa and Jess Lyóvson",
       creator: "@lyovson",
       site: "@lyovson",
@@ -159,17 +197,6 @@ export function generateMetadata(): Metadata {
           height: 630,
         },
       ],
-    },
-    other: {
-      "article:author": "Rafa Lyóvson, Jess Lyóvson",
-      "application-name": "Lyóvson.com",
-      "mobile-web-app-capable": "yes",
-      "apple-mobile-web-app-capable": "yes",
-      "apple-mobile-web-app-status-bar-style": "black-translucent",
-      "apple-mobile-web-app-title": "Lyóvson.com",
-      "msapplication-TileColor": "#000000",
-      "msapplication-config": "/browserconfig.xml",
-      "theme-color": "#000000",
     },
   };
 }
