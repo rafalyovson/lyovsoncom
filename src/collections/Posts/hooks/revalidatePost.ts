@@ -82,25 +82,27 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
 
     // Update cache tags - selective invalidation based on publish status to reduce database wake-ups
     if (isNewPublish) {
-      // New publish: full invalidation including feeds for immediate SEO indexing
+      // New publish: full invalidation for immediate SEO indexing
       revalidateTag("posts", { expire: 0 }); // Immediate invalidation
       revalidateTag(`post-${doc.slug}`, { expire: 0 });
       revalidateTag("homepage", { expire: 0 });
       revalidateTag("sitemap", { expire: 0 });
-      revalidateTag("rss", { expire: 0 }); // Invalidate feeds for new content
+      // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags.
+      // Feeds update on natural cache expiry, not on content changes.
+      // This reduces Neon compute by preventing feed readers from waking the DB.
       revalidatePath("/");
       revalidatePath("/posts");
 
       payload.logger.info(
-        `✅ NEW POST published: "${doc.title}" - Full cache invalidation including feeds`
+        `✅ NEW POST published: "${doc.title}" - Full cache invalidation (feeds update on natural expiry)`
       );
     } else {
-      // Edit to published post: use configured cache profiles, skip feed invalidation
+      // Edit to published post: use configured cache profiles
       // This prevents every typo fix from waking the database for all feed readers
       revalidateTag("posts", "posts"); // Use posts profile (30min stale, 1hr revalidate)
       revalidateTag(`post-${doc.slug}`, "posts");
       revalidateTag("homepage", "homepage"); // Use homepage profile (30min stale)
-      // Skip RSS/sitemap invalidation for edits - feeds will update on next natural refresh (6-12hr cache)
+      // Feeds use HTTP caching (6-12hr) and update on natural cache expiry
 
       payload.logger.info(
         `✅ EDITED published post: "${doc.title}" - Cache refreshed (feeds unchanged to reduce DB wake-ups)`
@@ -150,7 +152,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
     revalidateTag(`post-${previousDoc.slug}`, "posts");
     revalidateTag("homepage", "homepage");
     revalidateTag("sitemap", "sitemap");
-    revalidateTag("rss", "rss"); // Update feeds with configured profile
+    // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
     revalidatePath("/");
     revalidatePath("/posts");
 
@@ -199,7 +201,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   revalidateTag(`post-${doc?.slug}`, "posts");
   revalidateTag("homepage", "homepage");
   revalidateTag("sitemap", "sitemap");
-  revalidateTag("rss", "rss"); // Update feeds with configured profile
+  // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
   revalidatePath("/");
   revalidatePath("/posts");
 

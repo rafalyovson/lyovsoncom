@@ -80,9 +80,9 @@ Main collections with relationships:
 - **Projects/Topics** - Content taxonomy and organization
 
 **Collection Hooks:**
-- `generateEmbedding` - Creates pgvector embeddings on save (Posts & Notes)
-- `computeRecommendations` - Generates similar post recommendations (Posts only)
-- `revalidatePost` - Clears Next.js cache (Posts only)
+- `generateEmbeddingForPost` / `generateEmbeddingForNote` / `generateEmbeddingForActivity` - Fire-and-forget embedding generation on publish
+- `computeRecommendationsForPost` - Generates similar post recommendations (Posts only, called after embedding)
+- `revalidatePost` / `revalidateNote` / `revalidateActivity` - Clears Next.js cache on publish/update
 - `populateAuthors` - Hydrates user data
 
 ### Lexical Editor Configuration
@@ -155,7 +155,7 @@ pnpm dev                         # Restart server
 - **React Compiler** enabled - avoid manual `useMemo`/`useCallback`
 - **Sharp** image processing with Vercel Blob storage
 - **Advanced caching** with Next.js 15 cacheLife configuration
-- **Vector search** using pgvector with HNSW indexes for sub-100ms queries
+- **Vector search** using pgvector with VARCHAR storage and runtime casts
 
 ### Critical Patterns
 
@@ -169,62 +169,40 @@ pnpm dev                         # Restart server
 
 This project implements a sophisticated **semantic search and recommendation system** using OpenAI embeddings and PostgreSQL pgvector.
 
-#### Architecture - Jobs Queue Background Processing ✅
+#### Architecture - Fire-and-Forget Hooks ✅
 
-**Production System Verified:** Post #30 test (2025-10-21)
-- Post created: 10:49:35 UTC → Embeddings generated: 10:52:21 UTC (~3 min)
-- Post updated: 11:06:58 UTC → Embeddings re-generated: 11:07:24 UTC (~26 sec)
-- All 15 published posts have embeddings and recommendations
+**Current Implementation:** Event-driven embedding generation via `afterChange` hooks
 
-**Background Processing Workflow:**
+**Generation Workflow:**
 
-1. User publishes/updates post in Payload admin
-2. `afterChange` hook queues job: `req.payload.jobs.queue({ workflow: 'processPostEmbeddings', input: { postId } })`
-3. Job stored in `payload_jobs` table (queue: "default")
-4. Vercel Cron triggers `/api/payload-jobs/run?queue=default` hourly
-5. Workflow executes sequentially:
-   - **Step 1:** Generate embedding (1536D via OpenAI text-embedding-3-small)
-   - **Step 2:** Compute 3 similar posts using cosine similarity
-6. Results stored in post, job deleted from queue
+1. User publishes/updates post/note/activity in Payload admin
+2. `afterChange` hook fires immediately (non-blocking)
+3. Helper function called asynchronously (fire-and-forget):
+   - **Posts:** `generateEmbeddingForPost()` → generates embedding → computes recommendations
+   - **Notes:** `generateEmbeddingForNote()` → generates embedding only
+   - **Activities:** `generateEmbeddingForActivity()` → generates embedding only
+4. Embedding generated via OpenAI API (text-embedding-3-small, 1536 dimensions)
+5. Results stored in document fields, errors logged but don't block publish response
 
-**Job Definitions:**
-
-**Task: generateEmbedding** ([src/jobs/tasks/generate-embedding.ts](src/jobs/tasks/generate-embedding.ts))
-- Generic task for Posts & Notes collections
-- Validates content, extracts text via `extractLexicalText()`
-- Generates OpenAI embedding (1536 dimensions)
-- Skips if content hash unchanged (optimization)
-- Stores: `embedding_vector`, `embedding_dimensions`, `embedding_model`, `embedding_generated_at`, `embedding_text_hash`
-- Retry logic: Up to 2 retries on failure
-
-**Task: computeRecommendations** ([src/jobs/tasks/compute-recommendations.ts](src/jobs/tasks/compute-recommendations.ts))
-- Posts-only task for similarity-based recommendations
-- Queries 3 most similar posts via cosine distance
-- Uses `getSimilarPosts()` utility with HNSW index
-- Stores: `recommended_post_ids` (array in similarity order)
-- Retry logic: Up to 2 retries on failure
-
-**Workflow: processPostEmbeddings** ([src/jobs/workflows/process-post-embeddings.ts](src/jobs/workflows/process-post-embeddings.ts))
-- Orchestrates sequential execution: embedding → recommendations
-- Smart skip: If embedding unchanged, skips recommendations
-- Automatic retry from failure point
+**Helper Functions** ([src/utilities/generate-embedding-helpers.ts](src/utilities/generate-embedding-helpers.ts)):
+- Collection-specific wrappers that handle validation, text extraction, and storage
+- Content hash optimization: Skips regeneration if `embedding_text_hash` unchanged
+- Context flags prevent infinite loops: `skipEmbeddingGeneration`, `skipRecommendationCompute`, `skipRevalidation`
+- Posts compute recommendations after embedding is saved
 
 **Collection Hooks:**
-- [Posts](src/collections/Posts/index.ts#L370-L394): Queues workflow on publish/update
-- [Notes](src/collections/Notes/index.ts#L268-L293): Queues task on publish/update (no recommendations)
+- [Posts](src/collections/Posts/index.ts#L336-L352): Fire-and-forget `generateEmbeddingForPost()` on publish/update
+- [Notes](src/collections/Notes/index.ts#L274-290): Fire-and-forget `generateEmbeddingForNote()` on publish/update
+- [Activities](src/collections/Activities/index.ts#L378-392): Fire-and-forget `generateEmbeddingForActivity()` on publish/update
 
-**Configuration:**
-- **Vercel Cron:** Hourly ([vercel.json](vercel.json): `"0 * * * *"`)
-- **Queue:** "default" queue for all jobs
-- **No autoRun:** Incompatible with Vercel serverless
-- **Access Control:** Requires `CRON_SECRET` environment variable
-- **Endpoint:** `GET /api/payload-jobs/run?queue=default`
+**Note:** Jobs infrastructure exists (`src/jobs/tasks/`, `src/jobs/workflows/`) but is **not actively used**. The system uses direct function calls for immediate processing.
 
 **Similarity Search** ([get-similar-posts.ts](src/utilities/get-similar-posts.ts))
 - Direct database query using pgvector's `<=>` cosine distance operator
 - Critical: Requires `::vector(1536)` casting since embeddings stored as VARCHAR
-- Uses HNSW index for sub-100ms performance (~430x faster than sequential scan)
+- Sequential scan performance: ~2.7ms for current scale (14 posts)
 - Returns post IDs in order of similarity
+- HNSW index not present but not needed at current scale
 
 #### Database Setup
 
@@ -233,16 +211,19 @@ This project implements a sophisticated **semantic search and recommendation sys
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-**HNSW Index for Performance:**
+**Storage Format:**
+- Embeddings stored as **VARCHAR** (not native `vector` type) due to Drizzle ORM limitations
+- Format: JSON array string `"[0.123, -0.456, ...]"`
+- Cast to vector type at query time: `embedding_vector::vector(1536)`
+- No HNSW index currently - sequential scan is acceptable at current scale (~2.7ms for 14 posts)
+
+**Future Optimization:**
+If scale grows to hundreds/thousands of posts, HNSW expression index could be added:
 ```sql
-CREATE INDEX IF NOT EXISTS posts_embedding_vector_cosine_idx
+CREATE INDEX posts_embedding_hnsw_idx 
 ON posts USING hnsw ((embedding_vector::vector(1536)) vector_cosine_ops);
 ```
-
-**Why VARCHAR Storage:**
-- Drizzle ORM doesn't have native vector type support
-- Stored as JSON array string: `"[0.123, -0.456, ...]"`
-- Cast to vector type at query time: `embedding_vector::vector(1536)`
+This would require adding via `afterSchemaInit` hook in Payload config to prevent schema push from dropping it.
 
 #### Hook Context Flags
 
@@ -293,9 +274,10 @@ pnpm tsx src/utilities/test-similar-posts.ts
 
 #### Performance
 
-- **HNSW Index**: 1.5ms average query time
-- **Sequential Scan**: 650ms average query time
-- **Improvement**: ~430x faster with index
+- **Current Scale**: 14 posts, 2 notes, 10 activities (all with embeddings)
+- **Query Time**: ~2.7ms via sequential scan (acceptable at current scale)
+- **Coverage**: 100% - all published content has embeddings
+- **Future**: HNSW index could be added if scale grows significantly
 
 #### Notes Collection
 
@@ -336,6 +318,61 @@ The database is NOT in the default Neon organization. Follow this workflow:
    ```
 
 **Important:** Always use `org_id` filter when listing projects, as the default organization is different from where the database actually lives.
+
+### SEO Architecture
+
+This project implements comprehensive SEO features with aggressive caching to minimize Neon database compute costs.
+
+#### Sitemap Generation
+
+**File:** `src/app/sitemap.ts`
+
+- Uses Next.js 15 `MetadataRoute.Sitemap` API
+- Caching: `"use cache"` + `cacheTag("sitemap")` + `cacheLife("sitemap")`
+- Cache profile: 4h stale, 8h revalidate, 48h expire
+- Event-driven invalidation: Collection hooks call `revalidateTag("sitemap")` on publish
+- Queries database only on cache miss
+- Includes: Posts, Notes, Activities, Projects, Topics, Author pages, utility pages
+
+#### RSS/Atom/JSON Feeds
+
+**Files:**
+- `src/app/feed.xml/route.ts` (RSS 2.0)
+- `src/app/atom.xml/route.ts` (Atom 1.0)
+- `src/app/feed.json/route.ts` (JSON Feed 1.1)
+
+- HTTP Cache-Control: `max-age=21600, s-maxage=43200` (6-12 hours)
+- CDN caching: Feeds cached at edge, not invalidated on content changes
+- Design goal: Minimize database wake-ups from feed readers
+- New content appears in feeds within 6-12 hours (natural cache expiry)
+- Note: `revalidateTag("rss")` calls in hooks are no-ops (API routes don't support cache tags)
+
+#### JSON-LD Structured Data
+
+**Files:**
+- `src/utilities/generate-json-ld.ts` - Centralized schema generators
+- `src/components/JsonLd.tsx` - Rendering component
+
+**Schema Types:**
+- WebSite (root layout with SearchAction)
+- Article (posts, notes, activities)
+- Person (author profiles)
+- Organization (publisher info)
+- BreadcrumbList (navigation)
+- CollectionPage (listing pages)
+
+**Pattern:** Each page generates its own schemas using centralized utility functions for consistency.
+
+#### Cache Strategy Summary
+
+| Feature | Cache Method | Invalidation | Goal |
+|---------|-------------|--------------|------|
+| Sitemap | Next.js cache tags | Event-driven on publish | Immediate SEO indexing |
+| Feeds | HTTP Cache-Control | Natural expiry (6-12hr) | Minimize DB wake-ups |
+| Pages | ISR + cache tags | Event-driven on publish | Fast page loads |
+| JSON-LD | Generated at render | N/A (no caching) | Always fresh |
+
+**Design Philosophy:** Aggressive caching with event-driven invalidation only for critical paths (sitemap, pages). Feeds rely on natural cache expiry to prevent feed readers from waking the database.
 
 ### Environment Variables
 

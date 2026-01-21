@@ -30,7 +30,7 @@ This site serves as both:
 
 ### **AI & Search**
 
-- **Vector Embeddings**: pgvector 0.8.0 with HNSW indexes
+- **Vector Embeddings**: pgvector 0.8.0 (VARCHAR storage with runtime casts)
 - **Semantic Search**: Powered by text-embedding models
 - **Content Discovery**: AI-driven connections between posts and notes
 
@@ -140,7 +140,7 @@ pnpm dev
 - Configure Neon Postgres connection
 - Run Payload CMS migrations
 - Set up pgvector extension
-- Initialize HNSW indexes
+- Embeddings auto-generate on publish (no manual setup needed)
 
 ### **Content Management**
 
@@ -154,7 +154,7 @@ pnpm dev
 ### **Current Capacity**
 
 - **Content**: Optimized for thousands of posts and notes
-- **Performance**: Sub-100ms semantic search queries
+- **Performance**: Fast semantic search queries (~2.7ms at current scale)
 - **Storage**: Efficient vector storage with Neon Postgres
 - **Costs**: Minimal overhead with serverless architecture
 

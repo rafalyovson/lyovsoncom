@@ -32,25 +32,27 @@ export const revalidateNote: CollectionAfterChangeHook<Note> = async ({
 
     // Update cache tags - selective invalidation based on publish status
     if (isNewPublish) {
-      // New publish: full invalidation including feeds for immediate SEO indexing
+      // New publish: full invalidation for immediate SEO indexing
       revalidateTag("notes", { expire: 0 }); // Immediate invalidation
       revalidateTag(`note-${doc.slug}`, { expire: 0 });
       revalidateTag("homepage", { expire: 0 });
       revalidateTag("sitemap", { expire: 0 });
-      revalidateTag("rss", { expire: 0 }); // Invalidate feeds for new content
+      // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags.
+      // Feeds update on natural cache expiry, not on content changes.
+      // This reduces Neon compute by preventing feed readers from waking the DB.
       revalidatePath("/");
       revalidatePath("/notes");
 
       payload.logger.info(
-        `✅ NEW NOTE published: "${doc.title || doc.slug}" - Full cache invalidation including feeds`
+        `✅ NEW NOTE published: "${doc.title || doc.slug}" - Full cache invalidation (feeds update on natural expiry)`
       );
     } else {
-      // Edit to published note: use configured cache profiles, skip feed invalidation
+      // Edit to published note: use configured cache profiles
       // This prevents every typo fix from waking the database for all feed readers
       revalidateTag("notes", "notes"); // Use notes profile (30min stale, 1hr revalidate)
       revalidateTag(`note-${doc.slug}`, "notes");
       revalidateTag("homepage", "homepage"); // Use homepage profile (30min stale)
-      // Skip RSS/sitemap invalidation for edits - feeds will update on next natural refresh
+      // Feeds use HTTP caching (6-12hr) and update on natural cache expiry
 
       payload.logger.info(
         `✅ EDITED published note: "${doc.title || doc.slug}" - Cache refreshed (feeds unchanged to reduce DB wake-ups)`
@@ -71,7 +73,7 @@ export const revalidateNote: CollectionAfterChangeHook<Note> = async ({
     revalidateTag(`note-${previousDoc.slug}`, "notes");
     revalidateTag("homepage", "homepage");
     revalidateTag("sitemap", "sitemap");
-    revalidateTag("rss", "rss"); // Update feeds with configured profile
+    // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
     revalidatePath("/");
     revalidatePath("/notes");
   }
@@ -92,7 +94,7 @@ export const revalidateNoteDelete: CollectionAfterDeleteHook<Note> = async ({
   revalidateTag(`note-${doc?.slug}`, "notes");
   revalidateTag("homepage", "homepage");
   revalidateTag("sitemap", "sitemap");
-  revalidateTag("rss", "rss"); // Update feeds with configured profile
+  // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
   revalidatePath("/");
   revalidatePath("/notes");
 

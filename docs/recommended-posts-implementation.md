@@ -12,7 +12,7 @@ Transform the manual `relatedPosts` system into an intelligent, embedding-based 
 
 ### Current State
 - ✅ Embeddings: OpenAI text-embedding-3-small (1536D) with automatic generation
-- ✅ Storage: Vercel Postgres with pgvector + HNSW indexes
+- ✅ Storage: Vercel Postgres with pgvector (VARCHAR, runtime casts)
 - ✅ UI: `GridCardRelatedPosts` component displays 3 posts in grid
 - ❌ Manual: `relatedPosts` relationship field requires curation
 
@@ -32,7 +32,7 @@ Transform the manual `relatedPosts` system into an intelligent, embedding-based 
 - Drizzle has native `cosineDistance` function (since v0.31.0)
 - Import from `'drizzle-orm'` (not `'drizzle-orm/pg-core'`)
 - Access via `payload.db.drizzle` and `payload.db.tables.posts`
-- HNSW indexes already configured and working
+- Embeddings stored as VARCHAR with runtime `::vector(1536)` casts
 
 **Payload CMS Database Access**:
 ```typescript
@@ -46,10 +46,11 @@ payload.db.tables.posts
 ```
 
 **Performance Characteristics**:
-- HNSW index: O(log n) complexity
-- Expected query time: < 50ms for 1000s of posts
+- Sequential scan: ~2.7ms for current scale (14 posts)
+- Performance acceptable without HNSW at current scale
 - Cache lifetime: 30-60 min via Next.js "use cache"
 - Invalidation: Automatic via existing hooks
+- HNSW could be added via expression index if needed for growth
 
 ---
 
