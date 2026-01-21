@@ -6,6 +6,10 @@ import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generateEmbeddingForActivity } from "@/utilities/generate-embedding-helpers";
 import { populateContentTextHook } from "./hooks/populateContentText";
+import {
+  revalidateActivity,
+  revalidateActivityDelete,
+} from "./hooks/revalidateActivity";
 
 export const Activities: CollectionConfig = {
   slug: "activities",
@@ -315,10 +319,7 @@ export const Activities: CollectionConfig = {
   hooks: {
     beforeChange: [populateContentTextHook],
     afterChange: [
-      ({ doc, req, operation, previousDoc }) => {
-        req.payload.logger.info(`Revalidating activity: ${doc.id}`);
-        // TODO: Add revalidation logic for activities when we have activity pages
-      },
+      revalidateActivity, // Cache revalidation for activities
       // Regenerate slug when reference changes
       async ({ doc, req, operation, previousDoc }) => {
         if (operation === "update") {
@@ -390,6 +391,7 @@ export const Activities: CollectionConfig = {
         }
       },
     ],
+    afterDelete: [revalidateActivityDelete],
   },
   versions: {
     drafts: {

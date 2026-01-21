@@ -8,6 +8,10 @@ import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
 import { populateContentTextHook } from "./hooks/populateContentText";
+import {
+  revalidateNote,
+  revalidateNoteDelete,
+} from "./hooks/revalidateNote";
 
 export const Notes: CollectionConfig = {
   slug: "notes",
@@ -268,10 +272,7 @@ export const Notes: CollectionConfig = {
   hooks: {
     beforeChange: [populateContentTextHook],
     afterChange: [
-      async ({ doc, req }) => {
-        req.payload.logger.info(`Revalidating note: ${doc.slug}`);
-        // TODO: Add revalidation logic for notes when we have note pages
-      },
+      revalidateNote, // Cache revalidation for notes
       // Generate embeddings inline (fire-and-forget)
       async ({ doc, req, operation }) => {
         // Only for create/update of published notes
@@ -288,6 +289,7 @@ export const Notes: CollectionConfig = {
         }
       },
     ],
+    afterDelete: [revalidateNoteDelete],
   },
   versions: {
     drafts: {
