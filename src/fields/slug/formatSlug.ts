@@ -9,17 +9,19 @@ export const formatSlug = (val: string): string =>
 export const formatSlugHook =
   (fallback: string): FieldHook =>
   ({ data, operation, originalDoc, value }) => {
-    if (typeof value === "string") {
+    if (typeof value === "string" && value.length > 0) {
       return formatSlug(value);
     }
 
     if (operation === "create" || !data?.slug) {
-      const fallbackData = data?.[fallback] || data?.[fallback];
+      const fallbackData = data?.[fallback];
 
-      if (fallbackData && typeof fallbackData === "string") {
+      // Explicitly check for non-empty string (empty string is falsy but we need to handle it)
+      if (fallbackData && typeof fallbackData === "string" && fallbackData.length > 0) {
         return formatSlug(fallbackData);
       }
     }
 
-    return value;
+    // Return existing value or undefined (don't return null string)
+    return value || undefined;
   };

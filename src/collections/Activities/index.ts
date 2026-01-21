@@ -202,17 +202,28 @@ export const Activities: CollectionConfig = {
 
               // Fetch reference title if reference is provided
               if (data?.reference) {
+                // Handle reference as number (ID), string (ID), or object (populated)
                 const referenceId =
-                  typeof data.reference === "string"
+                  typeof data.reference === "number"
                     ? data.reference
-                    : data.reference?.id;
+                    : typeof data.reference === "string"
+                      ? data.reference
+                      : typeof data.reference === "object" && data.reference !== null && "id" in data.reference
+                        ? data.reference.id
+                        : null;
 
                 if (referenceId) {
-                  const reference = await req.payload.findByID({
-                    collection: "references",
-                    id: referenceId,
-                  });
-                  referenceTitle = reference?.title || "";
+                  try {
+                    const reference = await req.payload.findByID({
+                      collection: "references",
+                      id: referenceId,
+                    });
+                    referenceTitle = reference?.title || "";
+                  } catch (error) {
+                    req.payload.logger.error(
+                      `Failed to fetch reference ${referenceId} for activity slug: ${error instanceof Error ? error.message : String(error)}`
+                    );
+                  }
                 }
               }
 
@@ -304,9 +315,64 @@ export const Activities: CollectionConfig = {
   hooks: {
     beforeChange: [populateContentTextHook],
     afterChange: [
-      ({ doc, req }) => {
+      ({ doc, req, operation, previousDoc }) => {
         req.payload.logger.info(`Revalidating activity: ${doc.id}`);
         // TODO: Add revalidation logic for activities when we have activity pages
+      },
+      // Regenerate slug when reference changes
+      async ({ doc, req, operation, previousDoc }) => {
+        if (operation === "update") {
+          const referenceChanged =
+            previousDoc &&
+            typeof previousDoc === "object" &&
+            "reference" in previousDoc &&
+            previousDoc.reference !== doc.reference;
+
+          if (referenceChanged) {
+            try {
+              // Get the reference ID
+              const referenceId =
+                typeof doc.reference === "number"
+                  ? doc.reference
+                  : typeof doc.reference === "string"
+                    ? doc.reference
+                    : typeof doc.reference === "object" && doc.reference !== null && "id" in doc.reference
+                      ? doc.reference.id
+                      : null;
+
+              if (referenceId) {
+                const reference = await req.payload.findByID({
+                  collection: "references",
+                  id: referenceId,
+                });
+
+                if (reference?.title) {
+                  const newSlugSource = reference.title;
+                  const { formatSlug } = await import("@/fields/slug/formatSlug");
+                  const newSlug = formatSlug(newSlugSource);
+
+                  // Update the activity with new slug
+                  await req.payload.update({
+                    collection: "activities",
+                    id: doc.id,
+                    data: {
+                      slugSource: newSlugSource,
+                      slug: newSlug,
+                    },
+                  });
+
+                  req.payload.logger.info(
+                    `Regenerated slug for activity ${doc.id}: ${newSlug}`
+                  );
+                }
+              }
+            } catch (error) {
+              req.payload.logger.error(
+                `Failed to regenerate slug for activity ${doc.id}: ${error instanceof Error ? error.message : String(error)}`
+              );
+            }
+          }
+        }
       },
       // Generate embeddings inline (fire-and-forget)
       ({ doc, req, operation }) => {

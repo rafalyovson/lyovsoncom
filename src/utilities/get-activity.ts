@@ -39,7 +39,7 @@ export async function getLatestActivities(
     depth: 2,
     limit,
     overrideAccess: true,
-    sort: "-publishedAt",
+    sort: "-finishedAt",
   });
 
   return {
@@ -64,7 +64,7 @@ export async function getPaginatedActivities(
     limit,
     page: pageNumber,
     overrideAccess: true,
-    sort: "-publishedAt",
+    sort: "-finishedAt",
   });
 
   return {

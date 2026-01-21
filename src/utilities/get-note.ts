@@ -37,7 +37,7 @@ export async function getLatestNotes(limit = 12): Promise<PaginatedDocs<Note>> {
     depth: 2,
     limit,
     overrideAccess: false,
-    sort: "-publishedAt",
+    sort: "-createdAt",
   });
 
   return {
@@ -62,7 +62,7 @@ export async function getPaginatedNotes(
     limit,
     page: pageNumber,
     overrideAccess: false,
-    sort: "-publishedAt",
+    sort: "-createdAt",
   });
 
   return {

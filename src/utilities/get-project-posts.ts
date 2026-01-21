@@ -49,7 +49,7 @@ export async function getProjectPosts(
         },
       ],
     },
-    sort: "-publishedAt",
+    sort: "-createdAt",
     overrideAccess: true,
   });
 
@@ -108,7 +108,7 @@ export async function getPaginatedProjectPosts(
         },
       ],
     },
-    sort: "-publishedAt",
+    sort: "-createdAt",
     overrideAccess: true,
   });
 
