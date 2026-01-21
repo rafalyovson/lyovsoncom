@@ -69,7 +69,7 @@ export async function getLatestPosts(limit = 12): Promise<PaginatedDocs<Post>> {
     collection: "posts",
     depth: 2,
     limit,
-    sort: "-createdAt",
+    sort: "-publishedAt",
     where: {
       _status: {
         equals: "published",
@@ -98,7 +98,7 @@ export async function getPaginatedPosts(
     depth: 2,
     limit,
     page: pageNumber,
-    sort: "-createdAt",
+    sort: "-publishedAt",
     where: {
       _status: {
         equals: "published",

@@ -49,7 +49,7 @@ export async function getTopicPosts(
         },
       ],
     },
-    sort: "-createdAt",
+    sort: "-publishedAt",
     overrideAccess: true,
   });
 

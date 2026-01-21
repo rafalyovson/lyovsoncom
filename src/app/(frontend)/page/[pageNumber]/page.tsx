@@ -70,19 +70,21 @@ export default async function Page({ params: paramsPromise }: Args) {
     if (a.type === "activity") {
       dateA = a.data.finishedAt || a.data.startedAt || a.data.publishedAt || "";
     } else if (a.type === "note") {
-      dateA = a.data.createdAt || a.data.publishedAt || "";
+      // note - use publishedAt first (when it was published), fallback to createdAt
+      dateA = a.data.publishedAt || a.data.createdAt || "";
     } else {
-      // post
-      dateA = a.data.createdAt || a.data.publishedAt || "";
+      // post - use publishedAt first (when it was published), fallback to createdAt
+      dateA = a.data.publishedAt || a.data.createdAt || "";
     }
 
     if (b.type === "activity") {
       dateB = b.data.finishedAt || b.data.startedAt || b.data.publishedAt || "";
     } else if (b.type === "note") {
-      dateB = b.data.createdAt || b.data.publishedAt || "";
+      // note - use publishedAt first (when it was published), fallback to createdAt
+      dateB = b.data.publishedAt || b.data.createdAt || "";
     } else {
-      // post
-      dateB = b.data.createdAt || b.data.publishedAt || "";
+      // post - use publishedAt first (when it was published), fallback to createdAt
+      dateB = b.data.publishedAt || b.data.createdAt || "";
     }
 
     return new Date(dateB).getTime() - new Date(dateA).getTime();
