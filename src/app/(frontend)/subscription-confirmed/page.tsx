@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { GridCardSubscribeConfirmed } from "@/components/grid";
 
+export const dynamic = "force-static";
+
 export default async function SubscriptionConfirmed() {
   "use cache";
   await Promise.resolve();

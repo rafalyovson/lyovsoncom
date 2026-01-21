@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 
+export const dynamic = "force-static";
+
 export default async function PrivacyPolicy() {
   "use cache";
   await Promise.resolve();

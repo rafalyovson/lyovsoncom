@@ -111,30 +111,40 @@ export const GridCardPostFull = ({
           "col-start-3 col-end-4 row-start-1 row-end-2 flex flex-col items-center justify-end gap-2"
         }
       >
-        {topics?.map((topic, index) => {
-          if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
-            return null;
-          }
-          return (
-            <Link
-              aria-label={`View posts about ${topic.name}`}
-              className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
-              href={{ pathname: `/topics/${topic.slug}` }}
-              key={topic.id}
-            >
-              <Badge
-                className="glass-badge glass-text w-full shadow-md"
-                style={{
-                  backgroundColor: topic.color || "var(--glass-bg)",
-                  color: "var(--glass-text)",
-                }}
-                variant="default"
+        {topics
+          ?.filter((topic, index, self) => {
+            // Deduplicate topics by ID
+            if (typeof topic !== "object" || !topic?.id) {
+              return false;
+            }
+            return index === self.findIndex((t) => 
+              typeof t === "object" && t?.id === topic.id
+            );
+          })
+          .map((topic, index) => {
+            if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
+              return null;
+            }
+            return (
+              <Link
+                aria-label={`View posts about ${topic.name}`}
+                className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
+                href={{ pathname: `/topics/${topic.slug}` }}
+                key={topic.id}
               >
-                {topic.name}
-              </Badge>
-            </Link>
-          );
-        })}
+                <Badge
+                  className="glass-badge glass-text w-full shadow-md"
+                  style={{
+                    backgroundColor: topic.color || "var(--glass-bg)",
+                    color: "var(--glass-text)",
+                  }}
+                  variant="default"
+                >
+                  {topic.name}
+                </Badge>
+              </Link>
+            );
+          })}
       </GridCardSection>
 
       <GridCardSection
@@ -142,24 +152,34 @@ export const GridCardPostFull = ({
           "col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2"
         }
       >
-        {populatedAuthors?.map((author, index) => {
-          if (typeof author !== "object") {
-            return null;
-          }
-          return (
-            <Link
-              aria-label={`View ${author.name}'s profile`}
-              className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
-              href={{ pathname: `/${author.username}` }}
-              key={author.id}
-            >
-              <PenTool aria-hidden="true" className="h-5 w-5" />
-              <span className="font-medium text-xs">
-                {author.name?.replace(" Lyovson", "")}
-              </span>
-            </Link>
-          );
-        })}
+        {populatedAuthors
+          ?.filter((author, index, self) => {
+            // Deduplicate authors by ID
+            if (typeof author !== "object" || !author?.id) {
+              return false;
+            }
+            return index === self.findIndex((a) => 
+              typeof a === "object" && a?.id === author.id
+            );
+          })
+          .map((author, index) => {
+            if (typeof author !== "object") {
+              return null;
+            }
+            return (
+              <Link
+                aria-label={`View ${author.name}'s profile`}
+                className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
+                href={{ pathname: `/${author.username}` }}
+                key={author.id}
+              >
+                <PenTool aria-hidden="true" className="h-5 w-5" />
+                <span className="font-medium text-xs">
+                  {author.name?.replace(" Lyovson", "")}
+                </span>
+              </Link>
+            );
+          })}
 
         <div className="glass-text-secondary flex items-center gap-2 text-xs">
           <Calendar aria-hidden="true" className="h-5 w-5" />

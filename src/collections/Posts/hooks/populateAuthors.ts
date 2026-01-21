@@ -12,10 +12,20 @@ export const populateAuthors: CollectionAfterReadHook = async ({
 }) => {
   if (doc?.authors) {
     const authorDocs: Lyovson[] = [];
+    const processedIds = new Set<string | number>();
 
     for (const author of doc.authors) {
+      const authorId = typeof author === "object" ? author?.id : author;
+      
+      // Skip if we've already processed this author ID
+      if (!authorId || processedIds.has(authorId)) {
+        continue;
+      }
+      
+      processedIds.add(authorId);
+
       const authorDoc = await payload.findByID({
-        id: typeof author === "object" ? author?.id : author,
+        id: authorId,
         collection: "lyovsons",
         depth: 0,
         req,

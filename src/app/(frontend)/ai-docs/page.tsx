@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { getServerSideURL } from "@/utilities/getURL";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title: "AI & Bot Access Documentation | Lyóvson.com",
   description:

@@ -140,34 +140,34 @@ const nextConfig: NextConfig = {
   // Enable persistent caching for the turbopack dev server and build.
   cacheLife: {
     static: {
-      stale: 7200, // 2 hours stale (was 30 minutes)
-      revalidate: 14_400, // 4 hours revalidate (was 1 hour)
-      expire: 86_400, // 24 hours max
+      stale: 86_400, // 24 hours stale (was 2h) - rarely-changing taxonomy data
+      revalidate: 172_800, // 48 hours revalidate (was 4h)
+      expire: 604_800, // 7 days max (was 24h)
     },
     homepage: {
-      stale: 1800, // 30 minutes stale
-      revalidate: 3600, // 1 hour revalidate
-      expire: 7200, // 2 hours max
+      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate (was 1h)
+      expire: 86_400, // 24 hours max (was 2h)
     },
     posts: {
-      stale: 1800, // 30 minutes stale (was 5 minutes)
-      revalidate: 3600, // 1 hour revalidate (was 10 minutes)
-      expire: 7200, // 2 hours max (was 1 hour)
+      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate (was 1h)
+      expire: 86_400, // 24 hours max (was 2h)
     },
     notes: {
-      stale: 1800, // 30 minutes stale
-      revalidate: 3600, // 1 hour revalidate
-      expire: 7200, // 2 hours max
+      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate (was 1h)
+      expire: 86_400, // 24 hours max (was 2h)
     },
     activities: {
-      stale: 1800, // 30 minutes stale
-      revalidate: 3600, // 1 hour revalidate
-      expire: 7200, // 2 hours max
+      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate (was 1h)
+      expire: 86_400, // 24 hours max (was 2h)
     },
     "grid-cards": {
-      stale: 1800, // 30 minutes stale (was 10 minutes)
-      revalidate: 3600, // 1 hour revalidate (was 20 minutes)
-      expire: 7200, // 2 hours max (was 1 hour)
+      stale: 3600, // 1 hour stale (was 30min) - event-driven revalidation makes longer safe
+      revalidate: 7200, // 2 hours revalidate (was 1h)
+      expire: 86_400, // 24 hours max (was 2h)
     },
     "user-session": {
       stale: 60, // 1 minute stale

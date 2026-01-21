@@ -23,6 +23,8 @@ type Args = {
   }>;
 };
 
+export const dynamicParams = false;
+
 const activityTypeLabels: Record<string, string> = {
   read: "Read",
   watch: "Watched",

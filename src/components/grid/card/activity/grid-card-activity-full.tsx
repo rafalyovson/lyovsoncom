@@ -147,24 +147,34 @@ export const GridCardActivityFull = ({
       >
         {activity.participants && activity.participants.length > 0 && (
           <>
-            {activity.participants.map((participant, index) => {
-              if (typeof participant !== "object" || !participant?.username) {
-                return null;
-              }
-              return (
-                <Link
-                  aria-label={`View ${participant.name}'s profile`}
-                  className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
-                  href={{ pathname: `/${participant.username}` }}
-                  key={participant.id}
-                >
-                  <PenTool aria-hidden="true" className="h-5 w-5" />
-                  <span className="font-medium text-xs">
-                    {participant.name?.replace(" Lyovson", "")}
-                  </span>
-                </Link>
-              );
-            })}
+            {activity.participants
+              .filter((participant, index, self) => {
+                // Deduplicate participants by ID
+                if (typeof participant !== "object" || !participant?.id) {
+                  return false;
+                }
+                return index === self.findIndex((p) => 
+                  typeof p === "object" && p?.id === participant.id
+                );
+              })
+              .map((participant, index) => {
+                if (typeof participant !== "object" || !participant?.username) {
+                  return null;
+                }
+                return (
+                  <Link
+                    aria-label={`View ${participant.name}'s profile`}
+                    className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
+                    href={{ pathname: `/${participant.username}` }}
+                    key={participant.id}
+                  >
+                    <PenTool aria-hidden="true" className="h-5 w-5" />
+                    <span className="font-medium text-xs">
+                      {participant.name?.replace(" Lyovson", "")}
+                    </span>
+                  </Link>
+                );
+              })}
           </>
         )}
 

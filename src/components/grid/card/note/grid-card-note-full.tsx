@@ -163,30 +163,40 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
           "col-start-3 col-end-4 row-start-3 row-end-4 flex flex-col items-center justify-end gap-2"
         }
       >
-        {topics?.map((topic, index) => {
-          if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
-            return null;
-          }
-          return (
-            <Link
-              aria-label={`View notes about ${topic.name}`}
-              className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
-              href={{ pathname: `/topics/${topic.slug}` }}
-              key={topic.id}
-            >
-              <Badge
-                className="glass-badge glass-text w-full shadow-md"
-                style={{
-                  backgroundColor: topic.color || "var(--glass-bg)",
-                  color: "var(--glass-text)",
-                }}
-                variant="default"
+        {topics
+          ?.filter((topic, index, self) => {
+            // Deduplicate topics by ID
+            if (typeof topic !== "object" || !topic?.id) {
+              return false;
+            }
+            return index === self.findIndex((t) => 
+              typeof t === "object" && t?.id === topic.id
+            );
+          })
+          .map((topic, index) => {
+            if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
+              return null;
+            }
+            return (
+              <Link
+                aria-label={`View notes about ${topic.name}`}
+                className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
+                href={{ pathname: `/topics/${topic.slug}` }}
+                key={topic.id}
               >
-                {topic.name}
-              </Badge>
-            </Link>
-          );
-        })}
+                <Badge
+                  className="glass-badge glass-text w-full shadow-md"
+                  style={{
+                    backgroundColor: topic.color || "var(--glass-bg)",
+                    color: "var(--glass-text)",
+                  }}
+                  variant="default"
+                >
+                  {topic.name}
+                </Badge>
+              </Link>
+            );
+          })}
       </GridCardSection>
     </GridCard>
   );
