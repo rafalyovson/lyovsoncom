@@ -13,7 +13,8 @@ import { getLatestActivities } from "@/utilities/get-activity";
 import { getLatestNotes } from "@/utilities/get-note";
 import { getLatestPosts } from "@/utilities/get-post";
 
-const HOMEPAGE_ITEMS_LIMIT = 12;
+const HOMEPAGE_ITEMS_LIMIT = 25;
+const HOMEPAGE_FETCH_LIMIT = 50; // Fetch more to ensure we get the latest 25 overall
 
 type MixedFeedItem =
   | { type: "post"; data: Post }
@@ -30,10 +31,11 @@ export default async function Page() {
   cacheLife("notes");
   cacheLife("activities");
 
+  // Fetch more items from each collection to ensure we get the latest 25 overall
   const [posts, notes, activities] = await Promise.all([
-    getLatestPosts(HOMEPAGE_ITEMS_LIMIT),
-    getLatestNotes(HOMEPAGE_ITEMS_LIMIT),
-    getLatestActivities(HOMEPAGE_ITEMS_LIMIT),
+    getLatestPosts(HOMEPAGE_FETCH_LIMIT),
+    getLatestNotes(HOMEPAGE_FETCH_LIMIT),
+    getLatestActivities(HOMEPAGE_FETCH_LIMIT),
   ]);
 
   const mixedItems: MixedFeedItem[] = [
@@ -72,8 +74,13 @@ export default async function Page() {
     return new Date(dateB).getTime() - new Date(dateA).getTime();
   });
 
-  const hasMore =
-    posts.totalPages > 1 || notes.totalPages > 1 || activities.totalPages > 1;
+  // Take only the latest 25 items
+  const latestItems = mixedItems.slice(0, HOMEPAGE_ITEMS_LIMIT);
+
+  // Calculate total pages for the mixed feed
+  const totalItems = mixedItems.length;
+  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
+  const hasMore = totalPages > 1;
 
   return (
     <>
@@ -84,7 +91,7 @@ export default async function Page() {
       {/* <PWAInstall /> */}
 
       <Suspense fallback={<SkeletonGrid />}>
-        {mixedItems.map((item, index) => {
+        {latestItems.map((item, index) => {
           if (item.type === "post") {
             return (
               <GridCardPostFull
@@ -107,7 +114,7 @@ export default async function Page() {
             return (
               <GridCardActivityFull
                 activity={item.data}
-                key={`activity-${item.data.slug}`}
+                key={`activity-${item.data.id}`}
                 {...(index === 0 && { priority: true })}
               />
             );
@@ -121,11 +128,7 @@ export default async function Page() {
           basePath="/page"
           firstPagePath="/"
           page={1}
-          totalPages={Math.max(
-            posts.totalPages || 1,
-            notes.totalPages || 1,
-            activities.totalPages || 1
-          )}
+          totalPages={totalPages}
         />
       )}
     </>

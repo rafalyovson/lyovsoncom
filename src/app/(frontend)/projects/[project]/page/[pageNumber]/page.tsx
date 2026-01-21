@@ -10,7 +10,7 @@ import { getProject } from "@/utilities/get-project";
 import { getPaginatedProjectPosts } from "@/utilities/get-project-posts";
 
 // Number of posts per page for pagination
-const POSTS_PER_PAGE = 12;
+const POSTS_PER_PAGE = 25;
 
 type Args = {
   params: Promise<{

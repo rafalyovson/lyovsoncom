@@ -10,7 +10,7 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestNotes } from "@/utilities/get-note";
 import { getServerSideURL } from "@/utilities/getURL";
 
-const NOTES_PER_PAGE = 12;
+const NOTES_PER_PAGE = 25;
 
 export default async function Page() {
   "use cache";

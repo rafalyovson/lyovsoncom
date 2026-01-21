@@ -11,7 +11,7 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
-const POSTS_PER_PAGE = 12;
+const POSTS_PER_PAGE = 25;
 
 export default async function Page() {
   "use cache";

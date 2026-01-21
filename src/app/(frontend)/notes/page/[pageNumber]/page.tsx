@@ -7,7 +7,7 @@ import { NotesArchive } from "@/components/NotesArchive";
 import { Pagination } from "@/components/Pagination";
 import { getPaginatedNotes } from "@/utilities/get-note";
 
-const NOTES_PER_PAGE = 12;
+const NOTES_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
 
 type Args = {

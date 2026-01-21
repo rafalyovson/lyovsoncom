@@ -8,7 +8,7 @@ import { SkeletonGrid } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 
-const POSTS_PER_PAGE = 12;
+const POSTS_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
 
 type Args = {

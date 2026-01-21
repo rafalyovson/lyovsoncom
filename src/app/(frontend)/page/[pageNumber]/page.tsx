@@ -10,11 +10,12 @@ import {
 } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import type { Activity, Note, Post } from "@/payload-types";
-import { getPaginatedActivities } from "@/utilities/get-activity";
-import { getPaginatedNotes } from "@/utilities/get-note";
-import { getPaginatedPosts } from "@/utilities/get-post";
+import { getLatestActivities } from "@/utilities/get-activity";
+import { getLatestNotes } from "@/utilities/get-note";
+import { getLatestPosts } from "@/utilities/get-post";
 
-const HOMEPAGE_ITEMS_LIMIT = 12;
+const HOMEPAGE_ITEMS_LIMIT = 25;
+const HOMEPAGE_FETCH_LIMIT = 50; // Fetch more to ensure we get enough items for pagination
 
 type MixedFeedItem =
   | { type: "post"; data: Post }
@@ -46,11 +47,11 @@ export default async function Page({ params: paramsPromise }: Args) {
     notFound();
   }
 
-  // Fetch paginated items from each collection
+  // Fetch enough items from each collection to build a sorted mixed feed
   const [posts, notes, activities] = await Promise.all([
-    getPaginatedPosts(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
-    getPaginatedNotes(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
-    getPaginatedActivities(sanitizedPageNumber, HOMEPAGE_ITEMS_LIMIT),
+    getLatestPosts(HOMEPAGE_FETCH_LIMIT),
+    getLatestNotes(HOMEPAGE_FETCH_LIMIT),
+    getLatestActivities(HOMEPAGE_FETCH_LIMIT),
   ]);
 
   // Merge and sort by date
@@ -90,16 +91,19 @@ export default async function Page({ params: paramsPromise }: Args) {
     return new Date(dateB).getTime() - new Date(dateA).getTime();
   });
 
-  const maxTotalPages = Math.max(
-    posts.totalPages || 1,
-    notes.totalPages || 1,
-    activities.totalPages || 1
-  );
+  // Calculate pagination for the mixed feed
+  const totalItems = mixedItems.length;
+  const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
+  const startIndex = (sanitizedPageNumber - 1) * HOMEPAGE_ITEMS_LIMIT;
+  const endIndex = startIndex + HOMEPAGE_ITEMS_LIMIT;
 
   // If requested page is beyond available pages, 404
-  if (sanitizedPageNumber > maxTotalPages) {
+  if (sanitizedPageNumber > totalPages || sanitizedPageNumber < 1) {
     notFound();
   }
+
+  // Get the items for this page
+  const pageItems = mixedItems.slice(startIndex, endIndex);
 
   return (
     <>
@@ -108,7 +112,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       </h1>
 
       <Suspense fallback={<SkeletonGrid />}>
-        {mixedItems.map((item, index) => {
+        {pageItems.map((item, index) => {
           if (item.type === "post") {
             return (
               <GridCardPostFull
@@ -131,7 +135,7 @@ export default async function Page({ params: paramsPromise }: Args) {
             return (
               <GridCardActivityFull
                 activity={item.data}
-                key={`activity-${item.data.slug}`}
+                key={`activity-${item.data.id}`}
                 {...(index === 0 && { priority: true })}
               />
             );
@@ -140,12 +144,12 @@ export default async function Page({ params: paramsPromise }: Args) {
         })}
       </Suspense>
 
-      {maxTotalPages > 1 && (
+      {totalPages > 1 && (
         <Pagination
           basePath="/page"
           firstPagePath="/"
           page={sanitizedPageNumber}
-          totalPages={maxTotalPages}
+          totalPages={totalPages}
         />
       )}
     </>

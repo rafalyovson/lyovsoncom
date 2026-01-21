@@ -34,7 +34,7 @@ export async function getProjectPosts(
   const result = await payload.find({
     collection: "posts",
     depth: 2,
-    limit: 12,
+    limit: 25,
     where: {
       AND: [
         {
@@ -62,7 +62,7 @@ export async function getProjectPosts(
 export async function getPaginatedProjectPosts(
   slug: string,
   pageNumber: number,
-  limit = 12
+  limit = 25
 ): Promise<PaginatedDocs<Post> | null> {
   "use cache";
   cacheTag("posts");

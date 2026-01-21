@@ -43,7 +43,7 @@ export async function getAuthorPosts(
   const result = await payload.find({
     collection: "posts",
     depth: 2,
-    limit: 12,
+    limit: 25,
     where: {
       AND: [
         {

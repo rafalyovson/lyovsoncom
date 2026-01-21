@@ -11,7 +11,7 @@ import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
 
-const ACTIVITIES_PER_PAGE = 12;
+const ACTIVITIES_PER_PAGE = 25;
 
 export default async function Page() {
   "use cache";
