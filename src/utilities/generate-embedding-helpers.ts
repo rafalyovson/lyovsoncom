@@ -42,8 +42,28 @@ export async function generateEmbeddingForPost(
       return { success: false, error: "Post has no content" };
     }
 
-    // Extract text from Lexical content
-    const textContent = extractLexicalText(post.content);
+    // Build rich embedding text from all relevant fields
+    const contentText = extractLexicalText(post.content);
+    const topicNames = post.topics
+      ?.filter((t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null)
+      .map((t) => t.name)
+      .filter(Boolean)
+      .join(", ");
+    const projectName =
+      typeof post.project === "object" && post.project !== null
+        ? post.project.name
+        : null;
+
+    const textParts = [
+      post.title,
+      post.description,
+      projectName ? `Project: ${projectName}` : null,
+      topicNames ? `Topics: ${topicNames}` : null,
+      contentText,
+    ].filter(Boolean);
+
+    const textContent = textParts.join("\n\n");
+
     if (!textContent.trim()) {
       req.payload.logger.info(
         `[Embedding] Post ${postId} has no text content, skipping`
@@ -138,8 +158,26 @@ export async function generateEmbeddingForNote(
       return { success: false, error: "Note has no content" };
     }
 
-    // Extract text from Lexical content
-    const textContent = extractLexicalText(note.content);
+    // Build rich embedding text from all relevant fields
+    const contentText = extractLexicalText(note.content);
+    const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
+    const topicNames = note.topics
+      ?.filter((t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null)
+      .map((t) => t.name)
+      .filter(Boolean)
+      .join(", ");
+
+    const textParts = [
+      note.title,
+      `Type: ${noteTypeLabel}`,
+      note.author ? `Author: ${note.author}` : null,
+      note.quotedPerson ? `Quoted: ${note.quotedPerson}` : null,
+      topicNames ? `Topics: ${topicNames}` : null,
+      contentText,
+    ].filter(Boolean);
+
+    const textContent = textParts.join("\n\n");
+
     if (!textContent.trim()) {
       req.payload.logger.info(
         `[Embedding] Note ${noteId} has no text content, skipping`
@@ -228,7 +266,7 @@ export async function generateEmbeddingForActivity(
       return { success: false, error: "Activity is not published" };
     }
 
-    // Build embedding text from activity title and notes
+    // Build rich embedding text from activity and reference
     const referenceObj =
       typeof activity.reference === "object" && activity.reference !== null
         ? activity.reference
@@ -239,14 +277,48 @@ export async function generateEmbeddingForActivity(
       watch: "Watched",
       listen: "Listened",
       play: "Played",
+      visit: "Visited",
     };
 
-    const title = referenceObj?.title
-      ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
-      : "Activity";
+    const referenceTypeLabels: Record<string, string> = {
+      book: "Book",
+      movie: "Movie",
+      tvShow: "TV Show",
+      videoGame: "Video Game",
+      music: "Music",
+      podcast: "Podcast",
+      series: "Series",
+      person: "Person",
+      company: "Company",
+      video: "Video",
+      match: "Match",
+    };
 
+    const activityLabel = activityTypeLabels[activity.activityType] || activity.activityType;
+    const referenceType = referenceObj?.type ? referenceTypeLabels[referenceObj.type] || referenceObj.type : null;
     const notesText = activity.notes ? extractLexicalText(activity.notes) : "";
-    const textContent = [title, notesText].filter(Boolean).join(" ");
+
+    // Get participant reviews/notes
+    const reviewTexts = activity.reviews
+      ?.filter((r) => r.note && r.note.trim().length > 0)
+      .map((r) => {
+        const lyovsonName =
+          typeof r.lyovson === "object" && r.lyovson !== null
+            ? r.lyovson.name
+            : null;
+        return lyovsonName ? `${lyovsonName}'s note: ${r.note}` : r.note;
+      })
+      .filter(Boolean) || [];
+
+    const textParts = [
+      referenceObj?.title ? `${activityLabel} ${referenceObj.title}` : "Activity",
+      referenceType ? `Type: ${referenceType}` : null,
+      referenceObj?.description ? referenceObj.description : null,
+      notesText ? `Notes: ${notesText}` : null,
+      ...reviewTexts,
+    ].filter(Boolean);
+
+    const textContent = textParts.join("\n\n");
 
     if (!textContent.trim()) {
       req.payload.logger.info(
