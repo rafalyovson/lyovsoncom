@@ -254,6 +254,19 @@ export const Notes: CollectionConfig = {
         hidden: true,
       },
     },
+    // Pre-computed recommendations (stored as JSON array of note IDs)
+    {
+      name: "recommended_note_ids",
+      type: "json",
+      access: {
+        update: () => false, // Only updated via hooks
+      },
+      admin: {
+        hidden: true,
+        description:
+          "Pre-computed recommended note IDs based on semantic similarity",
+      },
+    },
     // Extracted plain text from Lexical content for full-text search
     {
       name: "content_text",

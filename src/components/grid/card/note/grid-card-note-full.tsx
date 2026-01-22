@@ -29,12 +29,10 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
   } = note;
 
   const noteUrl = `/notes/${slug}`;
+  const isQuoteType = type === "quote";
+  const typeLabel = isQuoteType ? "quote" : "thought";
 
-  const typeIcon = type === "quote" ? Quote : Brain;
-  const TypeIcon = typeIcon;
-  const typeLabel = type === "quote" ? "quote" : "thought";
-
-  const isQuote = type === "quote";
+  const isQuote = isQuoteType;
   const previewText = isQuote
     ? extractLexicalTextWithNewlines(content).trim()
     : extractLexicalText(content).trim();
@@ -123,10 +121,17 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         }
       >
         <Link className="group block flex flex-col items-center gap-1" href={noteUrl}>
-          <TypeIcon
-            aria-hidden="true"
-            className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
-          />
+          {isQuoteType ? (
+            <Quote
+              aria-hidden="true"
+              className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+            />
+          ) : (
+            <Brain
+              aria-hidden="true"
+              className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
+            />
+          )}
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
             {typeLabel}
           </span>

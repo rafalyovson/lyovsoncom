@@ -4,6 +4,8 @@ import { Media } from "@/components/Media";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
 
+export { GridCardRelatedNotes } from "./grid-card-related-notes";
+
 export const GridCardRelatedPosts = ({
   posts,
   className,
@@ -41,12 +43,7 @@ export const GridCardRelatedPosts = ({
                   resource={post.featuredImage}
                 />
               )}
-              <div
-                className={
-                  "col-start-2 col-end-4 row-start-1 row-end-2 grid items-center"
-                }
-                key={post.id}
-              >
+              <div className="col-start-2 col-end-4 row-start-1 row-end-2 grid items-center">
                 <h2 className="glass-text font-medium transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
                   {post.title}
                 </h2>

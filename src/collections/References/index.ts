@@ -55,6 +55,7 @@ export const References: CollectionConfig = {
         { label: "Repository", value: "repository" },
         { label: "Tool", value: "tool" },
         { label: "Social", value: "social" },
+        { label: "Match", value: "match" },
         { label: "Other", value: "other" },
       ],
       admin: {

@@ -22,14 +22,6 @@ export type GridCardPostProps = {
   priority?: boolean;
 };
 
-const postTypeIcons: Record<string, typeof FileText> = {
-  article: FileText,
-  review: Star,
-  video: Video,
-  podcast: Mic,
-  photo: Camera,
-};
-
 export const GridCardPostFull = ({
   post,
   className,
@@ -48,8 +40,8 @@ export const GridCardPostFull = ({
   } = post;
 
   const postUrl = `/posts/${slug}`;
-  const PostIcon = postTypeIcons[type || "article"] || FileText;
-  const postTypeLabel = type || "article";
+  const postType = type || "article";
+  const iconClassName = "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
   return (
     <GridCard className={className}>
@@ -96,12 +88,14 @@ export const GridCardPostFull = ({
         }
       >
         <Link className="group block flex flex-col items-center gap-1" href={postUrl}>
-          <PostIcon
-            aria-hidden="true"
-            className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
-          />
+          {postType === "article" && <FileText aria-hidden="true" className={iconClassName} />}
+          {postType === "review" && <Star aria-hidden="true" className={iconClassName} />}
+          {postType === "video" && <Video aria-hidden="true" className={iconClassName} />}
+          {postType === "podcast" && <Mic aria-hidden="true" className={iconClassName} />}
+          {postType === "photo" && <Camera aria-hidden="true" className={iconClassName} />}
+          {!["article", "review", "video", "podcast", "photo"].includes(postType) && <FileText aria-hidden="true" className={iconClassName} />}
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
-            {postTypeLabel}
+            {postType}
           </span>
         </Link>
       </GridCardSection>

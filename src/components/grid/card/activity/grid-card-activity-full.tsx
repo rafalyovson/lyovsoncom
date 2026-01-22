@@ -8,6 +8,7 @@ import {
   Mic,
   Music,
   PenTool,
+  Trophy,
   User,
   Video,
 } from "lucide-react";
@@ -29,25 +30,7 @@ const activityTypeLabels: Record<string, string> = {
   watch: "Watched",
   listen: "Listened",
   play: "Played",
-};
-
-const referenceTypeIcons: Record<string, typeof Book> = {
-  book: Book,
-  movie: Film,
-  tvShow: Film,
-  videoGame: Gamepad2,
-  music: Music,
-  podcast: Mic,
-  series: Book,
-  person: User,
-  company: Building2,
-  website: LinkIcon,
-  article: LinkIcon,
-  video: Video,
-  repository: LinkIcon,
-  tool: LinkIcon,
-  social: LinkIcon,
-  other: LinkIcon,
+  visit: "Visited",
 };
 
 
@@ -100,8 +83,10 @@ export const GridCardActivityFull = ({
       ? referenceObj.image
       : null;
 
-  const ReferenceIcon = referenceTypeIcons[referenceType] || LinkIcon;
   const activityTypeLabel = activityTypeLabels[activityType] || activityType;
+
+  // Helper to render the appropriate icon based on reference type
+  const iconClassName = "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
   return (
     <GridCard className={className}>
@@ -130,10 +115,18 @@ export const GridCardActivityFull = ({
         }
       >
         <Link className="group block flex flex-col items-center gap-1" href={activityUrl}>
-          <ReferenceIcon
-            aria-hidden="true"
-            className="glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]"
-          />
+          {referenceType === "book" && <Book aria-hidden="true" className={iconClassName} />}
+          {referenceType === "movie" && <Film aria-hidden="true" className={iconClassName} />}
+          {referenceType === "tvShow" && <Film aria-hidden="true" className={iconClassName} />}
+          {referenceType === "videoGame" && <Gamepad2 aria-hidden="true" className={iconClassName} />}
+          {referenceType === "music" && <Music aria-hidden="true" className={iconClassName} />}
+          {referenceType === "podcast" && <Mic aria-hidden="true" className={iconClassName} />}
+          {referenceType === "series" && <Book aria-hidden="true" className={iconClassName} />}
+          {referenceType === "person" && <User aria-hidden="true" className={iconClassName} />}
+          {referenceType === "company" && <Building2 aria-hidden="true" className={iconClassName} />}
+          {referenceType === "video" && <Video aria-hidden="true" className={iconClassName} />}
+          {referenceType === "match" && <Trophy aria-hidden="true" className={iconClassName} />}
+          {!["book", "movie", "tvShow", "videoGame", "music", "podcast", "series", "person", "company", "video", "match"].includes(referenceType) && <LinkIcon aria-hidden="true" className={iconClassName} />}
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
             {activityTypeLabel}
           </span>

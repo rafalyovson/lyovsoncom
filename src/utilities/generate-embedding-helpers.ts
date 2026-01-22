@@ -5,6 +5,7 @@ import {
   createTextHash,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
+import { getSimilarNotes } from "@/utilities/get-similar-notes";
 import { getSimilarPosts } from "@/utilities/get-similar-posts";
 
 /**
@@ -152,6 +153,8 @@ export async function generateEmbeddingForNote(
       req.payload.logger.info(
         `[Embedding] Note ${noteId} embedding already up to date, skipping generation`
       );
+      // Still compute recommendations in case other notes changed
+      await computeRecommendationsForNote(noteId, req);
       return { success: true };
     }
 
@@ -175,6 +178,7 @@ export async function generateEmbeddingForNote(
       },
       context: {
         skipEmbeddingGeneration: true,
+        skipRecommendationCompute: true,
         skipRevalidation: true,
       },
     });
@@ -182,6 +186,9 @@ export async function generateEmbeddingForNote(
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for note ${noteId}`
     );
+
+    // Compute recommendations after embedding is saved
+    await computeRecommendationsForNote(noteId, req);
 
     return { success: true };
   } catch (error) {
@@ -350,6 +357,63 @@ async function computeRecommendationsForPost(
   } catch (error) {
     req.payload.logger.error(
       `[Recommendations] Failed to compute recommendations for post ${postId}: ${error instanceof Error ? error.message : String(error)}`
+    );
+    // Don't throw - recommendations are non-critical
+  }
+}
+
+/**
+ * Compute recommendations for a note (helper function)
+ */
+async function computeRecommendationsForNote(
+  noteId: number,
+  req: PayloadRequest
+): Promise<void> {
+  try {
+    // Verify note has embedding
+    const note = await req.payload.findByID({
+      collection: "notes",
+      id: noteId,
+      select: {
+        embedding_vector: true,
+      },
+    });
+
+    if (!note?.embedding_vector) {
+      req.payload.logger.info(
+        `[Recommendations] Note ${noteId} has no embedding, skipping recommendations`
+      );
+      return;
+    }
+
+    // Compute similar notes
+    req.payload.logger.info(
+      `[Recommendations] Computing recommendations for note ${noteId}`
+    );
+
+    const similarNotes = await getSimilarNotes(noteId, 3);
+    const recommendedIds = similarNotes.map((n) => n.id);
+
+    // Update note with recommendations
+    await req.payload.update({
+      collection: "notes",
+      id: noteId,
+      data: {
+        recommended_note_ids: recommendedIds,
+      },
+      context: {
+        skipEmbeddingGeneration: true,
+        skipRecommendationCompute: true,
+        skipRevalidation: true,
+      },
+    });
+
+    req.payload.logger.info(
+      `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for note ${noteId}`
+    );
+  } catch (error) {
+    req.payload.logger.error(
+      `[Recommendations] Failed to compute recommendations for note ${noteId}: ${error instanceof Error ? error.message : String(error)}`
     );
     // Don't throw - recommendations are non-critical
   }

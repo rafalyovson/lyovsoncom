@@ -390,6 +390,7 @@ export interface Reference {
     | 'repository'
     | 'tool'
     | 'social'
+    | 'match'
     | 'other';
   /**
    * Image for this reference (cover, photo, logo, etc.)
@@ -787,6 +788,18 @@ export interface Note {
   embedding_generated_at?: string | null;
   embedding_text_hash?: string | null;
   /**
+   * Pre-computed recommended note IDs based on semantic similarity
+   */
+  recommended_note_ids?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
    * Plain text extracted from rich text content for full-text search indexing
    */
   content_text?: string | null;
@@ -868,7 +881,7 @@ export interface Lyovson {
   password?: string | null;
 }
 /**
- * Log reading, watching, listening, and playing activities
+ * Log reading, watching, listening, playing, and visiting activities
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
@@ -882,7 +895,7 @@ export interface Activity {
   /**
    * Type of activity
    */
-  activityType: 'read' | 'watch' | 'listen' | 'play';
+  activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit';
   /**
    * Who participated in this activity?
    */
@@ -900,7 +913,7 @@ export interface Activity {
    */
   visibility?: ('public' | 'private') | null;
   /**
-   * Your thoughts, review, or notes about this activity
+   * General information about this activity
    */
   notes?: {
     root: {
@@ -918,22 +931,22 @@ export interface Activity {
     [k: string]: unknown;
   } | null;
   /**
-   * Ratings from family members (out of 10)
+   * Notes from participants (each can include a note and/or rating)
    */
-  ratings?:
+  reviews?:
     | {
         /**
-         * Who is rating this?
+         * Who wrote this note?
          */
         lyovson: number | Lyovson;
         /**
-         * Rating out of 10
+         * Optional personal note about this activity (plain text)
          */
-        rating: number;
+        note?: string | null;
         /**
-         * Optional comment about the rating
+         * Optional rating out of 10
          */
-        comment?: string | null;
+        rating?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -1713,12 +1726,12 @@ export interface ActivitiesSelect<T extends boolean = true> {
   finishedAt?: T;
   visibility?: T;
   notes?: T;
-  ratings?:
+  reviews?:
     | T
     | {
         lyovson?: T;
+        note?: T;
         rating?: T;
-        comment?: T;
         id?: T;
       };
   publishedAt?: T;
@@ -1756,6 +1769,7 @@ export interface NotesSelect<T extends boolean = true> {
   embedding_dimensions?: T;
   embedding_generated_at?: T;
   embedding_text_hash?: T;
+  recommended_note_ids?: T;
   content_text?: T;
   slug?: T;
   slugLock?: T;

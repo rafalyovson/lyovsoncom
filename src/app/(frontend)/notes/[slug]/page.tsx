@@ -1,9 +1,11 @@
+import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
+import { getPayload } from "payload";
 import { Suspense } from "react";
 
-import { GridCardContent, GridCardHeroNote, GridCardReferences } from "@/components/grid";
+import { GridCardContent, GridCardHeroNote, GridCardRelatedNotes } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,7 +64,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
-      <GridCardHeroNote note={note} />
+      <GridCardHeroNote note={note} references={references} />
 
       <GridCardContent
         className={cn(
@@ -85,26 +87,57 @@ export default async function NotePage({ params: paramsPromise }: Args) {
         </div>
       </GridCardContent>
 
-      {references.length > 0 && (
-        <aside
-          className={cn(
-            "col-start-1 col-end-2 row-start-6 row-end-7 self-start",
-            "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-4"
-          )}
+      {/* Related Notes - Under nav on desktop */}
+      <aside
+        className={cn(
+          "col-start-1 col-end-2 row-start-6 row-end-7 self-start",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3"
+        )}
+      >
+        <Suspense
+          fallback={
+            <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+              <Skeleton className="glass-badge h-full w-full" />
+            </div>
+          }
         >
-          <Suspense
-            fallback={
-              <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
-                <Skeleton className="glass-badge h-full w-full" />
-              </div>
-            }
-          >
-            <GridCardReferences references={references} />
-          </Suspense>
-        </aside>
-      )}
+          <RelatedNotes
+            recommendedIds={note.recommended_note_ids as number[] | undefined}
+          />
+        </Suspense>
+      </aside>
     </>
   );
+}
+
+async function RelatedNotes({
+  recommendedIds,
+}: {
+  recommendedIds?: number[];
+}) {
+  // Early return if no recommendations stored
+  if (!recommendedIds || recommendedIds.length === 0) {
+    return null;
+  }
+
+  // Fetch the recommended notes by their stored IDs
+  const payload = await getPayload({ config: configPromise });
+  const notes = await payload.find({
+    collection: "notes",
+    where: {
+      id: {
+        in: recommendedIds,
+      },
+    },
+    depth: 1,
+    limit: recommendedIds.length,
+  });
+
+  if (notes.docs.length === 0) {
+    return null;
+  }
+
+  return <GridCardRelatedNotes notes={notes.docs} />;
 }
 
 

@@ -34,7 +34,7 @@ export const Activities: CollectionConfig = {
       "startedAt",
       "updatedAt",
     ],
-    description: "Log reading, watching, listening, and playing activities",
+    description: "Log reading, watching, listening, playing, and visiting activities",
   },
   fields: [
     {
@@ -55,6 +55,7 @@ export const Activities: CollectionConfig = {
         { label: "Watch", value: "watch" },
         { label: "Listen", value: "listen" },
         { label: "Play", value: "play" },
+        { label: "Visit", value: "visit" },
       ],
       required: true,
       admin: {
@@ -79,7 +80,7 @@ export const Activities: CollectionConfig = {
         position: "sidebar",
         description: "When did you start?",
         date: {
-          pickerAppearance: "dayAndTime",
+          pickerAppearance: "dayOnly",
         },
       },
     },
@@ -90,7 +91,7 @@ export const Activities: CollectionConfig = {
         position: "sidebar",
         description: "When did you finish?",
         date: {
-          pickerAppearance: "dayAndTime",
+          pickerAppearance: "dayOnly",
         },
       },
     },
@@ -111,7 +112,7 @@ export const Activities: CollectionConfig = {
       type: "tabs",
       tabs: [
         {
-          label: "Notes",
+          label: "Info",
           fields: [
             {
               name: "notes",
@@ -119,19 +120,19 @@ export const Activities: CollectionConfig = {
               editor: richEditorConfig,
               admin: {
                 description:
-                  "Your thoughts, review, or notes about this activity",
+                  "General information about this activity",
               },
             },
           ],
         },
         {
-          label: "Ratings",
+          label: "Notes",
           fields: [
             {
-              name: "ratings",
+              name: "reviews",
               type: "array",
               admin: {
-                description: "Ratings from family members (out of 10)",
+                description: "Notes from participants (each can include a note and/or rating)",
               },
               fields: [
                 {
@@ -140,7 +141,14 @@ export const Activities: CollectionConfig = {
                   relationTo: "lyovsons",
                   required: true,
                   admin: {
-                    description: "Who is rating this?",
+                    description: "Who wrote this note?",
+                  },
+                },
+                {
+                  name: "note",
+                  type: "text",
+                  admin: {
+                    description: "Optional personal note about this activity (plain text)",
                   },
                 },
                 {
@@ -148,16 +156,8 @@ export const Activities: CollectionConfig = {
                   type: "number",
                   min: 1,
                   max: 10,
-                  required: true,
                   admin: {
-                    description: "Rating out of 10",
-                  },
-                },
-                {
-                  name: "comment",
-                  type: "textarea",
-                  admin: {
-                    description: "Optional comment about the rating",
+                    description: "Optional rating out of 10",
                   },
                 },
               ],
