@@ -69,7 +69,7 @@ type Args = {
   }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export default async function PostPage({ params: paramsPromise }: Args) {
   "use cache";

@@ -15,7 +15,7 @@ type PageProps = {
   }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
   "use cache";

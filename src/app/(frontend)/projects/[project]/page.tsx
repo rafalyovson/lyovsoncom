@@ -17,7 +17,7 @@ type PageProps = {
   }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export default async function Page({ params: paramsPromise }: PageProps) {
   "use cache";

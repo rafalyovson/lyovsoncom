@@ -33,7 +33,7 @@ type Args = {
   }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 const activityTypeLabels: Record<string, string> = {
   read: "Read",

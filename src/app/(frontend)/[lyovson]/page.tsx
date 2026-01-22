@@ -15,7 +15,7 @@ type PageProps = {
   params: Promise<{ lyovson: string }>;
 };
 
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export default async function Page({ params }: PageProps) {
   "use cache";
