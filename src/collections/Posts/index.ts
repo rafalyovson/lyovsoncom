@@ -336,7 +336,7 @@ export const Posts: CollectionConfig<"posts"> = {
     afterChange: [
       revalidatePost, // Keep this - cache needs immediate update
       // Generate embeddings inline (fire-and-forget)
-      async ({ doc, req, operation }) => {
+      ({ doc, req, operation }) => {
         // Only for create/update of published posts
         if (
           (operation === "create" || operation === "update") &&

@@ -16,12 +16,12 @@ export const populateAuthors: CollectionAfterReadHook = async ({
 
     for (const author of doc.authors) {
       const authorId = typeof author === "object" ? author?.id : author;
-      
+
       // Skip if we've already processed this author ID
       if (!authorId || processedIds.has(authorId)) {
         continue;
       }
-      
+
       processedIds.add(authorId);
 
       const authorDoc = await payload.findByID({

@@ -11,6 +11,21 @@ import {
   revalidateActivityDelete,
 } from "./hooks/revalidateActivity";
 
+function extractRelationshipId(value: unknown): number | string | null {
+  if (typeof value === "number" || typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "object" && value !== null && "id" in value) {
+    const { id } = value as { id?: unknown };
+    if (typeof id === "number" || typeof id === "string") {
+      return id;
+    }
+  }
+
+  return null;
+}
+
 export const Activities: CollectionConfig = {
   slug: "activities",
   access: {
@@ -27,14 +42,9 @@ export const Activities: CollectionConfig = {
   },
   admin: {
     group: "Content",
-    useAsTitle: "id",
-    defaultColumns: [
-      "reference",
-      "activityType",
-      "startedAt",
-      "updatedAt",
-    ],
-    description: "Log reading, watching, listening, playing, and visiting activities",
+    defaultColumns: ["reference", "activityType", "startedAt", "updatedAt"],
+    description:
+      "Log reading, watching, listening, playing, and visiting activities",
   },
   fields: [
     {
@@ -119,8 +129,7 @@ export const Activities: CollectionConfig = {
               type: "richText",
               editor: richEditorConfig,
               admin: {
-                description:
-                  "General information about this activity",
+                description: "General information about this activity",
               },
             },
           ],
@@ -132,7 +141,8 @@ export const Activities: CollectionConfig = {
               name: "reviews",
               type: "array",
               admin: {
-                description: "Notes from participants (each can include a note and/or rating)",
+                description:
+                  "Notes from participants (each can include a note and/or rating)",
               },
               fields: [
                 {
@@ -148,7 +158,8 @@ export const Activities: CollectionConfig = {
                   name: "note",
                   type: "text",
                   admin: {
-                    description: "Optional personal note about this activity (plain text)",
+                    description:
+                      "Optional personal note about this activity (plain text)",
                   },
                 },
                 {
@@ -200,45 +211,47 @@ export const Activities: CollectionConfig = {
       hooks: {
         beforeValidate: [
           // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: slugSource composition depends on related reference title
-          async ({ data, operation, req }) => {
-            if (operation === "create" || operation === "update") {
-              let referenceTitle = "";
+          async ({ data, operation, originalDoc, req }) => {
+            const originalSlugSource =
+              originalDoc &&
+              typeof originalDoc === "object" &&
+              "slugSource" in originalDoc &&
+              typeof originalDoc.slugSource === "string"
+                ? originalDoc.slugSource
+                : "";
 
-              // Fetch reference title if reference is provided
-              if (data?.reference) {
-                // Handle reference as number (ID), string (ID), or object (populated)
-                const referenceId =
-                  typeof data.reference === "number"
-                    ? data.reference
-                    : typeof data.reference === "string"
-                      ? data.reference
-                      : typeof data.reference === "object" && data.reference !== null && "id" in data.reference
-                        ? data.reference.id
-                        : null;
-
-                if (referenceId) {
-                  try {
-                    const reference = await req.payload.findByID({
-                      collection: "references",
-                      id: referenceId,
-                    });
-                    referenceTitle = reference?.title || "";
-                  } catch (error) {
-                    req.payload.logger.error(
-                      `Failed to fetch reference ${referenceId} for activity slug: ${error instanceof Error ? error.message : String(error)}`
-                    );
-                  }
-                }
-              }
-
-              // Build slug source: just referenceTitle (date will be in URL path)
-              if (referenceTitle) {
-                return referenceTitle;
-              }
-
-              return "";
+            if (operation !== "create" && operation !== "update") {
+              return data?.slugSource || originalSlugSource;
             }
-            return data?.slugSource || "";
+
+            // Use incoming reference first; fall back to original document on partial updates.
+            const referenceValue =
+              data?.reference ??
+              (originalDoc &&
+              typeof originalDoc === "object" &&
+              "reference" in originalDoc
+                ? originalDoc.reference
+                : null);
+            const referenceId = extractRelationshipId(referenceValue);
+
+            if (referenceId !== null && referenceId !== "") {
+              try {
+                const reference = (await req.payload.findByID({
+                  collection: "references",
+                  id: referenceId,
+                })) as unknown as { title?: string };
+
+                if (reference?.title) {
+                  return reference.title;
+                }
+              } catch (error) {
+                req.payload.logger.error(
+                  `Failed to fetch reference ${referenceId} for activity slug: ${error instanceof Error ? error.message : String(error)}`
+                );
+              }
+            }
+
+            return data?.slugSource || originalSlugSource;
           },
         ],
       },
@@ -320,61 +333,6 @@ export const Activities: CollectionConfig = {
     beforeChange: [populateContentTextHook],
     afterChange: [
       revalidateActivity, // Cache revalidation for activities
-      // Regenerate slug when reference changes
-      async ({ doc, req, operation, previousDoc }) => {
-        if (operation === "update") {
-          const referenceChanged =
-            previousDoc &&
-            typeof previousDoc === "object" &&
-            "reference" in previousDoc &&
-            previousDoc.reference !== doc.reference;
-
-          if (referenceChanged) {
-            try {
-              // Get the reference ID
-              const referenceId =
-                typeof doc.reference === "number"
-                  ? doc.reference
-                  : typeof doc.reference === "string"
-                    ? doc.reference
-                    : typeof doc.reference === "object" && doc.reference !== null && "id" in doc.reference
-                      ? doc.reference.id
-                      : null;
-
-              if (referenceId) {
-                const reference = await req.payload.findByID({
-                  collection: "references",
-                  id: referenceId,
-                });
-
-                if (reference?.title) {
-                  const newSlugSource = reference.title;
-                  const { formatSlug } = await import("@/fields/slug/formatSlug");
-                  const newSlug = formatSlug(newSlugSource);
-
-                  // Update the activity with new slug
-                  await req.payload.update({
-                    collection: "activities",
-                    id: doc.id,
-                    data: {
-                      slugSource: newSlugSource,
-                      slug: newSlug,
-                    },
-                  });
-
-                  req.payload.logger.info(
-                    `Regenerated slug for activity ${doc.id}: ${newSlug}`
-                  );
-                }
-              }
-            } catch (error) {
-              req.payload.logger.error(
-                `Failed to regenerate slug for activity ${doc.id}: ${error instanceof Error ? error.message : String(error)}`
-              );
-            }
-          }
-        }
-      },
       // Generate embeddings inline (fire-and-forget)
       ({ doc, req, operation }) => {
         // Only for create/update of published activities

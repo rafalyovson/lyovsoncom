@@ -68,6 +68,7 @@ export async function searchGifs(query: string): Promise<TenorResult[]> {
  * @param result - Tenor search result
  * @returns Video URLs and metadata
  */
+// biome-ignore lint/suspicious/useAwait: server actions in "use server" files must be async
 export async function extractVideoUrls(
   result: TenorResult
 ): Promise<GifVideoData> {

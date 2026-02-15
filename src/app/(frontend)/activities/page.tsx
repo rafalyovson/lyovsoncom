@@ -80,7 +80,3 @@ export const metadata: Metadata = {
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
   },
 };
-
-
-
-

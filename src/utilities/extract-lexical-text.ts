@@ -84,37 +84,57 @@ export function extractLexicalText(content: unknown): string {
  * - linebreak nodes become '\n'
  */
 export function extractLexicalTextWithNewlines(content: unknown): string {
-  if (!content) return ""
+  if (!content) {
+    return "";
+  }
 
-  if (typeof content === "string") return content
+  if (typeof content === "string") {
+    return content;
+  }
 
   if (Array.isArray(content)) {
     return content
       .map(extractLexicalTextWithNewlines)
       .filter(Boolean)
-      .join("\n")
+      .join("\n");
   }
 
   if (typeof content === "object") {
     // Text node
-    if ("text" in content && typeof content.text === "string") return content.text
+    if ("text" in content && typeof content.text === "string") {
+      return content.text;
+    }
 
     // Root document
-    if ("root" in content && content.root) return extractLexicalTextWithNewlines(content.root)
+    if ("root" in content && content.root) {
+      return extractLexicalTextWithNewlines(content.root);
+    }
 
     // Lexical node with type
     if ("type" in content && typeof content.type === "string") {
-      if (content.type === "linebreak") return "\n"
+      if (content.type === "linebreak") {
+        return "\n";
+      }
 
-      if (content.type === "paragraph" && "children" in content && content.children) {
-        const paragraph = extractLexicalTextWithNewlines(content.children).trim()
-        return paragraph
+      if (
+        content.type === "paragraph" &&
+        "children" in content &&
+        content.children
+      ) {
+        const paragraph = extractLexicalTextWithNewlines(
+          content.children
+        ).trim();
+        return paragraph;
       }
     }
 
-    if ("children" in content && content.children) return extractLexicalTextWithNewlines(content.children)
-    if ("content" in content && content.content) return extractLexicalTextWithNewlines(content.content)
+    if ("children" in content && content.children) {
+      return extractLexicalTextWithNewlines(content.children);
+    }
+    if ("content" in content && content.content) {
+      return extractLexicalTextWithNewlines(content.content);
+    }
   }
 
-  return ""
+  return "";
 }

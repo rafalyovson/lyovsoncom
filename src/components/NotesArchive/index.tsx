@@ -29,7 +29,3 @@ export const NotesArchive: React.FC<Props> = (props) => {
     </>
   );
 };
-
-
-
-

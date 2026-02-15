@@ -83,5 +83,3 @@ export async function getNoteCount() {
     overrideAccess: false,
   });
 }
-
-

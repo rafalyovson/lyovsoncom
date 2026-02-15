@@ -4,14 +4,12 @@ import {
   ExternalLink,
   Film,
   Gamepad2,
-  Headphones,
   Link as LinkIcon,
   Mic,
   Music,
   User,
   Video,
 } from "lucide-react";
-import Link from "next/link";
 
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
@@ -94,7 +92,7 @@ export const GridCardReferences = ({
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-4 row-start-2 row-end-4 flex flex-col gap-2 overflow-y-auto">
-        {validReferences.map((reference, index) => {
+        {validReferences.map((reference, _index) => {
           const IconComponent =
             referenceTypeIcons[reference.type] || referenceTypeIcons.other;
           const typeLabel =

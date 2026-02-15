@@ -33,16 +33,18 @@ const activityTypeLabels: Record<string, string> = {
   visit: "Visited",
 };
 
-
-function getActivityDate(activity: Activity): { date: string; dateTime?: string; dateSlug?: string } | null {
-  const dateTime = activity.finishedAt || activity.startedAt || activity.publishedAt;
+function getActivityDate(
+  activity: Activity
+): { date: string; dateTime?: string; dateSlug?: string } | null {
+  const dateTime =
+    activity.finishedAt || activity.startedAt || activity.publishedAt;
   if (dateTime) {
     const dateObj = new Date(dateTime);
     const month = String(dateObj.getMonth() + 1).padStart(2, "0");
     const day = String(dateObj.getDate()).padStart(2, "0");
     const year = String(dateObj.getFullYear()).slice(-2);
     const dateSlug = `${month}-${day}-${year}`;
-    
+
     return {
       date: dateObj.toLocaleDateString("en-GB", {
         year: "2-digit",
@@ -86,7 +88,8 @@ export const GridCardActivityFull = ({
   const activityTypeLabel = activityTypeLabels[activityType] || activityType;
 
   // Helper to render the appropriate icon based on reference type
-  const iconClassName = "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
+  const iconClassName =
+    "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
   return (
     <GridCard className={className}>
@@ -114,19 +117,58 @@ export const GridCardActivityFull = ({
           "col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col items-center justify-center gap-1"
         }
       >
-        <Link className="group block flex flex-col items-center gap-1" href={activityUrl}>
-          {referenceType === "book" && <Book aria-hidden="true" className={iconClassName} />}
-          {referenceType === "movie" && <Film aria-hidden="true" className={iconClassName} />}
-          {referenceType === "tvShow" && <Film aria-hidden="true" className={iconClassName} />}
-          {referenceType === "videoGame" && <Gamepad2 aria-hidden="true" className={iconClassName} />}
-          {referenceType === "music" && <Music aria-hidden="true" className={iconClassName} />}
-          {referenceType === "podcast" && <Mic aria-hidden="true" className={iconClassName} />}
-          {referenceType === "series" && <Book aria-hidden="true" className={iconClassName} />}
-          {referenceType === "person" && <User aria-hidden="true" className={iconClassName} />}
-          {referenceType === "company" && <Building2 aria-hidden="true" className={iconClassName} />}
-          {referenceType === "video" && <Video aria-hidden="true" className={iconClassName} />}
-          {referenceType === "match" && <Trophy aria-hidden="true" className={iconClassName} />}
-          {!["book", "movie", "tvShow", "videoGame", "music", "podcast", "series", "person", "company", "video", "match"].includes(referenceType) && <LinkIcon aria-hidden="true" className={iconClassName} />}
+        <Link
+          className="group block flex flex-col items-center gap-1"
+          href={activityUrl}
+        >
+          {referenceType === "book" && (
+            <Book aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "movie" && (
+            <Film aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "tvShow" && (
+            <Film aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "videoGame" && (
+            <Gamepad2 aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "music" && (
+            <Music aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "podcast" && (
+            <Mic aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "series" && (
+            <Book aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "person" && (
+            <User aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "company" && (
+            <Building2 aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "video" && (
+            <Video aria-hidden="true" className={iconClassName} />
+          )}
+          {referenceType === "match" && (
+            <Trophy aria-hidden="true" className={iconClassName} />
+          )}
+          {![
+            "book",
+            "movie",
+            "tvShow",
+            "videoGame",
+            "music",
+            "podcast",
+            "series",
+            "person",
+            "company",
+            "video",
+            "match",
+          ].includes(referenceType) && (
+            <LinkIcon aria-hidden="true" className={iconClassName} />
+          )}
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
             {activityTypeLabel}
           </span>
@@ -138,45 +180,44 @@ export const GridCardActivityFull = ({
           "col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2"
         }
       >
-        {activity.participants && activity.participants.length > 0 && (
-          <>
-            {activity.participants
-              .filter((participant, index, self) => {
-                // Deduplicate participants by ID
-                if (typeof participant !== "object" || !participant?.id) {
-                  return false;
-                }
-                return index === self.findIndex((p) => 
-                  typeof p === "object" && p?.id === participant.id
-                );
-              })
-              .map((participant, index) => {
-                if (typeof participant !== "object" || !participant?.username) {
-                  return null;
-                }
-                return (
-                  <Link
-                    aria-label={`View ${participant.name}'s profile`}
-                    className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
-                    href={{ pathname: `/${participant.username}` }}
-                    key={participant.id}
-                  >
-                    <PenTool aria-hidden="true" className="h-5 w-5" />
-                    <span className="font-medium text-xs">
-                      {participant.name?.replace(" Lyovson", "")}
-                    </span>
-                  </Link>
-                );
-              })}
-          </>
-        )}
+        {activity.participants &&
+          activity.participants.length > 0 &&
+          activity.participants
+            .filter((participant, index, self) => {
+              // Deduplicate participants by ID
+              if (typeof participant !== "object" || !participant?.id) {
+                return false;
+              }
+              return (
+                index ===
+                self.findIndex(
+                  (p) => typeof p === "object" && p?.id === participant.id
+                )
+              );
+            })
+            .map((participant, index) => {
+              if (typeof participant !== "object" || !participant?.username) {
+                return null;
+              }
+              return (
+                <Link
+                  aria-label={`View ${participant.name}'s profile`}
+                  className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
+                  href={{ pathname: `/${participant.username}` }}
+                  key={participant.id}
+                >
+                  <PenTool aria-hidden="true" className="h-5 w-5" />
+                  <span className="font-medium text-xs">
+                    {participant.name?.replace(" Lyovson", "")}
+                  </span>
+                </Link>
+              );
+            })}
 
         {dateInfo && (
           <div className="glass-text-secondary flex items-center gap-2 text-xs">
             <Calendar aria-hidden="true" className="h-5 w-5" />
-            <time dateTime={dateInfo.dateTime}>
-              {dateInfo.date}
-            </time>
+            <time dateTime={dateInfo.dateTime}>{dateInfo.date}</time>
           </div>
         )}
       </GridCardSection>

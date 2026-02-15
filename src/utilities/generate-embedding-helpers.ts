@@ -1,5 +1,6 @@
+import { eq } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { PayloadRequest } from "payload";
-import type { Activity } from "@/payload-types";
+import type { Activity, Note, Post } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   createTextHash,
@@ -7,6 +8,8 @@ import {
 } from "@/utilities/generate-embedding";
 import { getSimilarNotes } from "@/utilities/get-similar-notes";
 import { getSimilarPosts } from "@/utilities/get-similar-posts";
+
+const RECOMMENDATION_LIMIT = 3;
 
 /**
  * Generate embedding for a post and optionally compute recommendations
@@ -16,11 +19,11 @@ export async function generateEmbeddingForPost(
   req: PayloadRequest
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Fetch the post
-    const post = await req.payload.findByID({
+    // Fetch the post (cast needed: Payload's defaultPopulate narrows return types)
+    const post = (await req.payload.findByID({
       collection: "posts",
       id: postId,
-    });
+    })) as unknown as Post | null;
 
     // Validation checks
     if (!post) {
@@ -45,7 +48,10 @@ export async function generateEmbeddingForPost(
     // Build rich embedding text from all relevant fields
     const contentText = extractLexicalText(post.content);
     const topicNames = post.topics
-      ?.filter((t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null)
+      ?.filter(
+        (t): t is Exclude<typeof t, number> =>
+          typeof t === "object" && t !== null
+      )
       .map((t) => t.name)
       .filter(Boolean)
       .join(", ");
@@ -89,23 +95,18 @@ export async function generateEmbeddingForPost(
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
 
-    // Update post with embedding
-    await req.payload.update({
-      collection: "posts",
-      id: postId,
-      data: {
+    // Direct DB update — bypasses version system, no extra version row created
+    const postsTable = req.payload.db.tables.posts;
+    await req.payload.db.drizzle
+      .update(postsTable)
+      .set({
         embedding_vector: `[${vector.join(",")}]`,
         embedding_model: model,
         embedding_dimensions: dimensions,
         embedding_generated_at: new Date().toISOString(),
         embedding_text_hash: currentTextHash,
-      },
-      context: {
-        skipEmbeddingGeneration: true,
-        skipRecommendationCompute: true,
-        skipRevalidation: true,
-      },
-    });
+      })
+      .where(eq(postsTable.id, postId));
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for post ${postId}`
@@ -132,11 +133,11 @@ export async function generateEmbeddingForNote(
   req: PayloadRequest
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Fetch the note
-    const note = await req.payload.findByID({
+    // Fetch the note (cast needed: Payload's defaultPopulate narrows return types)
+    const note = (await req.payload.findByID({
       collection: "notes",
       id: noteId,
-    });
+    })) as unknown as Note | null;
 
     // Validation checks
     if (!note) {
@@ -162,7 +163,10 @@ export async function generateEmbeddingForNote(
     const contentText = extractLexicalText(note.content);
     const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
     const topicNames = note.topics
-      ?.filter((t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null)
+      ?.filter(
+        (t): t is Exclude<typeof t, number> =>
+          typeof t === "object" && t !== null
+      )
       .map((t) => t.name)
       .filter(Boolean)
       .join(", ");
@@ -203,23 +207,18 @@ export async function generateEmbeddingForNote(
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
 
-    // Update note with embedding
-    await req.payload.update({
-      collection: "notes",
-      id: noteId,
-      data: {
+    // Direct DB update — bypasses version system, no extra version row created
+    const notesTable = req.payload.db.tables.notes;
+    await req.payload.db.drizzle
+      .update(notesTable)
+      .set({
         embedding_vector: `[${vector.join(",")}]`,
         embedding_model: model,
         embedding_dimensions: dimensions,
         embedding_generated_at: new Date().toISOString(),
         embedding_text_hash: currentTextHash,
-      },
-      context: {
-        skipEmbeddingGeneration: true,
-        skipRecommendationCompute: true,
-        skipRevalidation: true,
-      },
-    });
+      })
+      .where(eq(notesTable.id, noteId));
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for note ${noteId}`
@@ -238,6 +237,64 @@ export async function generateEmbeddingForNote(
   }
 }
 
+const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  read: "Read",
+  watch: "Watched",
+  listen: "Listened",
+  play: "Played",
+  visit: "Visited",
+};
+
+const REFERENCE_TYPE_LABELS: Record<string, string> = {
+  book: "Book",
+  movie: "Movie",
+  tvShow: "TV Show",
+  videoGame: "Video Game",
+  music: "Music",
+  podcast: "Podcast",
+  series: "Series",
+  person: "Person",
+  company: "Company",
+  video: "Video",
+  match: "Match",
+};
+
+function buildActivityEmbeddingText(activity: Activity): string {
+  const referenceObj =
+    typeof activity.reference === "object" && activity.reference !== null
+      ? activity.reference
+      : null;
+
+  const activityLabel =
+    ACTIVITY_TYPE_LABELS[activity.activityType] || activity.activityType;
+  const referenceType = referenceObj?.type
+    ? REFERENCE_TYPE_LABELS[referenceObj.type] || referenceObj.type
+    : null;
+  const notesText = activity.notes ? extractLexicalText(activity.notes) : "";
+
+  const reviewTexts =
+    activity.reviews
+      ?.filter((r) => r.note && r.note.trim().length > 0)
+      .map((r) => {
+        const lyovsonName =
+          typeof r.lyovson === "object" && r.lyovson !== null
+            ? r.lyovson.name
+            : null;
+        return lyovsonName ? `${lyovsonName}'s note: ${r.note}` : r.note;
+      })
+      .filter(Boolean) || [];
+
+  const textParts = [
+    referenceObj?.title ? `${activityLabel} ${referenceObj.title}` : "Activity",
+    referenceType ? `Type: ${referenceType}` : null,
+    referenceObj?.description ? referenceObj.description : null,
+    notesText ? `Notes: ${notesText}` : null,
+    ...reviewTexts,
+  ].filter(Boolean);
+
+  return textParts.join("\n\n");
+}
+
 /**
  * Generate embedding for an activity
  */
@@ -246,12 +303,12 @@ export async function generateEmbeddingForActivity(
   req: PayloadRequest
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Fetch the activity
-    const activity = await req.payload.findByID({
+    // Fetch the activity (cast needed: Payload's defaultPopulate narrows return types)
+    const activity = (await req.payload.findByID({
       collection: "activities",
       id: activityId,
       depth: 1, // Need reference for title
-    });
+    })) as unknown as Activity | null;
 
     // Validation checks
     if (!activity) {
@@ -266,59 +323,7 @@ export async function generateEmbeddingForActivity(
       return { success: false, error: "Activity is not published" };
     }
 
-    // Build rich embedding text from activity and reference
-    const referenceObj =
-      typeof activity.reference === "object" && activity.reference !== null
-        ? activity.reference
-        : null;
-
-    const activityTypeLabels: Record<string, string> = {
-      read: "Read",
-      watch: "Watched",
-      listen: "Listened",
-      play: "Played",
-      visit: "Visited",
-    };
-
-    const referenceTypeLabels: Record<string, string> = {
-      book: "Book",
-      movie: "Movie",
-      tvShow: "TV Show",
-      videoGame: "Video Game",
-      music: "Music",
-      podcast: "Podcast",
-      series: "Series",
-      person: "Person",
-      company: "Company",
-      video: "Video",
-      match: "Match",
-    };
-
-    const activityLabel = activityTypeLabels[activity.activityType] || activity.activityType;
-    const referenceType = referenceObj?.type ? referenceTypeLabels[referenceObj.type] || referenceObj.type : null;
-    const notesText = activity.notes ? extractLexicalText(activity.notes) : "";
-
-    // Get participant reviews/notes
-    const reviewTexts = activity.reviews
-      ?.filter((r) => r.note && r.note.trim().length > 0)
-      .map((r) => {
-        const lyovsonName =
-          typeof r.lyovson === "object" && r.lyovson !== null
-            ? r.lyovson.name
-            : null;
-        return lyovsonName ? `${lyovsonName}'s note: ${r.note}` : r.note;
-      })
-      .filter(Boolean) || [];
-
-    const textParts = [
-      referenceObj?.title ? `${activityLabel} ${referenceObj.title}` : "Activity",
-      referenceType ? `Type: ${referenceType}` : null,
-      referenceObj?.description ? referenceObj.description : null,
-      notesText ? `Notes: ${notesText}` : null,
-      ...reviewTexts,
-    ].filter(Boolean);
-
-    const textContent = textParts.join("\n\n");
+    const textContent = buildActivityEmbeddingText(activity);
 
     if (!textContent.trim()) {
       req.payload.logger.info(
@@ -346,22 +351,18 @@ export async function generateEmbeddingForActivity(
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
 
-    // Update activity with embedding
-    await req.payload.update({
-      collection: "activities",
-      id: activityId,
-      data: {
+    // Direct DB update — bypasses version system, no extra version row created
+    const activitiesTable = req.payload.db.tables.activities;
+    await req.payload.db.drizzle
+      .update(activitiesTable)
+      .set({
         embedding_vector: `[${vector.join(",")}]`,
         embedding_model: model,
         embedding_dimensions: dimensions,
         embedding_generated_at: new Date().toISOString(),
         embedding_text_hash: currentTextHash,
-      } as any,
-      context: {
-        skipEmbeddingGeneration: true,
-        skipRevalidation: true,
-      },
-    });
+      } as Record<string, unknown>)
+      .where(eq(activitiesTable.id, activityId));
 
     req.payload.logger.info(
       `[Embedding] ✅ Generated ${dimensions}D embedding for activity ${activityId}`
@@ -406,22 +407,15 @@ async function computeRecommendationsForPost(
       `[Recommendations] Computing recommendations for post ${postId}`
     );
 
-    const similarPosts = await getSimilarPosts(postId, 3);
+    const similarPosts = await getSimilarPosts(postId, RECOMMENDATION_LIMIT);
     const recommendedIds = similarPosts.map((p) => p.id);
 
-    // Update post with recommendations
-    await req.payload.update({
-      collection: "posts",
-      id: postId,
-      data: {
-        recommended_post_ids: recommendedIds,
-      },
-      context: {
-        skipEmbeddingGeneration: true,
-        skipRecommendationCompute: true,
-        skipRevalidation: true,
-      },
-    });
+    // Direct DB update — bypasses version system, no extra version row created
+    const postsTable = req.payload.db.tables.posts;
+    await req.payload.db.drizzle
+      .update(postsTable)
+      .set({ recommended_post_ids: recommendedIds })
+      .where(eq(postsTable.id, postId));
 
     req.payload.logger.info(
       `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for post ${postId}`
@@ -463,22 +457,15 @@ async function computeRecommendationsForNote(
       `[Recommendations] Computing recommendations for note ${noteId}`
     );
 
-    const similarNotes = await getSimilarNotes(noteId, 3);
+    const similarNotes = await getSimilarNotes(noteId, RECOMMENDATION_LIMIT);
     const recommendedIds = similarNotes.map((n) => n.id);
 
-    // Update note with recommendations
-    await req.payload.update({
-      collection: "notes",
-      id: noteId,
-      data: {
-        recommended_note_ids: recommendedIds,
-      },
-      context: {
-        skipEmbeddingGeneration: true,
-        skipRecommendationCompute: true,
-        skipRevalidation: true,
-      },
-    });
+    // Direct DB update — bypasses version system, no extra version row created
+    const notesTable = req.payload.db.tables.notes;
+    await req.payload.db.drizzle
+      .update(notesTable)
+      .set({ recommended_note_ids: recommendedIds })
+      .where(eq(notesTable.id, noteId));
 
     req.payload.logger.info(
       `[Recommendations] ✅ Computed ${recommendedIds.length} recommendations for note ${noteId}`

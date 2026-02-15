@@ -5,17 +5,21 @@ import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 
-import { GridCardContent, GridCardHeroNote, GridCardRelatedNotes } from "@/components/grid";
+import {
+  GridCardContent,
+  GridCardHeroNote,
+  GridCardRelatedNotes,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import type { Note, Reference } from "@/payload-types";
+import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { getNote } from "@/utilities/get-note";
 import { getServerSideURL } from "@/utilities/getURL";
 
@@ -74,7 +78,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
       >
         <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
           {note.type === "quote" && note.quotedPerson && (
-            <p className="glass-text-secondary mb-4 text-right text-sm not-italic before:content-['—'] before:mr-2">
+            <p className="glass-text-secondary mb-4 text-right text-sm not-italic before:mr-2 before:content-['—']">
               {note.quotedPerson}
             </p>
           )}
@@ -110,11 +114,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
   );
 }
 
-async function RelatedNotes({
-  recommendedIds,
-}: {
-  recommendedIds?: number[];
-}) {
+async function RelatedNotes({ recommendedIds }: { recommendedIds?: number[] }) {
   // Early return if no recommendations stored
   if (!recommendedIds || recommendedIds.length === 0) {
     return null;
@@ -133,13 +133,15 @@ async function RelatedNotes({
     limit: recommendedIds.length,
   });
 
-  if (notes.docs.length === 0) {
+  // defaultPopulate narrows the type, but find() returns full documents
+  const docs = notes.docs as unknown as Note[];
+
+  if (docs.length === 0) {
     return null;
   }
 
-  return <GridCardRelatedNotes notes={notes.docs} />;
+  return <GridCardRelatedNotes notes={docs} />;
 }
-
 
 function getNoteReferences(note: Note): Reference[] {
   const refs: Reference[] = [];
@@ -177,11 +179,12 @@ export async function generateStaticParams() {
   cacheTag("notes");
   cacheLife("static");
 
-  const { getPayload } = await import("payload");
-  const configPromise = await import("@payload-config");
-  const payload = await getPayload({ config: configPromise.default });
+  const payload = await getPayload({ config: configPromise });
   const notes = await payload.find({
     collection: "notes",
+    select: {
+      slug: true,
+    },
     where: {
       _status: {
         equals: "published",
@@ -191,9 +194,9 @@ export async function generateStaticParams() {
   });
 
   return notes.docs
-    .filter((note) => typeof note === "object" && "slug" in note && note.slug)
+    .filter((note) => note.slug)
     .map((note) => ({
-      slug: (note as { slug: string }).slug,
+      slug: note.slug,
     }));
 }
 
@@ -217,7 +220,9 @@ export async function generateMetadata({
   }
 
   const title = note.title;
-  const contentText = note.content ? extractLexicalText(note.content).trim() : "";
+  const contentText = note.content
+    ? extractLexicalText(note.content).trim()
+    : "";
   const description =
     contentText.length > 0
       ? contentText.slice(0, NOTE_META_DESCRIPTION_MAX_LENGTH)

@@ -17,7 +17,11 @@ export const formatSlugHook =
       const fallbackData = data?.[fallback];
 
       // Explicitly check for non-empty string (empty string is falsy but we need to handle it)
-      if (fallbackData && typeof fallbackData === "string" && fallbackData.length > 0) {
+      if (
+        fallbackData &&
+        typeof fallbackData === "string" &&
+        fallbackData.length > 0
+      ) {
         return formatSlug(fallbackData);
       }
     }

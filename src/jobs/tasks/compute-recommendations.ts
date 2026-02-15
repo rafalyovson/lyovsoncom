@@ -18,10 +18,11 @@ export const ComputeRecommendations: TaskConfig<"computeRecommendations"> = {
     const { postId } = input;
 
     // Fetch post to verify it exists and has embedding
-    const post = await req.payload.findByID({
+    // findByID returns full documents; cast needed because Payload's defaultPopulate narrows types
+    const post = (await req.payload.findByID({
       collection: "posts",
       id: postId,
-    });
+    })) as unknown as { _status?: string; embedding_vector?: string };
 
     if (!post) {
       return { output: { success: false, reason: "post_not_found" } };

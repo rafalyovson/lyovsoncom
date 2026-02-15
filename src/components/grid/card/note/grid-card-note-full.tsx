@@ -1,4 +1,4 @@
-import { Brain, Calendar, FileText, PenTool, Quote } from "lucide-react";
+import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import Link from "next/link";
 
 import { GridCard, GridCardSection } from "@/components/grid";
@@ -40,10 +40,14 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
   const isMultiLineThought = !isQuote && previewText.includes("\n");
   const maxChars = isQuote ? 360 : 520;
   const isTruncated = previewText.length > maxChars;
-  const excerpt = isTruncated ? previewText.slice(0, maxChars).trimEnd() : previewText;
+  const excerpt = isTruncated
+    ? previewText.slice(0, maxChars).trimEnd()
+    : previewText;
   const attribution =
     quotedPerson ||
-    (sourceReference && typeof sourceReference === "object" ? sourceReference?.title : null) ||
+    (sourceReference && typeof sourceReference === "object"
+      ? sourceReference?.title
+      : null) ||
     null;
 
   return (
@@ -58,7 +62,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
             <div className="relative flex h-full flex-col justify-start px-6 py-6">
               <p
                 className={[
-                  "glass-text overflow-hidden pr-10 text-left text-[15px] italic leading-snug break-words",
+                  "glass-text overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
                   isPoem ? "whitespace-pre-line" : "whitespace-normal",
                 ]
                   .filter(Boolean)
@@ -68,21 +72,21 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
               </p>
 
               {isTruncated && (
-                <>
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
-                </>
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
               )}
 
               {(isTruncated || attribution) && (
                 <div className="mt-4 flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     {isTruncated && (
-                      <span className="glass-text-secondary text-xs tracking-widest">***</span>
+                      <span className="glass-text-secondary text-xs tracking-widest">
+                        ***
+                      </span>
                     )}
                   </div>
                   <div className="min-w-0 text-right">
                     {attribution && (
-                      <cite className="glass-text-secondary block truncate text-xs font-normal not-italic before:content-['—'] before:mr-2">
+                      <cite className="glass-text-secondary block truncate font-normal text-xs not-italic before:mr-2 before:content-['—']">
                         {attribution}
                       </cite>
                     )}
@@ -94,9 +98,11 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
             <div className="relative flex h-full flex-col justify-start px-6 py-6">
               <p
                 className={[
-                  "glass-text overflow-hidden pr-10 text-left text-[15px] leading-relaxed break-words text-pretty",
+                  "glass-text overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
                   "tracking-[-0.01em]",
-                  isMultiLineThought ? "whitespace-pre-line" : "whitespace-normal",
+                  isMultiLineThought
+                    ? "whitespace-pre-line"
+                    : "whitespace-normal",
                 ].join(" ")}
               >
                 {excerpt}
@@ -105,7 +111,7 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
               {isTruncated && (
                 <>
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
-                  <span className="glass-text-secondary pointer-events-none absolute bottom-4 right-6 text-xs tracking-widest">
+                  <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
                     ***
                   </span>
                 </>
@@ -120,7 +126,10 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
           "col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
         }
       >
-        <Link className="group block flex flex-col items-center gap-1" href={noteUrl}>
+        <Link
+          className="group block flex flex-col items-center gap-1"
+          href={noteUrl}
+        >
           {isQuoteType ? (
             <Quote
               aria-hidden="true"
@@ -174,8 +183,9 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
             if (typeof topic !== "object" || !topic?.id) {
               return false;
             }
-            return index === self.findIndex((t) => 
-              typeof t === "object" && t?.id === topic.id
+            return (
+              index ===
+              self.findIndex((t) => typeof t === "object" && t?.id === topic.id)
             );
           })
           .map((topic, index) => {
@@ -206,5 +216,3 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
     </GridCard>
   );
 };
-
-

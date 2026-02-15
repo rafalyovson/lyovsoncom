@@ -36,7 +36,11 @@ export const Grid = ({ children }: { children: ReactNode }) => {
 
 export { GridCard, GridCardContent } from "./card";
 export { GridCardActivityFull, GridCardActivityReview } from "./card/activity";
-export { GridCardHero, GridCardHeroActivity, GridCardHeroNote } from "./card/hero";
+export {
+  GridCardHero,
+  GridCardHeroActivity,
+  GridCardHeroNote,
+} from "./card/hero";
 export { GridCardNav, GridCardNavItem } from "./card/nav";
 export { GridCardNotFound } from "./card/not-found";
 export { GridCardNoteFull } from "./card/note";

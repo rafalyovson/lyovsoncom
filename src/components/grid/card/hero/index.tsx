@@ -88,7 +88,10 @@ export const GridCardHeroNote = ({
 
   // Limit references to 3
   const validReferences = (references || [])
-    .filter((ref): ref is Reference => typeof ref === "object" && ref !== null && "title" in ref)
+    .filter(
+      (ref): ref is Reference =>
+        typeof ref === "object" && ref !== null && "title" in ref
+    )
     .slice(0, 3);
 
   return (
@@ -108,7 +111,7 @@ export const GridCardHeroNote = ({
           "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-3"
         )}
       >
-        <h1 className="glass-text text-center font-bold text-2xl transition-colors duration-300 g3:text-left">
+        <h1 className="glass-text g3:text-left text-center font-bold text-2xl transition-colors duration-300">
           {note.title}
         </h1>
       </GridCardSection>
@@ -131,7 +134,9 @@ export const GridCardHeroNote = ({
             className="glass-text h-5 w-5 transition-colors duration-300"
           />
         )}
-        <span className="glass-text-secondary text-xs capitalize">{typeLabel}</span>
+        <span className="glass-text-secondary text-xs capitalize">
+          {typeLabel}
+        </span>
       </GridCardSection>
 
       <GridCardSection
@@ -172,7 +177,10 @@ export const GridCardHeroNote = ({
             if (typeof topic !== "object" || !topic?.id) {
               return false;
             }
-            return index === self.findIndex((t) => typeof t === "object" && t?.id === topic.id);
+            return (
+              index ===
+              self.findIndex((t) => typeof t === "object" && t?.id === topic.id)
+            );
           })
           .map((topic) => {
             if (typeof topic !== "object" || !topic?.slug || !topic?.id) {
@@ -223,13 +231,13 @@ export const GridCardHeroNote = ({
 
         return (
           <GridCardSection
-            key={reference.id}
             className={cn(
               "col-start-1 col-end-4 flex items-center gap-2",
               "g3:col-start-4 g3:col-end-7",
               ...mobileRowClasses,
               ...desktopRowClasses
             )}
+            key={reference.id}
           >
             {imageObj && (
               <div className="flex-shrink-0">

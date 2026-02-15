@@ -6,7 +6,7 @@ import type {
 
 import type { Note } from "@/payload-types";
 
-export const revalidateNote: CollectionAfterChangeHook<Note> = async ({
+export const revalidateNote: CollectionAfterChangeHook<Note> = ({
   doc,
   previousDoc,
   req,
@@ -81,7 +81,7 @@ export const revalidateNote: CollectionAfterChangeHook<Note> = async ({
   return doc;
 };
 
-export const revalidateNoteDelete: CollectionAfterDeleteHook<Note> = async ({
+export const revalidateNoteDelete: CollectionAfterDeleteHook<Note> = ({
   doc,
   req,
 }) => {

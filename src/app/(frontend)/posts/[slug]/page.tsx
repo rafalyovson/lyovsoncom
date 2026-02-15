@@ -211,11 +211,14 @@ async function RecommendedPosts({
     limit: recommendedIds.length,
   });
 
-  if (posts.docs.length === 0) {
+  // Payload's type narrowing is overly conservative here; find() returns full documents
+  const docs = posts.docs as unknown as Post[];
+
+  if (docs.length === 0) {
     return null;
   }
 
-  return <GridCardRelatedPosts posts={posts.docs} />;
+  return <GridCardRelatedPosts posts={docs} />;
 }
 
 export async function generateStaticParams() {
@@ -226,6 +229,9 @@ export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
   const posts = await payload.find({
     collection: "posts",
+    select: {
+      slug: true,
+    },
     where: {
       _status: {
         equals: "published",
@@ -235,9 +241,9 @@ export async function generateStaticParams() {
   });
 
   return posts.docs
-    .filter((post) => typeof post === "object" && "slug" in post && post.slug)
+    .filter((post) => post.slug)
     .map((post) => ({
-      slug: (post as { slug: string }).slug,
+      slug: post.slug,
     }));
 }
 

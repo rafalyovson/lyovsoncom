@@ -51,7 +51,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
   // Optimized sizes attribute for 400px grid system
   // All grid cards are exactly 400px wide at all breakpoints
   // Hero cards and full-width images pass custom size prop or use fill
-  const sizes = sizeFromProps ? sizeFromProps : fill ? "100vw" : "400px";
+  const sizes = sizeFromProps || (fill ? "100vw" : "400px");
 
   return (
     <picture

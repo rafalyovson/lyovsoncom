@@ -8,10 +8,7 @@ import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
 import { populateContentTextHook } from "./hooks/populateContentText";
-import {
-  revalidateNote,
-  revalidateNoteDelete,
-} from "./hooks/revalidateNote";
+import { revalidateNote, revalidateNoteDelete } from "./hooks/revalidateNote";
 
 export const Notes: CollectionConfig = {
   slug: "notes",
@@ -134,7 +131,8 @@ export const Notes: CollectionConfig = {
               name: "quotedPerson",
               type: "text",
               admin: {
-                description: "Who said this quote? (e.g., author name, speaker)",
+                description:
+                  "Who said this quote? (e.g., author name, speaker)",
                 condition: (data) => data.type === "quote",
                 placeholder: "e.g., Jane Austen, Albert Einstein",
               },
@@ -150,8 +148,7 @@ export const Notes: CollectionConfig = {
             },
           ],
           label: "Quote Details",
-          description:
-            "Additional information for quote-type notes",
+          description: "Additional information for quote-type notes",
         },
         {
           fields: [
@@ -287,7 +284,7 @@ export const Notes: CollectionConfig = {
     afterChange: [
       revalidateNote, // Cache revalidation for notes
       // Generate embeddings inline (fire-and-forget)
-      async ({ doc, req, operation }) => {
+      ({ doc, req, operation }) => {
         // Only for create/update of published notes
         if (
           (operation === "create" || operation === "update") &&

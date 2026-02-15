@@ -56,7 +56,7 @@ export const Projects: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         req.payload.logger.info(`Updating cache for project: ${doc.slug}`);
 
         // Revalidate project-related cache tags
@@ -72,7 +72,7 @@ export const Projects: CollectionConfig = {
       },
     ],
     afterDelete: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         req.payload.logger.info(
           `Updating cache after project deletion: ${doc?.slug}`
         );

@@ -21,10 +21,15 @@ function renderRating(rating: number) {
   const emptyStars = 10 - rating;
 
   return (
-    <div className="flex flex-col items-center gap-1.5" aria-label={`${rating} out of 10`}>
+    <div
+      aria-label={`${rating} out of 10`}
+      className="flex flex-col items-center gap-1.5"
+    >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
-        <span className="glass-text text-2xl font-bold leading-none">{rating}</span>
+        <span className="glass-text font-bold text-2xl leading-none">
+          {rating}
+        </span>
         <span className="glass-text-secondary text-xs">/10</span>
       </div>
       {/* 10 stars in two rows of 5 */}
@@ -32,32 +37,32 @@ function renderRating(rating: number) {
         <div className="flex items-center justify-center gap-0.5">
           {Array.from({ length: Math.min(fullStars, 5) }).map((_, i) => (
             <Star
-              key={`full-${i}`}
               aria-hidden="true"
               className="glass-text h-3 w-3 fill-current"
+              key={`full-${i}`}
             />
           ))}
           {Array.from({ length: Math.max(0, 5 - fullStars) }).map((_, i) => (
             <Star
-              key={`empty-top-${i}`}
               aria-hidden="true"
               className="glass-text-secondary h-3 w-3 opacity-30"
+              key={`empty-top-${i}`}
             />
           ))}
         </div>
         <div className="flex items-center justify-center gap-0.5">
           {Array.from({ length: Math.max(0, fullStars - 5) }).map((_, i) => (
             <Star
-              key={`full-bottom-${i}`}
               aria-hidden="true"
               className="glass-text h-3 w-3 fill-current"
+              key={`full-bottom-${i}`}
             />
           ))}
           {Array.from({ length: Math.min(emptyStars, 5) }).map((_, i) => (
             <Star
-              key={`empty-bottom-${i}`}
               aria-hidden="true"
               className="glass-text-secondary h-3 w-3 opacity-30"
+              key={`empty-bottom-${i}`}
             />
           ))}
         </div>
@@ -78,7 +83,8 @@ export function GridCardActivityReview({
   const name = lyovson?.name || "Unknown";
   const username = lyovson?.username;
   const hasNote = review.note && review.note.trim().length > 0;
-  const rating: number | null = typeof review.rating === "number" ? review.rating : null;
+  const rating: number | null =
+    typeof review.rating === "number" ? review.rating : null;
 
   const noteText = review.note || "";
   const maxChars = 520;
@@ -100,12 +106,12 @@ export function GridCardActivityReview({
             {/* Opening quote mark */}
             <Quote
               aria-hidden="true"
-              className="glass-text-secondary absolute top-3 left-4 h-5 w-5 opacity-40 rotate-180"
+              className="glass-text-secondary absolute top-3 left-4 h-5 w-5 rotate-180 opacity-40"
             />
             <p
               className={cn(
-                "glass-text overflow-hidden pl-4 pr-6 text-left text-[15px] italic leading-relaxed break-words text-pretty",
-                "tracking-[-0.01em] whitespace-pre-line"
+                "glass-text overflow-hidden text-pretty break-words pr-6 pl-4 text-left text-[15px] italic leading-relaxed",
+                "whitespace-pre-line tracking-[-0.01em]"
               )}
             >
               {excerpt}
@@ -114,7 +120,7 @@ export function GridCardActivityReview({
             {isTruncated && (
               <>
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
-                <span className="glass-text-secondary pointer-events-none absolute bottom-4 right-6 text-xs tracking-widest">
+                <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
                   ...
                 </span>
               </>
@@ -148,10 +154,7 @@ export function GridCardActivityReview({
           </Link>
         ) : (
           <div className="flex flex-col items-center gap-1">
-            <User
-              aria-hidden="true"
-              className="glass-text h-5 w-5"
-            />
+            <User aria-hidden="true" className="glass-text h-5 w-5" />
             <span className="glass-text-secondary text-xs capitalize">
               {name.replace(" Lyovson", "")}
             </span>

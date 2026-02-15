@@ -618,7 +618,7 @@ export const References: CollectionConfig = {
   ],
   hooks: {
     afterChange: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         req.payload.logger.info(`Revalidating reference: ${doc.slug}`);
         // TODO: Add revalidation logic for references when we have reference pages
       },

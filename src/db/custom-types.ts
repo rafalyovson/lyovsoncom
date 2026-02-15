@@ -3,7 +3,6 @@
  * Used to extend Payload CMS schema with types not natively supported
  */
 
-import type { SQL } from "drizzle-orm";
 import { customType } from "drizzle-orm/pg-core";
 
 /**

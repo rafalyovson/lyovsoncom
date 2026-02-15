@@ -14,11 +14,16 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 
-import { GridCard, GridCardActivityReview, GridCardHeroActivity, GridCardSection } from "@/components/grid";
+import {
+  GridCard,
+  GridCardActivityReview,
+  GridCardHeroActivity,
+  GridCardSection,
+} from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
-import type { Activity, Reference } from "@/payload-types";
+import type { Activity } from "@/payload-types";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -51,6 +56,50 @@ function getActivityTitle(
     return `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceTitle}`;
   }
   return activityTypeLabels[activity.activityType] || activity.activityType;
+}
+
+const referenceTypeIcons: Record<string, typeof Book> = {
+  book: Book,
+  movie: Film,
+  tvShow: Film,
+  videoGame: Gamepad2,
+  music: Music,
+  podcast: Mic,
+  series: Book,
+  person: User,
+  company: Building2,
+  video: Video,
+  match: Trophy,
+};
+
+function ReferenceTypeIcon({ type }: { type: string }) {
+  const Icon = referenceTypeIcons[type] || Info;
+  return <Icon aria-hidden="true" className="glass-text h-6 w-6" />;
+}
+
+function getParticipants(activity: Activity) {
+  const objects =
+    activity.participants?.filter(
+      (p): p is Exclude<typeof p, number> => typeof p === "object" && p !== null
+    ) || [];
+  return objects.filter(
+    (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i
+  );
+}
+
+function getFinishDateParts(activity: Activity) {
+  if (!activity.finishedAt) {
+    return null;
+  }
+  const date = new Date(activity.finishedAt);
+  return {
+    day: date.getDate(),
+    monthYear: date.toLocaleDateString("en-GB", {
+      month: "short",
+      year: "numeric",
+    }),
+    iso: activity.finishedAt,
+  };
 }
 
 function getReviews(activity: Activity) {
@@ -108,22 +157,11 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
 
   // Get reference info for icon
   const referenceType = referenceObj?.type || "other";
-  const activityLabel = activityTypeLabels[activity.activityType] || activity.activityType;
+  const activityLabel =
+    activityTypeLabels[activity.activityType] || activity.activityType;
 
-  // Get participant details for display (filter to objects and dedupe by id)
-  const participantObjects = activity.participants?.filter(
-    (p): p is Exclude<typeof p, number> => typeof p === "object" && p !== null
-  ) || [];
-  const participants = participantObjects.filter(
-    (p, i, arr) => arr.findIndex((x) => x.id === p.id) === i
-  );
-
-  // Format finish date
-  const finishDate = activity.finishedAt ? new Date(activity.finishedAt) : null;
-  const finishDay = finishDate ? finishDate.getDate() : null;
-  const finishMonthYear = finishDate
-    ? finishDate.toLocaleDateString("en-GB", { month: "short", year: "numeric" })
-    : null;
+  const participants = getParticipants(activity);
+  const finishDateParts = getFinishDateParts(activity);
 
   return (
     <>
@@ -147,9 +185,9 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
               {/* Info icon indicator */}
               <Info
                 aria-hidden="true"
-                className="glass-text-secondary absolute -top-1 left-0 h-4 w-4 opacity-50"
+                className="glass-text-secondary -top-1 absolute left-0 h-4 w-4 opacity-50"
               />
-              <div className="prose prose-sm glass-stagger-1 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none pl-2 pt-4">
+              <div className="prose prose-sm glass-stagger-1 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none pt-4 pl-2">
                 <RichText
                   className="h-full"
                   content={activity.notes}
@@ -159,32 +197,28 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
               </div>
             </div>
           ) : (
-            <p className="glass-text-secondary text-center text-sm">No additional info</p>
+            <p className="glass-text-secondary text-center text-sm">
+              No additional info
+            </p>
           )}
         </GridCardSection>
 
         {/* Bottom row - Column 1: Activity type icon + label */}
         <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex flex-col items-center justify-center gap-1">
-          {referenceType === "book" && <Book aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "movie" && <Film aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "tvShow" && <Film aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "videoGame" && <Gamepad2 aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "music" && <Music aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "podcast" && <Mic aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "series" && <Book aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "person" && <User aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "company" && <Building2 aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "video" && <Video aria-hidden="true" className="glass-text h-6 w-6" />}
-          {referenceType === "match" && <Trophy aria-hidden="true" className="glass-text h-6 w-6" />}
-          {!["book", "movie", "tvShow", "videoGame", "music", "podcast", "series", "person", "company", "video", "match"].includes(referenceType) && <Info aria-hidden="true" className="glass-text h-6 w-6" />}
-          <span className="glass-text-secondary text-xs font-medium">{activityLabel}</span>
+          <ReferenceTypeIcon type={referenceType} />
+          <span className="glass-text-secondary font-medium text-xs">
+            {activityLabel}
+          </span>
         </GridCardSection>
 
         {/* Bottom row - Column 2: Participants with icons */}
         <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col items-center justify-center gap-1">
           <div className="flex items-center gap-2">
             {participants.map((participant) => (
-              <div key={participant.id} className="flex flex-col items-center gap-0.5">
+              <div
+                className="flex flex-col items-center gap-0.5"
+                key={participant.id}
+              >
                 <User aria-hidden="true" className="glass-text h-5 w-5" />
                 <span className="glass-text-secondary text-[10px]">
                   {participant.name?.split(" ").at(0) || "?"}
@@ -196,11 +230,16 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
 
         {/* Bottom row - Column 3: Finish date */}
         <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex flex-col items-center justify-center">
-          {finishDate ? (
-            <time className="flex flex-col items-center" dateTime={activity.finishedAt || ""}>
-              <span className="glass-text text-2xl font-bold leading-none">{finishDay}</span>
+          {finishDateParts ? (
+            <time
+              className="flex flex-col items-center"
+              dateTime={finishDateParts.iso}
+            >
+              <span className="glass-text font-bold text-2xl leading-none">
+                {finishDateParts.day}
+              </span>
               <span className="glass-text-secondary text-[10px] uppercase tracking-wider">
-                {finishMonthYear}
+                {finishDateParts.monthYear}
               </span>
             </time>
           ) : (
@@ -217,8 +256,6 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
 
         return (
           <GridCardActivityReview
-            key={`review-${typeof review.lyovson === "object" ? review.lyovson.id : review.lyovson}-${index}`}
-            review={review}
             className={cn(
               "col-start-1 col-end-2",
               "g2:col-start-2 g2:col-end-3",
@@ -226,6 +263,8 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
                 ? "g3:col-start-2 g3:col-end-3"
                 : "g3:col-start-3 g3:col-end-4"
             )}
+            key={`review-${typeof review.lyovson === "object" ? review.lyovson.id : review.lyovson}-${index}`}
+            review={review}
           />
         );
       })}
@@ -243,6 +282,12 @@ export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise.default });
   const activities = await payload.find({
     collection: "activities",
+    select: {
+      slug: true,
+      finishedAt: true,
+      startedAt: true,
+      publishedAt: true,
+    },
     where: {
       _status: {
         equals: "published",
@@ -252,34 +297,26 @@ export async function generateStaticParams() {
   });
 
   return activities.docs
-    .filter(
-      (activity) =>
-        typeof activity === "object" && "slug" in activity && activity.slug
-    )
+    .filter((activity) => activity.slug)
     .map((activity) => {
-      const activitySlug = (activity as { slug: string }).slug;
-      // Get date from finishedAt, startedAt, or publishedAt
-      const dateTime = (activity as { finishedAt?: string; startedAt?: string; publishedAt?: string }).finishedAt ||
-        (activity as { startedAt?: string; publishedAt?: string }).startedAt ||
-        (activity as { publishedAt?: string }).publishedAt;
-      
+      const dateTime =
+        activity.finishedAt || activity.startedAt || activity.publishedAt;
+
       if (dateTime) {
         const dateObj = new Date(dateTime);
         const month = String(dateObj.getMonth() + 1).padStart(2, "0");
         const day = String(dateObj.getDate()).padStart(2, "0");
         const year = String(dateObj.getFullYear()).slice(-2);
-        const dateSlug = `${month}-${day}-${year}`;
-        
+
         return {
-          date: dateSlug,
-          slug: activitySlug,
+          date: `${month}-${day}-${year}`,
+          slug: activity.slug,
         };
       }
-      
-      // Fallback for activities without date
+
       return {
         date: "unknown",
-        slug: activitySlug,
+        slug: activity.slug,
       };
     });
 }
@@ -336,4 +373,3 @@ export async function generateMetadata({
     },
   };
 }
-

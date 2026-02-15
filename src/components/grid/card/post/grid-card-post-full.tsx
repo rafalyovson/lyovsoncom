@@ -41,7 +41,8 @@ export const GridCardPostFull = ({
 
   const postUrl = `/posts/${slug}`;
   const postType = type || "article";
-  const iconClassName = "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
+  const iconClassName =
+    "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
   return (
     <GridCard className={className}>
@@ -87,13 +88,28 @@ export const GridCardPostFull = ({
           "col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
         }
       >
-        <Link className="group block flex flex-col items-center gap-1" href={postUrl}>
-          {postType === "article" && <FileText aria-hidden="true" className={iconClassName} />}
-          {postType === "review" && <Star aria-hidden="true" className={iconClassName} />}
-          {postType === "video" && <Video aria-hidden="true" className={iconClassName} />}
-          {postType === "podcast" && <Mic aria-hidden="true" className={iconClassName} />}
-          {postType === "photo" && <Camera aria-hidden="true" className={iconClassName} />}
-          {!["article", "review", "video", "podcast", "photo"].includes(postType) && <FileText aria-hidden="true" className={iconClassName} />}
+        <Link
+          className="group block flex flex-col items-center gap-1"
+          href={postUrl}
+        >
+          {postType === "article" && (
+            <FileText aria-hidden="true" className={iconClassName} />
+          )}
+          {postType === "review" && (
+            <Star aria-hidden="true" className={iconClassName} />
+          )}
+          {postType === "video" && (
+            <Video aria-hidden="true" className={iconClassName} />
+          )}
+          {postType === "podcast" && (
+            <Mic aria-hidden="true" className={iconClassName} />
+          )}
+          {postType === "photo" && (
+            <Camera aria-hidden="true" className={iconClassName} />
+          )}
+          {!["article", "review", "video", "podcast", "photo"].includes(
+            postType
+          ) && <FileText aria-hidden="true" className={iconClassName} />}
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
             {postType}
           </span>
@@ -111,8 +127,9 @@ export const GridCardPostFull = ({
             if (typeof topic !== "object" || !topic?.id) {
               return false;
             }
-            return index === self.findIndex((t) => 
-              typeof t === "object" && t?.id === topic.id
+            return (
+              index ===
+              self.findIndex((t) => typeof t === "object" && t?.id === topic.id)
             );
           })
           .map((topic, index) => {
@@ -152,8 +169,11 @@ export const GridCardPostFull = ({
             if (typeof author !== "object" || !author?.id) {
               return false;
             }
-            return index === self.findIndex((a) => 
-              typeof a === "object" && a?.id === author.id
+            return (
+              index ===
+              self.findIndex(
+                (a) => typeof a === "object" && a?.id === author.id
+              )
             );
           })
           .map((author, index) => {
