@@ -1,4 +1,5 @@
 declare global {
+  // biome-ignore lint/style/noNamespace: NodeJS ProcessEnv augmentation uses namespace merging.
   namespace NodeJS {
     type ProcessEnv = {
       PAYLOAD_SECRET: string;

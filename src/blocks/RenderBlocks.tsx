@@ -1,94 +1,93 @@
-import { BannerBlock } from "@/blocks/Banner/Component";
-import { CodeBlock } from "@/blocks/Code/Component";
-import { GIFBlock } from "@/blocks/GIF/Component";
-import { MediaBlock } from "@/blocks/MediaBlock/Component";
-import { QuoteBlock } from "@/blocks/Quote/Component";
-import { XPostBlock } from "@/blocks/XPost/Component";
-import { YouTubeBlock } from "@/blocks/YouTube/Component";
+import { BannerBlock as BannerBlockComponent } from "@/blocks/Banner/Component";
+import { CodeBlock as CodeBlockComponent } from "@/blocks/Code/Component";
+import { GIFBlock as GIFBlockComponent } from "@/blocks/GIF/Component";
+import { MediaBlock as MediaBlockComponent } from "@/blocks/MediaBlock/Component";
+import { QuoteBlock as QuoteBlockComponent } from "@/blocks/Quote/Component";
+import { XPostBlock as XPostBlockComponent } from "@/blocks/XPost/Component";
+import { YouTubeBlock as YouTubeBlockComponent } from "@/blocks/YouTube/Component";
+import type {
+  BannerBlock,
+  CodeBlock,
+  GIFBlock,
+  MediaBlock,
+  QuoteBlock,
+  XPostBlock,
+  YouTubeBlock,
+} from "@/payload-types";
 
-type BlockType =
-  | "banner"
-  | "code"
-  | "gif"
-  | "mediaBlock"
-  | "quote"
-  | "xpost"
-  | "youtube";
+type RenderBlock =
+  | BannerBlock
+  | CodeBlock
+  | GIFBlock
+  | MediaBlock
+  | QuoteBlock
+  | XPostBlock
+  | YouTubeBlock;
 
-type BlockWithType = {
-  blockType: BlockType;
-  id?: string;
-  [key: string]: unknown;
+type Props = {
+  blocks?: RenderBlock[] | null;
 };
 
-export const RenderBlocks = (props: { blocks: BlockWithType[] }) => {
-  const { blocks } = props;
+function renderBlock(block: RenderBlock, key: string) {
+  switch (block.blockType) {
+    case "mediaBlock":
+      return (
+        <div className="my-16" key={key}>
+          <MediaBlockComponent {...block} />
+        </div>
+      );
+    case "youtube":
+      return (
+        <div className="my-16" key={key}>
+          <YouTubeBlockComponent {...block} />
+        </div>
+      );
+    case "gif":
+      return (
+        <div className="my-16" key={key}>
+          <GIFBlockComponent {...block} />
+        </div>
+      );
+    case "banner":
+      return (
+        <div className="my-16" key={key}>
+          <BannerBlockComponent {...block} />
+        </div>
+      );
+    case "code":
+      return (
+        <div className="my-16" key={key}>
+          <CodeBlockComponent {...block} />
+        </div>
+      );
+    case "quote":
+      return (
+        <div className="my-16" key={key}>
+          <QuoteBlockComponent {...block} />
+        </div>
+      );
+    case "xpost":
+      return (
+        <div className="my-16" key={key}>
+          <XPostBlockComponent {...block} />
+        </div>
+      );
+    default:
+      return null;
+  }
+}
 
-  const hasBlocks = Array.isArray(blocks) && blocks.length > 0;
-
-  if (hasBlocks) {
-    return (
-      <>
-        {blocks.map((block, index) => {
-          const { blockType } = block;
-
-          if (!blockType) {
-            return null;
-          }
-
-          const key = block.id || `${blockType}-${index}`;
-          const blockProps = block as unknown as Record<string, unknown>;
-
-          switch (blockType) {
-            case "mediaBlock":
-              return (
-                <div className="my-16" key={key}>
-                  <MediaBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "youtube":
-              return (
-                <div className="my-16" key={key}>
-                  <YouTubeBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "gif":
-              return (
-                <div className="my-16" key={key}>
-                  <GIFBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "banner":
-              return (
-                <div className="my-16" key={key}>
-                  <BannerBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "code":
-              return (
-                <div className="my-16" key={key}>
-                  <CodeBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "quote":
-              return (
-                <div className="my-16" key={key}>
-                  <QuoteBlock {...(blockProps as any)} />
-                </div>
-              );
-            case "xpost":
-              return (
-                <div className="my-16" key={key}>
-                  <XPostBlock {...(blockProps as any)} />
-                </div>
-              );
-            default:
-              return null;
-          }
-        })}
-      </>
-    );
+export const RenderBlocks = ({ blocks }: Props) => {
+  if (!Array.isArray(blocks) || blocks.length === 0) {
+    return null;
   }
 
-  return null;
+  return (
+    <>
+      {blocks.map((block, index) => {
+        const key = block.id ?? `${block.blockType}-${index}`;
+        return renderBlock(block, key);
+      })}
+    </>
+  );
 };

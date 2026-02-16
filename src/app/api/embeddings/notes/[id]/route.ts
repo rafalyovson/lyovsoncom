@@ -2,6 +2,7 @@ import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Note } from "@/payload-types";
+import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
   extractTextFromContent,
   generateEmbedding,
@@ -62,9 +63,26 @@ export async function GET(
   try {
     const payload = await getPayload({ config: configPromise });
 
+    if (regenerate) {
+      const authResult = await authorizeEmbeddingMutation(request, payload);
+      if (!authResult.authorized) {
+        return new Response(
+          JSON.stringify({
+            error: authResult.reason || "Unauthorized",
+            id: Number.parseInt(id, 10),
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
     const note = await payload.findByID({
       collection: "notes",
       id: Number.parseInt(id, 10),
+      overrideAccess: false,
       depth: 2,
       select: {
         id: true,
@@ -284,6 +302,20 @@ export async function POST(
     const { action = "regenerate" } = body;
 
     if (action === "regenerate") {
+      const payload = await getPayload({ config: configPromise });
+      const authResult = await authorizeEmbeddingMutation(request, payload);
+      if (!authResult.authorized) {
+        return new Response(
+          JSON.stringify({
+            error: authResult.reason || "Unauthorized",
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
       // Redirect to GET with regenerate=true
       const url = new URL(request.url);
       url.searchParams.set("regenerate", "true");

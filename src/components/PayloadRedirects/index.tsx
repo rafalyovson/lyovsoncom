@@ -19,7 +19,9 @@ export const PayloadRedirects: React.FC<Props> = async ({
 
   const redirects = await getCachedRedirects()();
 
-  const redirectItem = redirects.find((redirect) => redirect.from === slug);
+  const redirectItem = redirects.find(
+    (redirectEntry) => redirectEntry.from === slug
+  );
 
   if (redirectItem) {
     if (redirectItem.to?.url) {

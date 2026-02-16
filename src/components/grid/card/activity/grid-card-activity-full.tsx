@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import {
   Book,
   Building2,
@@ -17,6 +18,7 @@ import Link from "next/link";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import type { Activity, Reference } from "@/payload-types";
+import { getActivityPath } from "@/utilities/activity-path";
 
 export type GridCardActivityProps = {
   activity: Activity;
@@ -25,7 +27,11 @@ export type GridCardActivityProps = {
   priority?: boolean;
 };
 
-const activityTypeLabels: Record<string, string> = {
+const MAX_PARTICIPANT_STAGGER = 6;
+const UNKNOWN_REFERENCE_TITLE = "Unknown";
+const UNKNOWN_ACTIVITY_SEGMENT = "unknown";
+
+const activityTypeLabels: Record<Activity["activityType"], string> = {
   read: "Read",
   watch: "Watched",
   listen: "Listened",
@@ -33,17 +39,33 @@ const activityTypeLabels: Record<string, string> = {
   visit: "Visited",
 };
 
+const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
+  book: Book,
+  movie: Film,
+  tvShow: Film,
+  videoGame: Gamepad2,
+  music: Music,
+  podcast: Mic,
+  series: Book,
+  person: User,
+  company: Building2,
+  video: Video,
+  match: Trophy,
+};
+
+type ParticipantLinkData = {
+  id: number | string;
+  name: string | null | undefined;
+  username: string;
+};
+
 function getActivityDate(
   activity: Activity
-): { date: string; dateTime?: string; dateSlug?: string } | null {
+): { date: string; dateTime?: string } | null {
   const dateTime =
     activity.finishedAt || activity.startedAt || activity.publishedAt;
   if (dateTime) {
     const dateObj = new Date(dateTime);
-    const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-    const day = String(dateObj.getDate()).padStart(2, "0");
-    const year = String(dateObj.getFullYear()).slice(-2);
-    const dateSlug = `${month}-${day}-${year}`;
 
     return {
       date: dateObj.toLocaleDateString("en-GB", {
@@ -52,10 +74,63 @@ function getActivityDate(
         day: "2-digit",
       }),
       dateTime,
-      dateSlug,
     };
   }
   return null;
+}
+
+function getReferenceObject(activity: Activity): Reference | null {
+  return typeof activity.reference === "object" && activity.reference !== null
+    ? activity.reference
+    : null;
+}
+
+function getReferenceImage(reference: Reference | null) {
+  return reference?.image && typeof reference.image === "object"
+    ? reference.image
+    : null;
+}
+
+function getActivityIcon(type: Reference["type"]): LucideIcon {
+  return referenceTypeIcons[type] ?? LinkIcon;
+}
+
+function getUniqueParticipants(activity: Activity): ParticipantLinkData[] {
+  if (
+    !Array.isArray(activity.participants) ||
+    activity.participants.length === 0
+  ) {
+    return [];
+  }
+
+  const uniqueParticipants = new Map<number | string, ParticipantLinkData>();
+
+  for (const participant of activity.participants) {
+    if (
+      typeof participant !== "object" ||
+      participant === null ||
+      (typeof participant.id !== "number" &&
+        typeof participant.id !== "string") ||
+      typeof participant.username !== "string" ||
+      participant.username.trim().length === 0
+    ) {
+      continue;
+    }
+
+    if (!uniqueParticipants.has(participant.id)) {
+      uniqueParticipants.set(participant.id, {
+        id: participant.id,
+        name: participant.name,
+        username: participant.username,
+      });
+    }
+  }
+
+  return [...uniqueParticipants.values()];
+}
+
+function getParticipantStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_PARTICIPANT_STAGGER)}`;
 }
 
 export const GridCardActivityFull = ({
@@ -64,30 +139,21 @@ export const GridCardActivityFull = ({
   loading,
   priority,
 }: GridCardActivityProps) => {
-  const { reference, activityType, slug } = activity;
+  const { activityType, slug } = activity;
 
-  // Build URL with date and slug: /activities/MM-DD-YY/reference-title
   const dateInfo = getActivityDate(activity);
-  const dateSlug = dateInfo?.dateSlug || "unknown";
-  const activityUrl = `/activities/${dateSlug}/${slug}`;
+  const activityUrl =
+    getActivityPath(activity) ??
+    `/activities/${UNKNOWN_ACTIVITY_SEGMENT}/${slug ?? UNKNOWN_ACTIVITY_SEGMENT}`;
 
-  const referenceObj =
-    typeof reference === "object" && reference !== null
-      ? (reference as Reference)
-      : null;
-  const referenceTitle = referenceObj?.title || "Unknown";
-  const referenceType = referenceObj?.type || "other";
-  const referenceImage =
-    referenceObj?.image &&
-    typeof referenceObj.image === "object" &&
-    referenceObj.image !== null &&
-    "id" in referenceObj.image
-      ? referenceObj.image
-      : null;
+  const referenceObj = getReferenceObject(activity);
+  const referenceTitle = referenceObj?.title ?? UNKNOWN_REFERENCE_TITLE;
+  const referenceType = referenceObj?.type ?? "other";
+  const referenceImage = getReferenceImage(referenceObj);
+  const activityTypeLabel = activityTypeLabels[activityType] ?? activityType;
+  const ActivityIcon = getActivityIcon(referenceType);
+  const participants = getUniqueParticipants(activity);
 
-  const activityTypeLabel = activityTypeLabels[activityType] || activityType;
-
-  // Helper to render the appropriate icon based on reference type
   const iconClassName =
     "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
@@ -96,7 +162,7 @@ export const GridCardActivityFull = ({
       {referenceImage && (
         <GridCardSection className="col-start-1 col-end-3 row-start-1 row-end-4">
           <Link
-            aria-label={`View activity: ${activityTypeLabels[activityType] || activityType} ${referenceTitle}`}
+            aria-label={`View activity: ${activityTypeLabel} ${referenceTitle}`}
             className="group block h-full overflow-hidden rounded-lg"
             href={activityUrl}
           >
@@ -121,54 +187,7 @@ export const GridCardActivityFull = ({
           className="group block flex flex-col items-center gap-1"
           href={activityUrl}
         >
-          {referenceType === "book" && (
-            <Book aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "movie" && (
-            <Film aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "tvShow" && (
-            <Film aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "videoGame" && (
-            <Gamepad2 aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "music" && (
-            <Music aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "podcast" && (
-            <Mic aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "series" && (
-            <Book aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "person" && (
-            <User aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "company" && (
-            <Building2 aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "video" && (
-            <Video aria-hidden="true" className={iconClassName} />
-          )}
-          {referenceType === "match" && (
-            <Trophy aria-hidden="true" className={iconClassName} />
-          )}
-          {![
-            "book",
-            "movie",
-            "tvShow",
-            "videoGame",
-            "music",
-            "podcast",
-            "series",
-            "person",
-            "company",
-            "video",
-            "match",
-          ].includes(referenceType) && (
-            <LinkIcon aria-hidden="true" className={iconClassName} />
-          )}
+          <ActivityIcon aria-hidden="true" className={iconClassName} />
           <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
             {activityTypeLabel}
           </span>
@@ -180,39 +199,19 @@ export const GridCardActivityFull = ({
           "col-start-3 col-end-4 row-start-2 row-end-3 flex flex-col justify-evenly gap-2"
         }
       >
-        {activity.participants &&
-          activity.participants.length > 0 &&
-          activity.participants
-            .filter((participant, index, self) => {
-              // Deduplicate participants by ID
-              if (typeof participant !== "object" || !participant?.id) {
-                return false;
-              }
-              return (
-                index ===
-                self.findIndex(
-                  (p) => typeof p === "object" && p?.id === participant.id
-                )
-              );
-            })
-            .map((participant, index) => {
-              if (typeof participant !== "object" || !participant?.username) {
-                return null;
-              }
-              return (
-                <Link
-                  aria-label={`View ${participant.name}'s profile`}
-                  className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
-                  href={{ pathname: `/${participant.username}` }}
-                  key={participant.id}
-                >
-                  <PenTool aria-hidden="true" className="h-5 w-5" />
-                  <span className="font-medium text-xs">
-                    {participant.name?.replace(" Lyovson", "")}
-                  </span>
-                </Link>
-              );
-            })}
+        {participants.map((participant, index) => (
+          <Link
+            aria-label={`View ${participant.name}'s profile`}
+            className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getParticipantStaggerClass(index)}`}
+            href={{ pathname: `/${participant.username}` }}
+            key={participant.id}
+          >
+            <PenTool aria-hidden="true" className="h-5 w-5" />
+            <span className="font-medium text-xs">
+              {participant.name?.replace(" Lyovson", "")}
+            </span>
+          </Link>
+        ))}
 
         {dateInfo && (
           <div className="glass-text-secondary flex items-center gap-2 text-xs">

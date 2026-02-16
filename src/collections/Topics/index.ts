@@ -55,7 +55,7 @@ export const Topics: CollectionConfig = {
       },
     ],
     afterChange: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         req.payload.logger.info(`Updating cache for topic: ${doc.slug}`);
 
         // Revalidate topic-related cache tags
@@ -69,7 +69,7 @@ export const Topics: CollectionConfig = {
       },
     ],
     afterDelete: [
-      async ({ doc, req }) => {
+      ({ doc, req }) => {
         req.payload.logger.info(
           `Updating cache after topic deletion: ${doc?.slug}`
         );

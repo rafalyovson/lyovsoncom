@@ -13,6 +13,20 @@ import { Linkedin } from "lucide-react";
 import { GridCard, GridCardNavItem } from "@/components/grid";
 import { cn } from "@/lib/utils";
 
+const MAX_STAGGER_INDEX = 6;
+
+const GRID_POSITIONS = [
+  "row-start-1 row-end-2 col-start-1 col-end-2",
+  "row-start-1 row-end-2 col-start-2 col-end-3",
+  "row-start-1 row-end-2 col-start-3 col-end-4",
+  "row-start-2 row-end-3 col-start-1 col-end-2",
+  "row-start-2 row-end-3 col-start-2 col-end-3",
+  "row-start-2 row-end-3 col-start-3 col-end-4",
+  "row-start-3 row-end-4 col-start-1 col-end-2",
+  "row-start-3 row-end-4 col-start-2 col-end-3",
+  "row-start-3 row-end-4 col-start-3 col-end-4",
+] as const;
+
 type SocialLink = {
   name: string;
   url: string;
@@ -24,6 +38,10 @@ type SocialLink = {
   useDefaultColor?: boolean;
   iconType: "simple" | "lucide";
 };
+
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
 
 const socialLinks: SocialLink[] = [
   {
@@ -95,26 +113,11 @@ export function GridCardUserSocial({ className }: { className?: string }) {
   return (
     <GridCard className={className}>
       {socialLinks.map((link, index) => {
-        const gridPositions = [
-          "row-start-1 row-end-2 col-start-1 col-end-2",
-          "row-start-1 row-end-2 col-start-2 col-end-3",
-          "row-start-1 row-end-2 col-start-3 col-end-4",
-          "row-start-2 row-end-3 col-start-1 col-end-2",
-          "row-start-2 row-end-3 col-start-2 col-end-3",
-          "row-start-2 row-end-3 col-start-3 col-end-4",
-          "row-start-3 row-end-4 col-start-1 col-end-2",
-          "row-start-3 row-end-4 col-start-2 col-end-3",
-          "row-start-3 row-end-4 col-start-3 col-end-4",
-        ];
-
         const IconComponent = link.icon;
 
         return (
           <GridCardNavItem
-            className={cn(
-              gridPositions[index],
-              `glass-stagger-${Math.min(index + 1, 6)}`
-            )}
+            className={cn(GRID_POSITIONS[index], getStaggerClass(index))}
             key={link.name}
           >
             <a

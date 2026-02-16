@@ -20,39 +20,32 @@ export const GridCardSection = ({
   const isInteractive = interactive || !!onClick;
   const shouldHandleWrapperInteraction = isInteractive && !asChild;
 
-  return (
-    <section
-      className={cn(
-        "glass-section transition-glass",
-        "hover:hover-float",
-        "focus-visible:outline-none",
-        isInteractive && "glass-interactive",
-        // Interactive states
-        shouldHandleWrapperInteraction && [
-          "cursor-pointer",
-          // Active state for better feedback
-          "active:scale-[0.98] active:transition-glass-fast",
-        ],
-        className
-      )}
-      onClick={onClick}
-      {...(shouldHandleWrapperInteraction && {
-        role: "button",
-        tabIndex: 0,
-        onKeyDown: (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onClick?.();
-          }
-        },
-        onKeyUp: (e) => {
-          if (e.key === " " || e.key === "Spacebar") {
-            e.preventDefault();
-          }
-        },
-      })}
-    >
-      {children}
-    </section>
+  const sectionClassName = cn(
+    "glass-section transition-glass",
+    "hover:hover-float",
+    "focus-visible:outline-none",
+    isInteractive && "glass-interactive",
+    shouldHandleWrapperInteraction && [
+      "cursor-pointer",
+      "active:scale-[0.98] active:transition-glass-fast",
+    ],
+    className
   );
+
+  if (shouldHandleWrapperInteraction) {
+    return (
+      <button
+        className={cn(
+          sectionClassName,
+          "h-full w-full appearance-none text-left"
+        )}
+        onClick={onClick}
+        type="button"
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return <section className={sectionClassName}>{children}</section>;
 };

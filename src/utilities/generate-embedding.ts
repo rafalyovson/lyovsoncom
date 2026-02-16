@@ -1,28 +1,159 @@
 import crypto from "node:crypto";
 import { openai } from "@ai-sdk/openai";
 import { embed } from "ai";
-import type { CollectionAfterOperationHook } from "payload";
+import type { CollectionAfterOperationHook, PayloadRequest } from "payload";
 
 // Re-export extractLexicalText as extractTextFromContent for backwards compatibility
 export { extractLexicalText as extractTextFromContent } from "./extract-lexical-text";
 
-// Generate a simple hash-based fallback embedding
+const EMBEDDING_TEXT_LIMIT = 8000;
+const DAYS_PER_WEEK = 7;
+const FALLBACK_VECTOR_DIMENSIONS = 384;
+const HASH_PREFIX_LENGTH = 16;
+const HASH_SLICE_LENGTH = 8;
+const HASH_WINDOW_MODULO = 32;
+const HOURS_PER_DAY = 24;
+const MILLISECONDS_PER_SECOND = 1000;
+const MINUTES_PER_HOUR = 60;
+const SECONDS_PER_MINUTE = 60;
+const MILLISECONDS_IN_WEEK =
+  DAYS_PER_WEEK *
+  HOURS_PER_DAY *
+  MINUTES_PER_HOUR *
+  SECONDS_PER_MINUTE *
+  MILLISECONDS_PER_SECOND;
+const NORMALIZATION_OFFSET = 0.5;
+const NORMALIZATION_SCALE = 2;
+const UINT32_MAX = 0xff_ff_ff_ff;
+const UNTITLED_LABEL = "untitled";
+
+type EmbeddableCollection = "activities" | "notes" | "posts";
+
+type EmbeddingDoc = {
+  id: number | string;
+  _status?: "draft" | "published" | null;
+  title?: string | null;
+  embedding_text_hash?: string | null;
+  [key: string]: unknown;
+};
+
+type CurrentEmbedding = {
+  generatedAt?: string | null;
+  textHash?: string | null;
+  vector?: number[] | null;
+};
+
 function generateFallbackEmbedding(text: string): number[] {
   const hash = crypto.createHash("sha256").update(text).digest("hex");
 
-  // Convert hash to deterministic vector
-  const vector = new Array(384).fill(0).map((_, i) => {
-    const slice = hash.slice(i % 32, (i % 32) + 8);
+  return new Array(FALLBACK_VECTOR_DIMENSIONS).fill(0).map((_, index) => {
+    const hashWindowStart = index % HASH_WINDOW_MODULO;
+    const slice = hash.slice(
+      hashWindowStart,
+      hashWindowStart + HASH_SLICE_LENGTH
+    );
     const num = Number.parseInt(slice, 16);
-    return (num / 0xff_ff_ff_ff - 0.5) * 2; // Normalize to [-1, 1]
+    return (num / UINT32_MAX - NORMALIZATION_OFFSET) * NORMALIZATION_SCALE;
   });
+}
 
-  return vector;
+function getDocFromResult(result: unknown): EmbeddingDoc | null {
+  if (!result || typeof result !== "object") {
+    return null;
+  }
+
+  if ("doc" in result && result.doc && typeof result.doc === "object") {
+    return result.doc as EmbeddingDoc;
+  }
+
+  return result as EmbeddingDoc;
+}
+
+function shouldSkipFromContext(args: unknown): boolean {
+  if (!(args && typeof args === "object" && "context" in args)) {
+    return false;
+  }
+
+  const context = args.context;
+  return Boolean(
+    context &&
+      typeof context === "object" &&
+      "skipEmbeddingGeneration" in context &&
+      context.skipEmbeddingGeneration
+  );
+}
+
+function shouldSkipEmbeddingGeneration({
+  args,
+  doc,
+  operation,
+  req,
+}: {
+  args: unknown;
+  doc: EmbeddingDoc | null;
+  operation: string;
+  req: PayloadRequest;
+}): boolean {
+  if (operation !== "create" && operation !== "update") {
+    return true;
+  }
+
+  if (!doc || shouldSkipFromContext(args)) {
+    return true;
+  }
+
+  if (doc._status !== "published") {
+    return true;
+  }
+
+  return req.query?.autosave === "true" || req.query?.draft === "true";
+}
+
+function getDocTitle(doc: Pick<EmbeddingDoc, "title">): string {
+  return doc.title?.trim() || UNTITLED_LABEL;
+}
+
+async function persistEmbedding({
+  collection,
+  doc,
+  model,
+  req,
+  textHash,
+  vector,
+}: {
+  collection: EmbeddableCollection;
+  doc: EmbeddingDoc;
+  model: string;
+  req: PayloadRequest;
+  textHash: string;
+  vector: number[];
+}) {
+  await req.payload.update({
+    collection,
+    id: doc.id,
+    data: {
+      embedding_vector: `[${vector.join(",")}]`,
+      embedding_model: model,
+      embedding_dimensions: vector.length,
+      embedding_generated_at: new Date().toISOString(),
+      embedding_text_hash: textHash,
+    },
+    overrideAccess: true,
+    context: {
+      skipEmbeddingGeneration: true,
+      skipRecommendationCompute: true,
+      skipRevalidation: true,
+    },
+  });
 }
 
 // Create a hash of the text content for change detection
 export function createTextHash(text: string): string {
-  return crypto.createHash("sha256").update(text).digest("hex").slice(0, 16);
+  return crypto
+    .createHash("sha256")
+    .update(text)
+    .digest("hex")
+    .slice(0, HASH_PREFIX_LENGTH);
 }
 
 // Main embedding generation function
@@ -43,10 +174,9 @@ export async function generateEmbedding(text: string): Promise<{
   }
 
   try {
-    // Use Vercel AI SDK for embeddings
     const { embedding } = await embed({
       model: openai.embedding("text-embedding-3-small"),
-      value: text.substring(0, 8000), // OpenAI token limit
+      value: text.substring(0, EMBEDDING_TEXT_LIMIT),
     });
 
     return {
@@ -54,8 +184,7 @@ export async function generateEmbedding(text: string): Promise<{
       model: "text-embedding-3-small",
       dimensions: embedding.length,
     };
-  } catch (_error) {
-    // Fallback to hash-based embedding on error
+  } catch {
     const vector = generateFallbackEmbedding(text);
     return {
       vector,
@@ -67,116 +196,86 @@ export async function generateEmbedding(text: string): Promise<{
 
 // Check if embedding needs to be regenerated
 export function shouldRegenerateEmbedding(
-  currentEmbedding: any,
+  currentEmbedding: CurrentEmbedding | null | undefined,
   newTextHash: string
 ): boolean {
-  if (!(currentEmbedding?.vector && currentEmbedding?.textHash)) {
-    return true; // No existing embedding
+  if (!(currentEmbedding?.vector && currentEmbedding.textHash)) {
+    return true;
   }
 
   if (currentEmbedding.textHash !== newTextHash) {
-    return true; // Content has changed
+    return true;
   }
 
-  // Check if embedding is too old (regenerate weekly)
-  if (currentEmbedding.generatedAt) {
-    const oneWeek = 7 * 24 * 60 * 60 * 1000;
-    const generatedAt = new Date(currentEmbedding.generatedAt);
-    if (Date.now() - generatedAt.getTime() > oneWeek) {
-      return true;
-    }
+  if (!currentEmbedding.generatedAt) {
+    return false;
   }
 
-  return false;
+  const generatedAt = new Date(currentEmbedding.generatedAt);
+  return Date.now() - generatedAt.getTime() > MILLISECONDS_IN_WEEK;
 }
 
 // Shared embedding hook factory - creates collection-specific hooks
-// Now runs in afterOperation to avoid blocking the HTTP response
+// Runs in afterOperation to avoid blocking the HTTP response.
 export function createEmbeddingHook(
-  extractText: (data: any) => string,
-  collectionName: string
+  extractText: (data: unknown) => string,
+  collectionName: EmbeddableCollection
 ): CollectionAfterOperationHook {
   return async ({ args, operation, req, result }) => {
-    // Only process after create/update operations
-    if (operation !== "create" && operation !== "update") {
+    const doc = getDocFromResult(result);
+
+    if (
+      shouldSkipEmbeddingGeneration({
+        args,
+        doc,
+        operation,
+        req,
+      })
+    ) {
       return;
     }
 
-    // Get the document from the result
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const doc = (result as any).doc || result;
-
-    // Skip if no document or context flag set
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!doc || (args as any).context?.skipEmbeddingGeneration) {
+    if (!doc) {
       return;
     }
 
-    // Only generate embeddings for published content
-    if (doc._status !== "published") {
+    const textContent = extractText(doc).trim();
+    if (!textContent) {
       return;
     }
 
-    // Skip for autosaves/drafts
-    if (req.query?.autosave === "true" || req.query?.draft === "true") {
+    const currentTextHash = createTextHash(textContent);
+
+    if (doc.embedding_text_hash === currentTextHash) {
+      req.payload.logger.info(
+        `${collectionName} embedding is up to date, skipping generation`
+      );
       return;
     }
+
+    const docTitle = getDocTitle(doc);
+    req.payload.logger.info(
+      `[Background] Generating embedding for ${collectionName}: "${docTitle}"`
+    );
 
     try {
-      // Extract text using collection-specific function
-      const textContent = extractText(doc);
-
-      if (!textContent.trim()) {
-        return; // No content to embed
-      }
-
-      // Create hash of current content
-      const currentTextHash = createTextHash(textContent);
-
-      // Check if embedding is already up to date
-      if (doc.embedding_text_hash === currentTextHash) {
-        req.payload.logger.info(
-          `${collectionName} embedding is up to date, skipping generation`
-        );
-        return;
-      }
-
-      req.payload.logger.info(
-        `[Background] Generating embedding for ${collectionName}: "${doc.title || "untitled"}"`
-      );
-
-      // Generate new embedding
-      const { vector, model, dimensions } =
-        await generateEmbedding(textContent);
-
-      // Update document with embedding (runs in background after response sent)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await req.payload.update({
-        collection: collectionName as any,
-        id: doc.id,
-        data: {
-          embedding_vector: `[${vector.join(",")}]`,
-          embedding_model: model,
-          embedding_dimensions: dimensions,
-          embedding_generated_at: new Date().toISOString(),
-          embedding_text_hash: currentTextHash,
-        },
-        overrideAccess: true,
-        context: {
-          skipEmbeddingGeneration: true, // Prevent infinite loop
-          skipRecommendationCompute: true, // Will be triggered separately
-          skipRevalidation: true, // No need to revalidate for background update
-        },
+      const { model, vector } = await generateEmbedding(textContent);
+      await persistEmbedding({
+        collection: collectionName,
+        doc,
+        model,
+        req,
+        textHash: currentTextHash,
+        vector,
       });
 
       req.payload.logger.info(
-        `[Background] ✅ Generated ${dimensions}D embedding for ${collectionName}: "${doc.title || "untitled"}"`
+        `[Background] ✅ Generated ${vector.length}D embedding for ${collectionName}: "${docTitle}"`
       );
     } catch (error) {
       req.payload.logger.error(
         `[Background] Failed to generate ${collectionName} embedding: ${error instanceof Error ? error.message : String(error)}`
       );
-      // Don't throw - this runs after response sent, so errors shouldn't affect user
     }
   };
 }

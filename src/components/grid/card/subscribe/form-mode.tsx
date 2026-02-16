@@ -1,5 +1,4 @@
 import { Mail } from "lucide-react";
-import type { ActionResponse } from "@/actions/create-contact-action";
 import { GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { SubscribeForm } from "./subscribe-form";
@@ -9,7 +8,6 @@ type FormModeProps = {
   description: string;
   buttonText: string;
   formAction: (formData: FormData) => void;
-  state: ActionResponse;
 };
 
 export const FormMode = ({
@@ -17,7 +15,6 @@ export const FormMode = ({
   description,
   buttonText,
   formAction,
-  state,
 }: FormModeProps) => {
   return (
     <>
@@ -35,11 +32,7 @@ export const FormMode = ({
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-4 row-start-3 row-end-4">
-        <SubscribeForm
-          action={formAction}
-          buttonText={buttonText}
-          state={state}
-        />
+        <SubscribeForm action={formAction} buttonText={buttonText} />
       </GridCardSection>
     </>
   );

@@ -71,11 +71,10 @@ export async function GET(_request: NextRequest) {
                 access: "public",
               },
               {
-                path: "/{projectSlug}/{postSlug}",
+                path: "/posts/{postSlug}",
                 method: "GET",
                 description: "Individual post pages",
                 parameters: {
-                  projectSlug: "URL-friendly project identifier",
                   postSlug: "URL-friendly post identifier",
                 },
                 response: "HTML page with full post content",
@@ -129,7 +128,7 @@ export async function GET(_request: NextRequest) {
         },
         embeddings: {
           description:
-            "Semantic search using pgvector embeddings for posts, notes, and books",
+            "Semantic search using pgvector embeddings for posts, notes, and activities",
           model: "text-embedding-3-small (OpenAI)",
           dimensions: 1536,
           endpoints: {
@@ -138,9 +137,9 @@ export async function GET(_request: NextRequest) {
               methods: {
                 bulk: {
                   description:
-                    "Get embeddings for multiple items (posts, books, notes)",
+                    "Get embeddings for multiple items (posts, activities, notes)",
                   parameters: {
-                    type: "posts | books | notes | all (optional, defaults to 'all')",
+                    type: "posts | activities | notes | all (optional, defaults to 'all')",
                     limit: "number (optional, max 100, defaults to 50)",
                     vector:
                       "boolean (optional, include vector data, defaults to true)",
@@ -149,7 +148,7 @@ export async function GET(_request: NextRequest) {
                   },
                   examples: [
                     `${SITE_URL}/api/embeddings?type=posts&limit=10`,
-                    `${SITE_URL}/api/embeddings?type=books&vector=false`,
+                    `${SITE_URL}/api/embeddings?type=activities&vector=false`,
                     `${SITE_URL}/api/embeddings?type=all&limit=25`,
                   ],
                   caching: "3600s",
@@ -159,7 +158,7 @@ export async function GET(_request: NextRequest) {
                 specific: {
                   description: "Get embedding for a specific item by ID",
                   parameters: {
-                    type: "posts | books | notes (required)",
+                    type: "posts | activities | notes (required)",
                     id: "item ID (required)",
                   },
                   example: `${SITE_URL}/api/embeddings?type=posts&id=123`,
@@ -251,7 +250,7 @@ export async function GET(_request: NextRequest) {
             "Use /api/embeddings for semantic search",
             "Use /api/search for natural language queries",
             "Use /api/embeddings/status to check system health",
-            "Access individual posts via /{projectSlug}/{postSlug}",
+            "Access individual posts via /posts/{postSlug}",
             "Respect Cache-Control headers for optimal performance",
           ],
           bestPractices: [

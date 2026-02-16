@@ -2,6 +2,13 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite"],
   "files": {
+    "includes": [
+      "**",
+      "!src/components/ui",
+      "!src/app/(payload)",
+      "!src/payload-types.ts",
+      "!src/app/(payload)/admin/importMap.js"
+    ],
     "experimentalScannerIgnores": [
       "src/utilities/test-*.ts",
       "src/utilities/check-*.ts",
@@ -42,7 +49,7 @@
         "noBannedTypes": "warn"
       },
       "performance": {
-        "noBarrelFile": "warn",
+        "noBarrelFile": "off",
         "useTopLevelRegex": "warn",
         "noNamespaceImport": "warn"
       },

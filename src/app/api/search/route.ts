@@ -105,18 +105,15 @@ export async function GET(request: NextRequest) {
     // Get Payload instance to access database
     const payload = await getPayload({ config: configPromise });
 
-    // Call hybrid search function via Drizzle SQL template
-    // Format vector as PostgreSQL array literal: '[0.1, 0.2, ...]'::vector(1536)
+    // Call hybrid search function via a parameterized Drizzle SQL template.
     const vectorString = `[${embedding.join(",")}]`;
     const result = await payload.db.drizzle.execute(
-      sql.raw(`
-        SELECT * FROM hybrid_search_content(
-          '${trimmedQuery.replace(/'/g, "''")}',
-          '${vectorString}'::vector(${EMBEDDING_DIMENSIONS}),
-          ${limit},
-          60
-        )
-      `)
+      sql`SELECT * FROM hybrid_search_content(
+        ${trimmedQuery},
+        ${vectorString}::vector,
+        ${limit},
+        60
+      )`
     );
 
     const rows = result.rows as unknown as HybridSearchRow[];

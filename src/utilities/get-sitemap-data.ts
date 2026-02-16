@@ -18,6 +18,7 @@ export async function getSitemapData() {
   const [posts, projects, topics, notes, activities] = await Promise.all([
     payload.find({
       collection: "posts",
+      overrideAccess: false,
       where: { _status: { equals: "published" } },
       depth: 1,
       select: {
@@ -28,6 +29,7 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "projects",
+      overrideAccess: false,
       select: {
         slug: true,
         updatedAt: true,
@@ -35,6 +37,7 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "topics",
+      overrideAccess: false,
       select: {
         slug: true,
         updatedAt: true,
@@ -42,7 +45,11 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "notes",
-      where: { _status: { equals: "published" } },
+      overrideAccess: false,
+      where: {
+        _status: { equals: "published" },
+        visibility: { equals: "public" },
+      },
       select: {
         slug: true,
         updatedAt: true,
@@ -50,10 +57,17 @@ export async function getSitemapData() {
     }),
     payload.find({
       collection: "activities",
-      where: { _status: { equals: "published" } },
+      overrideAccess: false,
+      where: {
+        _status: { equals: "published" },
+        visibility: { equals: "public" },
+      },
       select: {
         slug: true,
         updatedAt: true,
+        finishedAt: true,
+        startedAt: true,
+        publishedAt: true,
       },
     }),
   ]);

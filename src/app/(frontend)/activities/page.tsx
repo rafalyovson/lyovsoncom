@@ -7,6 +7,7 @@ import { ActivitiesArchive } from "@/components/ActivitiesArchive";
 import { SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { getActivityPath } from "@/utilities/activity-path";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -34,9 +35,18 @@ export default async function Page() {
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
     url: `${getServerSideURL()}/activities`,
     itemCount: totalDocs,
-    items: docs.map((activity) => ({
-      url: `${getServerSideURL()}/activities/${activity.slug}`,
-    })),
+    items: docs
+      .map((activity) => {
+        const activityPath = getActivityPath(activity);
+        if (!activityPath) {
+          return null;
+        }
+
+        return {
+          url: `${getServerSideURL()}${activityPath}`,
+        };
+      })
+      .filter((item): item is { url: string } => Boolean(item)),
   });
 
   return (

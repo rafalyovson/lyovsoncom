@@ -6,6 +6,43 @@ export const formatSlug = (val: string): string =>
     .replace(/[^\w-]+/g, "")
     .toLowerCase();
 
+function getFallbackData({
+  data,
+  fallback,
+  originalDoc,
+}: {
+  data?: Record<string, unknown>;
+  fallback: string;
+  originalDoc: unknown;
+}): string | undefined {
+  const fromData =
+    data &&
+    fallback in data &&
+    typeof data[fallback] === "string" &&
+    data[fallback].length > 0
+      ? data[fallback]
+      : undefined;
+
+  if (fromData) {
+    return fromData;
+  }
+
+  if (
+    originalDoc &&
+    typeof originalDoc === "object" &&
+    fallback in originalDoc
+  ) {
+    const originalDocRecord = originalDoc as Record<string, unknown>;
+    const fallbackValue = originalDocRecord[fallback];
+
+    if (typeof fallbackValue === "string" && fallbackValue.length > 0) {
+      return fallbackValue;
+    }
+  }
+
+  return;
+}
+
 export const formatSlugHook =
   (fallback: string): FieldHook =>
   ({ data, operation, originalDoc, value }) => {
@@ -14,16 +51,11 @@ export const formatSlugHook =
     }
 
     if (operation === "create" || !data?.slug) {
-      // Check incoming data first, then fall back to originalDoc for partial updates
-      // and async hook ordering scenarios where data may not yet carry the fallback field
-      const fallbackData =
-        data?.[fallback] ||
-        (originalDoc &&
-        typeof originalDoc === "object" &&
-        fallback in originalDoc &&
-        typeof originalDoc[fallback] === "string"
-          ? originalDoc[fallback]
-          : undefined);
+      const fallbackData = getFallbackData({
+        data: data as Record<string, unknown> | undefined,
+        fallback,
+        originalDoc,
+      });
 
       if (
         fallbackData &&

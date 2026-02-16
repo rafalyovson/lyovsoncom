@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { formatSlug } from "@/fields/slug/formatSlug";
@@ -32,7 +32,7 @@ export const Activities: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    read: authenticatedOrPublishedPublic,
     update: authenticated,
   },
   defaultPopulate: {

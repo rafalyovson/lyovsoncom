@@ -60,7 +60,6 @@ export const GridCardSubscribe = ({
               buttonText={buttonText}
               description={description}
               formAction={formAction}
-              state={state}
               title={title}
             />
           ),

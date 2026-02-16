@@ -3,13 +3,19 @@ import type { Post } from "@/payload-types";
 import { getServerSideURL } from "./getURL";
 import { mergeOpenGraph } from "./mergeOpenGraph";
 
-export const generateMeta = async (args: {
-  doc: Partial<Post>;
-}): Promise<Metadata> => {
-  const { doc } = args || {};
+type LegacyMeta = {
+  meta?: {
+    image?: Post["featuredImage"] | null;
+    description?: string | null;
+  } | null;
+};
+
+export const generateMeta = (args: { doc: Partial<Post> }): Metadata => {
+  const { doc } = args;
+  const legacyDoc = doc as Partial<Post> & LegacyMeta;
 
   // Use main fields with fallbacks to old meta fields during migration
-  const postImage = doc?.featuredImage || (doc as any)?.meta?.image;
+  const postImage = doc?.featuredImage || legacyDoc.meta?.image;
   const ogImage =
     typeof postImage === "object" &&
     postImage !== null &&
@@ -18,7 +24,7 @@ export const generateMeta = async (args: {
     `${getServerSideURL()}${postImage.url}`;
 
   const title = doc?.title ? `${doc?.title} | Lyovson.com` : "Lyovson.com";
-  const description = doc?.description || (doc as any)?.meta?.description;
+  const description = doc?.description || legacyDoc.meta?.description;
 
   return {
     description,

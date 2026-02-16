@@ -4,7 +4,13 @@ import { Media } from "@/components/Media";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/payload-types";
 
+const MAX_STAGGER_INDEX = 6;
+
 export { GridCardRelatedNotes } from "./grid-card-related-notes";
+
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
 
 export const GridCardRelatedPosts = ({
   posts,
@@ -20,7 +26,7 @@ export const GridCardRelatedPosts = ({
           return null;
         }
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
-        const staggerClass = `glass-stagger-${Math.min(index + 1, 6)}`;
+        const staggerClass = getStaggerClass(index);
         return (
           <Link
             aria-label={`Read related post: ${post.title}`}

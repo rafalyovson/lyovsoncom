@@ -5,10 +5,12 @@ type SkeletonGridProps = {
 };
 
 export function SkeletonGrid({ count = 6 }: SkeletonGridProps) {
+  const slots = Array.from({ length: count }, (_, slotIndex) => slotIndex + 1);
+
   return (
     <>
-      {new Array(count).fill(0).map((_, index) => (
-        <SkeletonCard key={index} />
+      {slots.map((slot) => (
+        <SkeletonCard key={slot} />
       ))}
     </>
   );

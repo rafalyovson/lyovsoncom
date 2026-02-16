@@ -28,13 +28,15 @@ import { getServerSideURL } from "@/utilities/getURL";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+const DEV_POOL_MAX = 3;
+const PROD_POOL_MAX = 1;
 
 export default buildConfig({
   // Development optimizations
   debug: process.env.NODE_ENV === "development",
 
   // Skip heavy operations in development
-  onInit: async (payload) => {
+  onInit: (payload) => {
     if (process.env.NODE_ENV === "development") {
       payload.logger.info("🚀 Payload CMS initialized in development mode");
     }
@@ -82,7 +84,7 @@ export default buildConfig({
     pool: {
       connectionString: process.env.POSTGRES_URL || "",
       // Optimized settings for faster schema introspection
-      max: process.env.NODE_ENV === "production" ? 1 : 3, // Reduce dev connections
+      max: process.env.NODE_ENV === "production" ? PROD_POOL_MAX : DEV_POOL_MAX,
       min: 0, // No minimum connections
       idleTimeoutMillis: 10_000, // Faster idle timeout (10s)
       connectionTimeoutMillis: 15_000, // Slightly reduce timeout (15s)

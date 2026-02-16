@@ -133,7 +133,7 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
               in: postsResults.map((r) => r.id),
             },
           },
-          depth: 1,
+          depth: 2,
           limit: postsResults.length,
         })
       : { docs: [] };
@@ -163,8 +163,11 @@ async function SearchPage({ searchParams: searchParamsPromise }: Args) {
               in: activitiesResults.map((r) => r.id),
             },
           },
-          depth: 1,
+          // Include nested reference image and participant profile fields for cards.
+          depth: 2,
           limit: activitiesResults.length,
+          // Lyovson read access is private, so relation population needs overrideAccess.
+          overrideAccess: true,
         })
       : { docs: [] };
 

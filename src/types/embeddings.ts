@@ -60,7 +60,7 @@ export type WithEmbedding = {
 };
 
 // Collection-specific text extractors
-export type TextExtractor<T = any> = (data: T) => string;
+export type TextExtractor<T = unknown> = (data: T) => string;
 
 // Similarity search types
 export type SimilaritySearchOptions = {
@@ -70,13 +70,13 @@ export type SimilaritySearchOptions = {
   includeContent?: boolean;
 };
 
-export type SimilarityResult<T = any> = {
+export type SimilarityResult<T = unknown> = {
   item: T;
   similarity: number;
   distance: number;
 };
 
-export type SimilaritySearchResult<T = any> = {
+export type SimilaritySearchResult<T = unknown> = {
   query: string;
   results: SimilarityResult<T>[];
   model: EmbeddingModel;
@@ -93,7 +93,7 @@ export type EmbeddingAPIResponse = {
   embedding: EmbeddingData | EmbeddingVector | null;
   publishedAt: string;
   updatedAt: string;
-  content?: any;
+  content?: unknown;
 };
 
 export type QueryEmbeddingResponse = {

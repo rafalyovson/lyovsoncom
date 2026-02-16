@@ -19,6 +19,9 @@ import type {
 } from "@/types/schema";
 import { getServerSideURL } from "./getURL";
 
+const DEFAULT_IMAGE_HEIGHT = 630;
+const DEFAULT_IMAGE_WIDTH = 1200;
+
 /**
  * Organization data (reused across schemas)
  * Contains the publisher information for all content on the site
@@ -92,8 +95,8 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
     ? {
         "@type": "ImageObject" as const,
         url: data.imageUrl,
-        width: data.imageWidth || 1200,
-        height: data.imageHeight || 630,
+        width: data.imageWidth || DEFAULT_IMAGE_WIDTH,
+        height: data.imageHeight || DEFAULT_IMAGE_HEIGHT,
       }
     : undefined;
 
@@ -179,7 +182,7 @@ type PersonDataParams = {
  * ```
  */
 export function generatePersonSchema(data: PersonDataParams): PersonSchema {
-  const sameAsLinks = [];
+  const sameAsLinks: string[] = [];
   if (data.socialLinks?.twitter) {
     sameAsLinks.push(data.socialLinks.twitter);
   }

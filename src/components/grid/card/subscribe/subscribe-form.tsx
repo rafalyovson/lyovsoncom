@@ -1,20 +1,14 @@
 "use client";
 
-import type { ActionResponse } from "@/actions/create-contact-action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type SubscribeFormProps = {
   buttonText: string;
   action: (formData: FormData) => void;
-  state: ActionResponse;
 };
 
-export function SubscribeForm({
-  buttonText,
-  action,
-  state,
-}: SubscribeFormProps) {
+export function SubscribeForm({ buttonText, action }: SubscribeFormProps) {
   return (
     <form
       action={action}

@@ -28,7 +28,7 @@ export const slugField: Slug = (fieldToUse = "title", overrides = {}) => {
 
   // Expect ts error here because of typescript mismatching Partial<TextField> with TextField
   // @ts-expect-error
-  const slugField: TextField = {
+  const slugTextField: TextField = {
     name: "slug",
     type: "text",
     index: true,
@@ -53,5 +53,5 @@ export const slugField: Slug = (fieldToUse = "title", overrides = {}) => {
     },
   };
 
-  return [slugField, checkBoxField];
+  return [slugTextField, checkBoxField];
 };

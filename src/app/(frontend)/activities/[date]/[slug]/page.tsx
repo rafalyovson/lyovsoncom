@@ -24,11 +24,12 @@ import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
 import type { Activity } from "@/payload-types";
+import { getActivityDateSlug } from "@/utilities/activity-path";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
 } from "@/utilities/generate-json-ld";
-import { getActivity } from "@/utilities/get-activity";
+import { getActivityByDateAndSlug } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
 
 type Args = {
@@ -125,8 +126,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
   cacheTag(`activity-${fullPath}`);
   cacheLife("activities");
 
-  // getActivity searches by slug (reference title), not the full path
-  const activity = await getActivity(slug);
+  const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {
     return notFound();
   }
@@ -292,6 +292,9 @@ export async function generateStaticParams() {
       _status: {
         equals: "published",
       },
+      visibility: {
+        equals: "public",
+      },
     },
     limit: 1000,
   });
@@ -299,23 +302,8 @@ export async function generateStaticParams() {
   return activities.docs
     .filter((activity) => activity.slug)
     .map((activity) => {
-      const dateTime =
-        activity.finishedAt || activity.startedAt || activity.publishedAt;
-
-      if (dateTime) {
-        const dateObj = new Date(dateTime);
-        const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-        const day = String(dateObj.getDate()).padStart(2, "0");
-        const year = String(dateObj.getFullYear()).slice(-2);
-
-        return {
-          date: `${month}-${day}-${year}`,
-          slug: activity.slug,
-        };
-      }
-
       return {
-        date: "unknown",
+        date: getActivityDateSlug(activity),
         slug: activity.slug,
       };
     });
@@ -333,8 +321,7 @@ export async function generateMetadata({
   cacheTag(`activity-${fullPath}`);
   cacheLife("activities");
 
-  // getActivity searches by slug (reference title), not the full path
-  const activity = await getActivity(slug);
+  const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {
     return {
       title: "Not Found | Lyovson.com",

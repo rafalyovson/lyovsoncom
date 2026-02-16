@@ -2,7 +2,15 @@ import Link from "next/link";
 import type React from "react";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { Post } from "@/payload-types";
+
+type LinkReferenceValue =
+  | number
+  | string
+  | {
+      id?: number | string | null;
+      slug?: string | null;
+      [key: string]: unknown;
+    };
 
 type CMSLinkType = {
   appearance?: "inline" | ButtonProps["variant"];
@@ -11,8 +19,8 @@ type CMSLinkType = {
   label?: string | null;
   newTab?: boolean | null;
   reference?: {
-    relationTo: "posts";
-    value: Post | string | number;
+    relationTo: string;
+    value: LinkReferenceValue;
   } | null;
   size?: ButtonProps["size"] | null;
   type?: "custom" | "reference" | null;
@@ -32,11 +40,18 @@ export const CMSLink: React.FC<CMSLinkType> = (props) => {
     url,
   } = props;
 
+  const referenceValue = reference?.value;
+  const referenceSlug =
+    referenceValue &&
+    typeof referenceValue === "object" &&
+    "slug" in referenceValue &&
+    typeof referenceValue.slug === "string"
+      ? referenceValue.slug
+      : null;
+
   const href =
-    type === "reference" &&
-    typeof reference?.value === "object" &&
-    reference.value.slug
-      ? `/${reference?.relationTo}/${reference.value.slug}`
+    type === "reference" && reference && referenceSlug
+      ? `/${reference.relationTo}/${referenceSlug}`
       : url;
 
   if (!href) {

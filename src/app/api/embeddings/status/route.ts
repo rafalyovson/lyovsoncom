@@ -38,76 +38,90 @@ export async function GET(_request: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise });
 
-    // Get embedding statistics using count() instead of fetching all records
-    // This prevents expensive limit: 0 queries that fetch entire collections
-    const [allPostsCount, allNotesCount, allActivitiesCount] =
-      await Promise.all([
-        payload.count({
-          collection: "posts",
-          where: { _status: { equals: "published" } },
-        }),
-        payload.count({
-          collection: "notes",
-          where: { _status: { equals: "published" } },
-        }),
-        payload.count({
-          collection: "activities",
-          where: { _status: { equals: "published" } },
-        }),
-      ]);
+    // Get collection totals and exact embedding coverage counts.
+    const [
+      allPostsCount,
+      allNotesCount,
+      allActivitiesCount,
+      postsWithEmbeddingsCount,
+      notesWithEmbeddingsCount,
+      activitiesWithEmbeddingsCount,
+    ] = await Promise.all([
+      payload.count({
+        collection: "posts",
+        overrideAccess: false,
+        where: { _status: { equals: "published" } },
+      }),
+      payload.count({
+        collection: "notes",
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+        },
+      }),
+      payload.count({
+        collection: "activities",
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+        },
+      }),
+      payload.count({
+        collection: "posts",
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          embedding_vector: { exists: true },
+        },
+      }),
+      payload.count({
+        collection: "notes",
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+          embedding_vector: { exists: true },
+        },
+      }),
+      payload.count({
+        collection: "activities",
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+          embedding_vector: { exists: true },
+        },
+      }),
+    ]);
 
-    // Sample a few embeddings to check models from multiple collections
-    // Fetch actual posts to check which ones have embeddings
-    const sampleEmbeddings = await payload.find({
+    // Sample a subset of post embeddings only for model/dimension telemetry.
+    const sampledPostEmbeddings = await payload.find({
       collection: "posts",
-      where: { _status: { equals: "published" } },
-      limit: 50, // Get more to ensure we find some with embeddings
+      overrideAccess: false,
+      where: {
+        _status: { equals: "published" },
+        embedding_vector: { exists: true },
+      },
+      limit: 50,
       select: {
-        id: true,
-        title: true,
         embedding_model: true,
         embedding_dimensions: true,
-        embedding_generated_at: true,
         embedding_vector: true,
       },
     });
 
-    // Filter to only posts with embeddings
-    const postDocs = sampleEmbeddings.docs
+    const sampledPostsWithEmbeddings = sampledPostEmbeddings.docs
       .map(asEmbeddingDoc)
-      .filter((doc): doc is EmbeddingDoc => Boolean(doc));
-
-    const postsWithEmbeddings = postDocs.filter(hasEmbeddingVector);
+      .filter((doc): doc is EmbeddingDoc => Boolean(doc))
+      .filter(hasEmbeddingVector);
 
     const modelStats: Record<string, number> = {};
-    for (const doc of postDocs) {
+    for (const doc of sampledPostsWithEmbeddings) {
       const model = doc.embedding_model || "unknown";
       modelStats[model] = (modelStats[model] || 0) + 1;
     }
-
-    // Sample activities to check embeddings
-    const sampleActivities = await payload.find({
-      collection: "activities",
-      where: { _status: { equals: "published" } },
-      limit: 50,
-    });
-
-    const activitiesWithEmbeddings = sampleActivities.docs
-      .map(asEmbeddingDoc)
-      .filter((doc): doc is EmbeddingDoc => Boolean(doc))
-      .filter(hasEmbeddingVector);
-
-    // Sample notes to check embeddings
-    const sampleNotes = await payload.find({
-      collection: "notes",
-      where: { _status: { equals: "published" } },
-      limit: 50,
-    });
-
-    const notesWithEmbeddings = sampleNotes.docs
-      .map(asEmbeddingDoc)
-      .filter((doc): doc is EmbeddingDoc => Boolean(doc))
-      .filter(hasEmbeddingVector);
 
     // Calculate overall coverage across all collections
     const totalPublished =
@@ -115,9 +129,9 @@ export async function GET(_request: NextRequest) {
       allNotesCount.totalDocs +
       allActivitiesCount.totalDocs;
     const totalWithEmbeddings =
-      postsWithEmbeddings.length +
-      notesWithEmbeddings.length +
-      activitiesWithEmbeddings.length;
+      postsWithEmbeddingsCount.totalDocs +
+      notesWithEmbeddingsCount.totalDocs +
+      activitiesWithEmbeddingsCount.totalDocs;
 
     const status = {
       system: {
@@ -149,43 +163,46 @@ export async function GET(_request: NextRequest) {
         collections: {
           posts: {
             totalPublished: allPostsCount.totalDocs,
-            withEmbeddings: postsWithEmbeddings.length,
+            withEmbeddings: postsWithEmbeddingsCount.totalDocs,
             coveragePercentage:
               allPostsCount.totalDocs > 0
                 ? Math.round(
-                    (postsWithEmbeddings.length / allPostsCount.totalDocs) *
+                    (postsWithEmbeddingsCount.totalDocs /
+                      allPostsCount.totalDocs) *
                       PERCENT_MULTIPLIER
                   )
                 : 0,
             needingEmbeddings:
-              allPostsCount.totalDocs - postsWithEmbeddings.length,
+              allPostsCount.totalDocs - postsWithEmbeddingsCount.totalDocs,
           },
           notes: {
             totalPublished: allNotesCount.totalDocs,
-            withEmbeddings: notesWithEmbeddings.length,
+            withEmbeddings: notesWithEmbeddingsCount.totalDocs,
             coveragePercentage:
               allNotesCount.totalDocs > 0
                 ? Math.round(
-                    (notesWithEmbeddings.length / allNotesCount.totalDocs) *
+                    (notesWithEmbeddingsCount.totalDocs /
+                      allNotesCount.totalDocs) *
                       PERCENT_MULTIPLIER
                   )
                 : 0,
             needingEmbeddings:
-              allNotesCount.totalDocs - notesWithEmbeddings.length,
+              allNotesCount.totalDocs - notesWithEmbeddingsCount.totalDocs,
           },
           activities: {
             totalPublished: allActivitiesCount.totalDocs,
-            withEmbeddings: activitiesWithEmbeddings.length,
+            withEmbeddings: activitiesWithEmbeddingsCount.totalDocs,
             coveragePercentage:
               allActivitiesCount.totalDocs > 0
                 ? Math.round(
-                    (activitiesWithEmbeddings.length /
+                    (activitiesWithEmbeddingsCount.totalDocs /
                       allActivitiesCount.totalDocs) *
                       PERCENT_MULTIPLIER
                   )
                 : 0,
             needingEmbeddings:
-              allActivitiesCount.totalDocs - activitiesWithEmbeddings.length,
+              allActivitiesCount.totalDocs -
+              activitiesWithEmbeddingsCount.totalDocs,
           },
         },
       },
@@ -209,14 +226,14 @@ export async function GET(_request: NextRequest) {
 
       models: {
         modelsInUse: modelStats,
-        sampleSize: postsWithEmbeddings.length,
+        sampleSize: sampledPostsWithEmbeddings.length,
         averageDimensions:
-          postsWithEmbeddings.length > 0
+          sampledPostsWithEmbeddings.length > 0
             ? Math.round(
-                postsWithEmbeddings.reduce(
+                sampledPostsWithEmbeddings.reduce(
                   (sum, doc) => sum + (doc.embedding_dimensions || 0),
                   0
-                ) / postsWithEmbeddings.length
+                ) / sampledPostsWithEmbeddings.length
               )
             : 0,
       },

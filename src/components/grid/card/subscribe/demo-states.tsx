@@ -17,11 +17,6 @@ type DemoCardProps = {
 const DemoSubscribeCard = ({ mode, className }: DemoCardProps) => {
   const [currentMode, setCurrentMode] = useState<SubscribeMode>(mode);
 
-  const demoState = {
-    success: false,
-    message: "",
-  };
-
   const demoAction = () => {
     // Demo action does nothing
   };
@@ -42,7 +37,6 @@ const DemoSubscribeCard = ({ mode, className }: DemoCardProps) => {
               buttonText="Subscribe"
               description="Get notified about new posts and projects"
               formAction={demoAction}
-              state={demoState}
               title="Subscribe to updates"
             />
           ),

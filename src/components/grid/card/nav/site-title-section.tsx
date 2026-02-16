@@ -13,13 +13,9 @@ export const SiteTitleSection = () => {
         href="/"
       >
         <Logo />
-        <div
-          aria-label="Site title"
-          className={"glass-text text-center font-bold text-3xl"}
-          role="banner"
-        >
+        <span className={"glass-text text-center font-bold text-3xl"}>
           Lyóvson.com
-        </div>
+        </span>
       </Link>
     </GridCardSection>
   );

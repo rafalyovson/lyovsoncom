@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
+import { getActivityPath } from "@/utilities/activity-path";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Sitemap generation aggregates multiple collections and routes */
@@ -174,8 +175,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       continue;
     }
 
+    const activityPath = getActivityPath(activity);
+    if (!activityPath) {
+      continue;
+    }
+
     routes.push({
-      url: `${SITE_URL}/activities/${activity.slug}`,
+      url: `${SITE_URL}${activityPath}`,
       lastModified: new Date(activity.updatedAt),
       changeFrequency: "weekly",
       priority: 0.8,

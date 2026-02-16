@@ -1,7 +1,7 @@
 import type { BeforeSync } from "@payloadcms/plugin-search/types";
 import type { Post } from "@/payload-types";
 
-export const beforeSyncWithSearch: BeforeSync = async ({
+export const beforeSyncWithSearch: BeforeSync = ({
   originalDoc,
   searchDoc,
 }) => {

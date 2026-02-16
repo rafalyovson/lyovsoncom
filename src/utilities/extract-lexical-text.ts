@@ -33,46 +33,70 @@
  * // Returns: "Hello World"
  * ```
  */
-export function extractLexicalText(content: unknown): string {
-  // Handle null/undefined
+type ExtractionMode = "newline" | "plain";
+
+function getNestedLexicalContent(content: Record<string, unknown>): unknown {
+  if ("root" in content && content.root) {
+    return content.root;
+  }
+
+  if ("children" in content && content.children) {
+    return content.children;
+  }
+
+  if ("content" in content && content.content) {
+    return content.content;
+  }
+
+  return null;
+}
+
+function extractTextByMode(content: unknown, mode: ExtractionMode): string {
   if (!content) {
     return "";
   }
 
-  // Handle string content
   if (typeof content === "string") {
     return content;
   }
 
-  // Handle array of nodes
   if (Array.isArray(content)) {
-    return content.map(extractLexicalText).join(" ");
+    const extracted = content.map((item) => extractTextByMode(item, mode));
+    return mode === "newline"
+      ? extracted.filter(Boolean).join("\n")
+      : extracted.join(" ");
   }
 
-  // Handle object content (nodes or document)
-  if (typeof content === "object") {
-    // Handle text node with 'text' property
-    if ("text" in content && typeof content.text === "string") {
-      return content.text;
-    }
-
-    // Handle root document with 'root' property
-    if ("root" in content && content.root) {
-      return extractLexicalText(content.root);
-    }
-
-    // Handle nodes with 'children' property
-    if ("children" in content && content.children) {
-      return extractLexicalText(content.children);
-    }
-
-    // Handle nodes with 'content' property
-    if ("content" in content && content.content) {
-      return extractLexicalText(content.content);
-    }
+  if (typeof content !== "object") {
+    return "";
   }
 
-  return "";
+  if ("text" in content && typeof content.text === "string") {
+    return content.text;
+  }
+
+  if (mode === "newline" && "type" in content && content.type === "linebreak") {
+    return "\n";
+  }
+
+  if (
+    mode === "newline" &&
+    "type" in content &&
+    content.type === "paragraph" &&
+    "children" in content &&
+    content.children
+  ) {
+    return extractTextByMode(content.children, mode).trim();
+  }
+
+  const nestedContent = getNestedLexicalContent(
+    content as Record<string, unknown>
+  );
+  return nestedContent ? extractTextByMode(nestedContent, mode) : "";
+}
+
+export function extractLexicalText(content: unknown): string {
+  return extractTextByMode(content, "plain");
 }
 
 /**
@@ -84,57 +108,5 @@ export function extractLexicalText(content: unknown): string {
  * - linebreak nodes become '\n'
  */
 export function extractLexicalTextWithNewlines(content: unknown): string {
-  if (!content) {
-    return "";
-  }
-
-  if (typeof content === "string") {
-    return content;
-  }
-
-  if (Array.isArray(content)) {
-    return content
-      .map(extractLexicalTextWithNewlines)
-      .filter(Boolean)
-      .join("\n");
-  }
-
-  if (typeof content === "object") {
-    // Text node
-    if ("text" in content && typeof content.text === "string") {
-      return content.text;
-    }
-
-    // Root document
-    if ("root" in content && content.root) {
-      return extractLexicalTextWithNewlines(content.root);
-    }
-
-    // Lexical node with type
-    if ("type" in content && typeof content.type === "string") {
-      if (content.type === "linebreak") {
-        return "\n";
-      }
-
-      if (
-        content.type === "paragraph" &&
-        "children" in content &&
-        content.children
-      ) {
-        const paragraph = extractLexicalTextWithNewlines(
-          content.children
-        ).trim();
-        return paragraph;
-      }
-    }
-
-    if ("children" in content && content.children) {
-      return extractLexicalTextWithNewlines(content.children);
-    }
-    if ("content" in content && content.content) {
-      return extractLexicalTextWithNewlines(content.content);
-    }
-  }
-
-  return "";
+  return extractTextByMode(content, "newline");
 }

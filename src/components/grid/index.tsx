@@ -1,6 +1,14 @@
-import type { ReactNode } from "react";
+import { Children, isValidElement, type ReactNode } from "react";
+
+const MAX_STAGGER_INDEX = 6;
+
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
 
 export const Grid = ({ children }: { children: ReactNode }) => {
+  const childrenArray = Children.toArray(children);
+
   return (
     <main className="relative mx-auto grid min-h-screen g2:grid-cols-[400px_400px] g3:grid-cols-[400px_400px_400px] g4:grid-cols-[400px_400px_400px_400px] g5:grid-cols-[400px_400px_400px_400px_400px] g6:grid-cols-[400px_400px_400px_400px_400px_400px] grid-cols-[clamp(18rem,100vw-2rem,400px)] place-items-center justify-center gap-4 p-4 g2:[grid-auto-rows:max-content]">
       {/* Theme-aware glassmorphism background context */}
@@ -20,15 +28,26 @@ export const Grid = ({ children }: { children: ReactNode }) => {
       />
 
       {/* Enhanced children with staggered animations */}
-      {Array.isArray(children)
-        ? children.map((child, index) => (
-            <div
-              className={`glass-stagger-${Math.min(index + 1, 6)} contents`}
-              key={index}
-            >
-              {child}
-            </div>
-          ))
+      {Array.isArray(childrenArray)
+        ? childrenArray.map((child, index) => {
+            const childKey =
+              isValidElement(child) && child.key != null
+                ? String(child.key)
+                : undefined;
+            const fallbackKey =
+              typeof child === "string" || typeof child === "number"
+                ? `grid-child-${child}`
+                : "grid-child";
+
+            return (
+              <div
+                className={`${getStaggerClass(index)} contents`}
+                key={childKey ?? fallbackKey}
+              >
+                {child}
+              </div>
+            );
+          })
         : children}
     </main>
   );

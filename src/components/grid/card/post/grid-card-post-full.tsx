@@ -15,12 +15,53 @@ import { Media } from "@/components/Media";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/payload-types";
 
+const MAX_STAGGER_INDEX = 6;
+
 export type GridCardPostProps = {
   post: Post;
   className?: string;
   loading?: "lazy" | "eager";
   priority?: boolean;
 };
+
+type ProjectLinkData = {
+  href: string;
+  key: number | string;
+  label: string;
+};
+
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
+
+function getProjectLinkData(project: Post["project"]): ProjectLinkData | null {
+  if (!project) {
+    return null;
+  }
+
+  if (typeof project === "number" || typeof project === "string") {
+    return {
+      href: "/projects",
+      key: project,
+      label: "Project",
+    };
+  }
+
+  const projectName =
+    typeof project.name === "string" && project.name.trim().length > 0
+      ? project.name
+      : "Project";
+  const projectSlug =
+    typeof project.slug === "string" && project.slug.trim().length > 0
+      ? project.slug
+      : null;
+
+  return {
+    href: projectSlug ? `/projects/${projectSlug}` : "/projects",
+    key: project.id ?? projectName,
+    label: projectName,
+  };
+}
 
 export const GridCardPostFull = ({
   post,
@@ -41,6 +82,7 @@ export const GridCardPostFull = ({
 
   const postUrl = `/posts/${slug}`;
   const postType = type || "article";
+  const projectLink = getProjectLinkData(project);
   const iconClassName =
     "glass-text h-5 w-5 transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]";
 
@@ -139,7 +181,7 @@ export const GridCardPostFull = ({
             return (
               <Link
                 aria-label={`View posts about ${topic.name}`}
-                className={`w-full font-semibold text-xs glass-stagger-${Math.min(index + 1, 6)}`}
+                className={`w-full font-semibold text-xs ${getStaggerClass(index)}`}
                 href={{ pathname: `/topics/${topic.slug}` }}
                 key={topic.id}
               >
@@ -183,7 +225,7 @@ export const GridCardPostFull = ({
             return (
               <Link
                 aria-label={`View ${author.name}'s profile`}
-                className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] glass-stagger-${Math.min(index + 1, 6)}`}
+                className={`glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)] ${getStaggerClass(index)}`}
                 href={{ pathname: `/${author.username}` }}
                 key={author.id}
               >
@@ -207,15 +249,15 @@ export const GridCardPostFull = ({
           </time>
         </div>
 
-        {project && typeof project === "object" && (
+        {projectLink && (
           <Link
-            aria-label={`View ${project.name} project`}
+            aria-label={`View ${projectLink.label} project`}
             className="glass-text glass-interactive flex items-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
-            href={{ pathname: `/projects/${project.slug}` }}
-            key={project.id}
+            href={{ pathname: projectLink.href }}
+            key={projectLink.key}
           >
             <BriefcaseBusiness aria-hidden="true" className="h-5 w-5" />
-            <span className="font-medium text-xs">{project.name}</span>
+            <span className="font-medium text-xs">{projectLink.label}</span>
           </Link>
         )}
       </GridCardSection>

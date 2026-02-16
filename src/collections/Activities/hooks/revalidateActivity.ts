@@ -5,19 +5,10 @@ import type {
 } from "payload";
 
 import type { Activity } from "@/payload-types";
-
-// Build date slug (MM-DD-YY) from activity date fields
-function getDateSlug(doc: Activity): string | null {
-  const dateTime = doc.finishedAt || doc.startedAt || doc.publishedAt;
-  if (!dateTime) {
-    return null;
-  }
-  const dateObj = new Date(dateTime);
-  const month = String(dateObj.getMonth() + 1).padStart(2, "0");
-  const day = String(dateObj.getDate()).padStart(2, "0");
-  const year = String(dateObj.getFullYear()).slice(-2);
-  return `${month}-${day}-${year}`;
-}
+import {
+  getActivityFullPath,
+  getActivityPath,
+} from "@/utilities/activity-path";
 
 // Invalidate shared activity listing caches
 function invalidateActivityListings(immediate: boolean) {
@@ -30,12 +21,14 @@ function invalidateActivityListings(immediate: boolean) {
 
 // Invalidate caches for a specific activity path
 function invalidateActivityPath(doc: Activity, immediate: boolean) {
-  const dateSlug = getDateSlug(doc);
-  if (!(dateSlug && doc.slug)) {
+  const activityPath = getActivityPath(doc);
+  const fullPath = getActivityFullPath(doc);
+
+  if (!(activityPath && fullPath)) {
     return;
   }
-  revalidatePath(`/activities/${dateSlug}/${doc.slug}`);
-  const fullPath = `${dateSlug}/${doc.slug}`;
+
+  revalidatePath(activityPath);
   const profile = immediate ? { expire: 0 } : "activities";
   revalidateTag(`activity-${fullPath}`, profile);
 }

@@ -5,6 +5,13 @@ import { cn } from "@/lib/utils";
 import type { Note } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 
+const RELATED_NOTE_EXCERPT_MAX = 80;
+const MAX_STAGGER_INDEX = 6;
+
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
+
 export function GridCardRelatedNotes({
   notes,
   className,
@@ -23,11 +30,13 @@ export function GridCardRelatedNotes({
         const fullText = note.content
           ? extractLexicalText(note.content).trim()
           : "";
-        const isTruncated = fullText.length > 80;
-        const excerpt = isTruncated ? fullText.slice(0, 80) : fullText;
+        const isTruncated = fullText.length > RELATED_NOTE_EXCERPT_MAX;
+        const excerpt = isTruncated
+          ? fullText.slice(0, RELATED_NOTE_EXCERPT_MAX)
+          : fullText;
 
         const rowClass = `row-start-${index + 1} row-end-${index + 2}`;
-        const staggerClass = `glass-stagger-${Math.min(index + 1, 6)}`;
+        const staggerClass = getStaggerClass(index);
 
         return (
           <Link

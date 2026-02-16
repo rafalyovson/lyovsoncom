@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import type { Activity, Note, Post, Reference } from "@/payload-types";
 import { GridCardSection } from "../section";
 
+const MAX_HERO_REFERENCES = 3;
+
 export const GridCardHero = ({
   className,
   post,
@@ -86,13 +88,13 @@ export const GridCardHeroNote = ({
   const isQuoteType = note.type === "quote";
   const typeLabel = isQuoteType ? "quote" : "thought";
 
-  // Limit references to 3
+  // Limit references to hero layout capacity
   const validReferences = (references || [])
     .filter(
       (ref): ref is Reference =>
         typeof ref === "object" && ref !== null && "title" in ref
     )
-    .slice(0, 3);
+    .slice(0, MAX_HERO_REFERENCES);
 
   return (
     <GridCard

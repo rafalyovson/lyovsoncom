@@ -2,6 +2,7 @@ import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
+import { getActivityPath } from "@/utilities/activity-path";
 import { generateEmbedding } from "@/utilities/generate-embedding";
 
 // Extended types with pgvector fields
@@ -63,6 +64,7 @@ export async function GET(request: NextRequest) {
         item = await payload.findByID({
           collection: "posts",
           id: Number.parseInt(id, 10),
+          overrideAccess: false,
           depth: 2,
           select: {
             id: true,
@@ -85,6 +87,7 @@ export async function GET(request: NextRequest) {
         item = await payload.findByID({
           collection: "notes",
           id: Number.parseInt(id, 10),
+          overrideAccess: false,
           depth: 1,
           select: {
             id: true,
@@ -101,6 +104,7 @@ export async function GET(request: NextRequest) {
         item = await payload.findByID({
           collection: "activities",
           id: Number.parseInt(id, 10),
+          overrideAccess: false,
           depth: 1,
           select: {
             id: true,
@@ -108,6 +112,9 @@ export async function GET(request: NextRequest) {
             activityType: true,
             reference: true,
             notes: true,
+            startedAt: true,
+            finishedAt: true,
+            publishedAt: true,
             updatedAt: true,
             embedding_vector: true,
             embedding_model: true,
@@ -118,6 +125,7 @@ export async function GET(request: NextRequest) {
         item = await payload.findByID({
           collection: "projects",
           id: Number.parseInt(id, 10),
+          overrideAccess: false,
           select: {
             id: true,
             name: true,
@@ -228,7 +236,10 @@ export async function GET(request: NextRequest) {
               return `${SITE_URL}/notes/${item.slug}`;
             }
             if (type === "activities") {
-              return `${SITE_URL}/activities/${item.slug}`;
+              const activityPath = getActivityPath(item as Activity);
+              return activityPath
+                ? `${SITE_URL}${activityPath}`
+                : `${SITE_URL}/activities/unknown/${item.slug}`;
             }
             return `${SITE_URL}/${item.slug}`;
           })(),
@@ -265,6 +276,7 @@ export async function GET(request: NextRequest) {
     if (type === "posts" || type === "all") {
       const posts = await payload.find({
         collection: "posts",
+        overrideAccess: false,
         where: { _status: { equals: "published" } },
         limit,
         depth: 2,
@@ -351,6 +363,7 @@ export async function GET(request: NextRequest) {
     if (type === "notes" || type === "all") {
       const notes = await payload.find({
         collection: "notes",
+        overrideAccess: false,
         where: { _status: { equals: "published" } },
         limit,
         depth: 1,
@@ -404,7 +417,11 @@ export async function GET(request: NextRequest) {
     if (type === "activities" || type === "all") {
       const activities = await payload.find({
         collection: "activities",
-        where: { _status: { equals: "published" } },
+        overrideAccess: false,
+        where: {
+          _status: { equals: "published" },
+          visibility: { equals: "public" },
+        },
         limit,
         depth: 1,
         select: {
@@ -412,6 +429,9 @@ export async function GET(request: NextRequest) {
           slug: true,
           activityType: true,
           reference: true,
+          startedAt: true,
+          finishedAt: true,
+          publishedAt: true,
           updatedAt: true,
           embedding_vector: true,
           embedding_model: true,
@@ -462,7 +482,12 @@ export async function GET(request: NextRequest) {
           metadata: {
             title,
             slug: activity.slug,
-            url: `${SITE_URL}/activities/${activity.slug}`,
+            url: (() => {
+              const activityPath = getActivityPath(activity as Activity);
+              return activityPath
+                ? `${SITE_URL}${activityPath}`
+                : `${SITE_URL}/activities/unknown/${activity.slug}`;
+            })(),
             lastModified: activity.updatedAt,
             activityType: activity.activityType,
             hasPrecomputedEmbedding: true,

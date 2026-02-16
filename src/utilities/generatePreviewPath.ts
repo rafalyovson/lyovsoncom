@@ -7,12 +7,17 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
 type Props = {
   collection: keyof typeof collectionPrefixMap;
   slug: string;
-  project?: any;
+  project?: unknown;
 };
 
 export const generatePreviewPath = ({ collection, slug, project }: Props) => {
   if (collection === "posts") {
-    if (project && typeof project === "object") {
+    if (
+      project &&
+      typeof project === "object" &&
+      "slug" in project &&
+      typeof project.slug === "string"
+    ) {
       return `/${project.slug}/${slug}`;
     }
     return `/posts/${slug}`; // fallback if no project

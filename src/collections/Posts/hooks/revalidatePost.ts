@@ -2,189 +2,297 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import type {
   CollectionAfterChangeHook,
   CollectionAfterDeleteHook,
+  PayloadRequest,
 } from "payload";
-
 import type { Post } from "@/payload-types";
 
-// Helper: resolve author usernames from the post document
+type AuthorLike = {
+  id?: number | string | null;
+  username?: string | null;
+};
+
+type PostWithPopulatedAuthors = Post & {
+  populatedAuthors?: AuthorLike[] | null;
+};
+
+type AuthorRevalidationArgs = {
+  errorContext: string;
+  post: Post;
+  req: PayloadRequest;
+  successMessage: string;
+};
+
+function getPostSlug(post: Pick<Post, "slug">): string | null {
+  return typeof post.slug === "string" && post.slug.length > 0
+    ? post.slug
+    : null;
+}
+
+function normalizeUsername(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
+function getAuthorId(author: unknown): number | string | null {
+  if (typeof author === "number" || typeof author === "string") {
+    return author;
+  }
+
+  if (!(author && typeof author === "object" && "id" in author)) {
+    return null;
+  }
+
+  const authorId = (author as AuthorLike).id;
+  return typeof authorId === "number" || typeof authorId === "string"
+    ? authorId
+    : null;
+}
+
+function getAuthorUsername(author: unknown): string | null {
+  if (!(author && typeof author === "object" && "username" in author)) {
+    return null;
+  }
+
+  return normalizeUsername((author as AuthorLike).username);
+}
+
+function getPopulatedAuthors(post: Post): AuthorLike[] | null {
+  const postWithPopulatedAuthors = post as PostWithPopulatedAuthors;
+  return Array.isArray(postWithPopulatedAuthors.populatedAuthors)
+    ? postWithPopulatedAuthors.populatedAuthors
+    : null;
+}
+
+async function getUsernamesFromAuthorIds(
+  req: PayloadRequest,
+  authorIds: Set<number | string>
+): Promise<string[]> {
+  const resolvedUsernames = await Promise.all(
+    [...authorIds].map(async (authorId) => {
+      try {
+        const user = await req.payload.findByID({
+          collection: "lyovsons",
+          id: authorId,
+        });
+
+        return normalizeUsername(user?.username);
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return resolvedUsernames.filter((username): username is string =>
+    Boolean(username)
+  );
+}
+
 async function getAuthorUsernames(
-  req: any,
+  req: PayloadRequest,
   authors: Post["authors"] | undefined,
-  populatedAuthors?: { username?: string | null }[] | null
+  populatedAuthors?: AuthorLike[] | null
 ): Promise<string[]> {
   const usernames = new Set<string>();
 
-  // Prefer populated authors if available
   if (Array.isArray(populatedAuthors)) {
-    for (const a of populatedAuthors) {
-      const u = a?.username;
-      if (typeof u === "string" && u.trim()) {
-        usernames.add(u.trim());
+    for (const author of populatedAuthors) {
+      const username = normalizeUsername(author?.username);
+      if (username) {
+        usernames.add(username);
       }
     }
   }
 
-  if (Array.isArray(authors)) {
-    for (const a of authors) {
-      if (
-        a &&
-        typeof a === "object" &&
-        "username" in a &&
-        typeof (a as any).username === "string"
-      ) {
-        const u = (a as any).username as string;
-        if (u?.trim()) {
-          usernames.add(u.trim());
-        }
-      } else if (typeof a === "number" || typeof a === "string") {
-        try {
-          const user = await req.payload.findByID({
-            collection: "lyovsons",
-            id: a as any,
-          });
-          const u = user?.username;
-          if (typeof u === "string" && u.trim()) {
-            usernames.add(u.trim());
-          }
-        } catch {
-          // ignore lookup failures
-        }
-      }
+  if (!Array.isArray(authors)) {
+    return [...usernames];
+  }
+
+  const authorIds = new Set<number | string>();
+
+  for (const author of authors) {
+    const directUsername = getAuthorUsername(author);
+    if (directUsername) {
+      usernames.add(directUsername);
+    }
+
+    const authorId = getAuthorId(author);
+    if (authorId !== null) {
+      authorIds.add(authorId);
     }
   }
 
-  return Array.from(usernames);
+  const usernamesFromIds = await getUsernamesFromAuthorIds(req, authorIds);
+  for (const username of usernamesFromIds) {
+    usernames.add(username);
+  }
+
+  return [...usernames];
+}
+
+function revalidatePostRootPaths() {
+  revalidatePath("/");
+  revalidatePath("/posts");
+}
+
+function revalidatePostProject(post: Pick<Post, "project">) {
+  if (!(post.project && typeof post.project === "object")) {
+    return;
+  }
+
+  revalidateTag(`project-${post.project.slug}`, "projects");
+  revalidatePath(`/projects/${post.project.slug}`);
+}
+
+function revalidatePostTagsForNewPublish(slug: string) {
+  revalidateTag("posts", { expire: 0 });
+  revalidateTag(`post-${slug}`, { expire: 0 });
+  revalidateTag("homepage", { expire: 0 });
+  revalidateTag("sitemap", { expire: 0 });
+}
+
+function revalidatePostTagsForEdit(slug: string) {
+  revalidateTag("posts", "posts");
+  revalidateTag(`post-${slug}`, "posts");
+  revalidateTag("homepage", "homepage");
+}
+
+function revalidatePostTagsForRemoval(slug?: string | null) {
+  revalidateTag("posts", "posts");
+  if (slug) {
+    revalidateTag(`post-${slug}`, "posts");
+  }
+  revalidateTag("homepage", "homepage");
+  revalidateTag("sitemap", "sitemap");
+}
+
+async function revalidatePostAuthors({
+  errorContext,
+  post,
+  req,
+  successMessage,
+}: AuthorRevalidationArgs): Promise<void> {
+  try {
+    const authorUsernames = await getAuthorUsernames(
+      req,
+      post.authors,
+      getPopulatedAuthors(post)
+    );
+
+    if (authorUsernames.length === 0) {
+      return;
+    }
+
+    revalidateTag("users", "authors");
+    for (const username of authorUsernames) {
+      revalidateTag(`author-${username}`, "authors");
+      revalidatePath(`/${username}`);
+    }
+
+    req.payload.logger.info(
+      `${successMessage}: ${authorUsernames.map((username) => `/${username}`).join(", ")}`
+    );
+  } catch (error) {
+    req.payload.logger.error(
+      `Failed to update author pages for ${errorContext}: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
+  }
+}
+
+async function handlePublishedPost(
+  doc: Post,
+  previousDoc: Post | null | undefined,
+  req: PayloadRequest
+) {
+  const slug = getPostSlug(doc);
+  if (!slug) {
+    req.payload.logger.warn(
+      `Skipping post revalidation because slug is missing for post "${doc.title}"`
+    );
+    return;
+  }
+
+  const isNewPublish = previousDoc?._status !== "published";
+  const path = `/posts/${slug}`;
+
+  req.payload.logger.info(
+    `Revalidating post at path: ${path} (${isNewPublish ? "NEW PUBLISH" : "EDIT"})`
+  );
+
+  revalidatePath(path);
+
+  if (isNewPublish) {
+    revalidatePostTagsForNewPublish(slug);
+    revalidatePostRootPaths();
+    req.payload.logger.info(
+      `✅ NEW POST published: "${doc.title}" - Full cache invalidation (feeds update on natural expiry)`
+    );
+  } else {
+    revalidatePostTagsForEdit(slug);
+    req.payload.logger.info(
+      `✅ EDITED published post: "${doc.title}" - Cache refreshed (feeds unchanged to reduce DB wake-ups)`
+    );
+  }
+
+  revalidatePostProject(doc);
+
+  await revalidatePostAuthors({
+    errorContext: "post change",
+    post: doc,
+    req,
+    successMessage: "Updated author pages for",
+  });
+}
+
+async function handleUnpublishedPost(previousDoc: Post, req: PayloadRequest) {
+  const slug = getPostSlug(previousDoc);
+  if (!slug) {
+    req.payload.logger.warn(
+      `Skipping unpublish revalidation because previous slug is missing for post "${previousDoc.title}"`
+    );
+    return;
+  }
+
+  const oldPath = `/posts/${slug}`;
+
+  req.payload.logger.info(
+    `Updating cache for unpublished post at path: ${oldPath}`
+  );
+
+  revalidatePath(oldPath);
+  revalidatePostTagsForRemoval(slug);
+  revalidatePostRootPaths();
+  revalidatePostProject(previousDoc);
+
+  await revalidatePostAuthors({
+    errorContext: "previous post state",
+    post: previousDoc,
+    req,
+    successMessage: "Updated author pages after unpublish",
+  });
 }
 
 export const revalidatePost: CollectionAfterChangeHook<Post> = async ({
+  context,
   doc,
   previousDoc,
   req,
-  context,
 }) => {
-  // Skip revalidation during migration or other system operations
   if (context?.skipRevalidation) {
     return doc;
   }
 
-  const { payload } = req;
-
   if (doc._status === "published") {
-    const path = `/posts/${doc.slug}`;
-    const isNewPublish = previousDoc?._status !== "published";
-
-    payload.logger.info(
-      `Revalidating post at path: ${path} (${isNewPublish ? "NEW PUBLISH" : "EDIT"})`
-    );
-
-    // Revalidate the specific post path
-    revalidatePath(path);
-
-    // Update cache tags - selective invalidation based on publish status to reduce database wake-ups
-    if (isNewPublish) {
-      // New publish: full invalidation for immediate SEO indexing
-      revalidateTag("posts", { expire: 0 }); // Immediate invalidation
-      revalidateTag(`post-${doc.slug}`, { expire: 0 });
-      revalidateTag("homepage", { expire: 0 });
-      revalidateTag("sitemap", { expire: 0 });
-      // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags.
-      // Feeds update on natural cache expiry, not on content changes.
-      // This reduces Neon compute by preventing feed readers from waking the DB.
-      revalidatePath("/");
-      revalidatePath("/posts");
-
-      payload.logger.info(
-        `✅ NEW POST published: "${doc.title}" - Full cache invalidation (feeds update on natural expiry)`
-      );
-    } else {
-      // Edit to published post: use configured cache profiles
-      // This prevents every typo fix from waking the database for all feed readers
-      revalidateTag("posts", "posts"); // Use posts profile (30min stale, 1hr revalidate)
-      revalidateTag(`post-${doc.slug}`, "posts");
-      revalidateTag("homepage", "homepage"); // Use homepage profile (30min stale)
-      // Feeds use HTTP caching (6-12hr) and update on natural cache expiry
-
-      payload.logger.info(
-        `✅ EDITED published post: "${doc.title}" - Cache refreshed (feeds unchanged to reduce DB wake-ups)`
-      );
-    }
-
-    // If post belongs to a project, invalidate project cache
-    if (doc.project && typeof doc.project === "object") {
-      revalidateTag(`project-${doc.project.slug}`, "projects");
-      revalidatePath(`/projects/${doc.project.slug}`);
-    }
-
-    // Invalidate author pages/tags for all authors on this post
-    try {
-      const authorUsernames = await getAuthorUsernames(
-        req,
-        doc.authors as any,
-        (doc as any).populatedAuthors
-      );
-      if (authorUsernames.length) {
-        revalidateTag("users", "authors"); // Use authors profile
-        for (const username of authorUsernames) {
-          revalidateTag(`author-${username}`, "authors");
-          revalidatePath(`/${username}`);
-        }
-        payload.logger.info(
-          `Updated author pages for: ${authorUsernames.map((u) => `/${u}`).join(", ")}`
-        );
-      }
-    } catch (e) {
-      payload.logger.error(
-        `Failed to update author pages for post change: ${e instanceof Error ? e.message : String(e)}`
-      );
-    }
+    await handlePublishedPost(doc, previousDoc, req);
   }
 
-  // If the post was previously published, we need to revalidate the old path
   if (previousDoc?._status === "published" && doc._status !== "published") {
-    const oldPath = `/posts/${previousDoc.slug}`;
-
-    payload.logger.info(
-      `Updating cache for unpublished post at path: ${oldPath}`
-    );
-
-    revalidatePath(oldPath);
-    revalidateTag("posts", "posts"); // Use configured profile for gentler invalidation
-    revalidateTag(`post-${previousDoc.slug}`, "posts");
-    revalidateTag("homepage", "homepage");
-    revalidateTag("sitemap", "sitemap");
-    // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
-    revalidatePath("/");
-    revalidatePath("/posts");
-
-    // Also update old project and author pages
-    if (previousDoc.project && typeof previousDoc.project === "object") {
-      revalidateTag(`project-${previousDoc.project.slug}`, "projects");
-      revalidatePath(`/projects/${previousDoc.project.slug}`);
-    }
-
-    try {
-      const prevAuthorUsernames = await getAuthorUsernames(
-        req,
-        previousDoc.authors as any,
-        (previousDoc as any).populatedAuthors
-      );
-      if (prevAuthorUsernames.length) {
-        revalidateTag("users", "authors");
-        for (const username of prevAuthorUsernames) {
-          revalidateTag(`author-${username}`, "authors");
-          revalidatePath(`/${username}`);
-        }
-        payload.logger.info(
-          `Updated author pages after unpublish: ${prevAuthorUsernames
-            .map((u) => `/${u}`)
-            .join(", ")}`
-        );
-      }
-    } catch (e) {
-      payload.logger.error(
-        `Failed to update author pages for previous post state: ${e instanceof Error ? e.message : String(e)}`
-      );
-    }
+    await handleUnpublishedPost(previousDoc, req);
   }
 
   return doc;
@@ -194,39 +302,31 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = async ({
   doc,
   req,
 }) => {
-  const path = `/posts/${doc?.slug}`;
-
-  revalidatePath(path);
-  revalidateTag("posts", "posts"); // Use configured profile for gentler invalidation
-  revalidateTag(`post-${doc?.slug}`, "posts");
-  revalidateTag("homepage", "homepage");
-  revalidateTag("sitemap", "sitemap");
-  // Note: Feed routes use HTTP Cache-Control (6-12hr), not Next.js cache tags
-  revalidatePath("/");
-  revalidatePath("/posts");
-
-  // If post belonged to a project, invalidate project cache
-  if (doc?.project && typeof doc.project === "object") {
-    revalidateTag(`project-${doc.project.slug}`, "projects");
-    revalidatePath(`/projects/${doc.project.slug}`);
-  }
-
-  // Invalidate author pages/tags
-  try {
-    const authorUsernames = await getAuthorUsernames(
-      req as any,
-      doc?.authors as any,
-      (doc as any)?.populatedAuthors
-    );
-    if (authorUsernames.length) {
-      revalidateTag("users", "authors");
-      for (const username of authorUsernames) {
-        revalidateTag(`author-${username}`, "authors");
-        revalidatePath(`/${username}`);
-      }
+  if (doc) {
+    const slug = getPostSlug(doc);
+    if (slug) {
+      const path = `/posts/${slug}`;
+      revalidatePath(path);
+      revalidatePostTagsForRemoval(slug);
+      revalidatePostRootPaths();
+    } else {
+      req.payload.logger.warn(
+        `Skipping post path revalidation on delete because slug is missing for post "${doc.title}"`
+      );
+      revalidatePostTagsForRemoval();
+      revalidatePostRootPaths();
     }
-  } catch {
-    // ignore
+
+    revalidatePostProject(doc);
+    await revalidatePostAuthors({
+      errorContext: "post delete",
+      post: doc,
+      req,
+      successMessage: "Updated author pages after delete",
+    });
+  } else {
+    revalidatePostTagsForRemoval();
+    revalidatePostRootPaths();
   }
 
   return doc;

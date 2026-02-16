@@ -16,53 +16,66 @@ type GridCardActivityReviewProps = {
   className?: string;
 };
 
+const RATING_MAX = 10;
+const STARS_PER_ROW = 5;
+const REVIEW_EXCERPT_MAX_CHARS = 520;
+
+function buildStarKeys(prefix: string, count: number): string[] {
+  return Array.from({ length: count }, (_, index) => `${prefix}-${index + 1}`);
+}
+
 function renderRating(rating: number) {
   const fullStars = rating;
-  const emptyStars = 10 - rating;
+  const emptyStars = RATING_MAX - rating;
+  const fullTopRow = Math.min(fullStars, STARS_PER_ROW);
+  const emptyTopRow = Math.max(0, STARS_PER_ROW - fullStars);
+  const fullBottomRow = Math.max(0, fullStars - STARS_PER_ROW);
+  const emptyBottomRow = Math.min(emptyStars, STARS_PER_ROW);
 
   return (
     <div
-      aria-label={`${rating} out of 10`}
+      aria-label={`${rating} out of ${RATING_MAX}`}
       className="flex flex-col items-center gap-1.5"
+      role="img"
     >
       {/* Numeric rating */}
       <div className="flex items-baseline gap-0.5">
         <span className="glass-text font-bold text-2xl leading-none">
           {rating}
         </span>
-        <span className="glass-text-secondary text-xs">/10</span>
+        <span className="glass-text-secondary text-xs">/{RATING_MAX}</span>
       </div>
       {/* 10 stars in two rows of 5 */}
       <div className="flex flex-col gap-0.5">
         <div className="flex items-center justify-center gap-0.5">
-          {Array.from({ length: Math.min(fullStars, 5) }).map((_, i) => (
+          {buildStarKeys("full-top", fullTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
               className="glass-text h-3 w-3 fill-current"
-              key={`full-${i}`}
+              key={starKey}
             />
           ))}
-          {Array.from({ length: Math.max(0, 5 - fullStars) }).map((_, i) => (
+          {buildStarKeys("empty-top", emptyTopRow).map((starKey) => (
             <Star
               aria-hidden="true"
               className="glass-text-secondary h-3 w-3 opacity-30"
-              key={`empty-top-${i}`}
+              key={starKey}
             />
           ))}
         </div>
         <div className="flex items-center justify-center gap-0.5">
-          {Array.from({ length: Math.max(0, fullStars - 5) }).map((_, i) => (
+          {buildStarKeys("full-bottom", fullBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
               className="glass-text h-3 w-3 fill-current"
-              key={`full-bottom-${i}`}
+              key={starKey}
             />
           ))}
-          {Array.from({ length: Math.min(emptyStars, 5) }).map((_, i) => (
+          {buildStarKeys("empty-bottom", emptyBottomRow).map((starKey) => (
             <Star
               aria-hidden="true"
               className="glass-text-secondary h-3 w-3 opacity-30"
-              key={`empty-bottom-${i}`}
+              key={starKey}
             />
           ))}
         </div>
@@ -87,10 +100,9 @@ export function GridCardActivityReview({
     typeof review.rating === "number" ? review.rating : null;
 
   const noteText = review.note || "";
-  const maxChars = 520;
-  const isTruncated = noteText.length > maxChars;
+  const isTruncated = noteText.length > REVIEW_EXCERPT_MAX_CHARS;
   const excerpt = isTruncated
-    ? noteText.slice(0, maxChars).trimEnd()
+    ? noteText.slice(0, REVIEW_EXCERPT_MAX_CHARS).trimEnd()
     : noteText;
 
   return (

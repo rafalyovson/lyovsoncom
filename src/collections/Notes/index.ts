@@ -1,7 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { authenticated } from "@/access/authenticated";
-import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
+import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
 import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers";
@@ -15,7 +15,7 @@ export const Notes: CollectionConfig = {
   access: {
     create: authenticated,
     delete: authenticated,
-    read: authenticatedOrPublished,
+    read: authenticatedOrPublishedPublic,
     update: authenticated,
   },
   defaultPopulate: {

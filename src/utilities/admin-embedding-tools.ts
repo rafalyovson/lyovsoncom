@@ -1,8 +1,12 @@
 import configPromise from "@payload-config";
+import type { PayloadRequest } from "payload";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
 import { generateEmbedding } from "./generate-embedding";
 import { generateEmbeddingForPost } from "./generate-embedding-helpers";
+
+const BULK_EMBEDDING_DELAY_MS = 100;
+const EMBEDDING_COVERAGE_PERCENT = 100;
 
 // Get embedding statistics for all posts
 export async function getEmbeddingStats() {
@@ -28,7 +32,8 @@ export async function getEmbeddingStats() {
 
   const coverage =
     allPosts.totalDocs > 0
-      ? (postsWithEmbeddings.totalDocs / allPosts.totalDocs) * 100
+      ? (postsWithEmbeddings.totalDocs / allPosts.totalDocs) *
+        EMBEDDING_COVERAGE_PERCENT
       : 0;
 
   return {
@@ -85,7 +90,7 @@ export async function regenerateEmbeddingForPost(postId: number) {
     const mockReq = {
       payload,
       user: null,
-    } as any;
+    } as unknown as PayloadRequest;
 
     const result = await generateEmbeddingForPost(postId, mockReq);
 
@@ -94,7 +99,7 @@ export async function regenerateEmbeddingForPost(postId: number) {
     }
 
     // Fetch updated post to get embedding details
-    const updatedPost = await payload.findByID({
+    const updatedPost = (await payload.findByID({
       collection: "posts",
       id: postId,
       select: {
@@ -102,14 +107,18 @@ export async function regenerateEmbeddingForPost(postId: number) {
         embedding_model: true,
         embedding_dimensions: true,
       },
-    });
+    })) as {
+      title: string;
+      embedding_model?: string | null;
+      embedding_dimensions?: number | null;
+    };
 
     return {
       success: true,
       postId,
       title: updatedPost.title,
-      model: (updatedPost as any).embedding_model || "unknown",
-      dimensions: (updatedPost as any).embedding_dimensions || 0,
+      model: updatedPost.embedding_model || "unknown",
+      dimensions: updatedPost.embedding_dimensions || 0,
     };
   } catch (error) {
     return {
@@ -139,7 +148,9 @@ export async function bulkGenerateEmbeddings(batchSize = 10) {
     results.push(result);
 
     // Small delay to avoid overwhelming the system
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) =>
+      setTimeout(resolve, BULK_EMBEDDING_DELAY_MS)
+    );
   }
 
   const successful = results.filter((r) => r.success).length;

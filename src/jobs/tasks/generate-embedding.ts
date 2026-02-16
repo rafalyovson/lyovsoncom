@@ -5,6 +5,20 @@ import {
   generateEmbedding,
 } from "@/utilities/generate-embedding";
 
+const EMBEDDABLE_COLLECTIONS = ["activities", "notes", "posts"] as const;
+
+type EmbeddableCollection = (typeof EMBEDDABLE_COLLECTIONS)[number];
+
+type EmbeddableDoc = {
+  _status?: "draft" | "published" | null;
+  content?: unknown;
+  embedding_text_hash?: string | null;
+};
+
+function isEmbeddableCollection(value: string): value is EmbeddableCollection {
+  return EMBEDDABLE_COLLECTIONS.includes(value as EmbeddableCollection);
+}
+
 export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
   slug: "generateEmbedding",
 
@@ -27,13 +41,19 @@ export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
 
   // The actual task logic
   handler: async ({ input, req }) => {
-    const { collection, docId } = input;
+    const { collection: collectionInput, docId } = input;
+
+    if (!isEmbeddableCollection(collectionInput)) {
+      return { output: { success: false, reason: "unsupported_collection" } };
+    }
+
+    const collection = collectionInput;
 
     // Fetch the document
-    const doc = await req.payload.findByID({
-      collection: collection as any,
+    const doc = (await req.payload.findByID({
+      collection,
       id: docId,
-    });
+    })) as EmbeddableDoc | null;
 
     // Validation checks
     if (!doc) {
@@ -72,7 +92,7 @@ export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
 
     // Update document with embedding
     await req.payload.update({
-      collection: collection as any,
+      collection,
       id: docId,
       data: {
         embedding_vector: `[${vector.join(",")}]`,

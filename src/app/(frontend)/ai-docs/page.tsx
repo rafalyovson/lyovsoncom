@@ -191,8 +191,10 @@ export default function AIDocsPage() {
                 </li>
                 <li>
                   📚{" "}
-                  <ExternalLink href={`${SITE_URL}/api/embeddings/books/1`}>
-                    Books API
+                  <ExternalLink
+                    href={`${SITE_URL}/api/embeddings/activities/1`}
+                  >
+                    Activities API
                   </ExternalLink>
                 </li>
                 <li>
@@ -324,7 +326,7 @@ GET ${SITE_URL}/api/posts/[id]?depth=2`}
           <CodeBlock title="Embeddings API Examples">
             {`# Collection-specific endpoints (pre-computed, ~50ms)
 GET ${SITE_URL}/api/embeddings/posts/123      # Articles & blog posts
-GET ${SITE_URL}/api/embeddings/books/456      # Books with quotes
+GET ${SITE_URL}/api/embeddings/activities/456 # Reading/watching/listening logs
 GET ${SITE_URL}/api/embeddings/notes/789      # Personal notes
 
 # Bulk access for training/analysis
@@ -338,7 +340,7 @@ GET ${SITE_URL}/api/embeddings/status
 
 # Advanced options
 GET ${SITE_URL}/api/embeddings/posts/123?content=true&format=full
-GET ${SITE_URL}/api/embeddings/books/456?regenerate=true
+GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
 
 # Response structure:
 {
@@ -346,9 +348,9 @@ GET ${SITE_URL}/api/embeddings/books/456?regenerate=true
   "embedding": [0.1, -0.2, 0.3, ...], // 1536-dimensional vector
   "dimensions": 1536,
   "metadata": {
-    "type": "post", // or "book", "note"
+    "type": "post", // or "activity", "note"
     "title": "Post Title",
-    "url": "${SITE_URL}/project/post-slug",
+    "url": "${SITE_URL}/posts/post-slug",
     "wordCount": 1200,
     "readingTime": 6,
     "topics": ["programming", "javascript"]

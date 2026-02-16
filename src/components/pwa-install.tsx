@@ -15,10 +15,22 @@ type BeforeInstallPromptEvent = Event & {
   prompt(): Promise<void>;
 };
 
-declare global {
-  interface WindowEventMap {
-    beforeinstallprompt: BeforeInstallPromptEvent;
-  }
+type NavigatorWithStandalone = Navigator & {
+  standalone?: boolean;
+};
+
+type WindowWithMSStream = Window & {
+  MSStream?: unknown;
+};
+
+function isBeforeInstallPromptEvent(
+  event: Event
+): event is BeforeInstallPromptEvent {
+  return (
+    "prompt" in event &&
+    typeof (event as BeforeInstallPromptEvent).prompt === "function" &&
+    "userChoice" in event
+  );
 }
 
 export function PWAInstall() {
@@ -35,15 +47,16 @@ export function PWAInstall() {
       const isStandalone = window.matchMedia(
         "(display-mode: standalone)"
       ).matches;
-      const isIOSStandalone = (window.navigator as any).standalone === true;
+      const isIOSStandalone =
+        (window.navigator as NavigatorWithStandalone).standalone === true;
       setIsInstalled(isStandalone || isIOSStandalone);
     };
 
     // Check if device is iOS
     const checkIfIOS = () => {
       const userAgent = window.navigator.userAgent;
-      const isIOSDevice =
-        IOS_DEVICE_REGEX.test(userAgent) && !(window as any).MSStream;
+      const hasMSStream = Boolean((window as WindowWithMSStream).MSStream);
+      const isIOSDevice = IOS_DEVICE_REGEX.test(userAgent) && !hasMSStream;
       setIsIOS(isIOSDevice);
     };
 
@@ -80,9 +93,13 @@ export function PWAInstall() {
     };
 
     // Handle beforeinstallprompt event
-    const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
+    const handleBeforeInstallPrompt = (event: Event) => {
+      if (!isBeforeInstallPromptEvent(event)) {
+        return;
+      }
+
+      event.preventDefault();
+      setDeferredPrompt(event);
       setIsInstallable(true);
     };
 
@@ -142,6 +159,7 @@ export function PWAInstall() {
               fill="currentColor"
               viewBox="0 0 20 20"
             >
+              <title>iOS install instructions</title>
               <path
                 clipRule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -181,6 +199,7 @@ export function PWAInstall() {
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
+                <title>Install app</title>
                 <path
                   clipRule="evenodd"
                   d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z"

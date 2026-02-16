@@ -2,6 +2,8 @@ import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Activity } from "@/payload-types";
+import { getActivityPath } from "@/utilities/activity-path";
+import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import { generateEmbedding } from "@/utilities/generate-embedding";
 
@@ -70,9 +72,26 @@ export async function GET(
   try {
     const payload = await getPayload({ config: configPromise });
 
+    if (regenerate) {
+      const authResult = await authorizeEmbeddingMutation(request, payload);
+      if (!authResult.authorized) {
+        return new Response(
+          JSON.stringify({
+            error: authResult.reason || "Unauthorized",
+            id: Number.parseInt(id, 10),
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+    }
+
     const activity = await payload.findByID({
       collection: "activities",
       id: Number.parseInt(id, 10),
+      overrideAccess: false,
       depth: 1,
       select: {
         id: true,
@@ -80,6 +99,8 @@ export async function GET(
         activityType: true,
         reference: true,
         notes: true,
+        startedAt: true,
+        finishedAt: true,
         publishedAt: true,
         updatedAt: true,
         embedding_vector: true,
@@ -220,7 +241,12 @@ export async function GET(
       id: activity.id,
       title,
       slug: activity.slug,
-      url: `${SITE_URL}/activities/${activity.slug}`,
+      url: (() => {
+        const activityPath = getActivityPath(activity);
+        return activityPath
+          ? `${SITE_URL}${activityPath}`
+          : `${SITE_URL}/activities/unknown/${activity.slug}`;
+      })(),
       embedding: null,
       publishedAt: activity.publishedAt,
       updatedAt: activity.updatedAt,
@@ -286,6 +312,20 @@ export async function POST(
     const { action = "regenerate" } = body;
 
     if (action === "regenerate") {
+      const payload = await getPayload({ config: configPromise });
+      const authResult = await authorizeEmbeddingMutation(request, payload);
+      if (!authResult.authorized) {
+        return new Response(
+          JSON.stringify({
+            error: authResult.reason || "Unauthorized",
+          }),
+          {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
       // Redirect to GET with regenerate=true
       const url = new URL(request.url);
       url.searchParams.set("regenerate", "true");

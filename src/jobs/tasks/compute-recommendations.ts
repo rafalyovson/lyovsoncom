@@ -1,6 +1,8 @@
 import type { TaskConfig } from "payload";
 import { getSimilarPosts } from "@/utilities/get-similar-posts";
 
+const RECOMMENDATION_LIMIT = 3;
+
 export const ComputeRecommendations: TaskConfig<"computeRecommendations"> = {
   slug: "computeRecommendations",
 
@@ -41,7 +43,7 @@ export const ComputeRecommendations: TaskConfig<"computeRecommendations"> = {
       `[Job] Computing recommendations for post ${postId}`
     );
 
-    const similarPosts = await getSimilarPosts(postId, 3);
+    const similarPosts = await getSimilarPosts(postId, RECOMMENDATION_LIMIT);
     const recommendedIds = similarPosts.map((p) => p.id);
 
     // Update post with recommendations
