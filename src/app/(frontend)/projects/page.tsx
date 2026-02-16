@@ -53,6 +53,7 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "Projects & Research | Lyóvson.com",
   description:
     "Explore projects and research by Rafa and Jess Lyóvson covering technology, programming, design, and creative endeavors.",

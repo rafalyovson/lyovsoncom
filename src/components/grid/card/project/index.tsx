@@ -19,12 +19,13 @@ export const GridCardProject = ({
   priority,
 }: GridCardProjectProps) => {
   const { name, slug } = project;
+  const projectHref = slug ? `/projects/${slug}` : "/projects";
 
   return (
     <Link
       aria-label={`View ${name} project`}
       className="group glass-interactive"
-      href={`/${slug}`}
+      href={projectHref}
     >
       <GridCard className={className}>
         {project.image && typeof project.image !== "string" && (

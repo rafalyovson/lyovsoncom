@@ -12,6 +12,7 @@ import type { Activity, Note, Post } from "@/payload-types";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getLatestNotes } from "@/utilities/get-note";
 import { getLatestPosts } from "@/utilities/get-post";
+import { getServerSideURL } from "@/utilities/getURL";
 
 const HOMEPAGE_ITEMS_LIMIT = 25;
 const HOMEPAGE_FETCH_LIMIT = 50; // Fetch more to ensure we get the latest 25 overall
@@ -137,6 +138,7 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: "Lyóvson.com",
     description: "Official website of Rafa and Jess Lyóvson",
     keywords: [

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { GridCardSubscribeConfirmed } from "@/components/grid";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export const dynamic = "force-static";
 
@@ -19,6 +20,7 @@ export default async function SubscriptionConfirmed() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "Subscription Confirmed - Thank You | Lyóvson.com",
   description:
     "Thank you for subscribing to Lyóvson.com! Your subscription has been confirmed and you will receive updates about our latest posts and projects.",

@@ -10,7 +10,7 @@ export const Grid = ({ children }: { children: ReactNode }) => {
   const childrenArray = Children.toArray(children);
 
   return (
-    <main className="relative mx-auto grid min-h-screen g2:grid-cols-[400px_400px] g3:grid-cols-[400px_400px_400px] g4:grid-cols-[400px_400px_400px_400px] g5:grid-cols-[400px_400px_400px_400px_400px] g6:grid-cols-[400px_400px_400px_400px_400px_400px] grid-cols-[clamp(18rem,100vw-2rem,400px)] place-items-center justify-center gap-4 p-4 g2:[grid-auto-rows:max-content]">
+    <main className="relative mx-auto grid min-h-screen g2:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)] g3:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g4:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g5:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] g6:grid-cols-[var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)_var(--grid-card-1x1)] grid-cols-[minmax(0,clamp(18rem,100vw-2rem,var(--grid-card-1x1)))] place-items-center justify-center gap-[var(--grid-gap)] p-[var(--grid-gap)] g2:[grid-auto-rows:max-content]">
       {/* Theme-aware glassmorphism background context */}
       <div
         className="-z-10 fixed inset-0"

@@ -97,11 +97,7 @@ function serializeTextNode(
     text = <span className="underline">{text}</span>;
   }
   if (format & IS_CODE) {
-    text = (
-      <code className="rounded bg-muted px-1 py-0.5 font-mono text-sm">
-        {node.text}
-      </code>
-    );
+    text = <code className="glass-longform-inline-code">{node.text}</code>;
   }
   if (format & IS_SUBSCRIPT) {
     text = <sub>{text}</sub>;
@@ -149,7 +145,7 @@ function renderRichTextBlock(
   switch (block.blockType) {
     case "mediaBlock":
       return (
-        <div className="glass-stagger-1 col-span-3 col-start-1" key={index}>
+        <div className="glass-longform-block glass-stagger-1" key={index}>
           <MediaBlock
             className="glass-section"
             imgClassName="m-0 w-full rounded-lg"
@@ -162,20 +158,20 @@ function renderRichTextBlock(
       );
     case "banner":
       return (
-        <div className="glass-stagger-2 col-start-2 mb-6" key={index}>
+        <div className="glass-longform-block glass-stagger-2" key={index}>
           <BannerBlock className="glass-section glass-interactive" {...block} />
         </div>
       );
     case "code":
       return (
-        <div className="glass-stagger-2 col-start-2" key={index}>
+        <div className="glass-longform-block glass-stagger-2" key={index}>
           <CodeBlock className="glass-section font-mono" {...block} />
         </div>
       );
     case "youtube":
       return (
         <div
-          className="glass-stagger-1 glass-section col-span-3 col-start-1 overflow-hidden rounded-lg"
+          className="glass-longform-block glass-section glass-stagger-1 overflow-hidden rounded-lg"
           key={index}
         >
           <YouTubeBlock {...block} />
@@ -184,7 +180,7 @@ function renderRichTextBlock(
     case "xpost":
       return (
         <div
-          className="glass-stagger-2 glass-section glass-interactive col-start-2"
+          className="glass-longform-block glass-section glass-interactive glass-stagger-2"
           key={index}
         >
           <XPostBlock {...block} />
@@ -192,14 +188,14 @@ function renderRichTextBlock(
       );
     case "quote":
       return (
-        <div className="glass-stagger-2 col-start-2" key={index}>
+        <div className="glass-longform-block glass-stagger-2" key={index}>
           <QuoteBlock className="glass-section glass-premium" {...block} />
         </div>
       );
     case "gif":
       return (
         <div
-          className="glass-stagger-1 glass-section col-span-3 col-start-1 overflow-hidden rounded-lg"
+          className="glass-longform-block glass-section glass-stagger-1 overflow-hidden rounded-lg"
           key={index}
         >
           <GIFBlock {...block} />
@@ -217,39 +213,30 @@ function renderElementNode(
 ): JSX.Element | null {
   switch (node.type) {
     case "linebreak":
-      return <br className="col-start-2" key={index} />;
+      return <br key={index} />;
     case "paragraph":
-      return (
-        <p className="col-start-2" key={index}>
-          {serializedChildren}
-        </p>
-      );
+      return <p key={index}>{serializedChildren}</p>;
     case "heading": {
       const Tag = node.tag;
-      return (
-        <Tag className="col-start-2" key={index}>
-          {serializedChildren}
-        </Tag>
-      );
+      return <Tag key={index}>{serializedChildren}</Tag>;
     }
     case "list": {
       const Tag = node.tag;
-      return (
-        <Tag className="col-start-2" key={index}>
-          {serializedChildren}
-        </Tag>
-      );
+      return <Tag key={index}>{serializedChildren}</Tag>;
     }
     case "listitem":
       if (node.checked != null) {
         return (
           <li
-            className={node.checked ? "line-through opacity-60" : undefined}
+            className={
+              node.checked
+                ? "glass-longform-checklist-item line-through opacity-65"
+                : "glass-longform-checklist-item"
+            }
             key={index}
-            tabIndex={-1}
             value={node.value}
           >
-            <span className="mr-2">{node.checked ? "✅" : "☐"}</span>
+            <span className="mr-2 text-xs">{node.checked ? "[x]" : "[ ]"}</span>
             {serializedChildren}
           </li>
         );
@@ -261,17 +248,13 @@ function renderElementNode(
         </li>
       );
     case "quote":
-      return (
-        <blockquote className="col-start-2" key={index}>
-          {serializedChildren}
-        </blockquote>
-      );
+      return <blockquote key={index}>{serializedChildren}</blockquote>;
     case "link": {
       const isInternalLink = node.fields.linkType === "internal";
 
       return (
         <CMSLink
-          className="underline transition-colors duration-300 hover:no-underline"
+          className="transition-colors duration-300 hover:opacity-90"
           key={index}
           newTab={Boolean(node.fields.newTab)}
           reference={isInternalLink ? node.fields.doc : null}

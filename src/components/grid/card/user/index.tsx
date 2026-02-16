@@ -41,9 +41,9 @@ export const GridCardUser = ({ user, className }: Props) => {
   return (
     <GridCard
       className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[816px] w-[400px] grid-rows-6",
+        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
         "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[400px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3",
+        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
         "g4:self-start",
         className
       )}
@@ -67,7 +67,7 @@ export const GridCardUser = ({ user, className }: Props) => {
       <GridCardSection
         className={cn(
           "col-start-1 col-end-4 row-start-4 row-end-6 flex h-full flex-col items-center justify-center px-4 md:px-8",
-          "g3:col-start-4 g3:col-end-8 g3:row-start-1 g3:row-end-3"
+          "g3:col-start-4 g3:col-end-7 g3:row-start-1 g3:row-end-3"
         )}
       >
         <div className="mx-auto w-full max-w-3xl space-y-4">
@@ -99,7 +99,11 @@ export const GridCardUser = ({ user, className }: Props) => {
         const IconComponent = iconConfig.icon;
 
         return (
-          <GridCardNavItem className={cn(gridPositions[index])} key={link.url}>
+          <GridCardNavItem
+            className={cn(gridPositions[index])}
+            key={link.url}
+            variant="static"
+          >
             <a
               aria-label={`${userName} on ${iconConfig.label}`}
               className="flex flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"

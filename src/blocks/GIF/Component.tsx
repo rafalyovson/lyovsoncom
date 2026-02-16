@@ -38,7 +38,7 @@ export function GIFBlock(props: GIFBlockType) {
   const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "1");
 
   return (
-    <Card className="glass-interactive glass-stagger-1 py-0 transition-all duration-300">
+    <Card className="glass-longform-block glass-interactive glass-stagger-1 py-0 transition-all duration-300">
       <CardContent className="px-0">
         <div className="glass-media overflow-hidden rounded-lg">
           <LazyVideo

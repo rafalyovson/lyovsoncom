@@ -119,6 +119,7 @@ export function GridCardUserSocial({ className }: { className?: string }) {
           <GridCardNavItem
             className={cn(GRID_POSITIONS[index], getStaggerClass(index))}
             key={link.name}
+            variant="static"
           >
             <a
               aria-label={`Visit ${link.name} profile`}

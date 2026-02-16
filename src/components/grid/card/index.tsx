@@ -37,15 +37,16 @@ export const GridCard = <T extends ElementType = "div">({
     variant === "default"
       ? {
           minHeight: "var(--grid-card-size)",
+          gridTemplateColumns:
+            "repeat(var(--grid-internal-cols), minmax(0, 1fr))",
+          gridTemplateRows: "repeat(var(--grid-internal-rows), minmax(0, 1fr))",
         }
       : {};
 
   const cardClassName = cn(
     "glass-card rounded-xl",
-    "grid gap-2 p-2",
-    variant === "default"
-      ? "aspect-square grid-cols-3 grid-rows-3"
-      : "auto-rows-auto grid-cols-1",
+    "grid gap-[var(--grid-section-gap)] p-[var(--grid-section-gap)]",
+    variant === "default" ? "aspect-square" : "auto-rows-auto grid-cols-1",
     interactive && "glass-interactive",
     className
   );

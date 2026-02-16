@@ -16,12 +16,14 @@ export const GridCardHero = ({
   className?: string;
   post: Post;
 }) => {
+  const postHref = post.slug ? `/posts/${post.slug}` : "/posts";
+
   return (
     <GridCard
       className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[816px] w-[400px] grid-rows-6",
+        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
         "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[400px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3",
+        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
         "g4:self-start",
         className
       )}
@@ -44,13 +46,13 @@ export const GridCardHero = ({
       )}
       <GridCardSection
         className={
-          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-8 g3:row-start-1 row-start-4 g3:row-end-4 row-end-8"
+          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7"
         }
       >
         <Link
           aria-label={`Featured post: ${post.title}`}
           className="group flex h-full flex-col items-center justify-center px-4 md:px-8"
-          href="/"
+          href={postHref}
         >
           <div className="mx-auto w-full max-w-3xl space-y-4">
             <h1
@@ -99,9 +101,9 @@ export const GridCardHeroNote = ({
   return (
     <GridCard
       className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[816px] w-[400px] grid-rows-6",
+        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
         "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[400px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3",
+        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
         "g4:self-start",
         className
       )}
@@ -285,9 +287,9 @@ export const GridCardHeroActivity = ({
   return (
     <GridCard
       className={cn(
-        "col-start-1 col-end-2 row-start-2 row-end-4 h-[816px] w-[400px] grid-rows-6",
+        "col-start-1 col-end-2 row-start-2 row-end-4 h-[var(--grid-card-1x2)] w-[var(--grid-card-1x1)] [--grid-internal-rows:6]",
         "g2:col-start-2 g2:col-end-3 g2:row-start-1 g2:row-end-3",
-        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[400px] g3:w-[816px] g3:grid-cols-6 g3:grid-rows-3",
+        "g3:col-start-2 g3:col-end-4 g3:row-start-1 g3:row-end-2 g3:h-[var(--grid-card-1x1)] g3:w-[var(--grid-card-2x1)] g3:[--grid-internal-cols:6] g3:[--grid-internal-rows:3]",
         "g4:self-start",
         className
       )}
@@ -310,7 +312,7 @@ export const GridCardHeroActivity = ({
       )}
       <GridCardSection
         className={
-          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-8 g3:row-start-1 row-start-4 g3:row-end-4 row-end-8"
+          "col-start-1 g3:col-start-4 col-end-4 g3:col-end-7 g3:row-start-1 row-start-4 g3:row-end-4 row-end-7"
         }
       >
         <div className="flex h-full flex-col items-center justify-center px-4 md:px-8">

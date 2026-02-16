@@ -64,6 +64,7 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "All Posts & Articles | Lyóvson.com",
   description:
     "Browse all posts and articles from Lyóvson.com covering programming, design, philosophy, technology, and creative projects by Rafa and Jess Lyóvson.",

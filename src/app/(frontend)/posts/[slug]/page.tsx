@@ -6,10 +6,11 @@ import { getPayload } from "payload";
 import { Suspense } from "react";
 import { createContactAction } from "@/actions/create-contact-action";
 import {
-  GridCardContent,
+  GridCard,
   GridCardHero,
   GridCardReferences,
   GridCardRelatedPosts,
+  GridCardSection,
   GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
@@ -135,21 +136,23 @@ export default async function PostPage({ params: paramsPromise }: Args) {
       <SchemaArticle post={post} url={`${getServerSideURL()}/posts/${slug}`} />
 
       <GridCardHero className={""} post={post} />
-      <GridCardContent
+      <GridCard
         className={cn(
           "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-          "g3:col-end-4 g3:row-start-2 g3:w-[816px]"
+          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
+          "aspect-auto h-auto"
         )}
+        interactive={false}
       >
-        <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
+        <GridCardSection className="col-span-3 row-span-3 p-6">
           <RichText
-            className="h-full"
+            className="glass-stagger-3 h-full"
             content={post.content}
             enableGutter={false}
             enableProse={true}
           />
-        </div>
-      </GridCardContent>
+        </GridCardSection>
+      </GridCard>
 
       <aside
         className={cn(
@@ -160,7 +163,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         {post.references && post.references.length > 0 && (
           <Suspense
             fallback={
-              <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+              <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
                 <Skeleton className="glass-badge h-full w-full" />
               </div>
             }
@@ -171,7 +174,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
         <Suspense
           fallback={
-            <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+            <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
               <Skeleton className="glass-badge h-full w-full" />
             </div>
           }

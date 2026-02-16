@@ -48,7 +48,7 @@ const RichText = async ({
         {
           container: enableGutter,
           "max-w-none": !enableGutter,
-          "prose dark:prose-invert mx-auto": enableProse,
+          "glass-longform mx-auto": enableProse,
         },
         className
       )}

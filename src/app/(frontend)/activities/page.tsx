@@ -72,6 +72,7 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "All Activities & Consumption | Lyóvson.com",
   description:
     "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",

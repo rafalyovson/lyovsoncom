@@ -22,7 +22,7 @@ export function BannerBlock({ className, content, style }: Props) {
   };
 
   return (
-    <div className={cn("mx-auto my-8 w-full", className)}>
+    <div className={cn("glass-longform-block mx-auto w-full", className)}>
       <div
         className={cn(
           "glass-section glass-interactive flex items-start gap-4 rounded-lg border-2 px-6 py-4 backdrop-blur-md transition-all duration-300",

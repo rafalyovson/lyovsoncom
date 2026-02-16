@@ -240,6 +240,7 @@ export async function generateMetadata({
     : "Search for posts, articles, and content on Lyóvson.com";
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title,
     description,
     alternates: {

@@ -61,6 +61,7 @@ export default async function Page() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "All Notes & Thoughts | Lyóvson.com",
   description:
     "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",

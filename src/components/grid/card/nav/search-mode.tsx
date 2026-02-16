@@ -15,6 +15,7 @@ export const SearchMode = ({
       <GridCardNavItem
         className={"col-start-1 col-end-2 row-start-3 row-end-4"}
         onClick={() => setMenuMode("hero")}
+        variant="button"
       >
         <X className="h-7 w-7" />
         <span>Close</span>

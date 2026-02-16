@@ -14,6 +14,7 @@ import {
   SkeletonCard,
 } from "@/components/grid";
 import { SubscribeDemoStates } from "@/components/grid/card/subscribe/demo-states";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export default function SuspensePlayground() {
   return (
@@ -78,6 +79,7 @@ async function Playground() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "Playground - Interactive Demos | Lyóvson.com",
   description:
     "Explore interactive demos, experiments, and test features on the Lyóvson.com playground. Try out new components and functionality.",

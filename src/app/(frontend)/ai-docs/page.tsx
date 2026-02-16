@@ -4,7 +4,14 @@ import { getServerSideURL } from "@/utilities/getURL";
 
 export const dynamic = "force-static";
 
+const DOCS_CARD_CLASS_NAME =
+  "aspect-auto h-auto g2:col-start-2 g2:col-end-3 g3:col-start-2 g3:col-end-4 g3:w-[var(--grid-card-2x1)]";
+
+const DOCS_SECTION_CLASS_NAME =
+  "glass-longform col-span-3 row-span-3 p-6 md:p-8";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "AI & Bot Access Documentation | Lyóvson.com",
   description:
     "Comprehensive guide for AI systems, bots, and crawlers to access and consume content from Lyóvson.com. Includes API endpoints, feeds, and best practices.",
@@ -59,11 +66,13 @@ export const metadata: Metadata = {
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
-    <div className="my-4">
+    <div className="glass-longform-block">
       {title && (
-        <h4 className="mb-2 font-medium text-gray-600 text-sm">{title}</h4>
+        <h4 className="glass-text-secondary mb-2 font-medium text-sm">
+          {title}
+        </h4>
       )}
-      <pre className="overflow-x-auto rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
+      <pre className="glass-longform-code-block text-sm">
         <code>{children}</code>
       </pre>
     </div>
@@ -79,7 +88,7 @@ function ExternalLink({
 }) {
   return (
     <a
-      className="text-blue-600 hover:underline dark:text-blue-400"
+      className="glass-text underline decoration-current/40 underline-offset-3 transition-opacity duration-300 hover:opacity-80"
       href={href}
       rel="noopener noreferrer"
       target="_blank"
@@ -93,21 +102,22 @@ export default function AIDocsPage() {
   const SITE_URL = getServerSideURL();
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="mb-4 font-bold text-3xl">
-          AI & Bot Access Documentation
-        </h1>
-        <p className="text-gray-600 text-lg dark:text-gray-300">
-          Comprehensive guide for AI systems, research bots, and automated tools
-          to access and consume content from Lyóvson.com.
-        </p>
-      </div>
+    <>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
+          <div className="glass-longform">
+            <h1>AI and Bot Access Documentation</h1>
+            <p>
+              Comprehensive guide for AI systems, research bots, and automated
+              tools to access and consume content from Lyovson.com.
+            </p>
+          </div>
+        </GridCardSection>
+      </GridCard>
 
       {/* Quick Access Links */}
-      <GridCard className="mb-8">
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">Quick Access</h2>
           <div className="grid gap-4 md:grid-cols-3">
             <div>
@@ -216,7 +226,7 @@ export default function AIDocsPage() {
                   </ExternalLink>
                 </li>
                 <li>
-                  ⚡ <span className="text-green-600">pgvector + OpenAI</span>
+                  ⚡ <span className="glass-text">pgvector + OpenAI</span>
                 </li>
               </ul>
             </div>
@@ -225,14 +235,14 @@ export default function AIDocsPage() {
       </GridCard>
 
       {/* Content Access Methods */}
-      <GridCard className="mb-8">
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">Content Access Methods</h2>
 
           <h3 className="mb-3 font-medium text-lg">
             1. RSS/JSON/Atom Feeds (Recommended)
           </h3>
-          <p className="mb-3 text-gray-700 dark:text-gray-300">
+          <p className="mb-3">
             For bulk content consumption, use our syndication feeds. They
             include full article content, metadata, and are updated hourly.
           </p>
@@ -258,7 +268,7 @@ export default function AIDocsPage() {
           </CodeBlock>
 
           <h3 className="mt-6 mb-3 font-medium text-lg">2. GraphQL API</h3>
-          <p className="mb-3 text-gray-700 dark:text-gray-300">
+          <p className="mb-3">
             For structured queries and real-time data access. Supports
             filtering, sorting, and relationship traversal.
           </p>
@@ -295,7 +305,7 @@ query LatestPosts {
           </CodeBlock>
 
           <h3 className="mt-6 mb-3 font-medium text-lg">3. REST API</h3>
-          <p className="mb-3 text-gray-700 dark:text-gray-300">
+          <p className="mb-3">
             Standard REST endpoints for all content types. Supports pagination,
             filtering, and depth control.
           </p>
@@ -317,7 +327,7 @@ GET ${SITE_URL}/api/posts/[id]?depth=2`}
           <h3 className="mt-6 mb-3 font-medium text-lg">
             4. Vector Embeddings API
           </h3>
-          <p className="mb-3 text-gray-700 dark:text-gray-300">
+          <p className="mb-3">
             Get vector embeddings for semantic search, content similarity, and
             AI applications. Supports both OpenAI embeddings and fallback
             hash-based vectors.
@@ -362,17 +372,17 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       </GridCard>
 
       {/* Vector Embeddings System */}
-      <GridCard className="mb-8">
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">
             🧠 Advanced Vector Embeddings System
           </h2>
 
-          <div className="mb-4 rounded-lg bg-gradient-to-r from-blue-50 to-green-50 p-4 dark:from-blue-900/20 dark:to-green-900/20">
+          <div className="glass-premium mb-4 rounded-lg p-4">
             <h3 className="mb-2 font-medium">
               ⚡ High-Performance Pre-computed Embeddings
             </h3>
-            <p className="text-gray-700 text-sm dark:text-gray-300">
+            <p className="text-sm">
               Our embedding system uses pgvector + OpenAI&apos;s
               text-embedding-3-small model with collection-specific endpoints
               and automatic pre-computation for lightning-fast API responses
@@ -383,7 +393,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <h3 className="mb-3 font-medium">🚀 Performance Features</h3>
-              <ul className="space-y-2 text-gray-700 text-sm dark:text-gray-300">
+              <ul className="space-y-2 text-sm">
                 <li>
                   • <strong>pgvector storage</strong> - 44% smaller than JSONB
                 </li>
@@ -418,7 +428,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
 
             <div>
               <h3 className="mb-3 font-medium">🔧 AI Applications</h3>
-              <ul className="space-y-2 text-gray-700 text-sm dark:text-gray-300">
+              <ul className="space-y-2 text-sm">
                 <li>
                   • <strong>Semantic search</strong> - Find related content
                 </li>
@@ -445,12 +455,12 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="mt-6 rounded-lg bg-gray-100 p-4 dark:bg-gray-800">
+          <div className="glass-section mt-6 rounded-lg p-4">
             <h4 className="mb-2 font-medium">📊 Monitor System Health</h4>
-            <p className="mb-2 text-gray-700 text-sm dark:text-gray-300">
+            <p className="mb-2 text-sm">
               Check embedding coverage and system status:
             </p>
-            <code className="rounded bg-white px-2 py-1 text-sm dark:bg-gray-900">
+            <code className="glass-longform-inline-code text-sm">
               GET{" "}
               <ExternalLink href={`${SITE_URL}/api/embeddings/status`}>
                 {SITE_URL}/api/embeddings/status
@@ -461,8 +471,8 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       </GridCard>
 
       {/* Best Practices */}
-      <GridCard className="mb-8">
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">
             Best Practices for AI Systems
           </h2>
@@ -470,7 +480,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           <div className="space-y-4">
             <div>
               <h3 className="mb-2 font-medium">🚀 Performance</h3>
-              <ul className="list-inside list-disc space-y-1 text-gray-700 text-sm dark:text-gray-300">
+              <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>
                   Use feeds for bulk content access (rate limit: 1000/hour)
                 </li>
@@ -484,7 +494,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
 
             <div>
               <h3 className="mb-2 font-medium">📝 Content Understanding</h3>
-              <ul className="list-inside list-disc space-y-1 text-gray-700 text-sm dark:text-gray-300">
+              <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>All content includes structured metadata (JSON-LD)</li>
                 <li>
                   Articles are categorized by project and tagged with topics
@@ -498,7 +508,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
 
             <div>
               <h3 className="mb-2 font-medium">🤝 Attribution</h3>
-              <ul className="list-inside list-disc space-y-1 text-gray-700 text-sm dark:text-gray-300">
+              <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>Content copyright: Rafa & Jess Lyóvson</li>
                 <li>
                   Attribution required: &quot;Lyóvson.com -
@@ -515,13 +525,13 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       </GridCard>
 
       {/* Structured Data */}
-      <GridCard className="mb-8">
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">
             Structured Data & Metadata
           </h2>
 
-          <p className="mb-4 text-gray-700 dark:text-gray-300">
+          <p className="mb-4">
             All pages include comprehensive structured data following Schema.org
             standards:
           </p>
@@ -549,7 +559,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </div>
           </div>
 
-          <div className="rounded-lg bg-gray-100 p-4 text-sm dark:bg-gray-800">
+          <div className="glass-section rounded-lg p-4 text-sm">
             <p className="mb-2 font-medium">Article Schema includes:</p>
             <ul className="list-inside list-disc space-y-1">
               <li>Context and type information</li>
@@ -564,10 +574,10 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
       </GridCard>
 
       {/* Contact */}
-      <GridCard>
-        <GridCardSection>
+      <GridCard className={DOCS_CARD_CLASS_NAME}>
+        <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">Contact & Support</h2>
-          <p className="mb-4 text-gray-700 dark:text-gray-300">
+          <p className="mb-4">
             Need higher rate limits, custom access, or have questions about
             using our content?
           </p>
@@ -591,7 +601,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               </ExternalLink>
             </p>
           </div>
-          <p className="mt-4 text-gray-600 text-sm dark:text-gray-400">
+          <p className="glass-text-secondary mt-4 text-sm">
             Last updated: January 16, 2025 •{" "}
             <ExternalLink href={`${SITE_URL}/api/docs`}>
               Machine-readable version
@@ -599,6 +609,6 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           </p>
         </GridCardSection>
       </GridCard>
-    </div>
+    </>
   );
 }

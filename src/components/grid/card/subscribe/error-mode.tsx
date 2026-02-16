@@ -36,6 +36,7 @@ export const ErrorMode = ({ message, setMode }: ErrorModeProps) => {
         onClick={() => {
           setMode("form");
         }}
+        variant="button"
       >
         <X className="h-7 w-7" />
         <span>Close</span>

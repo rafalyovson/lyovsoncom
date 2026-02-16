@@ -18,6 +18,7 @@ export const HeroMode = ({
         onClick={() => {
           setMenuMode("search");
         }}
+        variant="button"
       >
         <Search className="h-7 w-7" />
         <span>Search</span>
@@ -27,6 +28,7 @@ export const HeroMode = ({
         onClick={() => {
           setMenuMode("menu");
         }}
+        variant="button"
       >
         <LucideMenu className="h-7 w-7" />
         <span>Menu</span>
@@ -36,6 +38,7 @@ export const HeroMode = ({
         onClick={() => {
           setMenuMode("settings");
         }}
+        variant="button"
       >
         <Settings className="h-7 w-7" />
         <span>Settings</span>

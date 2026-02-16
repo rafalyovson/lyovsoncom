@@ -29,7 +29,7 @@ export function YouTubeBlock({
   }
 
   return (
-    <Card className="glass-interactive glass-stagger-1 transition-all duration-300">
+    <Card className="glass-longform-block glass-interactive glass-stagger-1 transition-all duration-300">
       <CardContent className="p-4">
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}

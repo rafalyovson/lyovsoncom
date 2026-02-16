@@ -1,11 +1,10 @@
 "use client";
 
 import { Edit, ShieldUser } from "lucide-react";
-import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { use, useMemo } from "react";
 import { getAuthAndEditUrl } from "@/actions/get-auth-and-edit-url";
-import { GridCard, GridCardSection } from "@/components/grid";
+import { GridCard, GridCardNavItem, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 
 export function GridCardAdmin({ className }: { className?: string }) {
@@ -38,28 +37,18 @@ export function GridCardAdmin({ className }: { className?: string }) {
 
 function EditPost({ editUrl }: { editUrl: string }) {
   return (
-    <GridCardSection className="flex flex-col items-center justify-center gap-2">
-      <Link
-        className="flex flex-col items-center justify-center gap-2 text-blue-600 transition-colors hover:text-blue-800"
-        href={editUrl}
-      >
-        <Edit className="h-5 w-5" />
-        <span className="text-xs">Edit Post</span>
-      </Link>
-    </GridCardSection>
+    <GridCardNavItem href={editUrl} variant="link">
+      <Edit className="h-5 w-5" />
+      <span className="text-xs">Edit Post</span>
+    </GridCardNavItem>
   );
 }
 
 function AdminLink() {
   return (
-    <GridCardSection className="flex flex-col items-center justify-center gap-2">
-      <Link
-        className="flex flex-col items-center justify-center gap-2 transition-colors hover:text-blue-600"
-        href="/admin"
-      >
-        <ShieldUser className="h-7 w-7" />
-        <span>Admin</span>
-      </Link>
-    </GridCardSection>
+    <GridCardNavItem href="/admin" variant="link">
+      <ShieldUser className="h-7 w-7" />
+      <span>Admin</span>
+    </GridCardNavItem>
   );
 }

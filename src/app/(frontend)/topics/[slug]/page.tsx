@@ -8,6 +8,7 @@ import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getTopicPosts } from "@/utilities/get-topic-posts";
+import { getServerSideURL } from "@/utilities/getURL";
 
 type PageProps = {
   params: Promise<{
@@ -107,6 +108,7 @@ export async function generateMetadata({
   const topicDescription = topic.description || `Posts about ${topicName}`;
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${topicName} | Lyóvson.com`,
     description: topicDescription,
     alternates: {

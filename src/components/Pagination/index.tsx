@@ -172,7 +172,6 @@ export const Pagination = ({
               <GridCardSection
                 aria-hidden="true"
                 className={positionClass}
-                interactive={false}
                 key={cell.key}
               >
                 <div />
@@ -182,27 +181,21 @@ export const Pagination = ({
 
           return (
             <GridCardSection
-              asChild
+              aria-current={cell.isCurrent ? "page" : undefined}
+              aria-label={cell.ariaLabel}
               className={cn(
                 positionClass,
-                "flex items-center justify-center text-lg",
+                "flex h-full w-full items-center justify-center text-lg",
                 isNumeric && "font-semibold",
                 cell.isCurrent && "glass-premium",
                 isDisabled && !cell.isCurrent && "opacity-45"
               )}
-              interactive={!isDisabled}
+              disabled={isDisabled}
               key={cell.key}
+              mode="button"
               onClick={isDisabled ? undefined : () => navigateTo(cell.target)}
             >
-              <button
-                aria-current={cell.isCurrent ? "page" : undefined}
-                aria-label={cell.ariaLabel}
-                className="flex h-full w-full items-center justify-center"
-                disabled={isDisabled}
-                type="button"
-              >
-                {isNumeric ? <span>{cell.label}</span> : cell.label}
-              </button>
+              {isNumeric ? <span>{cell.label}</span> : cell.label}
             </GridCardSection>
           );
         })}

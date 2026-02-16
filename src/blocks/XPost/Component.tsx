@@ -20,7 +20,7 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
   }
 
   return (
-    <Card className="glass-interactive glass-stagger-2 transition-all duration-300">
+    <Card className="glass-longform-block glass-interactive glass-stagger-2 transition-all duration-300">
       <CardContent className="flex justify-center pt-6">
         <div className="w-full max-w-lg">
           <Tweet id={postId} />

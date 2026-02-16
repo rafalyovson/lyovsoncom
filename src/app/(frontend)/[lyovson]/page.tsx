@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { getPayload } from "payload";
-import { GridCardContent, GridCardUser } from "@/components/grid";
+import { GridCard, GridCardSection, GridCardUser } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import type { Lyovson, Media } from "@/payload-types";
@@ -72,16 +72,19 @@ export default async function Page({ params }: PageProps) {
         user={user}
       />
       {user?.bio && (
-        <GridCardContent className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 g3:w-[816px]">
-          <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
+        <GridCard
+          className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 aspect-auto h-auto g3:w-[var(--grid-card-2x1)]"
+          interactive={false}
+        >
+          <GridCardSection className="col-span-3 row-span-3 p-6">
             <RichText
-              className="h-full"
+              className="glass-stagger-3 h-full"
               content={user.bio}
               enableGutter={false}
               enableProse={true}
             />
-          </div>
-        </GridCardContent>
+          </GridCardSection>
+        </GridCard>
       )}
     </>
   );
@@ -113,6 +116,7 @@ export async function generateMetadata({
   const imageUrl = avatarMedia?.url || null;
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${name} - Posts & Writing | Lyovson.com`,
     description,
     keywords: [

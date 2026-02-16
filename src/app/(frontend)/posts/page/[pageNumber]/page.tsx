@@ -7,6 +7,7 @@ import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
+import { getServerSideURL } from "@/utilities/getURL";
 
 const POSTS_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
@@ -82,6 +83,7 @@ export async function generateMetadata({
     : `Posts and articles from Lyovson.com - Page ${pageNumber}. Continue browsing our content on programming, design, and technology.`;
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title,
     description,
     alternates: {

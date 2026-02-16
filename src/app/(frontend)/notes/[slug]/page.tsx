@@ -6,9 +6,10 @@ import { getPayload } from "payload";
 import { Suspense } from "react";
 
 import {
-  GridCardContent,
+  GridCard,
   GridCardHeroNote,
   GridCardRelatedNotes,
+  GridCardSection,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -70,26 +71,28 @@ export default async function NotePage({ params: paramsPromise }: Args) {
 
       <GridCardHeroNote note={note} references={references} />
 
-      <GridCardContent
+      <GridCard
         className={cn(
           "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-          "g3:col-end-4 g3:row-start-2 g3:w-[816px]"
+          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
+          "aspect-auto h-auto"
         )}
+        interactive={false}
       >
-        <div className="prose prose-lg glass-stagger-3 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none">
+        <GridCardSection className="col-span-3 row-span-3 p-6">
           {note.type === "quote" && note.quotedPerson && (
             <p className="glass-text-secondary mb-4 text-right text-sm not-italic before:mr-2 before:content-['—']">
               {note.quotedPerson}
             </p>
           )}
           <RichText
-            className="h-full"
+            className="glass-stagger-3 h-full"
             content={note.content}
             enableGutter={false}
             enableProse={true}
           />
-        </div>
-      </GridCardContent>
+        </GridCardSection>
+      </GridCard>
 
       {/* Related Notes - Under nav on desktop */}
       <aside
@@ -100,7 +103,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
       >
         <Suspense
           fallback={
-            <div className="glass-section glass-loading h-[400px] w-[400px] animate-pulse rounded-xl">
+            <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
               <Skeleton className="glass-badge h-full w-full" />
             </div>
           }
@@ -229,6 +232,7 @@ export async function generateMetadata({
       : "A note or thought";
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${title} | Lyóvson.com`,
     description,
     alternates: {

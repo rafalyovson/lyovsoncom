@@ -1,12 +1,14 @@
 import type { Metadata } from "next/types";
 
 import { GridCardNotFound } from "@/components/grid";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export default function NotFound() {
   return <GridCardNotFound />;
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "Project Not Found (404) | Lyovson.com",
   description:
     "The project you are looking for could not be found. Browse our available projects and latest content on Lyovson.com.",

@@ -187,14 +187,12 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
                 aria-hidden="true"
                 className="glass-text-secondary -top-1 absolute left-0 h-4 w-4 opacity-50"
               />
-              <div className="prose prose-sm glass-stagger-1 prose-headings:glass-text prose-p:glass-text prose-a:glass-text prose-li:glass-text prose-blockquote:glass-text-secondary max-w-none pt-4 pl-2">
-                <RichText
-                  className="h-full"
-                  content={activity.notes}
-                  enableGutter={false}
-                  enableProse={true}
-                />
-              </div>
+              <RichText
+                className="glass-stagger-1 h-full pt-4 pl-2 text-sm"
+                content={activity.notes}
+                enableGutter={false}
+                enableProse={true}
+              />
             </div>
           ) : (
             <p className="glass-text-secondary text-center text-sm">
@@ -339,6 +337,7 @@ export async function generateMetadata({
     : "Activity";
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${title} | Lyóvson.com`,
     description: `Activity: ${title}`,
     alternates: {

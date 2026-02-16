@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { SkeletonCard, SkeletonGrid } from "@/components/grid/skeleton";
+import { getServerSideURL } from "@/utilities/getURL";
 
 export default async function SkeletonPlayground() {
   "use cache";
@@ -34,6 +35,7 @@ export default async function SkeletonPlayground() {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(getServerSideURL()),
   title: "Skeleton Loading Demo | Lyovson.com",
   description:
     "Interactive demo showcasing skeleton loading components and animations used throughout Lyovson.com. See loading states in action.",

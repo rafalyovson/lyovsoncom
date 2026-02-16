@@ -10,6 +10,7 @@ import { Pagination } from "@/components/Pagination";
 import type { Project } from "@/payload-types";
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
+import { getServerSideURL } from "@/utilities/getURL";
 
 type PageProps = {
   params: Promise<{
@@ -88,6 +89,7 @@ export async function generateMetadata({
     project.description || `Posts and content from the ${project.name} project`;
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${project.name} | Lyóvson.com`,
     description,
     keywords: [

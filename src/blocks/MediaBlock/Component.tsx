@@ -32,7 +32,7 @@ export function MediaBlock(props: Props) {
   return (
     <Card
       className={cn(
-        "glass-interactive glass-stagger-1 transition-all duration-300",
+        "glass-longform-block glass-interactive glass-stagger-1 transition-all duration-300",
 
         className
       )}

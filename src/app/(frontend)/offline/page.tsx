@@ -1,64 +1,49 @@
 "use client";
 
+import { Home, RefreshCcw, WifiOff } from "lucide-react";
 import Link from "next/link";
+import { GridCard, GridCardSection } from "@/components/grid";
 
 export default function OfflinePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-md p-8 text-center">
-        <div className="mb-6">
-          <svg
-            aria-label="Clock icon"
-            className="mx-auto h-24 w-24 text-gray-400 dark:text-gray-600"
-            fill="none"
-            role="img"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <title>Offline indicator</title>
-            <path
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-            />
-          </svg>
-        </div>
-
-        <h1 className="mb-4 font-bold text-3xl text-gray-900 dark:text-white">
-          You&apos;re Offline
-        </h1>
-
-        <p className="mb-6 text-gray-600 dark:text-gray-300">
-          It looks like you&apos;ve lost your internet connection. Don&apos;t
-          worry, you can still browse cached pages and content you&apos;ve
-          visited before.
+    <GridCard
+      className={
+        "g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-end-3 g3:self-start"
+      }
+      interactive={false}
+    >
+      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <span className="glass-badge flex h-16 w-16 items-center justify-center rounded-full">
+          <WifiOff aria-hidden="true" className="h-8 w-8" />
+        </span>
+        <h1 className="glass-text font-bold text-2xl">You are offline</h1>
+        <p className="glass-text-secondary text-sm">
+          Cached pages still work. Reconnect and refresh when you are ready.
         </p>
+      </GridCardSection>
 
-        <div className="space-y-4">
-          <Link
-            className="inline-block w-full rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-blue-700"
-            href="/"
-          >
-            Go to Homepage
-          </Link>
+      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4">
+        <Link
+          className="glass-text flex h-full w-full flex-col items-center justify-center gap-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+          href="/"
+        >
+          <Home aria-hidden="true" className="h-6 w-6" />
+          <span className="text-sm">Home</span>
+        </Link>
+      </GridCardSection>
 
-          <button
-            className="inline-block w-full rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
-            onClick={() => window.location.reload()}
-            type="button"
-          >
-            Refresh Page
-          </button>
-        </div>
+      <GridCardSection
+        className="glass-text col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col items-center justify-center gap-2"
+        mode="button"
+        onClick={() => window.location.reload()}
+      >
+        <RefreshCcw aria-hidden="true" className="h-6 w-6" />
+        <span className="text-sm">Refresh</span>
+      </GridCardSection>
 
-        <div className="mt-8 text-gray-500 text-sm dark:text-gray-400">
-          <p>
-            This page works offline thanks to our Progressive Web App
-            technology.
-          </p>
-        </div>
-      </div>
-    </main>
+      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex items-center justify-center px-3 text-center">
+        <p className="glass-text-secondary text-xs">PWA cache active</p>
+      </GridCardSection>
+    </GridCard>
   );
 }

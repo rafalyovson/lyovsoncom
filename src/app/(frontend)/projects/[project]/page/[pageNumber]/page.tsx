@@ -2,7 +2,6 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
-import { Skeleton } from "@/components//ui/skeleton";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
@@ -60,18 +59,14 @@ export default async function Page({ params: paramsPromise }: Args) {
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts} />
       </Suspense>
-      <div className="container">
-        {totalPages > 1 && page && (
-          <Suspense fallback={<Skeleton className="mx-auto mt-4 h-10 w-64" />}>
-            <Pagination
-              basePath={`/projects/${projectSlug}/page`}
-              firstPagePath={`/projects/${projectSlug}`}
-              page={page}
-              totalPages={totalPages}
-            />
-          </Suspense>
-        )}
-      </div>
+      {totalPages > 1 && page && (
+        <Pagination
+          basePath={`/projects/${projectSlug}/page`}
+          firstPagePath={`/projects/${projectSlug}`}
+          page={page}
+          totalPages={totalPages}
+        />
+      )}
     </>
   );
 }

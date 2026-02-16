@@ -8,7 +8,7 @@ type Props = {
 
 export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
-    <div className={cn("container", className)}>
+    <div className={cn("glass-longform-block", className)}>
       <blockquote className="glass-section glass-premium relative mt-0 mb-0 rounded-lg border-glass-border-hover border-l-4 py-6 pl-6 italic">
         <div className="glass-text-secondary text-xl leading-relaxed">
           <RichText content={quote} enableGutter={false} />
