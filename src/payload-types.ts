@@ -13,55 +13,55 @@
  * via the `definition` "supportedTimezones".
  */
 export type SupportedTimezones =
-  | "Pacific/Midway"
-  | "Pacific/Niue"
-  | "Pacific/Honolulu"
-  | "Pacific/Rarotonga"
-  | "America/Anchorage"
-  | "Pacific/Gambier"
-  | "America/Los_Angeles"
-  | "America/Tijuana"
-  | "America/Denver"
-  | "America/Phoenix"
-  | "America/Chicago"
-  | "America/Guatemala"
-  | "America/New_York"
-  | "America/Bogota"
-  | "America/Caracas"
-  | "America/Santiago"
-  | "America/Buenos_Aires"
-  | "America/Sao_Paulo"
-  | "Atlantic/South_Georgia"
-  | "Atlantic/Azores"
-  | "Atlantic/Cape_Verde"
-  | "Europe/London"
-  | "Europe/Berlin"
-  | "Africa/Lagos"
-  | "Europe/Athens"
-  | "Africa/Cairo"
-  | "Europe/Moscow"
-  | "Asia/Riyadh"
-  | "Asia/Dubai"
-  | "Asia/Baku"
-  | "Asia/Karachi"
-  | "Asia/Tashkent"
-  | "Asia/Calcutta"
-  | "Asia/Dhaka"
-  | "Asia/Almaty"
-  | "Asia/Jakarta"
-  | "Asia/Bangkok"
-  | "Asia/Shanghai"
-  | "Asia/Singapore"
-  | "Asia/Tokyo"
-  | "Asia/Seoul"
-  | "Australia/Brisbane"
-  | "Australia/Sydney"
-  | "Pacific/Guam"
-  | "Pacific/Noumea"
-  | "Pacific/Auckland"
-  | "Pacific/Fiji";
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
 
-export type Config = {
+export interface Config {
   auth: {
     lyovsons: LyovsonAuthOperations;
   };
@@ -78,13 +78,13 @@ export type Config = {
     notes: Note;
     redirects: Redirect;
     forms: Form;
-    "form-submissions": FormSubmission;
+    'form-submissions': FormSubmission;
     search: Search;
-    "payload-kv": PayloadKv;
-    "payload-jobs": PayloadJob;
-    "payload-locked-documents": PayloadLockedDocument;
-    "payload-preferences": PayloadPreference;
-    "payload-migrations": PayloadMigration;
+    'payload-kv': PayloadKv;
+    'payload-jobs': PayloadJob;
+    'payload-locked-documents': PayloadLockedDocument;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {};
   collectionsSelect: {
@@ -99,21 +99,13 @@ export type Config = {
     notes: NotesSelect<false> | NotesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
-    "form-submissions":
-      | FormSubmissionsSelect<false>
-      | FormSubmissionsSelect<true>;
+    'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
-    "payload-kv": PayloadKvSelect<false> | PayloadKvSelect<true>;
-    "payload-jobs": PayloadJobsSelect<false> | PayloadJobsSelect<true>;
-    "payload-locked-documents":
-      | PayloadLockedDocumentsSelect<false>
-      | PayloadLockedDocumentsSelect<true>;
-    "payload-preferences":
-      | PayloadPreferencesSelect<false>
-      | PayloadPreferencesSelect<true>;
-    "payload-migrations":
-      | PayloadMigrationsSelect<false>
-      | PayloadMigrationsSelect<true>;
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
+    'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
+    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
     defaultIDType: number;
@@ -122,9 +114,7 @@ export type Config = {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: Lyovson & {
-    collection: "lyovsons";
-  };
+  user: Lyovson;
   jobs: {
     tasks: {
       generateEmbedding: TaskGenerateEmbedding;
@@ -138,8 +128,8 @@ export type Config = {
       processPostEmbeddings: WorkflowProcessPostEmbeddings;
     };
   };
-};
-export type LyovsonAuthOperations = {
+}
+export interface LyovsonAuthOperations {
   forgotPassword:
     | {
         email: string;
@@ -168,12 +158,12 @@ export type LyovsonAuthOperations = {
     | {
         username: string;
       };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
-export type Post = {
+export interface Post {
   id: number;
   /**
    * The main title of your post
@@ -195,8 +185,8 @@ export type Post = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -205,7 +195,7 @@ export type Post = {
   /**
    * What type of content is this?
    */
-  type: "article" | "review" | "video" | "podcast" | "photo";
+  type: 'article' | 'review' | 'video' | 'podcast' | 'photo';
   /**
    * Rate from 1-10 stars
    */
@@ -281,13 +271,13 @@ export type Post = {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
-};
+  _status?: ('draft' | 'published') | null;
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
-export type Media = {
+export interface Media {
   id: number;
   alt?: string | null;
   caption?: {
@@ -298,8 +288,8 @@ export type Media = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -366,14 +356,14 @@ export type Media = {
       filename?: string | null;
     };
   };
-};
+}
 /**
  * Unified references for people, companies, works, and web media
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "references".
  */
-export type Reference = {
+export interface Reference {
   id: number;
   /**
    * The title or name of this reference
@@ -383,23 +373,23 @@ export type Reference = {
    * What type of reference is this?
    */
   type:
-    | "book"
-    | "movie"
-    | "tvShow"
-    | "videoGame"
-    | "music"
-    | "podcast"
-    | "series"
-    | "person"
-    | "company"
-    | "website"
-    | "article"
-    | "video"
-    | "repository"
-    | "tool"
-    | "social"
-    | "match"
-    | "other";
+    | 'book'
+    | 'movie'
+    | 'tvShow'
+    | 'videoGame'
+    | 'music'
+    | 'podcast'
+    | 'series'
+    | 'person'
+    | 'company'
+    | 'website'
+    | 'article'
+    | 'video'
+    | 'repository'
+    | 'tool'
+    | 'social'
+    | 'match'
+    | 'other';
   /**
    * Image for this reference (cover, photo, logo, etc.)
    */
@@ -427,7 +417,7 @@ export type Reference = {
   /**
    * Book format
    */
-  format?: ("hardcover" | "paperback" | "ebook" | "audiobook") | null;
+  format?: ('hardcover' | 'paperback' | 'ebook' | 'audiobook') | null;
   /**
    * Series this item belongs to
    */
@@ -439,7 +429,7 @@ export type Reference = {
   /**
    * MPAA rating
    */
-  mpaaRating?: ("g" | "pg" | "pg13" | "r" | "nc17" | "nr") | null;
+  mpaaRating?: ('g' | 'pg' | 'pg13' | 'r' | 'nc17' | 'nr') | null;
   /**
    * Network or streaming service
    */
@@ -447,7 +437,7 @@ export type Reference = {
   /**
    * Show status
    */
-  status?: ("ongoing" | "ended" | "cancelled") | null;
+  status?: ('ongoing' | 'ended' | 'cancelled') | null;
   /**
    * Season number
    */
@@ -459,13 +449,11 @@ export type Reference = {
   /**
    * Gaming platforms
    */
-  platforms?:
-    | ("pc" | "playstation" | "xbox" | "switch" | "mobile" | "vr")[]
-    | null;
+  platforms?: ('pc' | 'playstation' | 'xbox' | 'switch' | 'mobile' | 'vr')[] | null;
   /**
    * ESRB rating
    */
-  esrbRating?: ("e" | "e10" | "t" | "m" | "ao") | null;
+  esrbRating?: ('e' | 'e10' | 't' | 'm' | 'ao') | null;
   /**
    * Metacritic score
    */
@@ -497,17 +485,7 @@ export type Reference = {
   /**
    * What roles does this person have?
    */
-  roles?:
-    | (
-        | "author"
-        | "director"
-        | "actor"
-        | "musician"
-        | "developer"
-        | "host"
-        | "publicFigure"
-      )[]
-    | null;
+  roles?: ('author' | 'director' | 'actor' | 'musician' | 'developer' | 'host' | 'publicFigure')[] | null;
   /**
    * Birth date
    */
@@ -575,9 +553,7 @@ export type Reference = {
     | {
         label: string;
         url: string;
-        kind?:
-          | ("purchase" | "streaming" | "official" | "social" | "other")
-          | null;
+        kind?: ('purchase' | 'streaming' | 'official' | 'social' | 'other') | null;
         id?: string | null;
       }[]
     | null;
@@ -634,13 +610,13 @@ export type Reference = {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
-};
+  _status?: ('draft' | 'published') | null;
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "topics".
  */
-export type Topic = {
+export interface Topic {
   id: number;
   name: string;
   description?: string | null;
@@ -661,12 +637,12 @@ export type Topic = {
     | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects".
  */
-export type Project = {
+export interface Project {
   id: number;
   name: string;
   description?: string | null;
@@ -683,12 +659,12 @@ export type Project = {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts".
  */
-export type Contact = {
+export interface Contact {
   id: number;
   email: string;
   firstName?: string | null;
@@ -705,7 +681,7 @@ export type Contact = {
    * Indicates if the contact has unsubscribed.
    */
   unsubscribed?: boolean | null;
-  status?: ("pending" | "active" | "unsubscribed") | null;
+  status?: ('pending' | 'active' | 'unsubscribed') | null;
   /**
    * Legacy field: Optional project association for historical data.
    */
@@ -724,12 +700,12 @@ export type Contact = {
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notes".
  */
-export type Note = {
+export interface Note {
   id: number;
   /**
    * The main title of your note
@@ -738,15 +714,15 @@ export type Note = {
   /**
    * What type of note is this?
    */
-  type: "quote" | "thought";
+  type: 'quote' | 'thought';
   /**
    * Who wrote this note?
    */
-  author: "rafa" | "jess";
+  author: 'rafa' | 'jess';
   /**
    * Who can see this note?
    */
-  visibility: "public" | "private";
+  visibility: 'public' | 'private';
   content: {
     root: {
       type: string;
@@ -755,8 +731,8 @@ export type Note = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -784,15 +760,15 @@ export type Note = {
   connections?:
     | (
         | {
-            relationTo: "posts";
+            relationTo: 'posts';
             value: number | Post;
           }
         | {
-            relationTo: "references";
+            relationTo: 'references';
             value: number | Reference;
           }
         | {
-            relationTo: "notes";
+            relationTo: 'notes';
             value: number | Note;
           }
       )[]
@@ -829,15 +805,15 @@ export type Note = {
   slugLock?: boolean | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
-};
+  _status?: ('draft' | 'published') | null;
+}
 /**
  * Lyovson family members
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "lyovsons".
  */
-export type Lyovson = {
+export interface Lyovson {
   id: number;
   /**
    * Profile picture for this user
@@ -846,7 +822,7 @@ export type Lyovson = {
   /**
    * Preferred font family for this user's page
    */
-  font?: ("sans" | "serif" | "mono") | null;
+  font?: ('sans' | 'serif' | 'mono') | null;
   /**
    * Full name of the user
    */
@@ -867,8 +843,8 @@ export type Lyovson = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -879,14 +855,7 @@ export type Lyovson = {
    */
   socialLinks?:
     | {
-        platform:
-          | "x"
-          | "linkedin"
-          | "github"
-          | "instagram"
-          | "facebook"
-          | "youtube"
-          | "website";
+        platform: 'x' | 'linkedin' | 'github' | 'instagram' | 'facebook' | 'youtube' | 'website';
         url: string;
         id?: string | null;
       }[]
@@ -908,14 +877,15 @@ export type Lyovson = {
       }[]
     | null;
   password?: string | null;
-};
+  collection: 'lyovsons';
+}
 /**
  * Log reading, watching, listening, playing, and visiting activities
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities".
  */
-export type Activity = {
+export interface Activity {
   id: number;
   /**
    * What are you reading/watching/listening to/playing?
@@ -924,7 +894,7 @@ export type Activity = {
   /**
    * Type of activity
    */
-  activityType: "read" | "watch" | "listen" | "play" | "visit";
+  activityType: 'read' | 'watch' | 'listen' | 'play' | 'visit';
   /**
    * Who participated in this activity?
    */
@@ -940,7 +910,7 @@ export type Activity = {
   /**
    * Who can see this activity?
    */
-  visibility?: ("public" | "private") | null;
+  visibility?: ('public' | 'private') | null;
   /**
    * General information about this activity
    */
@@ -952,8 +922,8 @@ export type Activity = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -1000,34 +970,34 @@ export type Activity = {
   content_text?: string | null;
   updatedAt: string;
   createdAt: string;
-  _status?: ("draft" | "published") | null;
-};
+  _status?: ('draft' | 'published') | null;
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
-export type Redirect = {
+export interface Redirect {
   id: number;
   /**
    * You will need to rebuild the website when changing this field.
    */
   from: string;
   to?: {
-    type?: ("reference" | "custom") | null;
+    type?: ('reference' | 'custom') | null;
     reference?: {
-      relationTo: "posts";
+      relationTo: 'posts';
       value: number | Post;
     } | null;
     url?: string | null;
   };
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms".
  */
-export type Form = {
+export interface Form {
   id: number;
   title: string;
   fields?:
@@ -1040,7 +1010,7 @@ export type Form = {
             defaultValue?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "checkbox";
+            blockType: 'checkbox';
           }
         | {
             name: string;
@@ -1049,7 +1019,7 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "country";
+            blockType: 'country';
           }
         | {
             name: string;
@@ -1058,7 +1028,7 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "email";
+            blockType: 'email';
           }
         | {
             message?: {
@@ -1069,15 +1039,8 @@ export type Form = {
                   version: number;
                   [k: string]: unknown;
                 }[];
-                direction: ("ltr" | "rtl") | null;
-                format:
-                  | "left"
-                  | "start"
-                  | "center"
-                  | "right"
-                  | "end"
-                  | "justify"
-                  | "";
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
                 indent: number;
                 version: number;
               };
@@ -1085,7 +1048,7 @@ export type Form = {
             } | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "message";
+            blockType: 'message';
           }
         | {
             name: string;
@@ -1095,7 +1058,7 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "number";
+            blockType: 'number';
           }
         | {
             name: string;
@@ -1113,7 +1076,7 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "select";
+            blockType: 'select';
           }
         | {
             name: string;
@@ -1122,17 +1085,7 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "state";
-          }
-        | {
-            name: string;
-            label?: string | null;
-            width?: number | null;
-            defaultValue?: string | null;
-            required?: boolean | null;
-            id?: string | null;
-            blockName?: string | null;
-            blockType: "text";
+            blockType: 'state';
           }
         | {
             name: string;
@@ -1142,7 +1095,17 @@ export type Form = {
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
-            blockType: "textarea";
+            blockType: 'text';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'textarea';
           }
       )[]
     | null;
@@ -1150,7 +1113,7 @@ export type Form = {
   /**
    * Choose whether to display an on-page message or redirect to a different page after they submit the form.
    */
-  confirmationType?: ("message" | "redirect") | null;
+  confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
       type: string;
@@ -1159,8 +1122,8 @@ export type Form = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -1191,15 +1154,8 @@ export type Form = {
               version: number;
               [k: string]: unknown;
             }[];
-            direction: ("ltr" | "rtl") | null;
-            format:
-              | "left"
-              | "start"
-              | "center"
-              | "right"
-              | "end"
-              | "justify"
-              | "";
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
             indent: number;
             version: number;
           };
@@ -1210,12 +1166,12 @@ export type Form = {
     | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions".
  */
-export type FormSubmission = {
+export interface FormSubmission {
   id: number;
   form: number | Form;
   submissionData?:
@@ -1227,19 +1183,19 @@ export type FormSubmission = {
     | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search".
  */
-export type Search = {
+export interface Search {
   id: number;
   title?: string | null;
   priority?: number | null;
   doc: {
-    relationTo: "posts";
+    relationTo: 'posts';
     value: number | Post;
   };
   slug?: string | null;
@@ -1258,12 +1214,12 @@ export type Search = {
     | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
-export type PayloadKv = {
+export interface PayloadKv {
   id: number;
   key: string;
   data:
@@ -1275,12 +1231,12 @@ export type PayloadKv = {
     | number
     | boolean
     | null;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs".
  */
-export type PayloadJob = {
+export interface PayloadJob {
   id: number;
   /**
    * Input data provided to the job
@@ -1328,7 +1284,7 @@ export type PayloadJob = {
     | {
         executedAt: string;
         completedAt: string;
-        taskSlug: "inline" | "generateEmbedding" | "computeRecommendations";
+        taskSlug: 'inline' | 'generateEmbedding' | 'computeRecommendations';
         taskID: string;
         input?:
           | {
@@ -1348,7 +1304,7 @@ export type PayloadJob = {
           | number
           | boolean
           | null;
-        state: "failed" | "succeeded";
+        state: 'failed' | 'succeeded';
         error?:
           | {
               [k: string]: unknown;
@@ -1361,89 +1317,89 @@ export type PayloadJob = {
         id?: string | null;
       }[]
     | null;
-  workflowSlug?: "processPostEmbeddings" | null;
-  taskSlug?: ("inline" | "generateEmbedding" | "computeRecommendations") | null;
+  workflowSlug?: 'processPostEmbeddings' | null;
+  taskSlug?: ('inline' | 'generateEmbedding' | 'computeRecommendations') | null;
   queue?: string | null;
   waitUntil?: string | null;
   processing?: boolean | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
-export type PayloadLockedDocument = {
+export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: "posts";
+        relationTo: 'posts';
         value: number | Post;
       } | null)
     | ({
-        relationTo: "media";
+        relationTo: 'media';
         value: number | Media;
       } | null)
     | ({
-        relationTo: "topics";
+        relationTo: 'topics';
         value: number | Topic;
       } | null)
     | ({
-        relationTo: "projects";
+        relationTo: 'projects';
         value: number | Project;
       } | null)
     | ({
-        relationTo: "lyovsons";
+        relationTo: 'lyovsons';
         value: number | Lyovson;
       } | null)
     | ({
-        relationTo: "contacts";
+        relationTo: 'contacts';
         value: number | Contact;
       } | null)
     | ({
-        relationTo: "references";
+        relationTo: 'references';
         value: number | Reference;
       } | null)
     | ({
-        relationTo: "activities";
+        relationTo: 'activities';
         value: number | Activity;
       } | null)
     | ({
-        relationTo: "notes";
+        relationTo: 'notes';
         value: number | Note;
       } | null)
     | ({
-        relationTo: "redirects";
+        relationTo: 'redirects';
         value: number | Redirect;
       } | null)
     | ({
-        relationTo: "forms";
+        relationTo: 'forms';
         value: number | Form;
       } | null)
     | ({
-        relationTo: "form-submissions";
+        relationTo: 'form-submissions';
         value: number | FormSubmission;
       } | null)
     | ({
-        relationTo: "search";
+        relationTo: 'search';
         value: number | Search;
       } | null);
   globalSlug?: string | null;
   user: {
-    relationTo: "lyovsons";
+    relationTo: 'lyovsons';
     value: number | Lyovson;
   };
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
-export type PayloadPreference = {
+export interface PayloadPreference {
   id: number;
   user: {
-    relationTo: "lyovsons";
+    relationTo: 'lyovsons';
     value: number | Lyovson;
   };
   key?: string | null;
@@ -1458,23 +1414,23 @@ export type PayloadPreference = {
     | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
-export type PayloadMigration = {
+export interface PayloadMigration {
   id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
-export type PostsSelect<T extends boolean = true> = {
+export interface PostsSelect<T extends boolean = true> {
   title?: T;
   featuredImage?: T;
   description?: T;
@@ -1509,12 +1465,12 @@ export type PostsSelect<T extends boolean = true> = {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
-export type MediaSelect<T extends boolean = true> = {
+export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
   updatedAt?: T;
@@ -1592,12 +1548,12 @@ export type MediaSelect<T extends boolean = true> = {
               filename?: T;
             };
       };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "topics_select".
  */
-export type TopicsSelect<T extends boolean = true> = {
+export interface TopicsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   color?: T;
@@ -1614,12 +1570,12 @@ export type TopicsSelect<T extends boolean = true> = {
       };
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "projects_select".
  */
-export type ProjectsSelect<T extends boolean = true> = {
+export interface ProjectsSelect<T extends boolean = true> {
   name?: T;
   description?: T;
   image?: T;
@@ -1629,12 +1585,12 @@ export type ProjectsSelect<T extends boolean = true> = {
   slugLock?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "lyovsons_select".
  */
-export type LyovsonsSelect<T extends boolean = true> = {
+export interface LyovsonsSelect<T extends boolean = true> {
   avatar?: T;
   font?: T;
   name?: T;
@@ -1664,12 +1620,12 @@ export type LyovsonsSelect<T extends boolean = true> = {
         createdAt?: T;
         expiresAt?: T;
       };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contacts_select".
  */
-export type ContactsSelect<T extends boolean = true> = {
+export interface ContactsSelect<T extends boolean = true> {
   email?: T;
   firstName?: T;
   lastName?: T;
@@ -1683,12 +1639,12 @@ export type ContactsSelect<T extends boolean = true> = {
   notes?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "references_select".
  */
-export type ReferencesSelect<T extends boolean = true> = {
+export interface ReferencesSelect<T extends boolean = true> {
   title?: T;
   type?: T;
   image?: T;
@@ -1756,12 +1712,12 @@ export type ReferencesSelect<T extends boolean = true> = {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "activities_select".
  */
-export type ActivitiesSelect<T extends boolean = true> = {
+export interface ActivitiesSelect<T extends boolean = true> {
   reference?: T;
   activityType?: T;
   participants?: T;
@@ -1790,12 +1746,12 @@ export type ActivitiesSelect<T extends boolean = true> = {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "notes_select".
  */
-export type NotesSelect<T extends boolean = true> = {
+export interface NotesSelect<T extends boolean = true> {
   title?: T;
   type?: T;
   author?: T;
@@ -1819,12 +1775,12 @@ export type NotesSelect<T extends boolean = true> = {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
-export type RedirectsSelect<T extends boolean = true> = {
+export interface RedirectsSelect<T extends boolean = true> {
   from?: T;
   to?:
     | T
@@ -1835,12 +1791,12 @@ export type RedirectsSelect<T extends boolean = true> = {
       };
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "forms_select".
  */
-export type FormsSelect<T extends boolean = true> = {
+export interface FormsSelect<T extends boolean = true> {
   title?: T;
   fields?:
     | T
@@ -1968,12 +1924,12 @@ export type FormsSelect<T extends boolean = true> = {
       };
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-submissions_select".
  */
-export type FormSubmissionsSelect<T extends boolean = true> = {
+export interface FormSubmissionsSelect<T extends boolean = true> {
   form?: T;
   submissionData?:
     | T
@@ -1984,12 +1940,12 @@ export type FormSubmissionsSelect<T extends boolean = true> = {
       };
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search_select".
  */
-export type SearchSelect<T extends boolean = true> = {
+export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
@@ -2011,20 +1967,20 @@ export type SearchSelect<T extends boolean = true> = {
       };
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
-export type PayloadKvSelect<T extends boolean = true> = {
+export interface PayloadKvSelect<T extends boolean = true> {
   key?: T;
   data?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-jobs_select".
  */
-export type PayloadJobsSelect<T extends boolean = true> = {
+export interface PayloadJobsSelect<T extends boolean = true> {
   input?: T;
   taskStatus?: T;
   completedAt?: T;
@@ -2051,44 +2007,44 @@ export type PayloadJobsSelect<T extends boolean = true> = {
   processing?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
-export type PayloadLockedDocumentsSelect<T extends boolean = true> = {
+export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
   document?: T;
   globalSlug?: T;
   user?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences_select".
  */
-export type PayloadPreferencesSelect<T extends boolean = true> = {
+export interface PayloadPreferencesSelect<T extends boolean = true> {
   user?: T;
   key?: T;
   value?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations_select".
  */
-export type PayloadMigrationsSelect<T extends boolean = true> = {
+export interface PayloadMigrationsSelect<T extends boolean = true> {
   name?: T;
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TaskGenerateEmbedding".
  */
-export type TaskGenerateEmbedding = {
+export interface TaskGenerateEmbedding {
   input: {
     collection: string;
     docId: number;
@@ -2099,12 +2055,12 @@ export type TaskGenerateEmbedding = {
     reason?: string | null;
     dimensions?: number | null;
   };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TaskComputeRecommendations".
  */
-export type TaskComputeRecommendations = {
+export interface TaskComputeRecommendations {
   input: {
     postId: number;
   };
@@ -2113,22 +2069,22 @@ export type TaskComputeRecommendations = {
     count?: number | null;
     reason?: string | null;
   };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "WorkflowProcessPostEmbeddings".
  */
-export type WorkflowProcessPostEmbeddings = {
+export interface WorkflowProcessPostEmbeddings {
   input: {
     postId: number;
   };
-};
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "BannerBlock".
  */
-export type BannerBlock = {
-  style: "info" | "warning" | "error" | "success";
+export interface BannerBlock {
+  style: 'info' | 'warning' | 'error' | 'success';
   content: {
     root: {
       type: string;
@@ -2137,8 +2093,8 @@ export type BannerBlock = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -2146,34 +2102,34 @@ export type BannerBlock = {
   };
   id?: string | null;
   blockName?: string | null;
-  blockType: "banner";
-};
+  blockType: 'banner';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CodeBlock".
  */
-export type CodeBlock = {
-  language?: ("typescript" | "javascript" | "css") | null;
+export interface CodeBlock {
+  language?: ('typescript' | 'javascript' | 'css') | null;
   code: string;
   id?: string | null;
   blockName?: string | null;
-  blockType: "code";
-};
+  blockType: 'code';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "MediaBlock".
  */
-export type MediaBlock = {
+export interface MediaBlock {
   media: number | Media;
   id?: string | null;
   blockName?: string | null;
-  blockType: "mediaBlock";
-};
+  blockType: 'mediaBlock';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "YouTubeBlock".
  */
-export type YouTubeBlock = {
+export interface YouTubeBlock {
   /**
    * Enter a YouTube URL (e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ) or video ID
    */
@@ -2186,23 +2142,23 @@ export type YouTubeBlock = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
     [k: string]: unknown;
   } | null;
-  aspectRatio?: ("16:9" | "4:3" | "1:1") | null;
+  aspectRatio?: ('16:9' | '4:3' | '1:1') | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: "youtube";
-};
+  blockType: 'youtube';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "XPostBlock".
  */
-export type XPostBlock = {
+export interface XPostBlock {
   /**
    * Enter an X (Twitter) post URL (e.g., https://x.com/username/status/123456789) or post ID
    */
@@ -2215,8 +2171,8 @@ export type XPostBlock = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -2224,13 +2180,13 @@ export type XPostBlock = {
   } | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: "xpost";
-};
+  blockType: 'xpost';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "QuoteBlock".
  */
-export type QuoteBlock = {
+export interface QuoteBlock {
   quote: {
     root: {
       type: string;
@@ -2239,8 +2195,8 @@ export type QuoteBlock = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -2249,13 +2205,13 @@ export type QuoteBlock = {
   attribution?: string | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: "quote";
-};
+  blockType: 'quote';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "GIFBlock".
  */
-export type GIFBlock = {
+export interface GIFBlock {
   mp4Url: string;
   webmUrl?: string | null;
   posterUrl: string;
@@ -2268,8 +2224,8 @@ export type GIFBlock = {
         version: number;
         [k: string]: unknown;
       }[];
-      direction: ("ltr" | "rtl") | null;
-      format: "left" | "start" | "center" | "right" | "end" | "justify" | "";
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
       indent: number;
       version: number;
     };
@@ -2277,16 +2233,17 @@ export type GIFBlock = {
   } | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: "gif";
-};
+  blockType: 'gif';
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
-export type Auth = {
+export interface Auth {
   [k: string]: unknown;
-};
+}
 
-declare module "payload" {
+
+declare module 'payload' {
   export interface GeneratedTypes extends Config {}
 }

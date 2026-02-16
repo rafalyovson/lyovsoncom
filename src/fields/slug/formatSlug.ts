@@ -14,9 +14,17 @@ export const formatSlugHook =
     }
 
     if (operation === "create" || !data?.slug) {
-      const fallbackData = data?.[fallback];
+      // Check incoming data first, then fall back to originalDoc for partial updates
+      // and async hook ordering scenarios where data may not yet carry the fallback field
+      const fallbackData =
+        data?.[fallback] ||
+        (originalDoc &&
+        typeof originalDoc === "object" &&
+        fallback in originalDoc &&
+        typeof originalDoc[fallback] === "string"
+          ? originalDoc[fallback]
+          : undefined);
 
-      // Explicitly check for non-empty string (empty string is falsy but we need to handle it)
       if (
         fallbackData &&
         typeof fallbackData === "string" &&

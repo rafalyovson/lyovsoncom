@@ -4,6 +4,7 @@ import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
+import { formatSlug } from "@/fields/slug/formatSlug";
 import { generateEmbeddingForActivity } from "@/utilities/generate-embedding-helpers";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import {
@@ -35,6 +36,7 @@ export const Activities: CollectionConfig = {
     update: authenticated,
   },
   defaultPopulate: {
+    slug: true,
     reference: true,
     activityType: true,
     startedAt: true,
@@ -242,6 +244,9 @@ export const Activities: CollectionConfig = {
                 })) as unknown as { title?: string };
 
                 if (reference?.title) {
+                  if (data) {
+                    data.slug = formatSlug(reference.title);
+                  }
                   return reference.title;
                 }
               } catch (error) {
@@ -251,7 +256,11 @@ export const Activities: CollectionConfig = {
               }
             }
 
-            return data?.slugSource || originalSlugSource;
+            const fallbackSlugSource = data?.slugSource || originalSlugSource;
+            if (fallbackSlugSource && data) {
+              data.slug = formatSlug(fallbackSlugSource);
+            }
+            return fallbackSlugSource;
           },
         ],
       },
