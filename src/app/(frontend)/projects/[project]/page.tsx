@@ -5,9 +5,14 @@ import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
+import { JsonLd } from "@/components/JsonLd";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
 import type { Project } from "@/payload-types";
+import {
+  generateBreadcrumbSchema,
+  generateCollectionPageSchema,
+} from "@/utilities/generate-json-ld";
 import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -44,10 +49,29 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   }
 
   const { docs, totalPages, page } = response;
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: project.name,
+    description: project.description || `Posts from ${project.name}`,
+    url: `${getServerSideURL()}/projects/${projectSlug}`,
+    itemCount: response.totalDocs,
+    items: docs
+      .filter((post) => post.slug)
+      .map((post) => ({
+        url: `${getServerSideURL()}/posts/${post.slug}`,
+      })),
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: getServerSideURL() },
+    { name: "Projects", url: `${getServerSideURL()}/projects` },
+    { name: project.name },
+  ]);
 
   return (
     <>
       <h1 className="sr-only">{project.name}</h1>
+      <JsonLd data={collectionPageSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
@@ -80,6 +104,7 @@ export async function generateMetadata({
 
   if (!project) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Project Not Found | Lyóvson.com",
       description: "The requested project could not be found",
     };

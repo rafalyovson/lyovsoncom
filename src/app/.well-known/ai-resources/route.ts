@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 export function GET(_request: NextRequest) {
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const now = new Date();
 
   const aiResources = {
     // Standard identification
@@ -28,7 +29,7 @@ export function GET(_request: NextRequest) {
         rss: `${SITE_URL}/feed.xml`,
         json: `${SITE_URL}/feed.json`,
         atom: `${SITE_URL}/atom.xml`,
-        updateFrequency: "hourly",
+        updateFrequency: "every-6-to-12-hours",
         contentIncluded: "full-text",
       },
 
@@ -96,14 +97,14 @@ export function GET(_request: NextRequest) {
       human: `${SITE_URL}/ai-docs`,
       machine: `${SITE_URL}/api/docs`,
       llmsTxt: `${SITE_URL}/llms.txt`,
-      specification: "openapi-3.0.3",
+      specification: "openapi-3.1.0",
     },
 
     // Rate limits and usage guidelines
     usage: {
       rateLimit: {
-        feeds: "1000 requests/hour",
-        api: "100 requests/hour",
+        feeds: "No hard public limit (subject to platform and abuse controls)",
+        api: "No hard public limit (subject to platform and abuse controls)",
       },
       bestPractices: [
         "Use feeds for bulk content access",
@@ -117,7 +118,7 @@ export function GET(_request: NextRequest) {
     // Content licensing
     licensing: {
       copyright: "Rafa & Jess Lyóvson",
-      year: 2025,
+      year: now.getFullYear(),
       usage: "Attribution required for content use",
       contact: "hello@lyovson.com",
       attribution: "Lyóvson.com - https://www.lyovson.com",
@@ -127,6 +128,9 @@ export function GET(_request: NextRequest) {
     technical: {
       structuredData: [
         "schema.org/Article",
+        "schema.org/CollectionPage",
+        "schema.org/BreadcrumbList",
+        "schema.org/Person",
         "schema.org/Organization",
         "schema.org/WebSite",
       ],
@@ -137,7 +141,7 @@ export function GET(_request: NextRequest) {
     },
 
     // Last updated
-    lastUpdated: "2025-01-14T12:00:00Z",
+    lastUpdated: now.toISOString(),
     version: "1.0",
     generator: "Next.js",
   };

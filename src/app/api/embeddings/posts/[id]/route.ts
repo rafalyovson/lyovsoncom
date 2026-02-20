@@ -226,7 +226,7 @@ export async function GET(
       id: post.id,
       title: post.title,
       slug: post.slug,
-      url: `${SITE_URL}/${post.slug}`,
+      url: `${SITE_URL}/posts/${post.slug}`,
       embedding: null,
       publishedAt: post.publishedAt,
       updatedAt: post.updatedAt,

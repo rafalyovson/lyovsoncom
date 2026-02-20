@@ -242,10 +242,8 @@ export async function GET(request: NextRequest) {
           })(),
           slug: item.slug,
           url: (() => {
-            if (type === "posts" && "project" in item && item.project) {
-              const projectSlug =
-                typeof item.project === "object" ? item.project.slug : "posts";
-              return `${SITE_URL}/${projectSlug}/${item.slug}`;
+            if (type === "posts") {
+              return `${SITE_URL}/posts/${item.slug}`;
             }
             if (type === "notes") {
               return `${SITE_URL}/notes/${item.slug}`;
@@ -340,10 +338,7 @@ export async function GET(request: NextRequest) {
           metadata: {
             title: post.title,
             slug: post.slug,
-            url:
-              post.project && typeof post.project === "object"
-                ? `${SITE_URL}/${post.project.slug}/${post.slug}`
-                : `${SITE_URL}/posts/${post.slug}`,
+            url: `${SITE_URL}/posts/${post.slug}`,
             lastModified: post.updatedAt,
             topics: post.topics
               ?.map((t) =>

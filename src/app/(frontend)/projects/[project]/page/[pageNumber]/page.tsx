@@ -1,15 +1,19 @@
 import { cacheLife, cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid/skeleton";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getProject } from "@/utilities/get-project";
 import { getPaginatedProjectPosts } from "@/utilities/get-project-posts";
+import { getServerSideURL } from "@/utilities/getURL";
 
 // Number of posts per page for pagination
 const POSTS_PER_PAGE = 25;
+const MAX_INDEXED_PAGE = 3;
 
 type Args = {
   params: Promise<{
@@ -38,8 +42,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const sanitizedPageNumber = Number(pageNumber);
-  if (!Number.isInteger(sanitizedPageNumber)) {
+  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
     return notFound();
+  }
+  if (sanitizedPageNumber === 1) {
+    redirect(`/projects/${projectSlug}`);
   }
 
   const postsResponse = await getPaginatedProjectPosts(
@@ -53,9 +60,25 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { docs: posts, totalPages, page } = postsResponse;
+  const projectName = project.name || projectSlug;
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: `${projectName} - Page ${sanitizedPageNumber}`,
+    description:
+      project.description ||
+      `Archive of ${projectName} posts on page ${sanitizedPageNumber}.`,
+    url: `${getServerSideURL()}/projects/${projectSlug}/page/${sanitizedPageNumber}`,
+    itemCount: postsResponse.totalDocs,
+    items: posts
+      .filter((post) => post.slug)
+      .map((post) => ({
+        url: `${getServerSideURL()}/posts/${post.slug}`,
+      })),
+  });
 
   return (
     <>
+      <JsonLd data={collectionPageSchema} />
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts} />
       </Suspense>
@@ -86,18 +109,51 @@ export async function generateMetadata({
   const project = await getProject(projectSlug);
   if (!project) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Project Not Found | Lyovson.com",
       description: "The requested project could not be found",
     };
   }
 
   const projectName = project.name || projectSlug;
+  const sanitizedPageNumber = Number(pageNumber);
+  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 2) {
+    return {
+      metadataBase: new URL(getServerSideURL()),
+      title: "Not Found | Lyovson.com",
+      description: "The requested page could not be found",
+    };
+  }
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
     description: project.description || `Posts from ${projectName}`,
     alternates: {
-      canonical: `/projects/${projectSlug}/page/${pageNumber}`,
+      canonical: `/projects/${projectSlug}/page/${sanitizedPageNumber}`,
+      ...(sanitizedPageNumber > 1 && {
+        prev:
+          sanitizedPageNumber === 2
+            ? `/projects/${projectSlug}`
+            : `/projects/${projectSlug}/page/${sanitizedPageNumber - 1}`,
+      }),
+    },
+    openGraph: {
+      title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
+      description: project.description || `Posts from ${projectName}`,
+      type: "website",
+      url: `/projects/${projectSlug}/page/${sanitizedPageNumber}`,
+    },
+    twitter: {
+      card: "summary",
+      title: `${projectName} Posts Page ${pageNumber} | Lyovson.com`,
+      description: project.description || `Posts from ${projectName}`,
+      site: "@lyovson",
+    },
+    robots: {
+      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
+      follow: true,
+      noarchive: sanitizedPageNumber > 1,
     },
   };
 }
@@ -121,11 +177,19 @@ export async function generateStaticParams() {
 
   for (const project of projects.docs) {
     if (typeof project === "object" && "slug" in project && project.slug) {
-      // Generate first page for each project
-      paths.push({
-        project: project.slug as string,
-        pageNumber: "1",
-      });
+      const postsResponse = await getPaginatedProjectPosts(
+        project.slug as string,
+        1,
+        POSTS_PER_PAGE
+      );
+
+      const totalPages = postsResponse?.totalPages || 0;
+      for (let i = 2; i <= totalPages; i++) {
+        paths.push({
+          project: project.slug as string,
+          pageNumber: String(i),
+        });
+      }
     }
   }
 

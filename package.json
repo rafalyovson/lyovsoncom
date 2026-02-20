@@ -12,6 +12,7 @@
     "lint": "ultracite check",
     "lint:fix": "ultracite fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seo:check": "node scripts/check-seo-coverage.mjs",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },

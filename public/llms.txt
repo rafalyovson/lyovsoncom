@@ -47,7 +47,7 @@ All feeds include complete article content for optimal AI consumption:
 ### Structured Data & Discovery
 
 - AI Resources Manifest: https://lyovson.com/.well-known/ai-resources
-- OpenAPI 3.0 Documentation: https://lyovson.com/api/docs
+- OpenAPI-style Machine Documentation: https://lyovson.com/api/docs
 - GraphQL Endpoint: https://lyovson.com/api/graphql
 - GraphQL Playground: https://lyovson.com/api/graphql-playground
 - XML Sitemap: https://lyovson.com/sitemap.xml
@@ -82,9 +82,9 @@ All feeds include complete article content for optimal AI consumption:
 ✅ **AI Training**: Content available for training with attribution
 
 ### Rate Limits
-- Content Feeds: 1000 requests/hour
-- API Endpoints: 100 requests/hour
-- Embeddings API: 100 requests/hour
+- Content Feeds: No hard public limit (subject to platform and abuse controls)
+- API Endpoints: No hard public limit (subject to platform and abuse controls)
+- Embeddings API: No hard public limit (subject to platform and abuse controls)
 - For higher limits: Contact hello@lyovson.com
 
 ### Best Practices
@@ -126,7 +126,7 @@ Please email hello@lyovson.com with detailed information.
 ## Technical Stack
 
 Built with modern web technologies:
-- **Framework**: Next.js 15 with App Router
+- **Framework**: Next.js 16 with App Router
 - **CMS**: Payload CMS 3 with Lexical rich text editor
 - **Database**: Vercel Postgres with pgvector extension
 - **Hosting**: Vercel with edge network
@@ -136,8 +136,8 @@ Built with modern web technologies:
 ## Discovery & Indexing
 
 ### For AI Crawlers
-- Explicitly allowed in robots.txt: GPTBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, ChatGPT-User
-- Sitemap updated daily with all published content
+- Explicitly allowed in robots.txt: GPTBot, OAI-SearchBot, ClaudeBot, Google-Extended, PerplexityBot, CCBot, ChatGPT-User
+- Sitemap is regenerated as content changes and periodically refreshed
 - Full-content feeds for comprehensive understanding
 - Pre-computed embeddings for semantic similarity
 - Structured data (Schema.org JSON-LD) on all pages
@@ -146,11 +146,11 @@ Built with modern web technologies:
 - New posts: Daily to weekly frequency
 - Content updates: As needed for accuracy
 - Embedding refresh: Weekly automatic regeneration
-- Feed updates: Real-time with 1-hour cache
+- Feed updates: Cached for 6-12 hours for origin protection
 
 ---
 
-**Last Updated**: 2025-10-14
+**Last Updated**: 2026-02-20
 **Format**: llms.txt v1.0 (Emerging Standard)
 **Protocol**: https://github.com/llms-txt/llms-txt
 

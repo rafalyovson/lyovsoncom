@@ -217,6 +217,7 @@ export async function generateMetadata({
   const note = await getNote(slug);
   if (!note) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested note could not be found",
     };

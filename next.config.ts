@@ -79,6 +79,24 @@ const nextConfig: NextConfig = {
   async headers() {
     return await Promise.resolve([
       {
+        source: "/api/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow",
+          },
+        ],
+      },
+      {
+        source: "/admin/:path*",
+        headers: [
+          {
+            key: "X-Robots-Tag",
+            value: "noindex, nofollow, noarchive",
+          },
+        ],
+      },
+      {
         source: "/:path*",
         headers: [
           {
@@ -216,6 +234,10 @@ const nextConfig: NextConfig = {
 
     // Enable new caching and pre-rendering behavior
     useCache: true,
+
+    // Needed when using multiple root layouts so unmatched routes don't fall back
+    // to the default framework 404 metadata pipeline.
+    globalNotFound: true,
 
     // Enable Turbopack file system caching for faster builds (stores compiler artifacts between runs)
     turbopackFileSystemCacheForDev: true,

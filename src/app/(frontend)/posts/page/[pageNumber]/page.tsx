@@ -1,11 +1,13 @@
 import { cacheLife, cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
 
 import { CollectionArchive } from "@/components/CollectionArchive";
 import { SkeletonGrid } from "@/components/grid";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
+import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getPaginatedPosts, getPostCount } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
@@ -31,8 +33,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   cacheTag(`posts-page-${pageNumber}`);
   cacheLife("posts");
 
-  if (!Number.isInteger(sanitizedPageNumber)) {
+  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
     notFound();
+  }
+  if (sanitizedPageNumber === 1) {
+    redirect("/posts");
   }
 
   const response = await getPaginatedPosts(sanitizedPageNumber, POSTS_PER_PAGE);
@@ -42,9 +47,22 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { docs, totalPages, page } = response;
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: `All Posts - Page ${sanitizedPageNumber}`,
+    description: `Archive of posts and articles on page ${sanitizedPageNumber}.`,
+    url: `${getServerSideURL()}/posts/page/${sanitizedPageNumber}`,
+    itemCount: response.totalDocs,
+    items: docs
+      .filter((post) => post.slug)
+      .map((post) => ({
+        url: `${getServerSideURL()}/posts/${post.slug}`,
+      })),
+  });
 
   return (
     <>
+      <JsonLd data={collectionPageSchema} />
+
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={docs} />
       </Suspense>
@@ -87,7 +105,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: `/posts/page/${pageNumber}`,
+      canonical: isFirstPage ? "/posts" : `/posts/page/${pageNumber}`,
       ...(pageNum > 1 && {
         prev: pageNum === 2 ? "/posts" : `/posts/page/${pageNum - 1}`,
       }),
@@ -97,7 +115,7 @@ export async function generateMetadata({
       title,
       description,
       type: "website",
-      url: `/posts/page/${pageNumber}`,
+      url: isFirstPage ? "/posts" : `/posts/page/${pageNumber}`,
     },
     twitter: {
       card: "summary",
@@ -123,7 +141,7 @@ export async function generateStaticParams() {
 
   const pages: { pageNumber: string }[] = [];
 
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i = 2; i <= totalPages; i++) {
     pages.push({ pageNumber: String(i) });
   }
 

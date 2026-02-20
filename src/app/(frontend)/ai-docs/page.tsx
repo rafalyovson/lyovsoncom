@@ -100,6 +100,11 @@ function ExternalLink({
 
 export default function AIDocsPage() {
   const SITE_URL = getServerSideURL();
+  const lastUpdated = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date());
 
   return (
     <>
@@ -244,7 +249,8 @@ export default function AIDocsPage() {
           </h3>
           <p className="mb-3">
             For bulk content consumption, use our syndication feeds. They
-            include full article content, metadata, and are updated hourly.
+            include full article content, metadata, and are refreshed multiple
+            times per day (typically every 6-12 hours).
           </p>
 
           <CodeBlock title="JSON Feed with Enhanced Metadata">
@@ -402,7 +408,8 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
                   search
                 </li>
                 <li>
-                  • <strong>Collection-specific</strong> - Posts, Books, Notes
+                  • <strong>Collection-specific</strong> - Posts, Activities,
+                  Notes
                   endpoints
                 </li>
                 <li>
@@ -482,10 +489,12 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               <h3 className="mb-2 font-medium">🚀 Performance</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
                 <li>
-                  Use feeds for bulk content access (rate limit: 1000/hour)
+                  Use feeds for bulk content access whenever possible
                 </li>
                 <li>Respect Cache-Control headers for optimal performance</li>
-                <li>API endpoints have lower rate limits (100/hour)</li>
+                <li>
+                  API access is subject to platform limits and abuse controls
+                </li>
                 <li>
                   Include descriptive User-Agent header identifying your service
                 </li>
@@ -541,6 +550,8 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
               <h3 className="mb-2 font-medium">Schema Types</h3>
               <ul className="space-y-1">
                 <li>📄 Article (posts)</li>
+                <li>🗂️ CollectionPage (archive and taxonomy pages)</li>
+                <li>🧭 BreadcrumbList (hierarchy context)</li>
                 <li>🏢 Organization (site info)</li>
                 <li>🌐 WebSite (global metadata)</li>
                 <li>👤 Person (authors)</li>
@@ -578,7 +589,8 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
         <GridCardSection className={DOCS_SECTION_CLASS_NAME}>
           <h2 className="mb-4 font-semibold text-xl">Contact & Support</h2>
           <p className="mb-4">
-            Need higher rate limits, custom access, or have questions about
+            Need custom access patterns, partnership support, or have questions
+            about
             using our content?
           </p>
           <div className="space-y-2">
@@ -602,7 +614,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             </p>
           </div>
           <p className="glass-text-secondary mt-4 text-sm">
-            Last updated: January 16, 2025 •{" "}
+            Last updated: {lastUpdated} •{" "}
             <ExternalLink href={`${SITE_URL}/api/docs`}>
               Machine-readable version
             </ExternalLink>

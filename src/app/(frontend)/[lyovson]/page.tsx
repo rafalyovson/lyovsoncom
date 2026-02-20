@@ -98,6 +98,7 @@ export async function generateMetadata({
 
   if (!response) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Not Found",
     };
   }

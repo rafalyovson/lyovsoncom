@@ -3,6 +3,43 @@ import { cacheLife, cacheTag } from "next/cache";
 import { getActivityPath } from "@/utilities/activity-path";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
 
+const POSTS_PER_PAGE = 25;
+const NOTES_PER_PAGE = 25;
+const ACTIVITIES_PER_PAGE = 25;
+const PROJECT_POSTS_PER_PAGE = 25;
+const TOPIC_POSTS_PER_PAGE = 25;
+const MAX_INDEXED_PAGE = 3;
+
+function getIndexedPaginationPages(totalItems: number, pageSize: number) {
+  const totalPages = Math.ceil(totalItems / pageSize);
+  const maxPage = Math.min(totalPages, MAX_INDEXED_PAGE);
+  const pages: number[] = [];
+
+  for (let pageNumber = 2; pageNumber <= maxPage; pageNumber++) {
+    pages.push(pageNumber);
+  }
+
+  return pages;
+}
+
+function getSlugFromRelation(
+  relation: unknown,
+  idToSlugMap: Map<string, string>
+) {
+  if (typeof relation === "object" && relation !== null && "slug" in relation) {
+    const slug = relation.slug;
+    if (typeof slug === "string" && slug.length > 0) {
+      return slug;
+    }
+  }
+
+  if (typeof relation === "number" || typeof relation === "string") {
+    return idToSlugMap.get(String(relation));
+  }
+
+  return null;
+}
+
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Sitemap generation aggregates multiple collections and routes */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   "use cache";
@@ -12,100 +49,116 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   cacheTag("topics");
   cacheTag("notes");
   cacheTag("activities");
+  cacheTag("lyovsons");
   cacheLife("sitemap");
 
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const now = new Date();
 
-  const { posts, projects, topics, notes, activities } = await getSitemapData();
+  const { posts, projects, topics, notes, activities, lyovsons } =
+    await getSitemapData();
+
+  const projectSlugById = new Map<string, string>();
+  const topicSlugById = new Map<string, string>();
+  const projectPostCounts = new Map<string, number>();
+  const topicPostCounts = new Map<string, number>();
+
+  for (const project of projects) {
+    if (!project?.id || !project.slug) {
+      continue;
+    }
+    projectSlugById.set(String(project.id), project.slug);
+  }
+
+  for (const topic of topics) {
+    if (!topic?.id || !topic.slug) {
+      continue;
+    }
+    topicSlugById.set(String(topic.id), topic.slug);
+  }
+
+  for (const post of posts) {
+    const projectSlug = getSlugFromRelation(post?.project, projectSlugById);
+    if (projectSlug) {
+      projectPostCounts.set(projectSlug, (projectPostCounts.get(projectSlug) || 0) + 1);
+    }
+
+    if (!Array.isArray(post?.topics)) {
+      continue;
+    }
+
+    for (const topicRelation of post.topics) {
+      const topicSlug = getSlugFromRelation(topicRelation, topicSlugById);
+      if (!topicSlug) {
+        continue;
+      }
+      topicPostCounts.set(topicSlug, (topicPostCounts.get(topicSlug) || 0) + 1);
+    }
+  }
 
   const routes: MetadataRoute.Sitemap = [
     // Homepage - highest priority
     {
       url: SITE_URL,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily",
       priority: 1,
     },
     // Main section pages - high priority
     {
       url: `${SITE_URL}/posts`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/notes`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/activities`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "daily",
       priority: 0.9,
     },
     {
       url: `${SITE_URL}/projects`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    // Author pages - high priority for personal branding
-    {
-      url: `${SITE_URL}/rafa`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${SITE_URL}/jess`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     // Utility pages - medium priority
     {
       url: `${SITE_URL}/search`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: `${SITE_URL}/playground`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
       url: `${SITE_URL}/privacy-policy`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
-    },
-    {
-      url: `${SITE_URL}/subscription-confirmed`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.2,
     },
     // AI and bot documentation - high priority for discovery
     {
       url: `${SITE_URL}/ai-docs`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: `${SITE_URL}/.well-known/ai-resources`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${SITE_URL}/llms.txt`,
-      lastModified: new Date(),
+      lastModified: now,
       changeFrequency: "monthly",
       priority: 0.9,
     },
@@ -127,6 +180,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
+  // Add paginated archive pages that are indexable
+  for (const pageNumber of getIndexedPaginationPages(posts.length, POSTS_PER_PAGE)) {
+    routes.push({
+      url: `${SITE_URL}/posts/page/${pageNumber}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    });
+  }
+
   // Add projects with better change frequency
   for (const project of projects) {
     if (!project?.slug) {
@@ -139,6 +202,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     });
+
+    const projectPostCount = projectPostCounts.get(project.slug) || 0;
+    for (const pageNumber of getIndexedPaginationPages(
+      projectPostCount,
+      PROJECT_POSTS_PER_PAGE
+    )) {
+      routes.push({
+        url: `${SITE_URL}/projects/${project.slug}/page/${pageNumber}`,
+        lastModified: new Date(project.updatedAt),
+        changeFrequency: "weekly",
+        priority: 0.6,
+      });
+    }
   }
 
   // Add topics with appropriate priority
@@ -153,6 +229,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.7,
     });
+
+    const topicPostCount = topicPostCounts.get(topic.slug) || 0;
+    for (const pageNumber of getIndexedPaginationPages(
+      topicPostCount,
+      TOPIC_POSTS_PER_PAGE
+    )) {
+      routes.push({
+        url: `${SITE_URL}/topics/${topic.slug}/page/${pageNumber}`,
+        lastModified: new Date(topic.updatedAt),
+        changeFrequency: "monthly",
+        priority: 0.5,
+      });
+    }
   }
 
   // Add notes
@@ -166,6 +255,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(note.updatedAt),
       changeFrequency: "monthly",
       priority: 0.8,
+    });
+  }
+
+  for (const pageNumber of getIndexedPaginationPages(notes.length, NOTES_PER_PAGE)) {
+    routes.push({
+      url: `${SITE_URL}/notes/page/${pageNumber}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
     });
   }
 
@@ -183,6 +281,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     routes.push({
       url: `${SITE_URL}${activityPath}`,
       lastModified: new Date(activity.updatedAt),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    });
+  }
+
+  for (const pageNumber of getIndexedPaginationPages(
+    activities.length,
+    ACTIVITIES_PER_PAGE
+  )) {
+    routes.push({
+      url: `${SITE_URL}/activities/page/${pageNumber}`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.6,
+    });
+  }
+
+  // Add author pages discovered from the CMS
+  for (const lyovson of lyovsons) {
+    if (!lyovson?.username) {
+      continue;
+    }
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}`,
+      lastModified: lyovson.updatedAt ? new Date(lyovson.updatedAt) : new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     });

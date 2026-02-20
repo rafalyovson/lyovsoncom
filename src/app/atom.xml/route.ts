@@ -74,7 +74,11 @@ export async function GET(_request: NextRequest) {
         typeof post.project === "object" && post.project !== null
           ? (post.project as Project).slug || ""
           : "";
-      const author = post.populatedAuthors?.[0]?.name || "Lyóvson Team";
+      const primaryAuthor = post.populatedAuthors?.[0];
+      const authorName = primaryAuthor?.name || "Lyóvson Team";
+      const authorUrl = primaryAuthor?.username
+        ? `${SITE_URL}/${primaryAuthor.username}`
+        : SITE_URL;
 
       // Extract full content from Lexical format for AI consumption
       const fullContent = post.content ? extractLexicalText(post.content) : "";
@@ -92,9 +96,9 @@ export async function GET(_request: NextRequest) {
         content: fullContent || contentText,
         author: [
           {
-            name: author,
+            name: authorName,
             email: "hello@lyovson.com",
-            link: `${SITE_URL}/${author.toLowerCase().replaceAll(" ", "")}`,
+            link: authorUrl,
           },
         ],
         date: new Date(post.publishedAt || post.updatedAt),

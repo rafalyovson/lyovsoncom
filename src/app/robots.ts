@@ -3,43 +3,46 @@ import { cacheLife, cacheTag } from "next/cache";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
   "use cache";
-  await Promise.resolve();
   cacheTag("robots");
   cacheLife("static"); // Robots.txt changes very rarely
 
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";
+  const sharedDisallowRules = [
+    "/api/*",
+    "/admin/*",
+    "/playground",
+    "/search?*",
+    "/vercel-blob-client-upload-route",
+    "/private/*",
+    "/temp/*",
+    "/drafts/*",
+  ];
 
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/api/*",
-          "/admin/*",
-          "/playground",
-          "/search?*",
-          "/vercel-blob-client-upload-route",
-          "/private/*",
-          "/temp/*",
-          "/drafts/*",
-        ],
+        disallow: sharedDisallowRules,
       },
       {
         userAgent: "Googlebot",
         allow: "/",
+        disallow: sharedDisallowRules,
         crawlDelay: 1,
       },
       {
         userAgent: "Bingbot",
         allow: "/",
+        disallow: sharedDisallowRules,
         crawlDelay: 1,
       },
       // AI and research bots - explicitly welcome with full access
       {
         userAgent: [
           "GPTBot",
+          "OAI-SearchBot",
           "Google-Extended",
           "CCBot",
           "ChatGPT-User",
@@ -56,8 +59,10 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
           "/feed.xml",
           "/feed.json",
           "/atom.xml",
+          "/.well-known/ai-resources",
+          "/llms.txt",
         ],
-        disallow: ["/admin/*", "/private/*", "/temp/*", "/drafts/*"],
+        disallow: sharedDisallowRules,
       },
       // Social media crawlers
       {

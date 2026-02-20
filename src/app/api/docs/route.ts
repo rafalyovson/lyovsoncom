@@ -16,24 +16,49 @@ export async function GET(_request: NextRequest) {
     const payload = await getPayload({ config: configPromise });
 
     // Get content statistics for AI context
-    const [posts, projects, topics] = await Promise.all([
-      payload.find({
-        collection: "posts",
-        where: { _status: { equals: "published" } },
-        limit: 1,
-        pagination: false,
-      }),
-      payload.find({
-        collection: "projects",
-        limit: 1,
-        pagination: false,
-      }),
-      payload.find({
-        collection: "topics",
-        limit: 1,
-        pagination: false,
-      }),
-    ]);
+    const [posts, projects, topics, notes, activities, authors] =
+      await Promise.all([
+        payload.find({
+          collection: "posts",
+          where: { _status: { equals: "published" } },
+          limit: 1,
+          pagination: false,
+        }),
+        payload.find({
+          collection: "projects",
+          limit: 1,
+          pagination: false,
+        }),
+        payload.find({
+          collection: "topics",
+          limit: 1,
+          pagination: false,
+        }),
+        payload.find({
+          collection: "notes",
+          where: {
+            _status: { equals: "published" },
+            visibility: { equals: "public" },
+          },
+          limit: 1,
+          pagination: false,
+        }),
+        payload.find({
+          collection: "activities",
+          where: {
+            _status: { equals: "published" },
+            visibility: { equals: "public" },
+          },
+          limit: 1,
+          pagination: false,
+        }),
+        payload.find({
+          collection: "lyovsons",
+          overrideAccess: true,
+          limit: 1,
+          pagination: false,
+        }),
+      ]);
 
     const apiDocumentation = {
       site: {
@@ -52,6 +77,9 @@ export async function GET(_request: NextRequest) {
           totalPosts: posts.totalDocs,
           totalProjects: projects.totalDocs,
           totalTopics: topics.totalDocs,
+          totalNotes: notes.totalDocs,
+          totalActivities: activities.totalDocs,
+          totalAuthors: authors.totalDocs,
         },
       },
       openapi: "3.1.0",
@@ -60,7 +88,8 @@ export async function GET(_request: NextRequest) {
           "All content is accessible via standard HTTP GET requests to documented endpoints",
         api: {
           type: "REST",
-          description: "RESTful API for accessing posts, projects, and topics",
+          description:
+            "RESTful API for accessing posts, projects, topics, notes, and activities",
           rest: {
             endpoints: [
               {
@@ -123,6 +152,35 @@ export async function GET(_request: NextRequest) {
               description: "Content categorization tags",
               fields: ["name", "description", "color"],
               access: "public",
+            },
+            {
+              name: "notes",
+              endpoint: `${SITE_URL}/notes`,
+              description: "Short-form notes, quotes, and reflections",
+              fields: ["title", "content", "author", "type", "topics"],
+              access: "published public notes are accessible",
+            },
+            {
+              name: "activities",
+              endpoint: `${SITE_URL}/activities`,
+              description:
+                "Reading, watching, listening, and playing activity logs",
+              fields: [
+                "reference",
+                "activityType",
+                "participants",
+                "notes",
+                "startedAt",
+                "finishedAt",
+              ],
+              access: "published public activities are accessible",
+            },
+            {
+              name: "authors",
+              endpoint: `${SITE_URL}/{username}`,
+              description: "Public author profile and bio pages",
+              fields: ["name", "username", "bio", "socialLinks"],
+              access: "public profile routes; underlying user collection is private",
             },
           ],
         },
@@ -236,6 +294,31 @@ export async function GET(_request: NextRequest) {
             public: "Converted to HTML/Markdown for display",
           },
         },
+        notes: {
+          structure: "Lexical rich text format (JSON)",
+          features: [
+            "Short-form thought and quote content",
+            "Topic relationships",
+            "Connection graph to posts/references/notes",
+          ],
+          serialization: {
+            internal: "Lexical JSON",
+            public: "Rendered HTML with card summaries",
+          },
+        },
+        activities: {
+          structure: "Structured activity metadata + optional rich text notes",
+          features: [
+            "Activity type (read/watch/listen/play/visit)",
+            "Reference relationships",
+            "Participant relationships",
+            "Timeline fields (startedAt/finishedAt/publishedAt)",
+          ],
+          serialization: {
+            internal: "Payload document fields + Lexical JSON for notes",
+            public: "Rendered activity pages with stable date+slug URLs",
+          },
+        },
       },
       rateLimits: {
         default: "No explicit limits in development",
@@ -243,7 +326,7 @@ export async function GET(_request: NextRequest) {
         caching: "Aggressive caching via Cache-Control headers",
       },
       metadata: {
-        framework: "Next.js 15 with App Router",
+        framework: "Next.js 16 with App Router",
         cms: "Payload CMS 3.x",
         database: "Vercel Postgres with pgvector",
         hosting: "Vercel",

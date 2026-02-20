@@ -4,6 +4,7 @@
 import config from "@payload-config";
 import { generatePageMetadata, RootPage } from "@payloadcms/next/views";
 import type { Metadata } from "next";
+import { getServerSideURL } from "@/utilities/getURL";
 import { importMap } from "../importMap";
 
 type Args = {
@@ -15,11 +16,16 @@ type Args = {
   }>;
 };
 
-export const generateMetadata = ({
+export const generateMetadata = async ({
   params,
   searchParams,
-}: Args): Promise<Metadata> =>
-  generatePageMetadata({ config, params, searchParams });
+}: Args): Promise<Metadata> => {
+  const metadata = await generatePageMetadata({ config, params, searchParams });
+  return {
+    ...metadata,
+    metadataBase: new URL(getServerSideURL()),
+  };
+};
 
 const Page = ({ params, searchParams }: Args) => (
   <RootPage

@@ -27,6 +27,7 @@ export const generateMeta = (args: { doc: Partial<Post> }): Metadata => {
   const description = doc?.description || legacyDoc.meta?.description;
 
   return {
+    metadataBase: new URL(getServerSideURL()),
     description,
     openGraph: mergeOpenGraph({
       description: description || "",

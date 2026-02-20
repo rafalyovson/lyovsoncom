@@ -76,11 +76,14 @@ export const metadata: Metadata = {
   title: "All Activities & Consumption | Lyóvson.com",
   description:
     "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
+  alternates: {
+    canonical: "/activities",
+  },
   openGraph: {
     title: "All Activities & Consumption | Lyóvson.com",
     description:
       "Browse reading, watching, listening, and playing activities logged by the Lyóvson family.",
-    url: `${getServerSideURL()}/activities`,
+    url: "/activities",
     siteName: "Lyóvson.com",
     type: "website",
   },

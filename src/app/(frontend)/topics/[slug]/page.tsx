@@ -4,8 +4,13 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { CollectionArchive } from "@/components/CollectionArchive";
+import { JsonLd } from "@/components/JsonLd";
 import { SkeletonGrid } from "@/components/grid/skeleton";
 import { Pagination } from "@/components/Pagination";
+import {
+  generateBreadcrumbSchema,
+  generateCollectionPageSchema,
+} from "@/utilities/generate-json-ld";
 import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getTopicPosts } from "@/utilities/get-topic-posts";
 import { getServerSideURL } from "@/utilities/getURL";
@@ -63,10 +68,28 @@ export default async function Page({ params: paramsPromise }: PageProps) {
   }
 
   const { docs: posts, totalPages, page } = response;
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: topicName,
+    description: topic.description || `Posts about ${topicName}`,
+    url: `${getServerSideURL()}/topics/${slug}`,
+    itemCount: response.totalDocs,
+    items: posts
+      .filter((post) => post.slug)
+      .map((post) => ({
+        url: `${getServerSideURL()}/posts/${post.slug}`,
+      })),
+  });
+
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: "Home", url: getServerSideURL() },
+    { name: topicName },
+  ]);
 
   return (
     <>
       <h1 className="sr-only">{topicName}</h1>
+      <JsonLd data={collectionPageSchema} />
+      <JsonLd data={breadcrumbSchema} />
 
       <Suspense fallback={<SkeletonGrid />}>
         <CollectionArchive posts={posts} />
@@ -99,6 +122,7 @@ export async function generateMetadata({
 
   if (!topic) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Topic Not Found | Lyóvson.com",
       description: "The requested topic could not be found",
     };

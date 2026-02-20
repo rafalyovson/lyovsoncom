@@ -7,10 +7,19 @@ import type { Post } from "@/payload-types";
 export async function getTopicPosts(
   slug: string
 ): Promise<PaginatedDocs<Post> | null> {
+  return getPaginatedTopicPosts(slug, 1, 25);
+}
+
+export async function getPaginatedTopicPosts(
+  slug: string,
+  pageNumber: number,
+  limit = 25
+): Promise<PaginatedDocs<Post> | null> {
   "use cache";
   cacheTag("posts");
   cacheTag("topics");
   cacheTag(`topic-${slug}`);
+  cacheTag(`topic-${slug}-page-${pageNumber}`);
   cacheLife("posts");
 
   const payload = await getPayload({ config: configPromise });
@@ -34,7 +43,8 @@ export async function getTopicPosts(
   const result = await payload.find({
     collection: "posts",
     depth: 2,
-    limit: 25,
+    limit,
+    page: pageNumber,
     where: {
       AND: [
         {

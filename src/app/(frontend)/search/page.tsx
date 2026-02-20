@@ -244,14 +244,14 @@ export async function generateMetadata({
     title,
     description,
     alternates: {
-      canonical: query ? `/search?q=${encodeURIComponent(query)}` : "/search",
+      canonical: "/search",
     },
     openGraph: {
       siteName: "Lyóvson.com",
       title,
       description,
       type: "website",
-      url: query ? `/search?q=${encodeURIComponent(query)}` : "/search",
+      url: "/search",
       images: [
         {
           url: "/og-image.png",

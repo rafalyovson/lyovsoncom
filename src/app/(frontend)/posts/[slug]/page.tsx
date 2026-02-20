@@ -17,7 +17,7 @@ import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import type { Lyovson, Media, Post } from "@/payload-types";
+import type { Media, Post } from "@/payload-types";
 import {
   generateArticleSchema,
   generateBreadcrumbSchema,
@@ -133,7 +133,6 @@ export default async function PostPage({ params: paramsPromise }: Args) {
     <>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
-      <SchemaArticle post={post} url={`${getServerSideURL()}/posts/${slug}`} />
 
       <GridCardHero className={""} post={post} />
       <GridCard
@@ -266,6 +265,7 @@ export async function generateMetadata({
   const post = await getPost(slug);
   if (!post) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested post could not be found",
     };
@@ -389,123 +389,4 @@ export async function generateMetadata({
         : {}),
     },
   };
-}
-
-function SchemaArticle({ post, url }: { post: Post; url: string }) {
-  // Use main fields with fallbacks to old meta fields during migration
-  type PostWithMeta = Post & {
-    meta?: { description?: string; image?: unknown };
-  };
-  const description =
-    post.description || (post as PostWithMeta).meta?.description || "";
-  const postImageRaw = post.featuredImage || (post as PostWithMeta).meta?.image;
-  const postImage: Media | null =
-    postImageRaw && typeof postImageRaw === "object"
-      ? (postImageRaw as Media)
-      : null;
-
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description,
-    datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
-    author:
-      post.populatedAuthors
-        ?.map((a) => {
-          if (typeof a === "object" && a !== null) {
-            const author = a as Partial<Lyovson> & {
-              socialLinks?: Record<string, string>;
-            };
-            return {
-              "@type": "Person" as const,
-              name: author.name,
-              url: `https://www.lyovson.com/${author.username}`,
-              sameAs: author.socialLinks
-                ? Object.values(author.socialLinks).filter(Boolean)
-                : undefined,
-            };
-          }
-          return null;
-        })
-        .filter(Boolean) || [],
-    publisher: {
-      "@type": "Organization",
-      name: "Lyovson.com",
-      url: "https://www.lyovson.com",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://www.lyovson.com/logo-black.webp",
-        width: 600,
-        height: 60,
-      },
-      sameAs: ["https://x.com/rafalyovson", "https://github.com/rafalyovson"],
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": url,
-    },
-    image: postImage?.url
-      ? {
-          "@type": "ImageObject",
-          url: postImage.url,
-          width: 1200,
-          height: 630,
-          alt: postImage.alt || post.title,
-        }
-      : undefined,
-    url,
-    inLanguage: "en-US",
-    isPartOf: {
-      "@type": "WebSite",
-      name: "Lyovson.com",
-      url: "https://www.lyovson.com",
-    },
-    about:
-      post.topics
-        ?.map((topic) => {
-          if (typeof topic === "object" && topic !== null) {
-            return topic.name || topic.slug;
-          }
-          return typeof topic === "string" ? topic : null;
-        })
-        .filter(Boolean)
-        .map((name) => ({
-          "@type": "Thing" as const,
-          name,
-        })) || undefined,
-    keywords:
-      post.topics
-        ?.map((topic) => {
-          if (typeof topic === "object" && topic !== null) {
-            return topic.name || topic.slug;
-          }
-          return typeof topic === "string" ? topic : null;
-        })
-        .filter(Boolean)
-        .join(", ") || undefined,
-    articleSection:
-      post.project && typeof post.project === "object"
-        ? post.project.slug
-        : undefined,
-    ...(post.content &&
-      typeof post.content === "object" &&
-      "root" in post.content && {
-        wordCount: undefined, // Lexical content doesn't have simple length
-      }),
-    ...(post.content &&
-      typeof post.content === "object" &&
-      "root" in post.content && {
-        timeRequired: undefined, // Would need to extract text first
-      }),
-  };
-
-  return (
-    <script
-      // biome-ignore lint/security/noDangerouslySetInnerHtml: Safe - JSON.stringify on controlled structured data for SEO
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      type="application/ld+json"
-    />
-  );
 }

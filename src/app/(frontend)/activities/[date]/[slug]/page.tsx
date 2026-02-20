@@ -322,6 +322,7 @@ export async function generateMetadata({
   const activity = await getActivityByDateAndSlug(date, slug);
   if (!activity) {
     return {
+      metadataBase: new URL(getServerSideURL()),
       title: "Not Found | Lyovson.com",
       description: "The requested activity could not be found",
     };

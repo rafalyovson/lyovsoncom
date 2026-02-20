@@ -1,7 +1,8 @@
 import { cacheLife, cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
+import { JsonLd } from "@/components/JsonLd";
 import {
   GridCardActivityFull,
   GridCardNoteFull,
@@ -10,6 +11,8 @@ import {
 } from "@/components/grid";
 import { Pagination } from "@/components/Pagination";
 import type { Activity, Note, Post } from "@/payload-types";
+import { getActivityPath } from "@/utilities/activity-path";
+import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLatestActivities } from "@/utilities/get-activity";
 import { getLatestNotes } from "@/utilities/get-note";
 import { getLatestPosts } from "@/utilities/get-post";
@@ -46,6 +49,9 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) {
     notFound();
+  }
+  if (sanitizedPageNumber === 1) {
+    redirect("/");
   }
 
   // Fetch enough items from each collection to build a sorted mixed feed
@@ -105,12 +111,36 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   // Get the items for this page
   const pageItems = mixedItems.slice(startIndex, endIndex);
+  const collectionPageSchema = generateCollectionPageSchema({
+    name: `Latest Posts, Notes, and Activities - Page ${sanitizedPageNumber}`,
+    description: `Chronological mixed-content archive page ${sanitizedPageNumber}.`,
+    url: `${getServerSideURL()}/page/${sanitizedPageNumber}`,
+    itemCount: totalItems,
+    items: pageItems
+      .map((item) => {
+        if (item.type === "post" && item.data.slug) {
+          return { url: `${getServerSideURL()}/posts/${item.data.slug}` };
+        }
+        if (item.type === "note" && item.data.slug) {
+          return { url: `${getServerSideURL()}/notes/${item.data.slug}` };
+        }
+        if (item.type === "activity") {
+          const path = getActivityPath(item.data);
+          if (path) {
+            return { url: `${getServerSideURL()}${path}` };
+          }
+        }
+        return null;
+      })
+      .filter((item): item is { url: string } => Boolean(item)),
+  });
 
   return (
     <>
       <h1 className="sr-only">
         Lyóvson.com - Latest Posts, Notes & Activities - Page {pageNumber}
       </h1>
+      <JsonLd data={collectionPageSchema} />
 
       <Suspense fallback={<SkeletonGrid />}>
         {pageItems.map((item, index) => {

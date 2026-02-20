@@ -65,11 +65,14 @@ export const metadata: Metadata = {
   title: "All Notes & Thoughts | Lyóvson.com",
   description:
     "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",
+  alternates: {
+    canonical: "/notes",
+  },
   openGraph: {
     title: "All Notes & Thoughts | Lyóvson.com",
     description:
       "Browse quotes, thoughts, and reflections on books, movies, ideas, and life.",
-    url: `${getServerSideURL()}/notes`,
+    url: "/notes",
     siteName: "Lyóvson.com",
     type: "website",
   },
