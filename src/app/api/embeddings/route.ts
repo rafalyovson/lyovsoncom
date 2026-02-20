@@ -3,7 +3,11 @@ import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
 import type { Activity, Note, Post, Project, Topic } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
-import { generateEmbedding } from "@/utilities/generate-embedding";
+import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
+import {
+  EMBEDDING_VECTOR_DIMENSIONS,
+  generateEmbedding,
+} from "@/utilities/generate-embedding";
 
 // Extended types with pgvector fields
 type ItemWithEmbedding = (Post | Note | Activity | Project) & {
@@ -13,6 +17,8 @@ type ItemWithEmbedding = (Post | Note | Activity | Project) & {
 };
 
 const MAX_EMBEDDINGS_LIMIT = 100;
+const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
+  process.env.ENABLE_PUBLIC_QUERY_EMBEDDINGS === "true";
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Legacy endpoint supports query, item, and bulk embedding modes */
 export async function GET(request: NextRequest) {
@@ -35,6 +41,22 @@ export async function GET(request: NextRequest) {
 
     // Handle text query embedding - generate on-demand
     if (query) {
+      if (!PUBLIC_QUERY_EMBEDDINGS_ENABLED) {
+        const authResult = await authorizeEmbeddingMutation(request, payload);
+        if (!authResult.authorized) {
+          return new Response(
+            JSON.stringify({
+              error:
+                "Query embedding is disabled for public access. Use admin auth or valid CRON_SECRET.",
+            }),
+            {
+              status: 403,
+              headers: { "Content-Type": "application/json; charset=utf-8" },
+            }
+          );
+        }
+      }
+
       const { vector, model, dimensions } = await generateEmbedding(query);
       return new Response(
         JSON.stringify({
@@ -48,7 +70,8 @@ export async function GET(request: NextRequest) {
           status: 200,
           headers: {
             "Content-Type": "application/json; charset=utf-8",
-            "Cache-Control": "public, max-age=3600, s-maxage=3600",
+            "Cache-Control":
+              "public, max-age=300, s-maxage=600, stale-while-revalidate=1800",
             "Access-Control-Allow-Origin": "*",
           },
         }
@@ -143,16 +166,29 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      // Use pre-computed embedding for posts/notes/activities, generate for projects
+      // Use pre-computed embedding for posts/notes/activities.
+      // Projects don't have pre-computed vectors, so keep on-demand generation there only.
       let embedding: number[] = [];
       let model = "unknown";
       let dimensions = 0;
+      const isPrecomputedType =
+        type === "posts" || type === "notes" || type === "activities";
 
-      if (
-        (type === "posts" || type === "notes" || type === "activities") &&
-        item.embedding_vector
-      ) {
-        // Use pre-computed embedding - parse pgvector format
+      if (isPrecomputedType) {
+        if (!item.embedding_vector) {
+          return new Response(
+            JSON.stringify({
+              error: "Embedding not available yet. Run /api/embeddings/sync.",
+              type,
+              id: item.id,
+            }),
+            {
+              status: 409,
+              headers: { "Content-Type": "application/json; charset=utf-8" },
+            }
+          );
+        }
+
         const vectorString = item.embedding_vector;
         embedding =
           typeof vectorString === "string"
@@ -160,49 +196,28 @@ export async function GET(request: NextRequest) {
             : vectorString;
         model = item.embedding_model || "pre-computed";
         dimensions = item.embedding_dimensions || embedding.length;
-      } else {
-        // Extract text content for embedding
-        let textToEmbed = "";
-        if (type === "notes" && "content" in item && item.content) {
-          const { extractTextFromContent } = await import(
-            "@/utilities/generate-embedding"
-          );
-          textToEmbed = extractTextFromContent(item.content);
-        } else if (type === "activities") {
-          const { extractLexicalText } = await import(
-            "@/utilities/extract-lexical-text"
-          );
-          const activity = item as Activity;
-          const referenceObj =
-            typeof activity.reference === "object" &&
-            activity.reference !== null
-              ? activity.reference
-              : null;
-          const activityTypeLabels: Record<string, string> = {
-            read: "Read",
-            watch: "Watched",
-            listen: "Listened",
-            play: "Played",
-          };
-          const title = referenceObj?.title
-            ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
-            : "Activity";
-          const notesText = activity.notes
-            ? extractLexicalText(activity.notes)
-            : "";
-          textToEmbed = [title, notesText].filter(Boolean).join(" ");
-        } else {
-          let title = "";
-          if ("title" in item) {
-            title = item.title || "";
-          } else if ("name" in item) {
-            title = item.name || "";
-          }
 
-          const description =
-            "description" in item ? item.description || "" : "";
-          textToEmbed = [title, description].filter(Boolean).join(" ");
+        if (dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+          return new Response(
+            JSON.stringify({
+              error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+              type,
+              id: item.id,
+              currentDimensions: dimensions,
+            }),
+            {
+              status: 409,
+              headers: { "Content-Type": "application/json; charset=utf-8" },
+            }
+          );
         }
+      } else {
+        const projectTitle = "name" in item ? item.name || "" : "";
+        const projectDescription =
+          "description" in item ? item.description || "" : "";
+        const textToEmbed = [projectTitle, projectDescription]
+          .filter(Boolean)
+          .join(" ");
 
         const result = await generateEmbedding(textToEmbed);
         embedding = result.vector;
@@ -513,6 +528,7 @@ export async function GET(request: NextRequest) {
       endpoints: {
         specificItem: `${SITE_URL}/api/embeddings?type={type}&id={id}`,
         queryEmbedding: `${SITE_URL}/api/embeddings?q={query}`,
+        sync: `${SITE_URL}/api/embeddings/sync`,
         bulk: `${SITE_URL}/api/embeddings?type={type}&limit={limit}`,
         collections: {
           posts: `${SITE_URL}/api/embeddings/posts/{id}`,
@@ -524,7 +540,8 @@ export async function GET(request: NextRequest) {
         performance: "Using pre-computed embeddings for fast response times",
         coverage:
           "Only items with pre-computed embeddings are included in bulk requests",
-        onDemand: "Use individual endpoints for on-demand embedding generation",
+        onDemand:
+          "Use POST /api/embeddings/sync for batch generation; query mode is auth-gated unless explicitly enabled",
       },
     };
 

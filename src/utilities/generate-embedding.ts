@@ -7,11 +7,10 @@ import type { CollectionAfterOperationHook, PayloadRequest } from "payload";
 export { extractLexicalText as extractTextFromContent } from "./extract-lexical-text";
 
 const EMBEDDING_TEXT_LIMIT = 8000;
+export const EMBEDDING_MODEL = "text-embedding-3-small";
+export const EMBEDDING_VECTOR_DIMENSIONS = 1536;
 const DAYS_PER_WEEK = 7;
-const FALLBACK_VECTOR_DIMENSIONS = 384;
 const HASH_PREFIX_LENGTH = 16;
-const HASH_SLICE_LENGTH = 8;
-const HASH_WINDOW_MODULO = 32;
 const HOURS_PER_DAY = 24;
 const MILLISECONDS_PER_SECOND = 1000;
 const MINUTES_PER_HOUR = 60;
@@ -22,9 +21,6 @@ const MILLISECONDS_IN_WEEK =
   MINUTES_PER_HOUR *
   SECONDS_PER_MINUTE *
   MILLISECONDS_PER_SECOND;
-const NORMALIZATION_OFFSET = 0.5;
-const NORMALIZATION_SCALE = 2;
-const UINT32_MAX = 0xff_ff_ff_ff;
 const UNTITLED_LABEL = "untitled";
 
 type EmbeddableCollection = "activities" | "notes" | "posts";
@@ -42,20 +38,6 @@ type CurrentEmbedding = {
   textHash?: string | null;
   vector?: number[] | null;
 };
-
-function generateFallbackEmbedding(text: string): number[] {
-  const hash = crypto.createHash("sha256").update(text).digest("hex");
-
-  return new Array(FALLBACK_VECTOR_DIMENSIONS).fill(0).map((_, index) => {
-    const hashWindowStart = index % HASH_WINDOW_MODULO;
-    const slice = hash.slice(
-      hashWindowStart,
-      hashWindowStart + HASH_SLICE_LENGTH
-    );
-    const num = Number.parseInt(slice, 16);
-    return (num / UINT32_MAX - NORMALIZATION_OFFSET) * NORMALIZATION_SCALE;
-  });
-}
 
 function getDocFromResult(result: unknown): EmbeddingDoc | null {
   if (!result || typeof result !== "object") {
@@ -162,35 +144,31 @@ export async function generateEmbedding(text: string): Promise<{
   model: string;
   dimensions: number;
 }> {
-  const apiKey = process.env.OPENAI_API_KEY;
-
-  if (!apiKey) {
-    const vector = generateFallbackEmbedding(text);
-    return {
-      vector,
-      model: "fallback-hash",
-      dimensions: vector.length,
-    };
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("OPENAI_API_KEY is not configured");
   }
 
   try {
     const { embedding } = await embed({
-      model: openai.embedding("text-embedding-3-small"),
+      model: openai.embedding(EMBEDDING_MODEL),
       value: text.substring(0, EMBEDDING_TEXT_LIMIT),
     });
 
+    if (embedding.length !== EMBEDDING_VECTOR_DIMENSIONS) {
+      throw new Error(
+        `Unexpected embedding length: expected ${EMBEDDING_VECTOR_DIMENSIONS}, got ${embedding.length}`
+      );
+    }
+
     return {
       vector: embedding,
-      model: "text-embedding-3-small",
+      model: EMBEDDING_MODEL,
       dimensions: embedding.length,
     };
-  } catch {
-    const vector = generateFallbackEmbedding(text);
-    return {
-      vector,
-      model: "fallback-hash-error",
-      dimensions: vector.length,
-    };
+  } catch (error) {
+    throw new Error(
+      `Failed to generate embedding: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 

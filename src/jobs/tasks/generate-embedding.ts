@@ -1,9 +1,16 @@
 import type { TaskConfig } from "payload";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
+import type { Activity, Note, Post } from "@/payload-types";
 import {
   createTextHash,
+  EMBEDDING_MODEL,
+  EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
+import {
+  buildActivityEmbeddingText,
+  buildNoteEmbeddingText,
+  buildPostEmbeddingText,
+} from "@/utilities/generate-embedding-helpers";
 
 const EMBEDDABLE_COLLECTIONS = ["activities", "notes", "posts"] as const;
 
@@ -11,7 +18,7 @@ type EmbeddableCollection = (typeof EMBEDDABLE_COLLECTIONS)[number];
 
 type EmbeddableDoc = {
   _status?: "draft" | "published" | null;
-  content?: unknown;
+  visibility?: "public" | "private" | null;
   embedding_text_hash?: string | null;
 };
 
@@ -49,11 +56,14 @@ export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
 
     const collection = collectionInput;
 
+    const depth = collection === "posts" ? 2 : 1;
+
     // Fetch the document
     const doc = (await req.payload.findByID({
       collection,
       id: docId,
-    })) as EmbeddableDoc | null;
+      depth,
+    })) as ((Post | Note | Activity) & EmbeddableDoc) | null;
 
     // Validation checks
     if (!doc) {
@@ -64,12 +74,22 @@ export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
       return { output: { success: false, reason: "not_published" } };
     }
 
-    if (!doc.content) {
-      return { output: { success: false, reason: "no_content" } };
+    if (
+      (collection === "notes" || collection === "activities") &&
+      doc.visibility !== "public"
+    ) {
+      return { output: { success: false, reason: "not_public" } };
     }
 
-    // Extract text from Lexical content
-    const textContent = extractLexicalText(doc.content);
+    let textContent = "";
+    if (collection === "posts") {
+      textContent = buildPostEmbeddingText(doc as Post);
+    } else if (collection === "notes") {
+      textContent = buildNoteEmbeddingText(doc as Note);
+    } else {
+      textContent = buildActivityEmbeddingText(doc as Activity);
+    }
+
     if (!textContent.trim()) {
       return { output: { success: false, reason: "no_text_content" } };
     }
@@ -89,6 +109,12 @@ export const GenerateEmbedding: TaskConfig<"generateEmbedding"> = {
     );
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
+    if (
+      model !== EMBEDDING_MODEL ||
+      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
+    ) {
+      return { output: { success: false, reason: "invalid_embedding_output" } };
+    }
 
     // Update document with embedding
     await req.payload.update({

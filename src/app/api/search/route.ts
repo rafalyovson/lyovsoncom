@@ -12,11 +12,13 @@ import { sql } from "@payloadcms/db-vercel-postgres/drizzle";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getPayload } from "payload";
-import { generateEmbedding } from "@/utilities/generate-embedding";
+import {
+  EMBEDDING_VECTOR_DIMENSIONS,
+  generateEmbedding,
+} from "@/utilities/generate-embedding";
 
 const MIN_SEARCH_LIMIT = 1;
 const MAX_SEARCH_LIMIT = 50;
-const EMBEDDING_DIMENSIONS = 1536;
 
 type SearchResult = {
   collection: string;
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     if (
       !embeddingResult?.vector ||
-      embeddingResult.vector.length !== EMBEDDING_DIMENSIONS
+      embeddingResult.vector.length !== EMBEDDING_VECTOR_DIMENSIONS
     ) {
       return NextResponse.json(
         {

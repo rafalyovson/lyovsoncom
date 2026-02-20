@@ -4,10 +4,7 @@ export type EmbeddingVector = number[];
 
 export type EmbeddingModel =
   | "text-embedding-3-small"
-  | "text-embedding-3-large"
-  | "text-embedding-ada-002"
-  | "fallback-hash"
-  | "fallback-hash-error";
+  | "text-embedding-3-large";
 
 export type EmbeddingData = {
   vector: EmbeddingVector;

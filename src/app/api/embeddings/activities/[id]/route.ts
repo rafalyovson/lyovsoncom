@@ -4,8 +4,12 @@ import { getPayload } from "payload";
 import type { Activity } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
-import { extractLexicalText } from "@/utilities/extract-lexical-text";
-import { generateEmbedding } from "@/utilities/generate-embedding";
+import {
+  createTextHash,
+  EMBEDDING_VECTOR_DIMENSIONS,
+  generateEmbedding,
+} from "@/utilities/generate-embedding";
+import { buildActivityEmbeddingText } from "@/utilities/generate-embedding-helpers";
 
 // Extended Activity type with pgvector fields
 type ActivityWithEmbedding = Activity & {
@@ -15,39 +19,6 @@ type ActivityWithEmbedding = Activity & {
   embedding_generated_at?: string;
   embedding_text_hash?: string;
 };
-
-// Activities-specific text extraction for API
-function extractActivitiesText(activity: Activity): string {
-  const parts: string[] = [];
-
-  const referenceObj =
-    typeof activity.reference === "object" && activity.reference !== null
-      ? activity.reference
-      : null;
-
-  const activityTypeLabels: Record<string, string> = {
-    read: "Read",
-    watch: "Watched",
-    listen: "Listened",
-    play: "Played",
-  };
-
-  const title = referenceObj?.title
-    ? `${activityTypeLabels[activity.activityType] || activity.activityType} ${referenceObj.title}`
-    : "Activity";
-
-  parts.push(title);
-
-  // Extract content from Lexical JSONB format
-  if (activity.notes) {
-    const notesText = extractLexicalText(activity.notes);
-    if (notesText) {
-      parts.push(notesText);
-    }
-  }
-
-  return parts.filter(Boolean).join(" ");
-}
 
 type Args = {
   params: Promise<{
@@ -152,10 +123,23 @@ export async function GET(
       }
     }
 
-    // Handle regeneration or missing embedding
+    // Handle regeneration only; missing embeddings are synced in batch.
     let embedding = existingEmbedding;
-    if (regenerate || !existingEmbedding) {
-      const textContent = extractActivitiesText(activity);
+    if (!(regenerate || existingEmbedding)) {
+      return new Response(
+        JSON.stringify({
+          error: "Embedding not available yet. Run /api/embeddings/sync.",
+          id: Number.parseInt(id, 10),
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (regenerate) {
+      const textContent = buildActivityEmbeddingText(activity);
 
       if (!textContent.trim()) {
         return new Response(
@@ -178,26 +162,42 @@ export async function GET(
         model,
         dimensions,
         generatedAt: new Date().toISOString(),
-        textHash: activityWithEmbedding.embedding_text_hash,
+        textHash: createTextHash(textContent),
       };
 
-      // Only update the database if regenerating
-      if (regenerate) {
-        try {
-          await payload.update({
-            collection: "activities",
-            id: Number.parseInt(id, 10),
-            data: {
-              embedding_vector: `[${vector.join(",")}]`,
-              embedding_model: model,
-              embedding_dimensions: dimensions,
-              embedding_generated_at: embedding.generatedAt,
-            } as Partial<ActivityWithEmbedding>,
-          });
-        } catch (_updateError) {
-          // Database update failed - embedding is still returned in response
-        }
+      try {
+        await payload.update({
+          collection: "activities",
+          id: Number.parseInt(id, 10),
+          data: {
+            embedding_vector: `[${vector.join(",")}]`,
+            embedding_model: model,
+            embedding_dimensions: dimensions,
+            embedding_generated_at: embedding.generatedAt,
+            embedding_text_hash: embedding.textHash,
+          } as Partial<ActivityWithEmbedding>,
+          context: {
+            skipEmbeddingGeneration: true,
+            skipRecommendationCompute: true,
+            skipRevalidation: true,
+          },
+        });
+      } catch (_updateError) {
+        // Database update failed - embedding is still returned in response
       }
+    }
+
+    if (embedding?.dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+      return new Response(
+        JSON.stringify({
+          error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+          id: Number.parseInt(id, 10),
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Format response based on requested format

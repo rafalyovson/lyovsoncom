@@ -3,9 +3,9 @@ import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublished } from "@/access/authenticatedOrPublished";
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
-import { generateEmbeddingForPost } from "@/utilities/generate-embedding-helpers";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
+import { markPostEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateAuthors } from "./hooks/populateAuthors";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateDelete, revalidatePost } from "./hooks/revalidatePost";
@@ -332,25 +332,8 @@ export const Posts: CollectionConfig<"posts"> = {
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [populateContentTextHook], // Keep this - it's fast
-    afterChange: [
-      revalidatePost, // Keep this - cache needs immediate update
-      // Generate embeddings inline (fire-and-forget)
-      ({ doc, req, operation }) => {
-        // Only for create/update of published posts
-        if (
-          (operation === "create" || operation === "update") &&
-          doc._status === "published"
-        ) {
-          // Fire and forget - doesn't block publish response
-          generateEmbeddingForPost(doc.id, req).catch((err) => {
-            req.payload.logger.error(
-              `[Embedding] Failed for post ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
-            );
-          });
-        }
-      },
-    ],
+    beforeChange: [populateContentTextHook, markPostEmbeddingStaleHook],
+    afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],
   },

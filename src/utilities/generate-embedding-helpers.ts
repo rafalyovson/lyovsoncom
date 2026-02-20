@@ -4,6 +4,8 @@ import type { Activity, Note, Post } from "@/payload-types";
 import { extractLexicalText } from "@/utilities/extract-lexical-text";
 import {
   createTextHash,
+  EMBEDDING_MODEL,
+  EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
 import { getSimilarNotes } from "@/utilities/get-similar-notes";
@@ -11,18 +13,67 @@ import { getSimilarPosts } from "@/utilities/get-similar-posts";
 
 const RECOMMENDATION_LIMIT = 3;
 
+export function buildPostEmbeddingText(post: Post): string {
+  const contentText = post.content ? extractLexicalText(post.content) : "";
+  const topicNames = post.topics
+    ?.filter(
+      (t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null
+    )
+    .map((t) => t.name)
+    .filter(Boolean)
+    .join(", ");
+  const projectName =
+    typeof post.project === "object" && post.project !== null
+      ? post.project.name
+      : null;
+
+  return [
+    post.title,
+    post.description,
+    projectName ? `Project: ${projectName}` : null,
+    topicNames ? `Topics: ${topicNames}` : null,
+    contentText,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+export function buildNoteEmbeddingText(note: Note): string {
+  const contentText = note.content ? extractLexicalText(note.content) : "";
+  const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
+  const topicNames = note.topics
+    ?.filter(
+      (t): t is Exclude<typeof t, number> => typeof t === "object" && t !== null
+    )
+    .map((t) => t.name)
+    .filter(Boolean)
+    .join(", ");
+
+  return [
+    note.title,
+    `Type: ${noteTypeLabel}`,
+    note.author ? `Author: ${note.author}` : null,
+    note.quotedPerson ? `Quoted: ${note.quotedPerson}` : null,
+    topicNames ? `Topics: ${topicNames}` : null,
+    contentText,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 /**
  * Generate embedding for a post and optionally compute recommendations
  */
 export async function generateEmbeddingForPost(
   postId: number,
   req: PayloadRequest
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
   try {
     // Fetch the post (cast needed: Payload's defaultPopulate narrows return types)
     const post = (await req.payload.findByID({
       collection: "posts",
       id: postId,
+      depth: 2,
     })) as unknown as Post | null;
 
     // Validation checks
@@ -45,30 +96,7 @@ export async function generateEmbeddingForPost(
       return { success: false, error: "Post has no content" };
     }
 
-    // Build rich embedding text from all relevant fields
-    const contentText = extractLexicalText(post.content);
-    const topicNames = post.topics
-      ?.filter(
-        (t): t is Exclude<typeof t, number> =>
-          typeof t === "object" && t !== null
-      )
-      .map((t) => t.name)
-      .filter(Boolean)
-      .join(", ");
-    const projectName =
-      typeof post.project === "object" && post.project !== null
-        ? post.project.name
-        : null;
-
-    const textParts = [
-      post.title,
-      post.description,
-      projectName ? `Project: ${projectName}` : null,
-      topicNames ? `Topics: ${topicNames}` : null,
-      contentText,
-    ].filter(Boolean);
-
-    const textContent = textParts.join("\n\n");
+    const textContent = buildPostEmbeddingText(post);
 
     if (!textContent.trim()) {
       req.payload.logger.info(
@@ -83,9 +111,7 @@ export async function generateEmbeddingForPost(
       req.payload.logger.info(
         `[Embedding] Post ${postId} embedding already up to date, skipping generation`
       );
-      // Still compute recommendations in case other posts changed
-      await computeRecommendationsForPost(postId, req);
-      return { success: true };
+      return { success: true, skipped: true };
     }
 
     // Generate embedding
@@ -94,6 +120,15 @@ export async function generateEmbeddingForPost(
     );
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
+    if (
+      model !== EMBEDDING_MODEL ||
+      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
+    ) {
+      return {
+        success: false,
+        error: `Unexpected embedding output: ${model} (${dimensions}D)`,
+      };
+    }
 
     // Direct DB update — bypasses version system, no extra version row created
     const postsTable = req.payload.db.tables.posts;
@@ -115,7 +150,7 @@ export async function generateEmbeddingForPost(
     // Compute recommendations after embedding is saved
     await computeRecommendationsForPost(postId, req);
 
-    return { success: true };
+    return { success: true, skipped: false };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     req.payload.logger.error(
@@ -131,12 +166,13 @@ export async function generateEmbeddingForPost(
 export async function generateEmbeddingForNote(
   noteId: number,
   req: PayloadRequest
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
   try {
     // Fetch the note (cast needed: Payload's defaultPopulate narrows return types)
     const note = (await req.payload.findByID({
       collection: "notes",
       id: noteId,
+      depth: 1,
     })) as unknown as Note | null;
 
     // Validation checks
@@ -159,28 +195,7 @@ export async function generateEmbeddingForNote(
       return { success: false, error: "Note has no content" };
     }
 
-    // Build rich embedding text from all relevant fields
-    const contentText = extractLexicalText(note.content);
-    const noteTypeLabel = note.type === "quote" ? "Quote" : "Thought";
-    const topicNames = note.topics
-      ?.filter(
-        (t): t is Exclude<typeof t, number> =>
-          typeof t === "object" && t !== null
-      )
-      .map((t) => t.name)
-      .filter(Boolean)
-      .join(", ");
-
-    const textParts = [
-      note.title,
-      `Type: ${noteTypeLabel}`,
-      note.author ? `Author: ${note.author}` : null,
-      note.quotedPerson ? `Quoted: ${note.quotedPerson}` : null,
-      topicNames ? `Topics: ${topicNames}` : null,
-      contentText,
-    ].filter(Boolean);
-
-    const textContent = textParts.join("\n\n");
+    const textContent = buildNoteEmbeddingText(note);
 
     if (!textContent.trim()) {
       req.payload.logger.info(
@@ -195,9 +210,7 @@ export async function generateEmbeddingForNote(
       req.payload.logger.info(
         `[Embedding] Note ${noteId} embedding already up to date, skipping generation`
       );
-      // Still compute recommendations in case other notes changed
-      await computeRecommendationsForNote(noteId, req);
-      return { success: true };
+      return { success: true, skipped: true };
     }
 
     // Generate embedding
@@ -206,6 +219,15 @@ export async function generateEmbeddingForNote(
     );
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
+    if (
+      model !== EMBEDDING_MODEL ||
+      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
+    ) {
+      return {
+        success: false,
+        error: `Unexpected embedding output: ${model} (${dimensions}D)`,
+      };
+    }
 
     // Direct DB update — bypasses version system, no extra version row created
     const notesTable = req.payload.db.tables.notes;
@@ -227,7 +249,7 @@ export async function generateEmbeddingForNote(
     // Compute recommendations after embedding is saved
     await computeRecommendationsForNote(noteId, req);
 
-    return { success: true };
+    return { success: true, skipped: false };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     req.payload.logger.error(
@@ -259,7 +281,7 @@ const REFERENCE_TYPE_LABELS: Record<string, string> = {
   match: "Match",
 };
 
-function buildActivityEmbeddingText(activity: Activity): string {
+export function buildActivityEmbeddingText(activity: Activity): string {
   const referenceObj =
     typeof activity.reference === "object" && activity.reference !== null
       ? activity.reference
@@ -301,7 +323,7 @@ function buildActivityEmbeddingText(activity: Activity): string {
 export async function generateEmbeddingForActivity(
   activityId: number,
   req: PayloadRequest
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; skipped?: boolean; error?: string }> {
   try {
     // Fetch the activity (cast needed: Payload's defaultPopulate narrows return types)
     const activity = (await req.payload.findByID({
@@ -341,7 +363,7 @@ export async function generateEmbeddingForActivity(
       req.payload.logger.info(
         `[Embedding] Activity ${activityId} embedding already up to date, skipping generation`
       );
-      return { success: true };
+      return { success: true, skipped: true };
     }
 
     // Generate embedding
@@ -350,6 +372,15 @@ export async function generateEmbeddingForActivity(
     );
 
     const { vector, model, dimensions } = await generateEmbedding(textContent);
+    if (
+      model !== EMBEDDING_MODEL ||
+      dimensions !== EMBEDDING_VECTOR_DIMENSIONS
+    ) {
+      return {
+        success: false,
+        error: `Unexpected embedding output: ${model} (${dimensions}D)`,
+      };
+    }
 
     // Direct DB update — bypasses version system, no extra version row created
     const activitiesTable = req.payload.db.tables.activities;
@@ -368,7 +399,7 @@ export async function generateEmbeddingForActivity(
       `[Embedding] ✅ Generated ${dimensions}D embedding for activity ${activityId}`
     );
 
-    return { success: true };
+    return { success: true, skipped: false };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     req.payload.logger.error(

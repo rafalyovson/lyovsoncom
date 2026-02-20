@@ -4,9 +4,9 @@ import { authenticated } from "@/access/authenticated";
 import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishedPublic";
 import { noteEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
-import { generateEmbeddingForNote } from "@/utilities/generate-embedding-helpers";
 import { generatePreviewPath } from "@/utilities/generatePreviewPath";
 import { getServerSideURL } from "@/utilities/getURL";
+import { markNoteEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import { revalidateNote, revalidateNoteDelete } from "./hooks/revalidateNote";
 
@@ -280,25 +280,8 @@ export const Notes: CollectionConfig = {
     ...slugField(),
   ],
   hooks: {
-    beforeChange: [populateContentTextHook],
-    afterChange: [
-      revalidateNote, // Cache revalidation for notes
-      // Generate embeddings inline (fire-and-forget)
-      ({ doc, req, operation }) => {
-        // Only for create/update of published notes
-        if (
-          (operation === "create" || operation === "update") &&
-          doc._status === "published"
-        ) {
-          // Fire and forget - doesn't block publish response
-          generateEmbeddingForNote(doc.id, req).catch((err) => {
-            req.payload.logger.error(
-              `[Embedding] Failed for note ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
-            );
-          });
-        }
-      },
-    ],
+    beforeChange: [populateContentTextHook, markNoteEmbeddingStaleHook],
+    afterChange: [revalidateNote],
     afterDelete: [revalidateNoteDelete],
   },
   versions: {

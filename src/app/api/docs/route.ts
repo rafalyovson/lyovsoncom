@@ -166,15 +166,23 @@ export async function GET(_request: NextRequest) {
                 },
                 query: {
                   description:
-                    "Generate embedding for a text query (on-demand)",
+                    "Generate embedding for a text query (on-demand, disabled for public by default)",
                   parameters: {
                     q: "text query (required)",
                   },
                   example: `${SITE_URL}/api/embeddings?q=programming+philosophy`,
                   caching: "3600s",
-                  notes: "Generates embedding on-the-fly using OpenAI API",
+                  notes:
+                    "Requires admin auth/CRON_SECRET unless ENABLE_PUBLIC_QUERY_EMBEDDINGS=true",
                 },
               },
+            },
+            sync: {
+              path: "/api/embeddings/sync",
+              description:
+                "Batch-generate stale/missing embeddings (designed for daily cron)",
+              method: "POST",
+              auth: "admin session or Bearer CRON_SECRET",
             },
             status: {
               path: "/api/embeddings/status",
@@ -204,14 +212,14 @@ export async function GET(_request: NextRequest) {
           },
           features: [
             "Pre-computed embeddings for fast bulk access",
-            "On-demand embedding generation for queries",
-            "Automatic embedding updates on content changes",
-            "HNSW indexing for sub-100ms vector search",
+            "Batched embedding sync for stale/missing content",
+            "Optional on-demand query embeddings (auth-gated by default)",
+            "HNSW expression indexes for casted vector search",
             "Cosine similarity ranking",
             "Collection-specific coverage tracking",
           ],
           storage: "PostgreSQL with pgvector extension",
-          indexing: "HNSW (Hierarchical Navigable Small World)",
+          indexing: "HNSW on embedding_vector::vector(1536)",
         },
       },
       dataFormat: {

@@ -9,6 +9,7 @@ import {
 } from "@payloadcms/db-vercel-postgres/drizzle";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
+import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";
 
 /**
  * Find the most similar posts using pgvector cosine similarity.
@@ -48,7 +49,16 @@ export async function getSimilarPosts(
   }
 
   // Parse pgvector string format "[1.0,2.0,...]" to array
-  const embedding = JSON.parse(currentPost.embedding_vector);
+  let embedding: number[];
+  try {
+    embedding = JSON.parse(currentPost.embedding_vector);
+  } catch {
+    return [];
+  }
+
+  if (embedding.length !== EMBEDDING_VECTOR_DIMENSIONS) {
+    return [];
+  }
 
   // Access posts table from generated schema
   const postsTable = payload.db.tables.posts;

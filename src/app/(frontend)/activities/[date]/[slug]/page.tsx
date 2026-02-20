@@ -185,7 +185,7 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
               {/* Info icon indicator */}
               <Info
                 aria-hidden="true"
-                className="glass-text-secondary -top-1 absolute left-0 h-4 w-4 opacity-50"
+                className="glass-text-secondary absolute -top-1 left-0 h-4 w-4 opacity-50"
               />
               <RichText
                 className="glass-stagger-1 h-full pt-4 pl-2 text-sm"

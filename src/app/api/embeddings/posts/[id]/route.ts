@@ -4,43 +4,19 @@ import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
-  extractTextFromContent,
+  createTextHash,
+  EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
+import { buildPostEmbeddingText } from "@/utilities/generate-embedding-helpers";
 
-// Extended Post type with pgvector fields
 type PostWithEmbedding = Post & {
-  embedding_vector?: string;
-  embedding_model?: string;
   embedding_dimensions?: number;
   embedding_generated_at?: string;
+  embedding_model?: string;
   embedding_text_hash?: string;
+  embedding_vector?: string;
 };
-
-// Posts-specific text extraction for API
-function extractPostsText(
-  post: Pick<Post, "title" | "description" | "content">
-): string {
-  const parts: string[] = [];
-
-  if (post.title) {
-    parts.push(post.title);
-  }
-
-  if (post.description) {
-    parts.push(post.description);
-  }
-
-  // Extract content from Lexical JSONB format
-  if (post.content) {
-    const contentText = extractTextFromContent(post.content);
-    if (contentText) {
-      parts.push(contentText);
-    }
-  }
-
-  return parts.filter(Boolean).join(" ");
-}
 
 type Args = {
   params: Promise<{
@@ -146,10 +122,24 @@ export async function GET(
       }
     }
 
-    // Handle regeneration or missing embedding
+    // Handle regeneration only; missing embeddings are synced in batch.
     let embedding = existingEmbedding;
-    if (regenerate || !existingEmbedding) {
-      const textContent = extractPostsText(post);
+    if (!(regenerate || existingEmbedding)) {
+      return new Response(
+        JSON.stringify({
+          error: "Embedding not available yet. Run /api/embeddings/sync.",
+          id: Number.parseInt(id, 10),
+          title: post.title,
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (regenerate) {
+      const textContent = buildPostEmbeddingText(post);
 
       if (!textContent.trim()) {
         return new Response(
@@ -173,26 +163,42 @@ export async function GET(
         model,
         dimensions,
         generatedAt: new Date().toISOString(),
-        textHash: postWithEmbedding.embedding_text_hash, // Use existing hash if available
+        textHash: createTextHash(textContent),
       };
 
-      // Only update the database if regenerating
-      if (regenerate) {
-        try {
-          await payload.update({
-            collection: "posts",
-            id: Number.parseInt(id, 10),
-            data: {
-              embedding_vector: `[${vector.join(",")}]`,
-              embedding_model: model,
-              embedding_dimensions: dimensions,
-              embedding_generated_at: embedding.generatedAt,
-            } as Partial<PostWithEmbedding>,
-          });
-        } catch (_updateError) {
-          // Database update failed - embedding is still returned in response
-        }
+      try {
+        await payload.update({
+          collection: "posts",
+          id: Number.parseInt(id, 10),
+          data: {
+            embedding_vector: `[${vector.join(",")}]`,
+            embedding_model: model,
+            embedding_dimensions: dimensions,
+            embedding_generated_at: embedding.generatedAt,
+            embedding_text_hash: embedding.textHash,
+          } as Partial<PostWithEmbedding>,
+          context: {
+            skipEmbeddingGeneration: true,
+            skipRecommendationCompute: true,
+            skipRevalidation: true,
+          },
+        });
+      } catch (_updateError) {
+        // Database update failed - embedding is still returned in response
       }
+    }
+
+    if (embedding?.dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+      return new Response(
+        JSON.stringify({
+          error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+          id: Number.parseInt(id, 10),
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
     // Format response based on requested format

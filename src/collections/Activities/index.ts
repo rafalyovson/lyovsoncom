@@ -5,7 +5,7 @@ import { authenticatedOrPublishedPublic } from "@/access/authenticatedOrPublishe
 import { richEditorConfig } from "@/fields/lexical-configs";
 import { slugField } from "@/fields/slug";
 import { formatSlug } from "@/fields/slug/formatSlug";
-import { generateEmbeddingForActivity } from "@/utilities/generate-embedding-helpers";
+import { markActivityEmbeddingStaleHook } from "@/utilities/mark-embedding-stale";
 import { populateContentTextHook } from "./hooks/populateContentText";
 import {
   revalidateActivity,
@@ -339,25 +339,8 @@ export const Activities: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [populateContentTextHook],
-    afterChange: [
-      revalidateActivity, // Cache revalidation for activities
-      // Generate embeddings inline (fire-and-forget)
-      ({ doc, req, operation }) => {
-        // Only for create/update of published activities
-        if (
-          (operation === "create" || operation === "update") &&
-          doc._status === "published"
-        ) {
-          // Fire and forget - doesn't block publish response
-          generateEmbeddingForActivity(doc.id, req).catch((err) => {
-            req.payload.logger.error(
-              `[Embedding] Failed for activity ${doc.id}: ${err instanceof Error ? err.message : String(err)}`
-            );
-          });
-        }
-      },
-    ],
+    beforeChange: [populateContentTextHook, markActivityEmbeddingStaleHook],
+    afterChange: [revalidateActivity],
     afterDelete: [revalidateActivityDelete],
   },
   versions: {

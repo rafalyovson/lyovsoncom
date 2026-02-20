@@ -1,19 +1,16 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite"],
+  "extends": ["ultracite/biome/core", "ultracite/biome/next"],
   "files": {
     "includes": [
-      "**",
       "!src/components/ui",
       "!src/app/(payload)",
       "!src/payload-types.ts",
-      "!src/app/(payload)/admin/importMap.js"
-    ],
-    "experimentalScannerIgnores": [
-      "src/utilities/test-*.ts",
-      "src/utilities/check-*.ts",
-      "src/utilities/migrations/run-*.ts",
-      "src/utilities/migrate-*.ts"
+      "!src/app/(payload)/admin/importMap.js",
+      "!!**/src/utilities/test-*.ts",
+      "!!**/src/utilities/check-*.ts",
+      "!!**/src/utilities/migrations/run-*.ts",
+      "!!**/src/utilities/migrate-*.ts"
     ]
   },
   "linter": {
@@ -23,7 +20,8 @@
         "useFilenamingConvention": "off",
         "noNonNullAssertion": "warn",
         "noNestedTernary": "warn",
-        "noNamespace": "warn"
+        "noNamespace": "warn",
+        "useConsistentTypeDefinitions": "warn"
       },
       "suspicious": {
         "noExplicitAny": "warn",
@@ -38,9 +36,7 @@
       },
       "nursery": {
         "noShadow": "warn",
-        "noUnnecessaryConditions": "warn",
-        "useAnchorHref": "warn",
-        "useConsistentTypeDefinitions": "warn"
+        "noUnnecessaryConditions": "warn"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "warn",

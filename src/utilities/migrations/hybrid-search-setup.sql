@@ -29,6 +29,12 @@ ON posts USING GIST (title gist_trgm_ops);
 CREATE INDEX IF NOT EXISTS posts_description_trgm_idx
 ON posts USING GIST (description gist_trgm_ops);
 
+-- Create HNSW expression index for TEXT-backed pgvector embeddings.
+-- Uses cosine distance operator class and a partial predicate for published rows.
+CREATE INDEX IF NOT EXISTS posts_embedding_vector_hnsw_idx
+ON posts USING hnsw ((embedding_vector::vector(1536)) vector_cosine_ops)
+WHERE _status = 'published' AND embedding_vector IS NOT NULL;
+
 -- =====================================================
 -- Hybrid Search Function with RRF
 -- =====================================================

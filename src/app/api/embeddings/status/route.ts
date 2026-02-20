@@ -1,6 +1,10 @@
 import configPromise from "@payload-config";
 import type { NextRequest } from "next/server";
 import { getPayload } from "payload";
+import {
+  EMBEDDING_MODEL,
+  EMBEDDING_VECTOR_DIMENSIONS,
+} from "@/utilities/generate-embedding";
 
 type EmbeddingDoc = {
   embedding_dimensions?: number | null;
@@ -15,9 +19,9 @@ type CollectionEmbeddingStats = {
   needingEmbeddings: number;
 };
 
-const EMBEDDING_DIMENSIONS_OPENAI = 1536;
-const EMBEDDING_DIMENSIONS_FALLBACK = 384;
 const PERCENT_MULTIPLIER = 100;
+const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
+  process.env.ENABLE_PUBLIC_QUERY_EMBEDDINGS === "true";
 
 function asEmbeddingDoc(value: unknown): EmbeddingDoc | null {
   if (!value || typeof value !== "object") {
@@ -137,12 +141,9 @@ export async function GET(_request: NextRequest) {
       system: {
         healthy: true,
         openaiConfigured: !!process.env.OPENAI_API_KEY,
-        preferredModel: process.env.OPENAI_API_KEY
-          ? "text-embedding-3-small"
-          : "fallback-hash",
-        dimensions: process.env.OPENAI_API_KEY
-          ? EMBEDDING_DIMENSIONS_OPENAI
-          : EMBEDDING_DIMENSIONS_FALLBACK,
+        preferredModel: process.env.OPENAI_API_KEY ? EMBEDDING_MODEL : null,
+        dimensions: EMBEDDING_VECTOR_DIMENSIONS,
+        queryEmbeddingPublic: PUBLIC_QUERY_EMBEDDINGS_ENABLED,
         pgvectorEnabled: true,
         collectionsSupported: ["posts", "notes", "activities"],
       },
@@ -210,10 +211,10 @@ export async function GET(_request: NextRequest) {
       // Add cache performance monitoring
       performance: {
         status: "optimized",
-        embeddingStorage: "pgvector (1536D)",
-        indexType: "HNSW cosine similarity",
+        embeddingStorage: `pgvector (${EMBEDDING_VECTOR_DIMENSIONS}D)`,
+        indexType: "HNSW expression index on casted vectors",
         versionManagement: "automatic (5 per document)",
-        computeOptimization: "published content only",
+        computeOptimization: "batched sync endpoint with stale-only mode",
         cacheStrategy: {
           rssCache: "4-8 hours",
           sitemapCache: "4-8 hours",
@@ -240,6 +241,7 @@ export async function GET(_request: NextRequest) {
 
       endpoints: {
         status: `${SITE_URL}/api/embeddings/status`,
+        sync: `${SITE_URL}/api/embeddings/sync`,
         bulk: `${SITE_URL}/api/embeddings?type=posts|notes|activities|all`,
         collections: {
           posts: `${SITE_URL}/api/embeddings/posts/{id}`,
@@ -265,9 +267,9 @@ export async function GET(_request: NextRequest) {
       status.recommendations.push({
         type: "warning",
         message:
-          "No OpenAI API key configured - using fallback hash-based embeddings",
+          "No OpenAI API key configured - embeddings cannot be generated",
         action:
-          "Add OPENAI_API_KEY to environment variables for higher quality embeddings",
+          "Add OPENAI_API_KEY, then run POST /api/embeddings/sync to backfill vectors",
       });
     }
 
@@ -275,8 +277,17 @@ export async function GET(_request: NextRequest) {
       status.recommendations.push({
         type: "info",
         message: `${status.statistics.itemsNeedingEmbeddings} items need embeddings across all collections`,
+        action: "Run POST /api/embeddings/sync (recommended daily via cron)",
+      });
+    }
+
+    if (!PUBLIC_QUERY_EMBEDDINGS_ENABLED) {
+      status.recommendations.push({
+        type: "info",
+        message:
+          "Public query embedding endpoint is disabled to reduce compute cost",
         action:
-          "Edit and save existing content to generate embeddings automatically",
+          "Set ENABLE_PUBLIC_QUERY_EMBEDDINGS=true only if public on-demand query vectors are required",
       });
     }
 

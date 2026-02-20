@@ -4,9 +4,11 @@ import { getPayload } from "payload";
 import type { Note } from "@/payload-types";
 import { authorizeEmbeddingMutation } from "@/utilities/embedding-auth";
 import {
-  extractTextFromContent,
+  createTextHash,
+  EMBEDDING_VECTOR_DIMENSIONS,
   generateEmbedding,
 } from "@/utilities/generate-embedding";
+import { buildNoteEmbeddingText } from "@/utilities/generate-embedding-helpers";
 
 // Regex for word counting
 const WORD_SPLIT_REGEX = /\s+/;
@@ -20,25 +22,6 @@ type NoteWithEmbedding = Note & {
   embedding_generated_at?: string;
   embedding_text_hash?: string;
 };
-
-// Notes-specific text extraction for API
-function extractNotesText(note: Pick<Note, "title" | "content">): string {
-  const parts: string[] = [];
-
-  if (note.title) {
-    parts.push(note.title);
-  }
-
-  // Extract content from Lexical JSONB format
-  if (note.content) {
-    const contentText = extractTextFromContent(note.content);
-    if (contentText) {
-      parts.push(contentText);
-    }
-  }
-
-  return parts.filter(Boolean).join(" ");
-}
 
 type Args = {
   params: Promise<{
@@ -140,10 +123,24 @@ export async function GET(
       }
     }
 
-    // Handle regeneration or missing embedding
+    // Handle regeneration only; missing embeddings are synced in batch.
     let embedding = existingEmbedding;
-    if (regenerate || !existingEmbedding) {
-      const textContent = extractNotesText(note);
+    if (!(regenerate || existingEmbedding)) {
+      return new Response(
+        JSON.stringify({
+          error: "Embedding not available yet. Run /api/embeddings/sync.",
+          id: Number.parseInt(id, 10),
+          title: note.title,
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    if (regenerate) {
+      const textContent = buildNoteEmbeddingText(note);
 
       if (!textContent.trim()) {
         return new Response(
@@ -167,30 +164,46 @@ export async function GET(
         model,
         dimensions,
         generatedAt: new Date().toISOString(),
-        textHash: noteWithEmbedding.embedding_text_hash, // Use existing hash if available
+        textHash: createTextHash(textContent),
       };
 
-      // Only update the database if regenerating
-      if (regenerate) {
-        try {
-          await payload.update({
-            collection: "notes",
-            id: Number.parseInt(id, 10),
-            data: {
-              embedding_vector: `[${vector.join(",")}]`,
-              embedding_model: model,
-              embedding_dimensions: dimensions,
-              embedding_generated_at: embedding.generatedAt,
-            } as Partial<NoteWithEmbedding>,
-          });
-        } catch (_updateError) {
-          // Database update failed - embedding is still returned in response
-        }
+      try {
+        await payload.update({
+          collection: "notes",
+          id: Number.parseInt(id, 10),
+          data: {
+            embedding_vector: `[${vector.join(",")}]`,
+            embedding_model: model,
+            embedding_dimensions: dimensions,
+            embedding_generated_at: embedding.generatedAt,
+            embedding_text_hash: embedding.textHash,
+          } as Partial<NoteWithEmbedding>,
+          context: {
+            skipEmbeddingGeneration: true,
+            skipRecommendationCompute: true,
+            skipRevalidation: true,
+          },
+        });
+      } catch (_updateError) {
+        // Database update failed - embedding is still returned in response
       }
     }
 
+    if (embedding?.dimensions !== EMBEDDING_VECTOR_DIMENSIONS) {
+      return new Response(
+        JSON.stringify({
+          error: `Embedding dimension mismatch. Expected ${EMBEDDING_VECTOR_DIMENSIONS}D.`,
+          id: Number.parseInt(id, 10),
+        }),
+        {
+          status: 409,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Calculate content statistics for Notes
-    const contentText = extractNotesText(note);
+    const contentText = buildNoteEmbeddingText(note);
     const wordCount = contentText.split(WORD_SPLIT_REGEX).length;
     const readingTime = Math.ceil(wordCount / WORDS_PER_MINUTE); // ~200 words per minute
 

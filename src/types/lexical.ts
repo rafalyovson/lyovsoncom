@@ -20,10 +20,10 @@ type LexicalBaseNode = {
  * Text node containing actual content
  */
 interface LexicalTextNode extends LexicalBaseNode {
-  type: "text";
-  text: string;
   format?: number;
   style?: string;
+  text: string;
+  type: "text";
 }
 
 /**

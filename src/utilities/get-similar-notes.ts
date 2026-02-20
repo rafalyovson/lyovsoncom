@@ -9,6 +9,7 @@ import {
 } from "@payloadcms/db-vercel-postgres/drizzle";
 import { getPayload } from "payload";
 import type { Note } from "@/payload-types";
+import { EMBEDDING_VECTOR_DIMENSIONS } from "@/utilities/generate-embedding";
 
 /**
  * Find the most similar notes using pgvector cosine similarity.
@@ -38,7 +39,16 @@ export async function getSimilarNotes(
   }
 
   // Parse pgvector string format "[1.0,2.0,...]" to array
-  const embedding = JSON.parse(currentNote.embedding_vector);
+  let embedding: number[];
+  try {
+    embedding = JSON.parse(currentNote.embedding_vector);
+  } catch {
+    return [];
+  }
+
+  if (embedding.length !== EMBEDDING_VECTOR_DIMENSIONS) {
+    return [];
+  }
 
   // Access notes table from generated schema
   const notesTable = payload.db.tables.notes;
@@ -54,6 +64,7 @@ export async function getSimilarNotes(
       and(
         ne(notesTable.id, noteId), // Exclude current note
         eq(notesTable._status, "published"), // Only published notes
+        eq(notesTable.visibility, "public"), // Keep parity with public note access
         isNotNull(notesTable.embedding_vector) // Only notes with embeddings
       )
     )

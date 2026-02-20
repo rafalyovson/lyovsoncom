@@ -1,20 +1,13 @@
 -- =====================================================
--- Hybrid Search (Posts + Notes + Activities)
+-- Embedding Search Optimization
 --
--- Notes:
--- - Posts are searched via existing `hybrid_search_posts(...)`
--- - Notes + Activities use the same 3-channel approach (semantic + full-text + fuzzy),
---   fused via Reciprocal Rank Fusion (RRF), matching the posts strategy.
--- - `hybrid_search_content(...)` is a thin wrapper that UNIONs all three and sorts.
---
--- This file is meant to be applied to the app database (commonly `verceldb` on Neon).
+-- Applies production-safe improvements for:
+-- 1) HNSW expression indexes on TEXT-backed vectors
+-- 2) Public-visibility filtering parity for notes/activities search
 -- =====================================================
 
--- Enable pg_trgm extension for fuzzy/trigram search (if not already enabled)
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
--- Expression HNSW indexes to support vector operators on TEXT-backed embeddings.
--- This matches the current Payload/Drizzle workaround (embedding_vector stored as text).
 CREATE INDEX IF NOT EXISTS posts_embedding_vector_hnsw_idx
 ON posts USING hnsw ((embedding_vector::vector(1536)) vector_cosine_ops)
 WHERE _status = 'published' AND embedding_vector IS NOT NULL;
@@ -26,10 +19,6 @@ WHERE _status = 'published' AND visibility = 'public' AND embedding_vector IS NO
 CREATE INDEX IF NOT EXISTS activities_embedding_vector_hnsw_idx
 ON activities USING hnsw ((embedding_vector::vector(1536)) vector_cosine_ops)
 WHERE _status = 'published' AND visibility = 'public' AND embedding_vector IS NOT NULL;
-
--- =====================================================
--- Notes hybrid search (RRF)
--- =====================================================
 
 CREATE OR REPLACE FUNCTION hybrid_search_notes(
   query_text TEXT,
@@ -115,10 +104,6 @@ ORDER BY combined_score DESC
 LIMIT match_count
 $sql$;
 
--- =====================================================
--- Activities hybrid search (RRF)
--- =====================================================
-
 CREATE OR REPLACE FUNCTION hybrid_search_activities(
   query_text TEXT,
   query_embedding vector(1536),
@@ -202,85 +187,5 @@ WHERE a._status = 'published'
     OR fuzzy_search.id IS NOT NULL
   )
 ORDER BY combined_score DESC
-LIMIT match_count
-$sql$;
-
--- =====================================================
--- Unified hybrid search (wrapper)
--- =====================================================
-
-CREATE OR REPLACE FUNCTION hybrid_search_content(
-  query_text TEXT,
-  query_embedding vector(1536),
-  match_count INT DEFAULT 10,
-  rrf_k INT DEFAULT 60
-)
-RETURNS TABLE (
-  collection VARCHAR,
-  id INTEGER,
-  title VARCHAR,
-  slug VARCHAR,
-  description VARCHAR,
-  featured_image_id INTEGER,
-  created_at TIMESTAMPTZ,
-  updated_at TIMESTAMPTZ,
-  semantic_rank BIGINT,
-  fts_rank BIGINT,
-  fuzzy_rank BIGINT,
-  combined_score NUMERIC
-)
-LANGUAGE sql
-AS $sql$
-SELECT * FROM (
-  SELECT
-    'posts'::VARCHAR AS collection,
-    p.id,
-    p.title,
-    p.slug,
-    p.description,
-    p.featured_image_id,
-    p.created_at,
-    p.updated_at,
-    p.semantic_rank,
-    p.fts_rank,
-    p.fuzzy_rank,
-    p.combined_score
-  FROM hybrid_search_posts(query_text, query_embedding, match_count, rrf_k) p
-
-  UNION ALL
-
-  SELECT
-    'notes'::VARCHAR AS collection,
-    n.id,
-    n.title,
-    n.slug,
-    n.description,
-    n.featured_image_id,
-    n.created_at,
-    n.updated_at,
-    n.semantic_rank,
-    n.fts_rank,
-    n.fuzzy_rank,
-    n.combined_score
-  FROM hybrid_search_notes(query_text, query_embedding, match_count, rrf_k) n
-
-  UNION ALL
-
-  SELECT
-    'activities'::VARCHAR AS collection,
-    a.id,
-    a.title,
-    a.slug,
-    a.description,
-    a.featured_image_id,
-    a.created_at,
-    a.updated_at,
-    a.semantic_rank,
-    a.fts_rank,
-    a.fuzzy_rank,
-    a.combined_score
-  FROM hybrid_search_activities(query_text, query_embedding, match_count, rrf_k) a
-) r
-ORDER BY r.combined_score DESC
 LIMIT match_count
 $sql$;

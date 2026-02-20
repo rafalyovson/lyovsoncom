@@ -22,7 +22,7 @@ export const GridCardSubscribeConfirmed = () => {
             style={{ color: "var(--success)" }}
           />
           <Sparkles
-            className="-top-2 -right-2 absolute h-8 w-8 animate-pulse"
+            className="absolute -top-2 -right-2 h-8 w-8 animate-pulse"
             style={{ color: "var(--success)" }}
           />
         </div>
