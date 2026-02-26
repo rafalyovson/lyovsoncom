@@ -29,11 +29,11 @@ import { getServerSideURL } from "@/utilities/getURL";
 
 const NOTE_META_DESCRIPTION_MAX_LENGTH = 160;
 
-type Args = {
+interface Args {
   params: Promise<{
     slug: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 
@@ -66,6 +66,13 @@ export default async function NotePage({ params: paramsPromise }: Args) {
   ]);
 
   const references = getNoteReferences(note);
+  const isQuoteNote = note.type === "quote";
+  const quoteAttribution = getQuoteAttribution(note);
+  const noteRichTextProps = {
+    content: note.content,
+    enableGutter: false,
+    enableProse: true,
+  } as const;
 
   return (
     <>
@@ -83,17 +90,32 @@ export default async function NotePage({ params: paramsPromise }: Args) {
         interactive={false}
       >
         <GridCardSection className="col-span-3 row-span-3 p-6">
-          {note.type === "quote" && note.quotedPerson && (
-            <p className="glass-text-secondary mb-4 text-right text-sm not-italic before:mr-2 before:content-['—']">
-              {note.quotedPerson}
-            </p>
+          {isQuoteNote ? (
+            <article className="glass-note-stage glass-stagger-3" dir="auto">
+              <span aria-hidden="true" className="glass-note-quote-mark">
+                &ldquo;
+              </span>
+              <RichText
+                className="glass-note-quote-prose"
+                {...noteRichTextProps}
+              />
+              {quoteAttribution && (
+                <footer className="glass-note-quote-attribution" dir="auto">
+                  <cite>— {quoteAttribution}</cite>
+                </footer>
+              )}
+            </article>
+          ) : (
+            <article
+              className="glass-note-thought-stage glass-stagger-3"
+              dir="auto"
+            >
+              <RichText
+                className="glass-note-thought-prose"
+                {...noteRichTextProps}
+              />
+            </article>
           )}
-          <RichText
-            className="glass-stagger-3 h-full"
-            content={note.content}
-            enableGutter={false}
-            enableProse={true}
-          />
         </GridCardSection>
       </GridCard>
 
@@ -196,6 +218,25 @@ function getNoteReferences(note: Note): Reference[] {
   }
 
   return refs;
+}
+
+function getQuoteAttribution(
+  note: Pick<Note, "type" | "quotedPerson" | "sourceReference">
+): string | null {
+  if (note.type !== "quote") {
+    return null;
+  }
+
+  if (note.quotedPerson) {
+    return note.quotedPerson;
+  }
+
+  const sourceTitle =
+    note.sourceReference && typeof note.sourceReference === "object"
+      ? note.sourceReference.title
+      : null;
+
+  return sourceTitle || null;
 }
 
 export async function generateStaticParams() {

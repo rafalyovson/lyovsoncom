@@ -838,6 +838,115 @@
     list-style: none;
   }
 
+  .glass-note-stage,
+  .glass-note-thought-stage {
+    position: relative;
+    min-height: 100%;
+    isolation: isolate;
+  }
+
+  .glass-note-stage {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .glass-note-quote-mark {
+    position: absolute;
+    top: clamp(0.5rem, 1.1vw, 0.85rem);
+    left: clamp(0.95rem, 1.8vw, 1.2rem);
+    z-index: 1;
+    font-family: var(--font-serif);
+    font-size: clamp(3.05rem, 6.5vw, 4.3rem);
+    line-height: 0.8;
+    color: color-mix(in oklch, var(--glass-text-secondary) 46%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .glass-note-quote-prose {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    width: 100%;
+    max-width: min(72ch, 100%);
+    padding: clamp(1.5rem, 2.8vw, 2.15rem) clamp(0.95rem, 2vw, 1.35rem)
+      clamp(0.15rem, 0.7vw, 0.35rem);
+    margin: 0 auto;
+  }
+
+  .glass-note-quote-prose > * + * {
+    margin-top: 0.85rem;
+  }
+
+  .glass-note-quote-prose p,
+  .glass-note-quote-prose li {
+    font-size: clamp(1.1rem, 1.3vw + 0.8rem, 1.45rem);
+    font-style: italic;
+    line-height: 1.8;
+    color: color-mix(in oklch, var(--glass-text) 94%, white 6%);
+    letter-spacing: -0.012em;
+    text-wrap: pretty;
+  }
+
+  .glass-note-quote-prose blockquote {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    border: 0;
+  }
+
+  .glass-note-quote-attribution {
+    position: relative;
+    z-index: 1;
+    padding: 0 clamp(0.95rem, 2vw, 1.35rem) clamp(0.65rem, 1.5vw, 1rem);
+    margin-top: clamp(0.45rem, 1.1vw, 0.8rem);
+  }
+
+  .glass-note-quote-attribution cite {
+    display: block;
+    width: fit-content;
+    max-width: min(100%, 36ch);
+    margin: 0 0 0 auto;
+    overflow: hidden;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 500;
+    color: var(--glass-text-secondary);
+    text-align: right;
+    letter-spacing: 0.035em;
+    white-space: normal;
+  }
+
+  .glass-note-thought-prose {
+    width: 100%;
+    max-width: min(68ch, 100%);
+    padding: clamp(0.4rem, 1vw, 0.7rem) 0;
+    margin: 0 auto;
+  }
+
+  .glass-note-thought-prose > * + * {
+    margin-top: 0.95rem;
+  }
+
+  .glass-note-thought-prose p:first-of-type {
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: clamp(1.18rem, 0.95vw + 0.96rem, 1.46rem);
+    font-weight: 500;
+    line-height: 1.72;
+    color: var(--glass-text);
+    letter-spacing: -0.014em;
+  }
+
+  .glass-note-thought-prose p,
+  .glass-note-thought-prose li {
+    font-size: clamp(1.03rem, 0.43vw + 0.94rem, 1.18rem);
+    line-height: 1.86;
+    color: color-mix(in oklch, var(--glass-text-secondary) 84%, white 16%);
+    letter-spacing: -0.008em;
+    text-wrap: pretty;
+  }
+
   @media (hover: hover) {
     .glass-badge:hover {
       background: var(--glass-bg-hover);

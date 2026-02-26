@@ -13,6 +13,10 @@ const QUOTE_PREVIEW_MAX_CHARS = 360;
 const THOUGHT_PREVIEW_MAX_CHARS = 520;
 const MAX_TOPIC_STAGGER = 6;
 const UNKNOWN_NOTE_SLUG = "unknown";
+const QUOTE_TRUNCATION_MASK_CLASS =
+  "[-webkit-mask-image:linear-gradient(to_bottom,black_72%,transparent)] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]";
+const THOUGHT_TRUNCATION_MASK_CLASS =
+  "[-webkit-mask-image:linear-gradient(to_bottom,black_74%,transparent)] [mask-image:linear-gradient(to_bottom,black_74%,transparent)]";
 
 export interface GridCardNoteProps {
   className?: string;
@@ -125,6 +129,7 @@ function NoteQuoteContent({
       <p
         className={[
           "glass-text overflow-hidden break-words pr-10 text-left text-[15px] italic leading-snug",
+          isTruncated && QUOTE_TRUNCATION_MASK_CLASS,
           isPoem ? "whitespace-pre-line" : "whitespace-normal",
         ]
           .filter(Boolean)
@@ -132,10 +137,6 @@ function NoteQuoteContent({
       >
         {isPoem ? excerpt : `“${excerpt}”`}
       </p>
-
-      {isTruncated && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
-      )}
 
       {(isTruncated || attribution) && (
         <div className="mt-4 flex items-center justify-between gap-4">
@@ -170,6 +171,7 @@ function NoteThoughtContent({
         className={[
           "glass-text overflow-hidden text-pretty break-words pr-10 text-left text-[15px] leading-relaxed",
           "tracking-[-0.01em]",
+          isTruncated && THOUGHT_TRUNCATION_MASK_CLASS,
           isMultiLineThought ? "whitespace-pre-line" : "whitespace-normal",
         ].join(" ")}
       >
@@ -177,12 +179,9 @@ function NoteThoughtContent({
       </p>
 
       {isTruncated && (
-        <>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-[color:var(--glass-bg)] to-transparent" />
-          <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
-            ***
-          </span>
-        </>
+        <span className="glass-text-secondary pointer-events-none absolute right-6 bottom-4 text-xs tracking-widest">
+          ***
+        </span>
       )}
     </div>
   );
