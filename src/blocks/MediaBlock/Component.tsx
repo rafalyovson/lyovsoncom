@@ -28,6 +28,7 @@ export function MediaBlock(props: Props) {
   if (media && typeof media === "object") {
     caption = media.caption || null;
   }
+  const hasCaption = Boolean(caption);
 
   return (
     <Card
@@ -36,10 +37,14 @@ export function MediaBlock(props: Props) {
         className
       )}
     >
-      <CardContent className="p-0">
+      <CardContent className={cn(hasCaption ? "p-3" : "p-0")}>
         <Media
           className="flex h-full items-center justify-center"
-          imgClassName={cn("h-full object-cover", imgClassName)}
+          imgClassName={cn(
+            "h-full object-cover",
+            hasCaption && "rounded-lg",
+            imgClassName
+          )}
           pictureClassName="mt-0 mb-0"
           resource={media}
           src={staticImage}
@@ -48,7 +53,7 @@ export function MediaBlock(props: Props) {
       {caption && (
         <CardFooter
           className={cn(
-            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
+            "glass-section m-3 mt-0 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}

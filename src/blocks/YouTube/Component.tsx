@@ -30,7 +30,7 @@ export function YouTubeBlock({
 
   return (
     <Card className="glass-longform-block glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0 transition-all duration-300">
-      <CardContent className="p-0">
+      <CardContent className={cn(caption ? "p-3" : "p-0")}>
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}
           videoId={videoId}
@@ -40,7 +40,7 @@ export function YouTubeBlock({
       {caption && (
         <CardFooter
           className={cn(
-            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
+            "glass-section m-3 mt-0 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}

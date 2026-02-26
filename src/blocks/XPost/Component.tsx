@@ -19,9 +19,13 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
     return null;
   }
 
+  const contentPaddingClassName = caption ? "p-3" : "px-4 pt-4 pb-0";
+
   return (
     <Card className="glass-longform-block glass-interactive glass-stagger-2 gap-0 overflow-hidden py-0 transition-all duration-300">
-      <CardContent className="flex justify-center px-4 pt-4 pb-0">
+      <CardContent
+        className={cn("flex justify-center", contentPaddingClassName)}
+      >
         <div className="w-full max-w-lg">
           <Tweet id={postId} />
         </div>
@@ -30,7 +34,7 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
       {caption && (
         <CardFooter
           className={cn(
-            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
+            "glass-section m-3 mt-0 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}
