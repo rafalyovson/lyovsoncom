@@ -1,0 +1,122 @@
+import { notFound } from "next/navigation";
+import type { Metadata } from "next/types";
+import {
+  GridCard,
+  GridCardEmptyState,
+  GridCardSection,
+} from "@/components/grid";
+import { JsonLd } from "@/components/JsonLd";
+import RichText from "@/components/RichText";
+import type { Media } from "@/payload-types";
+import { generatePersonSchema } from "@/utilities/generate-json-ld";
+import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
+import { getServerSideURL } from "@/utilities/getURL";
+
+interface PageProps {
+  params: Promise<{ lyovson: string }>;
+}
+
+export default async function Page({ params }: PageProps) {
+  const { lyovson: username } = await params;
+  const user = await getLyovsonProfile(username);
+
+  if (!user) {
+    return notFound();
+  }
+
+  const avatarMedia: Media | null =
+    user.avatar && typeof user.avatar === "object"
+      ? (user.avatar as Media)
+      : null;
+
+  const avatarUrl = avatarMedia?.url
+    ? `${getServerSideURL()}${avatarMedia.url}`
+    : undefined;
+
+  const personSchema = generatePersonSchema({
+    name: user.name,
+    username: user.username,
+    bio: user.quote || undefined,
+    avatarUrl,
+    socialLinks: {
+      twitter: user.socialLinks?.find((social) => social.platform === "x")?.url,
+      github: user.socialLinks?.find((social) => social.platform === "github")
+        ?.url,
+      linkedin: user.socialLinks?.find(
+        (social) => social.platform === "linkedin"
+      )?.url,
+    },
+  });
+
+  return (
+    <>
+      <h1 className="sr-only">{user.name} bio</h1>
+      <JsonLd data={personSchema} />
+
+      {user.bio ? (
+        <GridCard
+          className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 aspect-auto h-auto g3:w-[var(--grid-card-2x1)]"
+          interactive={false}
+        >
+          <GridCardSection className="col-span-3 row-span-3 p-6">
+            <RichText
+              className="glass-stagger-3 h-full"
+              content={user.bio}
+              enableGutter={false}
+              enableProse={true}
+            />
+          </GridCardSection>
+        </GridCard>
+      ) : (
+        <GridCardEmptyState
+          description={`A full bio for ${user.name} has not been published yet.`}
+          title="Bio Coming Soon"
+        />
+      )}
+    </>
+  );
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { lyovson: username } = await params;
+  const user = await getLyovsonProfile(username);
+
+  if (!user) {
+    return {
+      metadataBase: new URL(getServerSideURL()),
+      title: "Not Found | Lyóvson.com",
+      description: "The requested page could not be found.",
+    };
+  }
+
+  const name = user.name || username;
+  const description = user.quote || `Read ${name}'s biography.`;
+  const title = `${name} Bio | Lyóvson.com`;
+
+  return {
+    metadataBase: new URL(getServerSideURL()),
+    title,
+    description,
+    alternates: {
+      canonical: `/${username}/bio`,
+    },
+    openGraph: {
+      title,
+      description,
+      type: "profile",
+      url: `/${username}/bio`,
+      firstName: name.split(" ")[0],
+      lastName: name.split(" ").slice(1).join(" ") || undefined,
+      username,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      creator: "@lyovson",
+      site: "@lyovson",
+    },
+  };
+}

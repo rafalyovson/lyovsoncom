@@ -65,14 +65,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const topicPostCounts = new Map<string, number>();
 
   for (const project of projects) {
-    if (!project?.id || !project.slug) {
+    if (!(project?.id && project.slug)) {
       continue;
     }
     projectSlugById.set(String(project.id), project.slug);
   }
 
   for (const topic of topics) {
-    if (!topic?.id || !topic.slug) {
+    if (!(topic?.id && topic.slug)) {
       continue;
     }
     topicSlugById.set(String(topic.id), topic.slug);
@@ -81,7 +81,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const post of posts) {
     const projectSlug = getSlugFromRelation(post?.project, projectSlugById);
     if (projectSlug) {
-      projectPostCounts.set(projectSlug, (projectPostCounts.get(projectSlug) || 0) + 1);
+      projectPostCounts.set(
+        projectSlug,
+        (projectPostCounts.get(projectSlug) || 0) + 1
+      );
     }
 
     if (!Array.isArray(post?.topics)) {
@@ -181,7 +184,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Add paginated archive pages that are indexable
-  for (const pageNumber of getIndexedPaginationPages(posts.length, POSTS_PER_PAGE)) {
+  for (const pageNumber of getIndexedPaginationPages(
+    posts.length,
+    POSTS_PER_PAGE
+  )) {
     routes.push({
       url: `${SITE_URL}/posts/page/${pageNumber}`,
       lastModified: now,
@@ -258,7 +264,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   }
 
-  for (const pageNumber of getIndexedPaginationPages(notes.length, NOTES_PER_PAGE)) {
+  for (const pageNumber of getIndexedPaginationPages(
+    notes.length,
+    NOTES_PER_PAGE
+  )) {
     routes.push({
       url: `${SITE_URL}/notes/page/${pageNumber}`,
       lastModified: now,
@@ -306,9 +315,65 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     routes.push({
       url: `${SITE_URL}/${lyovson.username}`,
-      lastModified: lyovson.updatedAt ? new Date(lyovson.updatedAt) : new Date(),
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/bio`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/portfolio`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/contact`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/posts`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.75,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/notes`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.75,
+    });
+
+    routes.push({
+      url: `${SITE_URL}/${lyovson.username}/activities`,
+      lastModified: lyovson.updatedAt
+        ? new Date(lyovson.updatedAt)
+        : new Date(),
+      changeFrequency: "weekly",
+      priority: 0.75,
     });
   }
 

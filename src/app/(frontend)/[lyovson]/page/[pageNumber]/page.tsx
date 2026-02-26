@@ -1,26 +1,28 @@
-import configPromise from "@payload-config";
 import { cacheLife, cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
-import { getPayload } from "payload";
 import { Suspense } from "react";
 import { GridCardEmptyState, SkeletonGrid } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
-import type { Lyovson } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import type { LyovsonMixedFeedItem } from "@/utilities/get-lyovson-feed";
 import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import { getServerSideURL } from "@/utilities/getURL";
-import { LyovsonFeedItems } from "./_components/lyovson-feed-items";
-import { LYOVSON_ITEMS_PER_PAGE } from "./_utilities/constants";
+import { LyovsonFeedItems } from "../../_components/lyovson-feed-items";
+import {
+  getValidPageNumber,
+  LYOVSON_ITEMS_PER_PAGE,
+  MAX_INDEXED_PAGE,
+} from "../../_utilities/constants";
 
-interface PageProps {
-  params: Promise<{ lyovson: string }>;
+interface Args {
+  params: Promise<{
+    lyovson: string;
+    pageNumber: string;
+  }>;
 }
-
-export const dynamicParams = true;
 
 function getLyovsonFeedItemUrl(item: LyovsonMixedFeedItem): string | null {
   if (item.type === "post" && item.data.slug) {
@@ -41,24 +43,34 @@ function getLyovsonFeedItemUrl(item: LyovsonMixedFeedItem): string | null {
   return null;
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
 
-  const { lyovson: username } = await params;
+  const { lyovson: username, pageNumber } = await paramsPromise;
+  const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
   cacheTag("posts");
   cacheTag("notes");
   cacheTag("activities");
   cacheTag("lyovsons");
   cacheTag(`lyovson-${username}`);
+  cacheTag(`lyovson-${username}-all-page-${pageNumber}`);
   cacheLife("posts");
   cacheLife("notes");
   cacheLife("activities");
 
+  if (!sanitizedPageNumber) {
+    notFound();
+  }
+
+  if (sanitizedPageNumber === 1) {
+    redirect(`/${username}`);
+  }
+
   const response = await getLyovsonFeed({
     username,
     filter: "all",
-    page: 1,
+    page: sanitizedPageNumber,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
 
@@ -66,14 +78,16 @@ export default async function Page({ params }: PageProps) {
     return notFound();
   }
 
+  if (sanitizedPageNumber > response.totalPages) {
+    return notFound();
+  }
+
   const { user, items, totalItems, totalPages } = response;
 
   const collectionPageSchema = generateCollectionPageSchema({
-    name: `${user.name} - Posts, Notes, and Activities`,
-    description:
-      user.quote ||
-      `Chronological feed of recent posts, notes, and activities by ${user.name}.`,
-    url: `${getServerSideURL()}/${username}`,
+    name: `${user.name} - Feed Page ${sanitizedPageNumber}`,
+    description: `Chronological feed page ${sanitizedPageNumber} for ${user.name}.`,
+    url: `${getServerSideURL()}/${username}/page/${sanitizedPageNumber}`,
     itemCount: totalItems,
     items: items
       .map((item) => {
@@ -85,7 +99,9 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      <h1 className="sr-only">{user.name} feed</h1>
+      <h1 className="sr-only">
+        {user.name} feed page {sanitizedPageNumber}
+      </h1>
 
       <JsonLd data={collectionPageSchema} />
 
@@ -94,8 +110,8 @@ export default async function Page({ params }: PageProps) {
           <LyovsonFeedItems items={items} />
         ) : (
           <GridCardEmptyState
-            description={`No published posts, notes, or activities found for ${user.name} yet.`}
-            title="Nothing Published Yet"
+            description={`No items found on page ${sanitizedPageNumber} for ${user.name}.`}
+            title="No Results"
           />
         )}
       </Suspense>
@@ -104,7 +120,7 @@ export default async function Page({ params }: PageProps) {
         <Pagination
           basePath={`/${username}/page`}
           firstPagePath={`/${username}`}
-          page={1}
+          page={sanitizedPageNumber}
           totalPages={totalPages}
         />
       )}
@@ -113,75 +129,69 @@ export default async function Page({ params }: PageProps) {
 }
 
 export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+  params: paramsPromise,
+}: Args): Promise<Metadata> {
   "use cache";
 
-  const { lyovson: username } = await params;
+  const { lyovson: username, pageNumber } = await paramsPromise;
+  const sanitizedPageNumber = getValidPageNumber(pageNumber);
+
+  if (!sanitizedPageNumber || sanitizedPageNumber < 2) {
+    return {
+      metadataBase: new URL(getServerSideURL()),
+      title: "Not Found | Lyóvson.com",
+      description: "The requested page could not be found.",
+    };
+  }
 
   const response = await getLyovsonFeed({
     username,
     filter: "all",
-    page: 1,
+    page: sanitizedPageNumber,
     limit: LYOVSON_ITEMS_PER_PAGE,
   });
 
-  if (!response) {
+  if (!response || sanitizedPageNumber > response.totalPages) {
     return {
       metadataBase: new URL(getServerSideURL()),
-      title: "Not Found",
+      title: "Not Found | Lyóvson.com",
+      description: "The requested page could not be found.",
     };
   }
 
-  const { user } = response;
-  const name = user.name || username;
-  const description =
-    user.quote ||
-    `Latest posts, notes, and activities by ${name}. Explore their work and updates.`;
+  const name = response.user.name || username;
+  const title = `${name} - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const description = `Feed page ${sanitizedPageNumber} for ${name}.`;
 
   return {
     metadataBase: new URL(getServerSideURL()),
-    title: `${name} | Lyóvson.com`,
+    title,
     description,
     alternates: {
-      canonical: `/${username}`,
+      canonical: `/${username}/page/${sanitizedPageNumber}`,
+      ...(sanitizedPageNumber > 1 && {
+        prev:
+          sanitizedPageNumber === 2
+            ? `/${username}`
+            : `/${username}/page/${sanitizedPageNumber - 1}`,
+      }),
     },
     openGraph: {
-      title: `${name} | Lyóvson.com`,
+      title,
       description,
       type: "website",
-      url: `/${username}`,
+      url: `/${username}/page/${sanitizedPageNumber}`,
     },
     twitter: {
-      card: "summary_large_image",
-      title: `${name} | Lyóvson.com`,
+      card: "summary",
+      title,
       description,
-      creator: "@lyovson",
       site: "@lyovson",
     },
+    robots: {
+      index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
+      follow: true,
+      noarchive: sanitizedPageNumber > 1,
+    },
   };
-}
-
-export async function generateStaticParams() {
-  "use cache";
-  cacheTag("lyovsons");
-  cacheLife("static");
-
-  const payload = await getPayload({ config: configPromise });
-  const lyovsons = await payload.find({
-    collection: "lyovsons",
-    limit: 100,
-    overrideAccess: true,
-  });
-
-  return lyovsons.docs
-    .filter(
-      (lyovson): lyovson is Lyovson =>
-        typeof lyovson === "object" &&
-        "username" in lyovson &&
-        !!lyovson.username
-    )
-    .map((lyovson) => ({
-      lyovson: lyovson.username as string,
-    }));
 }

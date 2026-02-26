@@ -1,12 +1,11 @@
-import configPromise from "@payload-config";
 import { notFound } from "next/navigation";
-import { getPayload } from "payload";
-import type { Lyovson } from "@/payload-types";
+import { GridCardLyovsonSections, GridCardUser } from "@/components/grid";
+import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 
-type LayoutProps = {
+interface LayoutProps {
   children: React.ReactNode;
   params: Promise<{ lyovson: string }>;
-};
+}
 
 type FontClass = "font-sans" | "font-serif" | "font-mono";
 
@@ -19,25 +18,22 @@ const fontMap: Record<string, FontClass> = {
 export default async function Layout({ children, params }: LayoutProps) {
   const { lyovson: username } = await params;
 
-  const payload = await getPayload({ config: configPromise });
+  const lyovson = await getLyovsonProfile(username);
 
-  // Fetch lyovson to get font preference
-  const lyovsonResult = await payload.find({
-    collection: "lyovsons",
-    where: {
-      username: {
-        equals: username,
-      },
-    },
-    limit: 1,
-  });
-
-  if (!lyovsonResult?.docs?.[0]) {
+  if (!lyovson) {
     return notFound();
   }
 
-  const lyovson = lyovsonResult.docs[0] as Lyovson;
   const fontClass = fontMap[lyovson.font || "sans"] || "font-sans";
 
-  return <div className={`contents ${fontClass}`}>{children}</div>;
+  return (
+    <div className={`contents ${fontClass}`}>
+      <GridCardLyovsonSections username={username} />
+      <GridCardUser
+        className="g2:row-start-1 g3:row-start-1 row-start-3 g2:row-end-3 g3:row-end-2 row-end-5"
+        user={lyovson}
+      />
+      {children}
+    </div>
+  );
 }
