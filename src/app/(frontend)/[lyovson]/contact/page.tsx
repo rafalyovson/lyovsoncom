@@ -12,6 +12,7 @@ interface PageProps {
 }
 
 const PUBLIC_EMAIL = "hello@lyovson.com";
+const MAX_CONTACT_LINKS = 3;
 
 export default async function Page({ params }: PageProps) {
   const { lyovson: username } = await params;
@@ -21,17 +22,19 @@ export default async function Page({ params }: PageProps) {
     return notFound();
   }
 
+  const contactLinks = (user.socialLinks || []).slice(0, MAX_CONTACT_LINKS);
+
   return (
     <>
       <h1 className="sr-only">{user.name} contact</h1>
 
       <GridCard
-        className="g2:col-start-2 g2:col-end-3 g3:col-end-4 g2:row-auto g2:row-start-2 aspect-auto h-auto g3:w-[var(--grid-card-2x1)]"
+        className="g2:col-start-2 g3:col-start-2 g2:col-end-3 g3:col-end-3 g2:row-start-3 g3:row-start-2 g2:row-end-4 g3:row-end-3"
         interactive={false}
       >
-        <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-6">
+        <GridCardSection className="col-span-3 row-span-1 flex items-center justify-center p-5">
           <div className="text-center">
-            <h2 className="glass-text font-bold text-2xl">
+            <h2 className="glass-text font-bold text-xl">
               Contact {user.name}
             </h2>
             <p className="glass-text-secondary mt-2 text-sm">
@@ -40,11 +43,11 @@ export default async function Page({ params }: PageProps) {
           </div>
         </GridCardSection>
 
-        <GridCardSection className="col-span-3 row-span-2 p-6">
-          <ul className="flex h-full flex-col justify-center gap-4">
+        <GridCardSection className="col-span-3 row-span-2 p-4">
+          <ul className="flex h-full flex-col justify-center gap-2">
             <li>
               <Link
-                className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+                className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
                 href={`mailto:${PUBLIC_EMAIL}`}
               >
                 <Mail aria-hidden="true" className="h-5 w-5" />
@@ -52,7 +55,7 @@ export default async function Page({ params }: PageProps) {
               </Link>
             </li>
 
-            {(user.socialLinks || []).map((link) => {
+            {contactLinks.map((link) => {
               const iconConfig = SOCIAL_ICON_MAP[link.platform];
               if (!iconConfig) {
                 return null;
@@ -63,7 +66,7 @@ export default async function Page({ params }: PageProps) {
               return (
                 <li key={link.url}>
                   <a
-                    className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
+                    className="glass-text glass-interactive flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-300 hover:text-[var(--glass-text-secondary)]"
                     href={link.url}
                     rel="noopener"
                     target="_blank"
