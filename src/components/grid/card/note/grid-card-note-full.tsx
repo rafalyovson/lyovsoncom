@@ -8,7 +8,6 @@ import {
   extractLexicalText,
   extractLexicalTextWithNewlines,
 } from "@/utilities/extract-lexical-text";
-import { getTopicBadgeStyle } from "@/utilities/topicBadgeStyle";
 
 const QUOTE_PREVIEW_MAX_CHARS = 360;
 const THOUGHT_PREVIEW_MAX_CHARS = 520;
@@ -261,7 +260,6 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
             >
               <Badge
                 className="glass-badge glass-text w-full shadow-md"
-                style={getTopicBadgeStyle(topic.color)}
                 variant="default"
               >
                 {topic.name}

@@ -5,7 +5,6 @@ import { Media } from "@/components/Media";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
-import { getTopicBadgeStyle } from "@/utilities/topicBadgeStyle";
 import { GridCardSection } from "../section";
 
 export const GridCardHero = ({
@@ -137,7 +136,6 @@ export const GridCardHeroNote = ({
               >
                 <Badge
                   className="glass-badge glass-text w-full shadow-md"
-                  style={getTopicBadgeStyle(topic.color)}
                   variant="default"
                 >
                   {topic.name}

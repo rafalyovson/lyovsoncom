@@ -14,7 +14,6 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/payload-types";
-import { getTopicBadgeStyle } from "@/utilities/topicBadgeStyle";
 
 const MAX_STAGGER_INDEX = 6;
 
@@ -188,7 +187,6 @@ export const GridCardPostFull = ({
               >
                 <Badge
                   className="glass-badge glass-text w-full shadow-md"
-                  style={getTopicBadgeStyle(topic.color)}
                   variant="default"
                 >
                   {topic.name}
