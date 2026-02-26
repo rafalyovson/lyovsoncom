@@ -40,25 +40,11 @@ jobs:
           node-version: 24
           cache: pnpm
 
-      - name: Wait for Postgres
-        run: |
-          for i in {1..30}; do
-            if (echo > /dev/tcp/localhost/5432) >/dev/null 2>&1; then
-              echo "Postgres is ready"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Postgres did not start in time"
-          exit 1
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Prepare Payload schema
-        run: |
-          pnpm payload migrate:create ci_schema --forceAcceptWarning
-          pnpm payload migrate
+      - name: Run Payload migrations
+        run: pnpm payload migrate
 
       - name: SEO coverage checks
         run: pnpm seo:check
