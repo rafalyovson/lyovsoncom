@@ -1,5 +1,6 @@
 import {
   Book,
+  BookOpenText,
   Building2,
   ExternalLink,
   Film,
@@ -16,12 +17,14 @@ import { Media } from "@/components/Media";
 import { cn } from "@/lib/utils";
 import type { Reference } from "@/payload-types";
 
-export type GridCardReferencesProps = {
-  references: Array<number | Reference>;
+export interface GridCardReferencesProps {
   className?: string;
-};
+  references: Array<number | Reference>;
+}
 
-const referenceTypeIcons: Record<string, typeof Book> = {
+const MAX_STAGGER_INDEX = 6;
+
+const referenceTypeIcons: Partial<Record<Reference["type"], typeof Book>> = {
   book: Book,
   movie: Film,
   tvShow: Film,
@@ -40,7 +43,7 @@ const referenceTypeIcons: Record<string, typeof Book> = {
   other: LinkIcon,
 };
 
-const referenceTypeLabels: Record<string, string> = {
+const referenceTypeLabels: Partial<Record<Reference["type"], string>> = {
   book: "Book",
   movie: "Movie",
   tvShow: "TV Show",
@@ -59,14 +62,15 @@ const referenceTypeLabels: Record<string, string> = {
   other: "Other",
 };
 
-const webMediaTypes = [
-  "website",
-  "article",
-  "video",
-  "repository",
-  "tool",
-  "social",
-];
+function getStaggerClass(index: number): string {
+  return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
+}
+
+function hasExternalUrl(
+  reference: Reference
+): reference is Reference & { url: string } {
+  return typeof reference.url === "string" && reference.url.trim().length > 0;
+}
 
 export const GridCardReferences = ({
   references,
@@ -87,18 +91,26 @@ export const GridCardReferences = ({
 
   return (
     <GridCard className={cn("col-span-1", className)}>
-      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-2 flex items-center justify-center">
-        <h3 className="glass-text font-bold text-lg">References</h3>
+      <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-2 flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <BookOpenText
+            aria-hidden="true"
+            className="glass-text-secondary h-4 w-4 transition-colors duration-300"
+          />
+          <h3 className="glass-text font-bold text-base uppercase tracking-wide">
+            References
+          </h3>
+        </div>
+        <span className="glass-badge min-w-7 justify-center px-2 py-1 text-xs tabular-nums">
+          {validReferences.length}
+        </span>
       </GridCardSection>
 
       <GridCardSection className="col-start-1 col-end-4 row-start-2 row-end-4 flex flex-col gap-2 overflow-y-auto">
-        {validReferences.map((reference, _index) => {
-          const IconComponent =
-            referenceTypeIcons[reference.type] || referenceTypeIcons.other;
-          const typeLabel =
-            referenceTypeLabels[reference.type] || reference.type;
-          const hasUrl =
-            webMediaTypes.includes(reference.type) && reference.url;
+        {validReferences.map((reference, index) => {
+          const IconComponent = referenceTypeIcons[reference.type] ?? LinkIcon;
+          const typeLabel = referenceTypeLabels[reference.type] ?? "Reference";
+          const isExternal = hasExternalUrl(reference);
 
           const imageObj =
             typeof reference.image === "object" && reference.image !== null
@@ -108,48 +120,61 @@ export const GridCardReferences = ({
           const content = (
             <div
               className={cn(
-                "glass-interactive flex items-center gap-3 rounded-lg p-2 transition-colors duration-300",
-                hasUrl && "hover:bg-[var(--glass-bg-hover)]"
+                "group/reference relative grid grid-cols-[5.5rem_1fr_auto] items-center gap-3 rounded-lg border border-[var(--glass-border)] bg-[color:var(--glass-bg)] p-2",
+                "transition-colors duration-300",
+                getStaggerClass(index),
+                isExternal &&
+                  "glass-interactive hover:border-[var(--glass-border-hover)] hover:bg-[color:var(--glass-bg-hover)]"
               )}
             >
-              {imageObj && (
-                <div className="flex-shrink-0">
+              <div className="h-[5.5rem] w-[5.5rem] shrink-0 overflow-hidden rounded-md border border-[var(--glass-border)] bg-[color:var(--glass-bg)]">
+                {imageObj ? (
                   <Media
-                    className="glass-media h-12 w-12 rounded"
+                    className="glass-media h-full w-full"
                     imgClassName="object-cover h-full w-full"
-                    pictureClassName="h-12 w-12"
+                    pictureClassName="h-full w-full"
                     resource={imageObj}
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center">
+                    <IconComponent
+                      aria-hidden="true"
+                      className="glass-text-secondary h-6 w-6 transition-colors duration-300"
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <div className="glass-text flex items-center gap-2 font-medium text-sm">
-                  <IconComponent
-                    aria-hidden="true"
-                    className="h-4 w-4 flex-shrink-0"
-                  />
-                  <span className="truncate">{reference.title}</span>
+                <div className="glass-text font-semibold text-sm leading-snug">
+                  <span className="line-clamp-2">{reference.title}</span>
                 </div>
-                <div className="glass-text-secondary text-xs">{typeLabel}</div>
+                <div className="flex items-center gap-2">
+                  <span className="glass-badge px-2 py-0.5 text-[11px] uppercase tracking-wide">
+                    {typeLabel}
+                  </span>
+                </div>
                 {reference.description && (
-                  <p className="glass-text-secondary line-clamp-2 text-xs">
+                  <p className="glass-text-secondary line-clamp-2 text-xs leading-relaxed">
                     {reference.description}
                   </p>
                 )}
               </div>
-              {hasUrl && (
+
+              {isExternal && (
                 <ExternalLink
                   aria-hidden="true"
-                  className="h-4 w-4 flex-shrink-0 text-[var(--glass-text-secondary)]"
+                  className="h-4 w-4 flex-shrink-0 text-[var(--glass-text-secondary)] transition-colors duration-300 group-hover/reference:text-[var(--glass-text)]"
                 />
               )}
             </div>
           );
 
-          if (hasUrl) {
+          if (isExternal) {
             return (
               <a
-                href={reference.url || undefined}
+                aria-label={`Open reference: ${reference.title}`}
+                href={reference.url}
                 key={reference.id}
                 rel="noopener"
                 target="_blank"
