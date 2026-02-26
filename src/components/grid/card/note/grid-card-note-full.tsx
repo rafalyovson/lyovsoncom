@@ -2,7 +2,7 @@ import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import Link from "next/link";
 
 import { GridCard, GridCardSection } from "@/components/grid";
-import { Badge } from "@/components/ui/badge";
+import { TopicPill } from "@/components/TopicPill";
 import type { Note, Topic } from "@/payload-types";
 import {
   extractLexicalText,
@@ -254,16 +254,11 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
           return (
             <Link
               aria-label={`View notes about ${topic.name}`}
-              className={`w-full font-semibold text-xs ${getTopicStaggerClass(index)}`}
+              className={`w-full ${getTopicStaggerClass(index)}`}
               href={{ pathname: `/topics/${topic.slug}` }}
               key={topic.id}
             >
-              <Badge
-                className="glass-badge glass-text w-full shadow-md"
-                variant="default"
-              >
-                {topic.name}
-              </Badge>
+              <TopicPill>{topic.name}</TopicPill>
             </Link>
           );
         })}

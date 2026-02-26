@@ -2,7 +2,7 @@ import { Brain, Calendar, PenTool, Quote } from "lucide-react";
 import Link from "next/link";
 import { GridCard } from "@/components/grid";
 import { Media } from "@/components/Media";
-import { Badge } from "@/components/ui/badge";
+import { TopicPill } from "@/components/TopicPill";
 import { cn } from "@/lib/utils";
 import type { Activity, Note, Post } from "@/payload-types";
 import { GridCardSection } from "../section";
@@ -130,16 +130,11 @@ export const GridCardHeroNote = ({
             return (
               <Link
                 aria-label={`View notes about ${topic.name}`}
-                className="w-full font-semibold text-xs"
+                className="w-full"
                 href={{ pathname: `/topics/${topic.slug}` }}
                 key={topic.id}
               >
-                <Badge
-                  className="glass-badge glass-text w-full shadow-md"
-                  variant="default"
-                >
-                  {topic.name}
-                </Badge>
+                <TopicPill>{topic.name}</TopicPill>
               </Link>
             );
           })}
