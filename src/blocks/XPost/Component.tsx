@@ -26,7 +26,7 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
       <CardContent
         className={cn("flex justify-center", contentPaddingClassName)}
       >
-        <div className="w-full max-w-lg">
+        <div className="xpost-embed w-full max-w-lg">
           <Tweet id={postId} />
         </div>
       </CardContent>

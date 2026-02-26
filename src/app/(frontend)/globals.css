@@ -828,6 +828,11 @@
     margin: 1.5rem 0;
   }
 
+  .xpost-embed .react-tweet-theme {
+    --tweet-container-margin: 0 !important;
+    margin: 0 !important;
+  }
+
   .glass-longform-checklist-item {
     margin-left: 0;
     list-style: none;
