@@ -107,9 +107,9 @@
   );
 
   /* === Grid Background Tokens === */
-  --grid-bg-start: oklch(0.992 0.014 230 / 0.74);
-  --grid-bg-middle: oklch(0.966 0.03 200 / 0.68);
-  --grid-bg-end: oklch(0.928 0.04 88 / 0.58);
+  --grid-bg-start: oklch(0.984 0.02 230 / 0.86);
+  --grid-bg-middle: oklch(0.948 0.042 202 / 0.76);
+  --grid-bg-end: oklch(0.91 0.054 92 / 0.66);
 
   /* === Refined Glass Effects === */
   --glass-glow-subtle: 0 0 10px oklch(0.72 0.1 228 / 0.09);
@@ -120,22 +120,26 @@
   /* === Aurora Enhanced === */
   --glass-aurora-refined: linear-gradient(
     135deg,
-    oklch(0.95 0.03 220 / 0.42),
-    oklch(0.93 0.046 186 / 0.34),
-    oklch(0.91 0.058 118 / 0.24),
-    oklch(0.89 0.05 70 / 0.14)
+    oklch(0.92 0.05 220 / 0.5),
+    oklch(0.9 0.066 186 / 0.42),
+    oklch(0.88 0.074 118 / 0.32),
+    oklch(0.86 0.06 70 / 0.2)
   );
 
   /* === Refined Glassmorphism Core === */
-  --glass-bg-refined: oklch(0.992 0.005 230 / 0.1);
-  --glass-bg-hover-refined: oklch(0.992 0.008 215 / 0.14);
-  --glass-bg-active-refined: oklch(0.992 0.01 205 / 0.18);
-  --glass-border-refined: oklch(0.99 0.009 220 / 0.24);
-  --glass-border-hover-refined: oklch(0.99 0.012 200 / 0.34);
+  --glass-bg-refined: oklch(0.958 0.016 226 / 0.58);
+  --glass-bg-hover-refined: oklch(0.948 0.021 210 / 0.66);
+  --glass-bg-active-refined: oklch(0.938 0.026 196 / 0.74);
+  --glass-border-refined: oklch(0.86 0.028 216 / 0.42);
+  --glass-border-hover-refined: oklch(0.8 0.038 198 / 0.52);
   --glass-shadow-refined:
-    0 8px 20px oklch(0.2 0.02 240 / 0.08), 0 2px 6px oklch(0.2 0.02 240 / 0.05);
+    0 8px 20px oklch(0.42 0.02 240 / 0.14),
+    0 2px 6px oklch(0.42 0.02 240 / 0.09);
   --glass-shadow-hover-refined:
-    0 10px 26px oklch(0.2 0.02 240 / 0.11), 0 3px 9px oklch(0.2 0.02 240 / 0.07);
+    0 10px 26px oklch(0.42 0.02 240 / 0.18),
+    0 3px 9px oklch(0.42 0.02 240 / 0.12);
+  --glass-edge-highlight-refined: inset 0 1px 0 oklch(1 0 0 / 0.52);
+  --glass-edge-shadow-refined: inset 0 -1px 0 oklch(0.44 0.02 236 / 0.2);
   --glass-backdrop-soft: blur(8px) saturate(125%);
   --glass-backdrop-medium: blur(11px) saturate(132%);
   --glass-backdrop-strong: blur(14px) saturate(140%);
@@ -150,6 +154,8 @@
   --glass-border-hover: var(--glass-border-hover-refined);
   --glass-shadow: var(--glass-shadow-refined);
   --glass-shadow-hover: var(--glass-shadow-hover-refined);
+  --glass-edge-highlight: var(--glass-edge-highlight-refined);
+  --glass-edge-shadow: var(--glass-edge-shadow-refined);
   --glass-text: var(--glass-text-refined);
   --glass-text-secondary: var(--glass-text-secondary-refined);
   --glass-aurora: var(--glass-aurora-refined);
@@ -292,9 +298,9 @@
   );
 
   /* === Grid Background Tokens (Dark) === */
-  --grid-bg-start: oklch(0.22 0.045 232 / 0.56);
-  --grid-bg-middle: oklch(0.16 0.058 200 / 0.62);
-  --grid-bg-end: oklch(0.12 0.06 88 / 0.64);
+  --grid-bg-start: oklch(0.24 0.05 232 / 0.62);
+  --grid-bg-middle: oklch(0.17 0.062 200 / 0.68);
+  --grid-bg-end: oklch(0.12 0.062 88 / 0.7);
 
   /* === Refined Dark Glass Effects === */
   --glass-glow-subtle: 0 0 14px oklch(0.75 0.09 220 / 0.14);
@@ -305,10 +311,10 @@
   /* === Aurora Enhanced for Dark === */
   --glass-aurora-refined: linear-gradient(
     135deg,
-    oklch(0.2 0.05 228 / 0.5),
-    oklch(0.16 0.06 194 / 0.4),
-    oklch(0.13 0.07 132 / 0.3),
-    oklch(0.1 0.07 78 / 0.2)
+    oklch(0.24 0.06 228 / 0.56),
+    oklch(0.18 0.07 194 / 0.44),
+    oklch(0.14 0.076 132 / 0.34),
+    oklch(0.1 0.074 78 / 0.24)
   );
 
   /* === Refined Dark Glassmorphism Core === */
@@ -323,6 +329,8 @@
   --glass-shadow-hover-refined:
     0 10px 30px oklch(0 0 0 / 0.44), 0 3px 10px oklch(0 0 0 / 0.24),
     inset 0 1px 0 oklch(1 0 0 / 0.09);
+  --glass-edge-highlight-refined: inset 0 1px 0 oklch(1 0 0 / 0.16);
+  --glass-edge-shadow-refined: inset 0 -1px 0 oklch(0 0 0 / 0.42);
   --glass-backdrop-soft: blur(8px) saturate(125%) brightness(108%);
   --glass-backdrop-medium: blur(11px) saturate(132%) brightness(112%);
   --glass-backdrop-strong: blur(14px) saturate(140%) brightness(116%);
@@ -529,7 +537,8 @@
     background-clip: padding-box;
     border: 1px solid var(--glass-border);
     border-radius: var(--radius);
-    box-shadow: var(--glass-shadow);
+    box-shadow:
+      var(--glass-shadow), var(--glass-edge-highlight), var(--glass-edge-shadow);
     isolation: isolate;
     -webkit-backdrop-filter: var(--glass-backdrop-soft);
     backdrop-filter: var(--glass-backdrop-soft);
@@ -550,7 +559,9 @@
     .glass-card:hover {
       background: var(--glass-bg-hover);
       border-color: var(--glass-border-hover);
-      box-shadow: var(--glass-shadow-hover);
+      box-shadow:
+        var(--glass-shadow-hover), var(--glass-edge-highlight),
+        var(--glass-edge-shadow);
       transform: translateY(-0.8px) scale(1.0015);
     }
   }
@@ -582,7 +593,8 @@
     background-clip: padding-box;
     border: 1px solid var(--glass-border);
     border-radius: calc(var(--radius) - 2px);
-    box-shadow: var(--glass-shadow);
+    box-shadow:
+      var(--glass-shadow), var(--glass-edge-highlight), var(--glass-edge-shadow);
     isolation: isolate;
     -webkit-backdrop-filter: var(--glass-backdrop-medium);
     backdrop-filter: var(--glass-backdrop-medium);
@@ -600,7 +612,9 @@
     .glass-section:hover {
       background: var(--glass-bg-hover);
       border-color: var(--glass-border-hover);
-      box-shadow: var(--glass-shadow-hover);
+      box-shadow:
+        var(--glass-shadow-hover), var(--glass-edge-highlight),
+        var(--glass-edge-shadow);
       transform: translateY(-0.35px);
     }
   }
@@ -677,6 +691,7 @@
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
     border-radius: calc(var(--radius) - 6px);
+    box-shadow: var(--glass-edge-highlight), var(--glass-edge-shadow);
     -webkit-backdrop-filter: var(--glass-backdrop-soft);
     backdrop-filter: var(--glass-backdrop-soft);
     transition:
@@ -822,7 +837,9 @@
     .glass-badge:hover {
       background: var(--glass-bg-hover);
       border-color: var(--glass-border-hover);
-      box-shadow: var(--glass-shadow);
+      box-shadow:
+        var(--glass-shadow), var(--glass-edge-highlight),
+        var(--glass-edge-shadow);
       transform: translateY(-0.5px);
     }
   }
@@ -1058,7 +1075,10 @@
     .glass-section,
     .glass-badge,
     .glass-premium {
+      background-color: var(--glass-bg-hover) !important;
       background-image: none !important;
+      border-color: var(--glass-border-hover) !important;
+      box-shadow: var(--glass-shadow) !important;
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
@@ -1075,18 +1095,16 @@
     .glass-section,
     .glass-badge,
     .glass-premium {
-      background-image: none !important;
+      background-color: var(--glass-bg-hover) !important;
+      border-color: var(--glass-border-hover) !important;
+      box-shadow: var(--glass-shadow) !important;
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
 
     .glass-card,
     .glass-section {
-      background: color-mix(
-        in oklch,
-        var(--glass-bg) 92%,
-        var(--background)
-      ) !important;
+      background-image: var(--glass-aurora) !important;
     }
 
     .glass-premium {
@@ -1118,7 +1136,10 @@
     .glass-section,
     .glass-badge,
     .glass-premium {
+      background-color: var(--glass-bg-hover) !important;
       background-image: none !important;
+      border-color: var(--glass-border-hover) !important;
+      box-shadow: var(--glass-shadow) !important;
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
@@ -1129,7 +1150,10 @@
     .glass-section,
     .glass-badge,
     .glass-premium {
+      background-color: var(--glass-bg-hover) !important;
       background-image: none !important;
+      border-color: var(--glass-border-hover) !important;
+      box-shadow: var(--glass-shadow) !important;
       -webkit-backdrop-filter: none !important;
       backdrop-filter: none !important;
     }
