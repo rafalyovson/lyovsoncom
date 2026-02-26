@@ -55,6 +55,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare Payload schema
+        run: |
+          pnpm payload migrate:create ci_schema --forceAcceptWarning
+          pnpm payload migrate
+
       - name: SEO coverage checks
         run: pnpm seo:check
 
