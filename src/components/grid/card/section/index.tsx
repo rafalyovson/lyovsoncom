@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 interface GridCardSectionBaseProps {
   children: ReactNode;
   className?: string;
+  flush?: boolean;
 }
 
 type GridCardSectionStaticProps = GridCardSectionBaseProps &
@@ -23,10 +24,12 @@ type GridCardSectionProps =
 
 function getSectionClassName(
   className: string | undefined,
-  isInteractive: boolean
+  isInteractive: boolean,
+  flush: boolean
 ): string {
   return cn(
     "glass-section transition-glass",
+    flush && "p-0",
     "focus-visible:outline-none",
     isInteractive && [
       "glass-interactive cursor-pointer",
@@ -41,11 +44,16 @@ export const GridCardSection = (props: GridCardSectionProps) => {
     const {
       children: buttonChildren,
       className: buttonClassName,
+      flush: buttonFlush = false,
       mode: _buttonMode,
       type,
       ...buttonProps
     } = props;
-    const sectionClassName = getSectionClassName(buttonClassName, true);
+    const sectionClassName = getSectionClassName(
+      buttonClassName,
+      true,
+      buttonFlush
+    );
 
     return (
       <button
@@ -64,10 +72,15 @@ export const GridCardSection = (props: GridCardSectionProps) => {
   const {
     children: sectionChildren,
     className: sectionClassNameProp,
+    flush: sectionFlush = false,
     mode: _sectionMode,
     ...sectionProps
   } = props;
-  const sectionClassName = getSectionClassName(sectionClassNameProp, false);
+  const sectionClassName = getSectionClassName(
+    sectionClassNameProp,
+    false,
+    sectionFlush
+  );
 
   return (
     <section className={sectionClassName} {...sectionProps}>

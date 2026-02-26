@@ -91,6 +91,7 @@ export const GridCardPostFull = ({
       {featuredImage && typeof featuredImage !== "string" && (
         <GridCardSection
           className={"col-start-1 col-end-3 row-start-1 row-end-3"}
+          flush={true}
         >
           <Link
             aria-label={`Read "${title}"`}

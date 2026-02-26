@@ -29,7 +29,10 @@ export const GridCardProject = ({
     >
       <GridCard className={className}>
         {project.image && typeof project.image !== "string" && (
-          <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3">
+          <GridCardSection
+            className="col-start-1 col-end-4 row-start-1 row-end-3"
+            flush={true}
+          >
             <Media
               className="glass-media flex h-full items-center justify-center"
               imgClassName="object-cover h-full"

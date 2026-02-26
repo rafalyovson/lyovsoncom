@@ -160,7 +160,10 @@ export const GridCardActivityFull = ({
   return (
     <GridCard className={className}>
       {referenceImage && (
-        <GridCardSection className="col-start-1 col-end-3 row-start-1 row-end-4">
+        <GridCardSection
+          className="col-start-1 col-end-3 row-start-1 row-end-4"
+          flush={true}
+        >
           <Link
             aria-label={`View activity: ${activityTypeLabel} ${referenceTitle}`}
             className="group block h-full overflow-hidden rounded-lg"

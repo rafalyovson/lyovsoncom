@@ -32,6 +32,7 @@ export const GridCardHero = ({
             "col-start-1 col-end-4 row-start-1 row-end-4",
             "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
           )}
+          flush={true}
         >
           <Media
             className="glass-media flex h-full items-center justify-center"
@@ -225,6 +226,7 @@ export const GridCardHeroActivity = ({
             "col-start-1 col-end-4 row-start-1 row-end-4",
             "g3:col-start-1 g3:col-end-4 g3:row-start-1 g3:row-end-4"
           )}
+          flush={true}
         >
           <Media
             className="glass-media flex h-full items-center justify-center"

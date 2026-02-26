@@ -40,6 +40,7 @@ export const GridCardRelatedPosts = ({
           >
             <GridCardSection
               className={"grid h-full grid-cols-3 grid-rows-1 gap-2"}
+              flush={true}
             >
               {post.featuredImage && (
                 <Media
