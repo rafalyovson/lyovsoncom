@@ -5,8 +5,6 @@ import { getPayload } from "payload";
 import { Resend } from "resend";
 import type { Contact } from "@/payload-types";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 // Prevent prerendering for API routes that use request.url
 export const dynamic = "force-dynamic";
 
@@ -84,50 +82,55 @@ export async function GET(request: Request) {
       );
     }
 
-    // Validate required environment variable
+    // Validate Resend integration environment variables
     const audienceId = process.env.RESEND_AUDIENCE_ID;
-    if (!audienceId) {
-      return NextResponse.json(
-        { error: "Server configuration error" },
-        { status: 500 }
+    const resendApiKey = process.env.RESEND_API_KEY;
+    const resendClient = resendApiKey ? new Resend(resendApiKey) : null;
+    const canSyncToResend = Boolean(resendClient && audienceId);
+
+    if (!canSyncToResend) {
+      logWarn(
+        "[Confirm] Resend integration not configured; proceeding without external sync"
       );
     }
 
     // Create contact in Resend with error handling
     let resendContactId: string | undefined;
-    try {
-      const resendContact = await resend.contacts.create({
-        email: contact.email,
-        firstName: contact.firstName || undefined,
-        lastName: contact.lastName || undefined,
-        unsubscribed: false,
-        audienceId,
-      });
+    if (canSyncToResend && resendClient && audienceId) {
+      try {
+        const resendContact = await resendClient.contacts.create({
+          email: contact.email,
+          firstName: contact.firstName || undefined,
+          lastName: contact.lastName || undefined,
+          unsubscribed: false,
+          audienceId,
+        });
 
-      resendContactId = resendContact.data?.id;
+        resendContactId = resendContact.data?.id;
 
-      // Check for API errors
-      if (resendContact.error) {
-        logError("[Confirm] Resend API error", resendContact.error);
-        // If contact already exists, that's okay - just update our database
-        const errorMessage = resendContact.error.message?.toLowerCase() || "";
-        if (
-          errorMessage.includes("already exists") ||
-          errorMessage.includes("duplicate")
-        ) {
-          logInfo(
-            `[Confirm] Contact ${contact.email} already exists in Resend - continuing`
-          );
-          // Try to find existing Resend contact ID
-          // (In production, you might want to call resend.contacts.get() here)
-        } else {
-          throw new Error(resendContact.error.message);
+        // Check for API errors
+        if (resendContact.error) {
+          logError("[Confirm] Resend API error", resendContact.error);
+          // If contact already exists, that's okay - just update our database
+          const errorMessage = resendContact.error.message?.toLowerCase() || "";
+          if (
+            errorMessage.includes("already exists") ||
+            errorMessage.includes("duplicate")
+          ) {
+            logInfo(
+              `[Confirm] Contact ${contact.email} already exists in Resend - continuing`
+            );
+            // Try to find existing Resend contact ID
+            // (In production, you might want to call resend.contacts.get() here)
+          } else {
+            throw new Error(resendContact.error.message);
+          }
         }
+      } catch (error) {
+        logError("[Confirm] Failed to create contact in Resend", error);
+        // Continue anyway - we can sync later via webhook
+        // Don't block user confirmation due to Resend issues
       }
-    } catch (error) {
-      logError("[Confirm] Failed to create contact in Resend", error);
-      // Continue anyway - we can sync later via webhook
-      // Don't block user confirmation due to Resend issues
     }
 
     // Update contact in database
