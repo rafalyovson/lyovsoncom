@@ -5,14 +5,12 @@ import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 
-import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardHeroNote,
   GridCardReferences,
   GridCardRelatedNotes,
   GridCardSection,
-  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -144,18 +142,7 @@ export default async function NotePage({ params: paramsPromise }: Args) {
             />
           </Suspense>
         </div>
-        <div className="order-3 g3:hidden">
-          <GridCardSubscribe handleSubmit={createContactAction} />
-        </div>
       </aside>
-
-      <GridCardSubscribe
-        className={cn(
-          "g3:block hidden g3:self-start",
-          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-3"
-        )}
-        handleSubmit={createContactAction}
-      />
     </>
   );
 }

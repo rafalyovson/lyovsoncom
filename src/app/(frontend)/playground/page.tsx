@@ -4,16 +4,12 @@ import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPayload } from "payload";
 import { Suspense } from "react";
-import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardSection,
-  GridCardSubscribe,
-  GridCardSubscribeConfirmed,
   GridCardUserSocial,
   SkeletonCard,
 } from "@/components/grid";
-import { SubscribeDemoStates } from "@/components/grid/card/subscribe/demo-states";
 import { getServerSideURL } from "@/utilities/getURL";
 
 export default function SuspensePlayground() {
@@ -42,36 +38,6 @@ async function Playground() {
           {`Welcome, ${user.user?.name} `}
         </GridCardSection>
       </GridCard>
-
-      <GridCard>
-        <GridCardSection className="col-span-3 row-span-3 flex flex-col items-center justify-center gap-4 text-center">
-          <h2 className="glass-text font-bold text-2xl">
-            Subscribe Card States Demo
-          </h2>
-          <p className="glass-text-secondary text-sm">
-            Form, Success, Error, Info, and Confirmed states
-          </p>
-        </GridCardSection>
-      </GridCard>
-
-      <SubscribeDemoStates />
-
-      <GridCardSubscribeConfirmed />
-
-      <GridCard>
-        <GridCardSection className="col-span-3 row-span-3 flex flex-col items-center justify-center gap-4 text-center">
-          <h2 className="glass-text font-bold text-2xl">Live Subscribe Card</h2>
-          <p className="glass-text-secondary text-sm">
-            This one actually works
-          </p>
-        </GridCardSection>
-      </GridCard>
-
-      <GridCardSubscribe
-        description="Get notified about new posts and projects"
-        handleSubmit={createContactAction}
-        title="Subscribe to updates"
-      />
 
       <GridCardUserSocial />
     </>

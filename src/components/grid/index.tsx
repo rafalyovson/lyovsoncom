@@ -73,7 +73,6 @@ export { GridCardReferences } from "./card/references";
 export { GridCardRelatedNotes, GridCardRelatedPosts } from "./card/related";
 export { GridCardSection } from "./card/section";
 export { GridCardSubscribe } from "./card/subscribe";
-export { GridCardSubscribeConfirmed } from "./card/subscribe/confirmed";
 export { GridCardUser } from "./card/user";
 export { GridCardUserSocial } from "./card/user-social";
 export { SkeletonCard, SkeletonGrid } from "./skeleton";

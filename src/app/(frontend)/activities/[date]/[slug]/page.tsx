@@ -14,13 +14,11 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 
-import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardActivityReview,
   GridCardHeroActivity,
   GridCardSection,
-  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -34,12 +32,12 @@ import {
 import { getActivityByDateAndSlug } from "@/utilities/get-activity";
 import { getServerSideURL } from "@/utilities/getURL";
 
-type Args = {
+interface Args {
   params: Promise<{
     date: string;
     slug: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 
@@ -243,16 +241,6 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
           )}
         </GridCardSection>
       </GridCard>
-
-      <GridCardSubscribe
-        className={cn(
-          "col-start-1 col-end-2 row-start-5 row-end-6",
-          "g2:col-start-1 g2:col-end-2 g2:row-start-3 g2:row-end-4",
-          "g3:col-start-1 g3:col-end-2 g3:row-start-3 g3:row-end-4",
-          "g4:col-start-1 g4:col-end-2 g4:row-start-2 g4:row-end-3 g4:self-start"
-        )}
-        handleSubmit={createContactAction}
-      />
 
       {/* Reviews - Right side, side by side on desktop */}
       {reviews.map((review, index) => {

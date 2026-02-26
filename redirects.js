@@ -12,6 +12,19 @@ const redirects = () => {
     source: "/:path((?!ie-incompatible.html$).*)", // all pages except the incompatibility page
   };
 
+  const newsletterArchiveRedirects = [
+    {
+      source: "/subscription-confirmed",
+      destination: "/",
+      permanent: false,
+    },
+    {
+      source: "/api/confirm-subscription",
+      destination: "/",
+      permanent: false,
+    },
+  ];
+
   // All specific post redirects - Generated from database query
   // This ensures every published post has an explicit redirect
   const specificPostRedirects = [
@@ -98,6 +111,7 @@ const redirects = () => {
 
   const allRedirects = [
     internetExplorerRedirect,
+    ...newsletterArchiveRedirects,
     ...specificPostRedirects,
     ...projectIndexRedirects,
   ];

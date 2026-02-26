@@ -41,7 +41,7 @@ const requiredJsonLdFiles = [
   "src/app/(frontend)/page/[pageNumber]/page.tsx",
 ];
 
-const noindexExcludedFromSitemap = ["/playground", "/subscription-confirmed"];
+const noindexExcludedFromSitemap = ["/playground"];
 
 async function readFile(file) {
   return fs.readFile(path.join(ROOT, file), "utf8");

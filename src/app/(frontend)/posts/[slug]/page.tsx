@@ -4,14 +4,12 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { getPayload } from "payload";
 import { Suspense } from "react";
-import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardHero,
   GridCardReferences,
   GridCardRelatedPosts,
   GridCardSection,
-  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -64,11 +62,11 @@ function _extractTextFromContent(content: LexicalContentNode): string {
   return "";
 }
 
-type Args = {
+interface Args {
   params: Promise<{
     slug: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 
@@ -155,7 +153,7 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
       <aside
         className={cn(
-          "col-start-1 col-end-2 row-start-6 row-end-7 grid grid-rows-3 gap-4 self-start",
+          "col-start-1 col-end-2 row-start-6 row-end-7 grid auto-rows-max gap-4 self-start",
           "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5"
         )}
       >
@@ -182,8 +180,6 @@ export default async function PostPage({ params: paramsPromise }: Args) {
             recommendedIds={post.recommended_post_ids as number[] | undefined}
           />
         </Suspense>
-
-        <GridCardSubscribe handleSubmit={createContactAction} />
       </aside>
     </>
   );

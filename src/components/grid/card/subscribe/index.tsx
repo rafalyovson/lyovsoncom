@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import type { ActionResponse } from "@/actions/create-contact-action";
 import { GridCard } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { ErrorMode } from "./error-mode";
@@ -10,15 +9,21 @@ import { InfoMode } from "./info-mode";
 import { SuccessMode } from "./success-mode";
 import type { SubscribeMode } from "./types";
 
+interface SubscribeActionResponse {
+  success: boolean;
+  message: string;
+  errors?: Record<string, string>;
+}
+
 type GridCardSubscribeProps = {
   title?: string;
   description?: string;
   buttonText?: string;
   className?: string;
   handleSubmit: (
-    prevState: ActionResponse,
+    prevState: SubscribeActionResponse,
     formData: FormData
-  ) => Promise<ActionResponse>;
+  ) => Promise<SubscribeActionResponse>;
 };
 
 export const GridCardSubscribe = ({
