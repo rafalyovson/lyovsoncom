@@ -8,12 +8,14 @@
  * - Uses Next.js caching (24 hour revalidation)
  */
 
-type TenorVideoData = {
-  mp4Url: string;
-  webmUrl?: string;
-  posterUrl: string;
+interface TenorVideoData {
   aspectRatio: string;
-};
+  mp4Url: string;
+  posterUrl: string;
+  webmUrl?: string;
+}
+
+export { normalizeAspectRatio } from "@/utilities/aspectRatio";
 
 /**
  * Fetch video URLs from Tenor API
@@ -88,44 +90,4 @@ export function calculateAspectRatio(dims: [number, number]): string {
     return "1"; // Default to square
   }
   return String(width / height);
-}
-
-/**
- * Convert aspect ratio string to Next.js aspect ratio format
- * @param ratio - Aspect ratio string (e.g., "1.7777" or "16:9")
- * @returns Normalized aspect ratio string ("16:9", "4:3", or "1:1")
- */
-export function normalizeAspectRatio(ratio: string): "16:9" | "4:3" | "1:1" {
-  const RATIO_16_9_MIN = 1.7;
-  const RATIO_16_9_MAX = 1.8;
-  const RATIO_4_3_MIN = 1.3;
-  const RATIO_4_3_MAX = 1.4;
-
-  // If it's already in ratio format, return as is
-  if (ratio.includes(":")) {
-    if (ratio === "16:9") {
-      return "16:9";
-    }
-    if (ratio === "4:3") {
-      return "4:3";
-    }
-    return "1:1";
-  }
-
-  // Convert decimal to ratio
-  const numericRatio = Number.parseFloat(ratio);
-
-  if (Number.isNaN(numericRatio)) {
-    return "1:1";
-  }
-
-  // Common aspect ratios
-  if (numericRatio >= RATIO_16_9_MIN && numericRatio <= RATIO_16_9_MAX) {
-    return "16:9";
-  }
-  if (numericRatio >= RATIO_4_3_MIN && numericRatio <= RATIO_4_3_MAX) {
-    return "4:3";
-  }
-
-  return "1:1"; // Default to square
 }

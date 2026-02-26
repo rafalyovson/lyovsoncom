@@ -180,17 +180,13 @@ export const GridCardActivityFull = ({
 
       <GridCardSection
         className={
-          "col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col items-center justify-center gap-1"
+          "col-start-3 col-end-4 row-start-1 row-end-2 flex h-full flex-col justify-center"
         }
       >
-        <Link
-          className="group block flex flex-col items-center gap-1"
-          href={activityUrl}
-        >
-          <ActivityIcon aria-hidden="true" className={iconClassName} />
-          <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
-            {activityTypeLabel}
-          </span>
+        <Link className="group block" href={activityUrl}>
+          <h2 className="glass-text text-center font-bold text-sm transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            {referenceTitle}
+          </h2>
         </Link>
       </GridCardSection>
 
@@ -223,13 +219,17 @@ export const GridCardActivityFull = ({
 
       <GridCardSection
         className={
-          "col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col justify-center"
+          "col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1"
         }
       >
-        <Link className="group block" href={activityUrl}>
-          <h2 className="glass-text text-center font-bold text-sm transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
-            {referenceTitle}
-          </h2>
+        <Link
+          className="group block flex flex-col items-center gap-1"
+          href={activityUrl}
+        >
+          <ActivityIcon aria-hidden="true" className={iconClassName} />
+          <span className="glass-text-secondary text-xs capitalize transition-colors duration-300 group-hover:text-[var(--glass-text-secondary)]">
+            {activityTypeLabel}
+          </span>
         </Link>
       </GridCardSection>
     </GridCard>

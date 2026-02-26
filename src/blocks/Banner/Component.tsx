@@ -1,6 +1,6 @@
-import type { BannerBlock as BannerBlockProps } from "src/payload-types";
 import RichText from "@/components/RichText";
 import { cn } from "@/lib/utils";
+import type { BannerBlock as BannerBlockProps } from "@/payload-types";
 
 type Props = {
   className?: string;
@@ -25,7 +25,7 @@ export function BannerBlock({ className, content, style }: Props) {
     <div className={cn("glass-longform-block mx-auto w-full", className)}>
       <div
         className={cn(
-          "glass-section glass-interactive flex items-start gap-4 rounded-lg border-2 px-6 py-4 backdrop-blur-md transition-all duration-300",
+          "glass-section glass-interactive flex items-start gap-3 rounded-xl border-2 px-5 py-5 backdrop-blur-md transition-all duration-300 sm:gap-4 sm:px-6",
           styleClasses[style || "info"]
         )}
       >
@@ -35,8 +35,9 @@ export function BannerBlock({ className, content, style }: Props) {
         </div>
 
         {/* Content */}
-        <div className="glass-text flex-1">
+        <div className="glass-text min-w-0 flex-1" dir="auto">
           <RichText
+            className="text-sm leading-relaxed sm:text-base"
             content={content}
             enableGutter={false}
             enableProse={false}

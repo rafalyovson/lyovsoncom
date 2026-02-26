@@ -3,18 +3,7 @@
 import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
-
-const getAspectRatioClass = (ratio: string) => {
-  switch (ratio) {
-    case "4:3":
-      return "aspect-4/3";
-    case "1:1":
-      return "aspect-square";
-    default:
-      return "aspect-video"; // 16:9
-  }
-};
+import { normalizeAspectRatio } from "@/utilities/aspectRatio";
 
 const PlayButton = () => (
   <div className="group/play absolute inset-0 z-20 flex items-center justify-center">
@@ -28,24 +17,39 @@ const PlayButton = () => (
   </div>
 );
 
-type YouTubePlayerProps = {
-  videoId: string;
+interface YouTubePlayerProps {
   aspectRatio?: string;
-};
+  videoId: string;
+}
+
+const THUMBNAIL_VARIANTS = [
+  "maxresdefault",
+  "hqdefault",
+  "mqdefault",
+  "default",
+] as const;
 
 export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   videoId,
   aspectRatio = "16:9",
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  const [thumbnailVariantIndex, setThumbnailVariantIndex] = useState(0);
+  const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "16:9");
+  const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/${THUMBNAIL_VARIANTS[thumbnailVariantIndex]}.jpg`;
+
+  function handleThumbnailError() {
+    if (thumbnailVariantIndex >= THUMBNAIL_VARIANTS.length - 1) {
+      return;
+    }
+
+    setThumbnailVariantIndex((currentIndex) => currentIndex + 1);
+  }
 
   return (
     <div
-      className={cn(
-        "glass-media relative w-full overflow-hidden rounded-lg shadow-lg transition-all duration-300",
-        getAspectRatioClass(aspectRatio || "16/9")
-      )}
+      className="glass-media relative w-full overflow-hidden rounded-lg shadow-lg transition-all duration-300"
+      style={{ aspectRatio: normalizedAspectRatio }}
     >
       {isLoaded ? (
         <iframe
@@ -72,6 +76,7 @@ export const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
               className="object-cover"
               fill
               loading="lazy"
+              onError={handleThumbnailError}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
               src={thumbnailUrl}
             />

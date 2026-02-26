@@ -2,13 +2,13 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next/types";
 import { Suspense } from "react";
-import { JsonLd } from "@/components/JsonLd";
 import {
   GridCardActivityFull,
   GridCardNoteFull,
   GridCardPostFull,
   SkeletonGrid,
 } from "@/components/grid";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import type { Activity, Note, Post } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
@@ -19,18 +19,39 @@ import { getLatestPosts } from "@/utilities/get-post";
 import { getServerSideURL } from "@/utilities/getURL";
 
 const HOMEPAGE_ITEMS_LIMIT = 25;
-const HOMEPAGE_FETCH_LIMIT = 50; // Fetch more to ensure we get enough items for pagination
+const HOMEPAGE_FETCH_BUFFER = 5;
 
 type MixedFeedItem =
-  | { type: "post"; data: Post }
-  | { type: "note"; data: Note }
-  | { type: "activity"; data: Activity };
+  | { type: "post"; data: Post; timestamp: number }
+  | { type: "note"; data: Note; timestamp: number }
+  | { type: "activity"; data: Activity; timestamp: number };
 
-type Args = {
+function getFeedTimestamp(item: {
+  type: "post" | "note" | "activity";
+  data: Post | Note | Activity;
+}): number {
+  let dateValue = "";
+
+  if (item.type === "activity") {
+    const activity = item.data as Activity;
+    dateValue =
+      activity.finishedAt || activity.startedAt || activity.publishedAt || "";
+  } else if (item.type === "note") {
+    const note = item.data as Note;
+    dateValue = note.publishedAt || note.createdAt || "";
+  } else {
+    const post = item.data as Post;
+    dateValue = post.publishedAt || post.createdAt || "";
+  }
+
+  return Date.parse(dateValue) || 0;
+}
+
+interface Args {
   params: Promise<{
     pageNumber: string;
   }>;
-};
+}
 
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";
@@ -54,52 +75,39 @@ export default async function Page({ params: paramsPromise }: Args) {
     redirect("/");
   }
 
+  const feedWindowSize = sanitizedPageNumber * HOMEPAGE_ITEMS_LIMIT;
+  const mixedFeedFetchLimit = feedWindowSize + HOMEPAGE_FETCH_BUFFER;
+
   // Fetch enough items from each collection to build a sorted mixed feed
   const [posts, notes, activities] = await Promise.all([
-    getLatestPosts(HOMEPAGE_FETCH_LIMIT),
-    getLatestNotes(HOMEPAGE_FETCH_LIMIT),
-    getLatestActivities(HOMEPAGE_FETCH_LIMIT),
+    getLatestPosts(mixedFeedFetchLimit),
+    getLatestNotes(mixedFeedFetchLimit),
+    getLatestActivities(mixedFeedFetchLimit),
   ]);
 
   // Merge and sort by date
   const mixedItems: MixedFeedItem[] = [
-    ...posts.docs.map((post) => ({ type: "post" as const, data: post })),
-    ...notes.docs.map((note) => ({ type: "note" as const, data: note })),
+    ...posts.docs.map((post) => ({
+      type: "post" as const,
+      data: post,
+      timestamp: getFeedTimestamp({ type: "post", data: post }),
+    })),
+    ...notes.docs.map((note) => ({
+      type: "note" as const,
+      data: note,
+      timestamp: getFeedTimestamp({ type: "note", data: note }),
+    })),
     ...activities.docs.map((activity) => ({
       type: "activity" as const,
       data: activity,
+      timestamp: getFeedTimestamp({ type: "activity", data: activity }),
     })),
   ];
 
-  mixedItems.sort((a, b) => {
-    let dateA: string;
-    let dateB: string;
-
-    if (a.type === "activity") {
-      dateA = a.data.finishedAt || a.data.startedAt || a.data.publishedAt || "";
-    } else if (a.type === "note") {
-      // note - use publishedAt first (when it was published), fallback to createdAt
-      dateA = a.data.publishedAt || a.data.createdAt || "";
-    } else {
-      // post - use publishedAt first (when it was published), fallback to createdAt
-      dateA = a.data.publishedAt || a.data.createdAt || "";
-    }
-
-    if (b.type === "activity") {
-      dateB = b.data.finishedAt || b.data.startedAt || b.data.publishedAt || "";
-    } else if (b.type === "note") {
-      // note - use publishedAt first (when it was published), fallback to createdAt
-      dateB = b.data.publishedAt || b.data.createdAt || "";
-    } else {
-      // post - use publishedAt first (when it was published), fallback to createdAt
-      dateB = b.data.publishedAt || b.data.createdAt || "";
-    }
-
-    return new Date(dateB).getTime() - new Date(dateA).getTime();
-  });
+  mixedItems.sort((a, b) => b.timestamp - a.timestamp);
 
   // Calculate pagination for the mixed feed
-  const totalItems = mixedItems.length;
+  const totalItems = posts.totalDocs + notes.totalDocs + activities.totalDocs;
   const totalPages = Math.ceil(totalItems / HOMEPAGE_ITEMS_LIMIT);
   const startIndex = (sanitizedPageNumber - 1) * HOMEPAGE_ITEMS_LIMIT;
   const endIndex = startIndex + HOMEPAGE_ITEMS_LIMIT;

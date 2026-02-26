@@ -9,20 +9,33 @@ type Props = {
 export function QuoteBlock({ className, quote, attribution }: Props) {
   return (
     <div className={cn("glass-longform-block", className)}>
-      <blockquote className="glass-section glass-premium relative mt-0 mb-0 rounded-lg border-glass-border-hover border-l-4 py-6 pl-6 italic">
-        <div className="glass-text-secondary text-xl leading-relaxed">
-          <RichText content={quote} enableGutter={false} />
-        </div>
+      <div
+        className="glass-section mt-0 mb-0 rounded-lg px-4 py-3 sm:px-5 sm:py-4"
+        dir="auto"
+      >
+        <blockquote className="m-0">
+          <span
+            aria-hidden="true"
+            className="glass-text-secondary mb-2 block text-2xl leading-none opacity-60"
+          >
+            &ldquo;
+          </span>
+          <RichText
+            className="glass-text-secondary text-base italic leading-relaxed [overflow-wrap:anywhere] [&_p+_p]:mt-3 [&_p]:m-0"
+            content={quote}
+            enableGutter={false}
+            enableProse={false}
+          />
+        </blockquote>
         {attribution && (
-          <footer className="glass-text-secondary mt-4 font-medium text-sm opacity-80">
+          <footer
+            className="glass-text-secondary mt-3 text-start font-medium text-sm opacity-80"
+            dir="auto"
+          >
             — {attribution}
           </footer>
         )}
-        {/* Glass decorative element */}
-        <div className="glass-badge absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full">
-          <span className="text-glass-text-secondary text-lg">&ldquo;</span>
-        </div>
-      </blockquote>
+      </div>
     </div>
   );
 }

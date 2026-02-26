@@ -14,11 +14,13 @@ import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 
+import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardActivityReview,
   GridCardHeroActivity,
   GridCardSection,
+  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -175,20 +177,16 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
         className={cn(
           "col-start-1 col-end-2 row-start-4 row-end-5",
           "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3",
-          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-3"
+          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-3",
+          "g4:col-start-4 g4:col-end-5 g4:row-start-1 g4:row-end-2"
         )}
       >
         {/* Top section - Info text spanning rows 1-2, all columns */}
         <GridCardSection className="col-start-1 col-end-4 row-start-1 row-end-3 flex flex-col justify-center overflow-hidden px-6 py-4">
           {activity.notes ? (
-            <div className="relative">
-              {/* Info icon indicator */}
-              <Info
-                aria-hidden="true"
-                className="glass-text-secondary absolute -top-1 left-0 h-4 w-4 opacity-50"
-              />
+            <div className="flex h-full w-full items-center justify-center text-center">
               <RichText
-                className="glass-stagger-1 h-full pt-4 pl-2 text-sm"
+                className="glass-stagger-1 text-sm"
                 content={activity.notes}
                 enableGutter={false}
                 enableProse={true}
@@ -245,6 +243,16 @@ export default async function ActivityPage({ params: paramsPromise }: Args) {
           )}
         </GridCardSection>
       </GridCard>
+
+      <GridCardSubscribe
+        className={cn(
+          "col-start-1 col-end-2 row-start-5 row-end-6",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-3 g2:row-end-4",
+          "g3:col-start-1 g3:col-end-2 g3:row-start-3 g3:row-end-4",
+          "g4:col-start-1 g4:col-end-2 g4:row-start-2 g4:row-end-3 g4:self-start"
+        )}
+        handleSubmit={createContactAction}
+      />
 
       {/* Reviews - Right side, side by side on desktop */}
       {reviews.map((review, index) => {

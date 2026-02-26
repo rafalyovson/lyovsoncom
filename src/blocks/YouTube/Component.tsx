@@ -13,7 +13,7 @@ import { YouTubePlayer } from "./YouTubePlayer";
  * - Eliminates ~1.5 MB YouTube player JavaScript on initial page load
  * - Only loads iframe when user clicks play button
  * - Custom glassmorphism styling with play button overlay
- * - Supports multiple aspect ratios (16:9, 4:3, 1:1)
+ * - Supports flexible CSS aspect ratios (for example "16:9", "4:3", "1:1")
  *
  * Note: This implementation is equivalent to @next/third-parties/YouTubeEmbed
  * but includes custom styling and caption support specific to this design system.
@@ -29,8 +29,8 @@ export function YouTubeBlock({
   }
 
   return (
-    <Card className="glass-longform-block glass-interactive glass-stagger-1 transition-all duration-300">
-      <CardContent className="p-4">
+    <Card className="glass-longform-block glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0 transition-all duration-300">
+      <CardContent className="p-0">
         <YouTubePlayer
           aspectRatio={aspectRatio || undefined}
           videoId={videoId}
@@ -40,14 +40,17 @@ export function YouTubeBlock({
       {caption && (
         <CardFooter
           className={cn(
-            "glass-section m-4 rounded-lg p-2 transition-all duration-300",
+            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}
+          dir="auto"
         >
           <RichText
-            className="glass-text-secondary w-full text-center text-sm italic"
+            className="glass-text-secondary w-full break-words text-center text-sm italic"
             content={caption}
+            enableGutter={false}
+            enableProse={false}
           />
         </CardFooter>
       )}

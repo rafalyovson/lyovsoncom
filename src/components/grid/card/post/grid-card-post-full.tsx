@@ -14,21 +14,22 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/payload-types";
+import { getTopicBadgeStyle } from "@/utilities/topicBadgeStyle";
 
 const MAX_STAGGER_INDEX = 6;
 
-export type GridCardPostProps = {
-  post: Post;
+export interface GridCardPostProps {
   className?: string;
   loading?: "lazy" | "eager";
+  post: Post;
   priority?: boolean;
-};
+}
 
-type ProjectLinkData = {
+interface ProjectLinkData {
   href: string;
   key: number | string;
   label: string;
-};
+}
 
 function getStaggerClass(index: number): string {
   return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;
@@ -187,10 +188,7 @@ export const GridCardPostFull = ({
               >
                 <Badge
                   className="glass-badge glass-text w-full shadow-md"
-                  style={{
-                    backgroundColor: topic.color || "var(--glass-bg)",
-                    color: "var(--glass-text)",
-                  }}
+                  style={getTopicBadgeStyle(topic.color)}
                   variant="default"
                 >
                   {topic.name}

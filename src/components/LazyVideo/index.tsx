@@ -3,14 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
-type LazyVideoProps = {
-  mp4Src?: string;
-  webmSrc?: string;
-  poster?: string;
-  aspectRatio?: "16:9" | "4:3" | "1:1";
-  className?: string;
+interface LazyVideoProps {
   alt?: string;
-};
+  aspectRatio?: string;
+  className?: string;
+  mp4Src?: string;
+  poster?: string;
+  webmSrc?: string;
+}
 
 /**
  * LazyVideo Component - Intersection Observer Lazy Loading
@@ -30,7 +30,7 @@ export const LazyVideo = ({
   mp4Src,
   webmSrc,
   poster,
-  aspectRatio = "1:1",
+  aspectRatio = "1 / 1",
   className,
   alt = "Video content",
 }: LazyVideoProps) => {
@@ -60,26 +60,12 @@ export const LazyVideo = ({
     return () => observer.disconnect();
   }, []);
 
-  const getAspectRatioClass = () => {
-    switch (aspectRatio) {
-      case "4:3":
-        return "aspect-4/3";
-      case "16:9":
-        return "aspect-video";
-      case "1:1":
-        return "aspect-square";
-      default:
-        return "aspect-square";
-    }
-  };
-
   return (
     <video
       aria-label={alt}
       autoPlay
       className={cn(
-        "glass-media w-full rounded-lg",
-        getAspectRatioClass(),
+        "glass-media h-auto w-full rounded-lg object-cover",
         className
       )}
       loop
@@ -87,6 +73,7 @@ export const LazyVideo = ({
       playsInline
       poster={poster}
       ref={videoRef}
+      style={{ aspectRatio }}
     >
       {isLoaded && (
         <>

@@ -2,7 +2,7 @@ import { LazyVideo } from "@/components/LazyVideo";
 import RichText from "@/components/RichText";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { normalizeAspectRatio } from "@/utilities/tenor";
+import { normalizeAspectRatio } from "@/utilities/aspectRatio";
 import type { GIFBlock as GIFBlockType } from "./types";
 
 /**
@@ -38,8 +38,8 @@ export function GIFBlock(props: GIFBlockType) {
   const normalizedAspectRatio = normalizeAspectRatio(aspectRatio || "1");
 
   return (
-    <Card className="glass-longform-block glass-interactive glass-stagger-1 py-0 transition-all duration-300">
-      <CardContent className="px-0">
+    <Card className="glass-longform-block glass-interactive glass-stagger-1 gap-0 overflow-hidden py-0 transition-all duration-300">
+      <CardContent className="p-0">
         <div className="glass-media overflow-hidden rounded-lg">
           <LazyVideo
             alt="Animated GIF"
@@ -54,14 +54,17 @@ export function GIFBlock(props: GIFBlockType) {
       {props.caption && (
         <CardFooter
           className={cn(
-            "glass-section rounded-lg p-2 transition-all duration-300",
+            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}
+          dir="auto"
         >
           <RichText
-            className="glass-text-secondary w-full text-center text-sm italic"
+            className="glass-text-secondary w-full break-words text-center text-sm italic"
             content={props.caption}
+            enableGutter={false}
+            enableProse={false}
           />
         </CardFooter>
       )}

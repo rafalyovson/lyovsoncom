@@ -8,27 +8,28 @@ import {
   extractLexicalText,
   extractLexicalTextWithNewlines,
 } from "@/utilities/extract-lexical-text";
+import { getTopicBadgeStyle } from "@/utilities/topicBadgeStyle";
 
 const QUOTE_PREVIEW_MAX_CHARS = 360;
 const THOUGHT_PREVIEW_MAX_CHARS = 520;
 const MAX_TOPIC_STAGGER = 6;
 const UNKNOWN_NOTE_SLUG = "unknown";
 
-export type GridCardNoteProps = {
-  note: Note;
+export interface GridCardNoteProps {
   className?: string;
   loading?: "lazy" | "eager";
+  note: Note;
   priority?: boolean;
-};
+}
 
-type NotePreview = {
+interface NotePreview {
   attribution: string | null;
   excerpt: string;
   isMultiLineThought: boolean;
   isPoem: boolean;
   isQuote: boolean;
   isTruncated: boolean;
-};
+}
 
 function getNoteUrl(slug: Note["slug"]): string {
   return `/notes/${slug ?? UNKNOWN_NOTE_SLUG}`;
@@ -245,7 +246,46 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
         <NoteContentPreview noteUrl={noteUrl} preview={preview} />
       </GridCardSection>
 
-      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
+      <GridCardSection className="col-start-1 col-end-2 row-start-3 row-end-4 flex h-full flex-col items-center justify-end gap-2">
+        {uniqueTopics.map((topic, index) => {
+          if (!topic.slug) {
+            return null;
+          }
+
+          return (
+            <Link
+              aria-label={`View notes about ${topic.name}`}
+              className={`w-full font-semibold text-xs ${getTopicStaggerClass(index)}`}
+              href={{ pathname: `/topics/${topic.slug}` }}
+              key={topic.id}
+            >
+              <Badge
+                className="glass-badge glass-text w-full shadow-md"
+                style={getTopicBadgeStyle(topic.color)}
+                variant="default"
+              >
+                {topic.name}
+              </Badge>
+            </Link>
+          );
+        })}
+      </GridCardSection>
+
+      <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">
+        {author && (
+          <div className="glass-text-secondary flex items-center gap-2 text-xs capitalize">
+            <PenTool aria-hidden="true" className="h-5 w-5" />
+            <span className="font-medium">{author}</span>
+          </div>
+        )}
+
+        <div className="glass-text-secondary flex items-center gap-2 text-xs">
+          <Calendar aria-hidden="true" className="h-5 w-5" />
+          <time dateTime={publishedAt || undefined}>{publishedDateLabel}</time>
+        </div>
+      </GridCardSection>
+
+      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex h-full flex-col items-center justify-center gap-1">
         <Link
           className="group block flex flex-col items-center gap-1"
           href={noteUrl}
@@ -265,48 +305,6 @@ export const GridCardNoteFull = ({ note, className }: GridCardNoteProps) => {
             {typeLabel}
           </span>
         </Link>
-      </GridCardSection>
-
-      <GridCardSection className="col-start-2 col-end-3 row-start-3 row-end-4 flex flex-col justify-evenly gap-2">
-        {author && (
-          <div className="glass-text-secondary flex items-center gap-2 text-xs capitalize">
-            <PenTool aria-hidden="true" className="h-5 w-5" />
-            <span className="font-medium">{author}</span>
-          </div>
-        )}
-
-        <div className="glass-text-secondary flex items-center gap-2 text-xs">
-          <Calendar aria-hidden="true" className="h-5 w-5" />
-          <time dateTime={publishedAt || undefined}>{publishedDateLabel}</time>
-        </div>
-      </GridCardSection>
-
-      <GridCardSection className="col-start-3 col-end-4 row-start-3 row-end-4 flex flex-col items-center justify-end gap-2">
-        {uniqueTopics.map((topic, index) => {
-          if (!topic.slug) {
-            return null;
-          }
-
-          return (
-            <Link
-              aria-label={`View notes about ${topic.name}`}
-              className={`w-full font-semibold text-xs ${getTopicStaggerClass(index)}`}
-              href={{ pathname: `/topics/${topic.slug}` }}
-              key={topic.id}
-            >
-              <Badge
-                className="glass-badge glass-text w-full shadow-md"
-                style={{
-                  backgroundColor: topic.color || "var(--glass-bg)",
-                  color: "var(--glass-text)",
-                }}
-                variant="default"
-              >
-                {topic.name}
-              </Badge>
-            </Link>
-          );
-        })}
       </GridCardSection>
     </GridCard>
   );

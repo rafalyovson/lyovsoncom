@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import { type NodeTypes, serializeLexical } from "./serialize";
 
-type Props = {
+interface Props {
   className?: string;
   content: unknown;
   enableGutter?: boolean;
   enableProse?: boolean;
-};
+}
 
 function getLexicalNodes(
   content: unknown
@@ -29,7 +29,7 @@ function getLexicalNodes(
   return content.root.children as Array<NodeTypes | null | undefined>;
 }
 
-const RichText = async ({
+const RichText = ({
   className,
   content,
   enableGutter = true,
@@ -40,7 +40,7 @@ const RichText = async ({
   }
 
   const nodes = getLexicalNodes(content);
-  const serializedContent = nodes ? await serializeLexical({ nodes }) : null;
+  const serializedContent = nodes ? serializeLexical({ nodes }) : null;
 
   return (
     <div

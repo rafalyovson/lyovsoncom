@@ -2,10 +2,10 @@ import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
-type GridCardSectionBaseProps = {
+interface GridCardSectionBaseProps {
   children: ReactNode;
   className?: string;
-};
+}
 
 type GridCardSectionStaticProps = GridCardSectionBaseProps &
   Omit<ComponentPropsWithoutRef<"section">, "children" | "className"> & {
@@ -27,7 +27,6 @@ function getSectionClassName(
 ): string {
   return cn(
     "glass-section transition-glass",
-    "hover:hover-float",
     "focus-visible:outline-none",
     isInteractive && [
       "glass-interactive cursor-pointer",

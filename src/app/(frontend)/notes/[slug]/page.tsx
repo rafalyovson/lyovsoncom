@@ -5,11 +5,14 @@ import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 
+import { createContactAction } from "@/actions/create-contact-action";
 import {
   GridCard,
   GridCardHeroNote,
+  GridCardReferences,
   GridCardRelatedNotes,
   GridCardSection,
+  GridCardSubscribe,
 } from "@/components/grid";
 import { JsonLd } from "@/components/JsonLd";
 import RichText from "@/components/RichText";
@@ -69,12 +72,12 @@ export default async function NotePage({ params: paramsPromise }: Args) {
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
 
-      <GridCardHeroNote note={note} references={references} />
+      <GridCardHeroNote note={note} />
 
       <GridCard
         className={cn(
-          "g2:col-start-2 g2:col-end-3 g2:row-auto g2:row-start-3",
-          "g3:col-end-4 g3:row-start-2 g3:w-[var(--grid-card-2x1)]",
+          "g2:col-start-2 g2:col-end-3 g2:row-start-2 g2:row-end-3",
+          "g3:col-start-2 g3:col-end-3 g3:row-start-2 g3:row-end-3",
           "aspect-auto h-auto"
         )}
         interactive={false}
@@ -94,25 +97,43 @@ export default async function NotePage({ params: paramsPromise }: Args) {
         </GridCardSection>
       </GridCard>
 
-      {/* Related Notes - Under nav on desktop */}
       <aside
         className={cn(
-          "col-start-1 col-end-2 row-start-6 row-end-7 self-start",
-          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-3"
+          "col-start-1 col-end-2 grid auto-rows-max gap-4 self-start",
+          "g2:col-start-1 g2:col-end-2 g2:row-start-2 g2:row-end-5",
+          "g3:col-start-3 g3:col-end-4 g3:row-start-1 g3:row-end-3"
         )}
       >
-        <Suspense
-          fallback={
-            <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
-              <Skeleton className="glass-badge h-full w-full" />
-            </div>
-          }
-        >
-          <RelatedNotes
-            recommendedIds={note.recommended_note_ids as number[] | undefined}
-          />
-        </Suspense>
+        {references.length > 0 && (
+          <div>
+            <GridCardReferences references={references} />
+          </div>
+        )}
+        <div>
+          <Suspense
+            fallback={
+              <div className="glass-section glass-loading h-[var(--grid-card-1x1)] w-[var(--grid-card-1x1)] animate-pulse rounded-xl">
+                <Skeleton className="glass-badge h-full w-full" />
+              </div>
+            }
+          >
+            <RelatedNotes
+              recommendedIds={note.recommended_note_ids as number[] | undefined}
+            />
+          </Suspense>
+        </div>
+        <div className="order-3 g3:hidden">
+          <GridCardSubscribe handleSubmit={createContactAction} />
+        </div>
       </aside>
+
+      <GridCardSubscribe
+        className={cn(
+          "g3:block hidden g3:self-start",
+          "g3:col-start-1 g3:col-end-2 g3:row-start-2 g3:row-end-3"
+        )}
+        handleSubmit={createContactAction}
+      />
     </>
   );
 }

@@ -20,8 +20,8 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
   }
 
   return (
-    <Card className="glass-longform-block glass-interactive glass-stagger-2 transition-all duration-300">
-      <CardContent className="flex justify-center pt-6">
+    <Card className="glass-longform-block glass-interactive glass-stagger-2 gap-0 overflow-hidden py-0 transition-all duration-300">
+      <CardContent className="flex justify-center px-4 pt-4 pb-0">
         <div className="w-full max-w-lg">
           <Tweet id={postId} />
         </div>
@@ -30,14 +30,17 @@ export function XPostBlock({ postId, caption }: XPostBlockType) {
       {caption && (
         <CardFooter
           className={cn(
-            "glass-section m-4 rounded-lg p-2 transition-all duration-300",
+            "glass-section m-3 mt-2 rounded-lg px-4 py-2 transition-all duration-300 sm:px-5 sm:py-3",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--glass-border-hover)] focus-visible:ring-offset-2",
             "hover:shadow-md"
           )}
+          dir="auto"
         >
           <RichText
-            className="glass-text-secondary w-full text-center text-sm italic"
+            className="glass-text-secondary w-full break-words text-center text-sm italic"
             content={caption}
+            enableGutter={false}
+            enableProse={false}
           />
         </CardFooter>
       )}

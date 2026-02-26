@@ -41,9 +41,10 @@ export type NodeTypes =
       | GIFBlockProps
     >;
 
-type Props = {
+interface Props {
   nodes: Array<NodeTypes | null | undefined>;
-};
+  path?: string;
+}
 
 type RichTextBlock =
   | MediaBlockProps
@@ -58,6 +59,77 @@ function hasChildren(
   node: NodeTypes
 ): node is NodeTypes & { children: NodeTypes[] } {
   return "children" in node && Array.isArray(node.children);
+}
+
+function getUnknownBlockType(block: unknown): string {
+  if (
+    block &&
+    typeof block === "object" &&
+    "blockType" in block &&
+    typeof block.blockType === "string"
+  ) {
+    return block.blockType;
+  }
+
+  return "unknown";
+}
+
+function getObjectId(value: unknown): string | null {
+  if (!(value && typeof value === "object" && "id" in value)) {
+    return null;
+  }
+
+  const id = value.id;
+  if (typeof id === "string" || typeof id === "number") {
+    return String(id);
+  }
+
+  return null;
+}
+
+function sanitizeKeySegment(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function getNodeKeyBase(node: NodeTypes): string {
+  if (node.type === "text") {
+    const textSample = sanitizeKeySegment(node.text.slice(0, 24));
+    return `text-${textSample || "empty"}-${node.format ?? 0}`;
+  }
+
+  if (node.type === "block") {
+    const blockType = getUnknownBlockType(node.fields);
+    const blockId = getObjectId(node.fields);
+    if (blockId) {
+      return `block-${blockType}-${blockId}`;
+    }
+    return `block-${blockType}`;
+  }
+
+  if (node.type === "heading") {
+    return `heading-${node.tag}`;
+  }
+
+  if (node.type === "list") {
+    return `list-${node.tag}-${node.listType ?? "default"}`;
+  }
+
+  if (node.type === "listitem") {
+    return `listitem-${node.value ?? "na"}-${node.checked ?? "na"}`;
+  }
+
+  if (node.type === "link") {
+    const externalUrl =
+      node.fields.linkType === "custom" && node.fields.url
+        ? sanitizeKeySegment(node.fields.url)
+        : "internal";
+    return `link-${externalUrl || "empty"}`;
+  }
+
+  return node.type;
 }
 
 function isRichTextBlock(block: unknown): block is RichTextBlock {
@@ -129,100 +201,85 @@ function normalizeChildren(node: NodeTypes): NodeTypes[] | null {
   });
 }
 
-function serializeChildren(node: NodeTypes): Promise<JSX.Element | null> {
+function serializeChildren(node: NodeTypes, path: string): JSX.Element | null {
   const children = normalizeChildren(node);
   if (children == null) {
-    return Promise.resolve(null);
+    return null;
   }
 
-  return serializeLexical({ nodes: children });
+  return serializeLexical({
+    nodes: children,
+    path: `${path}-children`,
+  });
 }
 
 function renderRichTextBlock(
   block: RichTextBlock,
-  index: number
+  key: string
 ): JSX.Element | null {
   switch (block.blockType) {
     case "mediaBlock":
       return (
-        <div className="glass-longform-block glass-stagger-1" key={index}>
-          <MediaBlock
-            className="glass-section"
-            imgClassName="m-0 w-full rounded-lg"
-            {...block}
-            captionClassName="mx-auto max-w-[48rem] glass-text-secondary text-center"
-            disableInnerContainer={true}
-            enableGutter={false}
-          />
-        </div>
+        <MediaBlock
+          imgClassName="m-0 w-full rounded-lg"
+          key={key}
+          {...block}
+          captionClassName="mx-auto max-w-[48rem] glass-text-secondary text-center"
+          disableInnerContainer={true}
+          enableGutter={false}
+        />
       );
     case "banner":
-      return (
-        <div className="glass-longform-block glass-stagger-2" key={index}>
-          <BannerBlock className="glass-section glass-interactive" {...block} />
-        </div>
-      );
+      return <BannerBlock className="glass-stagger-2" key={key} {...block} />;
     case "code":
       return (
-        <div className="glass-longform-block glass-stagger-2" key={index}>
-          <CodeBlock className="glass-section font-mono" {...block} />
-        </div>
+        <CodeBlock className="glass-stagger-2 font-mono" key={key} {...block} />
       );
     case "youtube":
-      return (
-        <div
-          className="glass-longform-block glass-section glass-stagger-1 overflow-hidden rounded-lg"
-          key={index}
-        >
-          <YouTubeBlock {...block} />
-        </div>
-      );
+      return <YouTubeBlock key={key} {...block} />;
     case "xpost":
-      return (
-        <div
-          className="glass-longform-block glass-section glass-interactive glass-stagger-2"
-          key={index}
-        >
-          <XPostBlock {...block} />
-        </div>
-      );
+      return <XPostBlock key={key} {...block} />;
     case "quote":
-      return (
-        <div className="glass-longform-block glass-stagger-2" key={index}>
-          <QuoteBlock className="glass-section glass-premium" {...block} />
-        </div>
-      );
+      return <QuoteBlock className="glass-stagger-2" key={key} {...block} />;
     case "gif":
-      return (
-        <div
-          className="glass-longform-block glass-section glass-stagger-1 overflow-hidden rounded-lg"
-          key={index}
-        >
-          <GIFBlock {...block} />
-        </div>
-      );
+      return <GIFBlock key={key} {...block} />;
     default:
       return null;
   }
 }
 
+function renderUnsupportedBlock(block: unknown, key: string): JSX.Element {
+  const blockType = getUnknownBlockType(block);
+
+  return (
+    <div
+      className="glass-longform-block glass-section rounded-lg p-4"
+      key={key}
+    >
+      <p className="glass-text-secondary text-sm">
+        Unsupported content block: {blockType}
+      </p>
+    </div>
+  );
+}
+
 function renderElementNode(
   node: Exclude<NodeTypes, { type: "block" } | { type: "text" }>,
-  index: number,
+  key: string,
   serializedChildren: JSX.Element | null
 ): JSX.Element | null {
   switch (node.type) {
     case "linebreak":
-      return <br key={index} />;
+      return <br key={key} />;
     case "paragraph":
-      return <p key={index}>{serializedChildren}</p>;
+      return <p key={key}>{serializedChildren}</p>;
     case "heading": {
       const Tag = node.tag;
-      return <Tag key={index}>{serializedChildren}</Tag>;
+      return <Tag key={key}>{serializedChildren}</Tag>;
     }
     case "list": {
       const Tag = node.tag;
-      return <Tag key={index}>{serializedChildren}</Tag>;
+      return <Tag key={key}>{serializedChildren}</Tag>;
     }
     case "listitem":
       if (node.checked != null) {
@@ -233,7 +290,7 @@ function renderElementNode(
                 ? "glass-longform-checklist-item line-through opacity-65"
                 : "glass-longform-checklist-item"
             }
-            key={index}
+            key={key}
             value={node.value}
           >
             <span className="mr-2 text-xs">{node.checked ? "[x]" : "[ ]"}</span>
@@ -243,19 +300,19 @@ function renderElementNode(
       }
 
       return (
-        <li key={index} value={node.value}>
+        <li key={key} value={node.value}>
           {serializedChildren}
         </li>
       );
     case "quote":
-      return <blockquote key={index}>{serializedChildren}</blockquote>;
+      return <blockquote key={key}>{serializedChildren}</blockquote>;
     case "link": {
       const isInternalLink = node.fields.linkType === "internal";
 
       return (
         <CMSLink
           className="transition-colors duration-300 hover:opacity-90"
-          key={index}
+          key={key}
           newTab={Boolean(node.fields.newTab)}
           reference={isInternalLink ? node.fields.doc : null}
           type={isInternalLink ? "reference" : "custom"}
@@ -270,37 +327,38 @@ function renderElementNode(
   }
 }
 
-async function serializeNode(
-  node: NodeTypes | null | undefined,
-  index: number
-): Promise<JSX.Element | null> {
-  if (!node) {
-    return null;
-  }
-
+function serializeNode(node: NodeTypes, key: string): JSX.Element | null {
   if (node.type === "text") {
-    return (
-      <React.Fragment key={index}>{serializeTextNode(node)}</React.Fragment>
-    );
+    return <React.Fragment key={key}>{serializeTextNode(node)}</React.Fragment>;
   }
 
-  const serializedChildren = await serializeChildren(node);
+  const serializedChildren = serializeChildren(node, key);
 
   if (node.type === "block") {
     if (!isRichTextBlock(node.fields)) {
+      return renderUnsupportedBlock(node.fields, key);
+    }
+
+    return renderRichTextBlock(node.fields, key);
+  }
+
+  return renderElementNode(node, key, serializedChildren);
+}
+
+export function serializeLexical({ nodes, path = "root" }: Props): JSX.Element {
+  const keyCounts = new Map<string, number>();
+  const serializedNodes = nodes.map((node) => {
+    if (!node) {
       return null;
     }
 
-    return renderRichTextBlock(node.fields, index);
-  }
+    const baseKey = getNodeKeyBase(node);
+    const keyCount = (keyCounts.get(baseKey) ?? 0) + 1;
+    keyCounts.set(baseKey, keyCount);
 
-  return renderElementNode(node, index, serializedChildren);
-}
-
-export async function serializeLexical({ nodes }: Props): Promise<JSX.Element> {
-  const serializedNodes = await Promise.all(
-    nodes?.map(async (node, index) => serializeNode(node, index)) ?? []
-  );
+    const key = `${path}-${baseKey}-${keyCount}`;
+    return serializeNode(node, key);
+  });
 
   return <>{serializedNodes}</>;
 }
