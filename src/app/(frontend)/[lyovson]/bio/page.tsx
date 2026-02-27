@@ -11,6 +11,10 @@ import type { Media } from "@/payload-types";
 import { generatePersonSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
 import { getServerSideURL } from "@/utilities/getURL";
+import {
+  buildLyovsonMetadata,
+  buildLyovsonNotFoundMetadata,
+} from "../_utilities/metadata";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -84,39 +88,22 @@ export async function generateMetadata({
   const user = await getLyovsonProfile(username);
 
   if (!user) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const name = user.name || username;
   const description = user.quote || `Read ${name}'s biography.`;
-  const title = `${name} Bio | Lyóvson.com`;
+  const title = `${name} Bio`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildLyovsonMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/${username}/bio`,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "profile",
-      url: `/${username}/bio`,
+    canonicalPath: `/${username}/bio`,
+    openGraphType: "profile",
+    profile: {
       firstName: name.split(" ")[0],
       lastName: name.split(" ").slice(1).join(" ") || undefined,
       username,
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-    },
-  };
+  });
 }

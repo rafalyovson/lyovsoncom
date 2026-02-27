@@ -15,6 +15,10 @@ import {
   LYOVSON_ITEMS_PER_PAGE,
   MAX_INDEXED_PAGE,
 } from "../../../_utilities/constants";
+import {
+  buildLyovsonMetadata,
+  buildLyovsonNotFoundMetadata,
+} from "../../../_utilities/metadata";
 
 interface Args {
   params: Promise<{
@@ -114,11 +118,7 @@ export async function generateMetadata({
   const sanitizedPageNumber = getValidPageNumber(pageNumber);
 
   if (!sanitizedPageNumber || sanitizedPageNumber < 2) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const response = await getLyovsonFeed({
@@ -129,46 +129,31 @@ export async function generateMetadata({
   });
 
   if (!response || sanitizedPageNumber > response.totalPages) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const name = response.user.name || username;
-  const title = `${name} Activities - Page ${sanitizedPageNumber} | Lyóvson.com`;
+  const title = `${name} Activities - Page ${sanitizedPageNumber}`;
   const description = `Activities associated with ${name} on page ${sanitizedPageNumber}.`;
+  const prevPath =
+    sanitizedPageNumber === 2
+      ? `/${username}/activities`
+      : `/${username}/activities/page/${sanitizedPageNumber - 1}`;
+  const nextPath =
+    sanitizedPageNumber < response.totalPages
+      ? `/${username}/activities/page/${sanitizedPageNumber + 1}`
+      : undefined;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildLyovsonMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/${username}/activities/page/${sanitizedPageNumber}`,
-      ...(sanitizedPageNumber > 1 && {
-        prev:
-          sanitizedPageNumber === 2
-            ? `/${username}/activities`
-            : `/${username}/activities/page/${sanitizedPageNumber - 1}`,
-      }),
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `/${username}/activities/page/${sanitizedPageNumber}`,
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      site: "@lyovson",
-    },
+    canonicalPath: `/${username}/activities/page/${sanitizedPageNumber}`,
+    prevPath,
+    nextPath,
     robots: {
       index: sanitizedPageNumber <= MAX_INDEXED_PAGE,
       follow: true,
       noarchive: sanitizedPageNumber > 1,
     },
-  };
+  });
 }

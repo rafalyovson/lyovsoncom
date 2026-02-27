@@ -3,10 +3,7 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 
-const requiredMetadataBaseGlobs = [
-  "src/app/(frontend)",
-  "src/app/(payload)",
-];
+const requiredMetadataBaseGlobs = ["src/app/(frontend)", "src/app/(payload)"];
 
 const requiredCanonicalFiles = [
   "src/app/(frontend)/posts/page.tsx",
@@ -20,6 +17,16 @@ const requiredCanonicalFiles = [
   "src/app/(frontend)/projects/[project]/page.tsx",
   "src/app/(frontend)/topics/[slug]/page.tsx",
   "src/app/(frontend)/[lyovson]/page.tsx",
+  "src/app/(frontend)/[lyovson]/posts/page.tsx",
+  "src/app/(frontend)/[lyovson]/notes/page.tsx",
+  "src/app/(frontend)/[lyovson]/activities/page.tsx",
+  "src/app/(frontend)/[lyovson]/portfolio/page.tsx",
+  "src/app/(frontend)/[lyovson]/bio/page.tsx",
+  "src/app/(frontend)/[lyovson]/contact/page.tsx",
+  "src/app/(frontend)/[lyovson]/page/[pageNumber]/page.tsx",
+  "src/app/(frontend)/[lyovson]/posts/page/[pageNumber]/page.tsx",
+  "src/app/(frontend)/[lyovson]/notes/page/[pageNumber]/page.tsx",
+  "src/app/(frontend)/[lyovson]/activities/page/[pageNumber]/page.tsx",
 ];
 
 const requiredJsonLdFiles = [
@@ -43,7 +50,7 @@ const requiredJsonLdFiles = [
 
 const noindexExcludedFromSitemap = ["/playground"];
 
-async function readFile(file) {
+function readFile(file) {
   return fs.readFile(path.join(ROOT, file), "utf8");
 }
 
@@ -78,7 +85,7 @@ async function checkMetadataBase() {
     const files = await listFilesRecursively(absoluteDir);
 
     for (const file of files) {
-      if (!file.endsWith(".ts") && !file.endsWith(".tsx")) {
+      if (!(file.endsWith(".ts") || file.endsWith(".tsx"))) {
         continue;
       }
 
@@ -86,7 +93,11 @@ async function checkMetadataBase() {
       if (!hasMetadataExport(source)) {
         continue;
       }
-      if (!source.includes("metadataBase")) {
+      const hasMetadataBase =
+        source.includes("metadataBase") ||
+        source.includes("buildLyovsonMetadata(");
+
+      if (!hasMetadataBase) {
         issues.push(
           `Missing metadataBase in metadata export: ${path.relative(ROOT, file)}`
         );
@@ -116,9 +127,10 @@ async function checkJsonLdCoverage() {
   for (const file of requiredJsonLdFiles) {
     const source = await readFile(file);
     const hasJsonLd = source.includes("JsonLd");
-    const hasSchemaGenerator = source.includes("generateCollectionPageSchema")
-      || source.includes("generateArticleSchema")
-      || source.includes("generatePersonSchema");
+    const hasSchemaGenerator =
+      source.includes("generateCollectionPageSchema") ||
+      source.includes("generateArticleSchema") ||
+      source.includes("generatePersonSchema");
 
     if (!(hasJsonLd && hasSchemaGenerator)) {
       issues.push(`Missing structured data wiring: ${file}`);

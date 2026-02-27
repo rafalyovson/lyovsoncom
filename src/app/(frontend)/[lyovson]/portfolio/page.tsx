@@ -6,6 +6,10 @@ import { JsonLd } from "@/components/JsonLd";
 import { generateCollectionPageSchema } from "@/utilities/generate-json-ld";
 import { getLyovsonPortfolioProjects } from "@/utilities/get-lyovson-feed";
 import { getServerSideURL } from "@/utilities/getURL";
+import {
+  buildLyovsonMetadata,
+  buildLyovsonNotFoundMetadata,
+} from "../_utilities/metadata";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -59,36 +63,16 @@ export async function generateMetadata({
 
   const response = await getLyovsonPortfolioProjects(username);
   if (!response) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const name = response.user.name || username;
-  const title = `${name} Portfolio | Lyóvson.com`;
+  const title = `${name} Portfolio`;
   const description = `Project portfolio inferred from published work by ${name}.`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildLyovsonMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/${username}/portfolio`,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `/${username}/portfolio`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-    },
-  };
+    canonicalPath: `/${username}/portfolio`,
+  });
 }

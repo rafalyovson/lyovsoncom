@@ -4,8 +4,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next/types";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { getLyovsonProfile } from "@/utilities/get-lyovson-profile";
-import { getServerSideURL } from "@/utilities/getURL";
 import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
+import {
+  buildLyovsonMetadata,
+  buildLyovsonNotFoundMetadata,
+} from "../_utilities/metadata";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -91,36 +94,16 @@ export async function generateMetadata({
   const user = await getLyovsonProfile(username);
 
   if (!user) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const name = user.name || username;
-  const title = `${name} Contact | Lyóvson.com`;
+  const title = `${name} Contact`;
   const description = `Public contact links for ${name}.`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildLyovsonMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/${username}/contact`,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `/${username}/contact`,
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-      creator: "@lyovson",
-      site: "@lyovson",
-    },
-  };
+    canonicalPath: `/${username}/contact`,
+  });
 }

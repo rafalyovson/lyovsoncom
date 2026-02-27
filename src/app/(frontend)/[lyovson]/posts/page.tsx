@@ -10,6 +10,10 @@ import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import { getServerSideURL } from "@/utilities/getURL";
 import { LyovsonFeedItems } from "../_components/lyovson-feed-items";
 import { LYOVSON_ITEMS_PER_PAGE } from "../_utilities/constants";
+import {
+  buildLyovsonMetadata,
+  buildLyovsonNotFoundMetadata,
+} from "../_utilities/metadata";
 
 interface PageProps {
   params: Promise<{ lyovson: string }>;
@@ -95,36 +99,16 @@ export async function generateMetadata({
   });
 
   if (!response) {
-    return {
-      metadataBase: new URL(getServerSideURL()),
-      title: "Not Found | Lyóvson.com",
-      description: "The requested page could not be found.",
-    };
+    return buildLyovsonNotFoundMetadata();
   }
 
   const name = response.user.name || username;
-  const title = `${name} Posts | Lyóvson.com`;
+  const title = `${name} Posts`;
   const description = `Browse published posts by ${name}.`;
 
-  return {
-    metadataBase: new URL(getServerSideURL()),
+  return buildLyovsonMetadata({
     title,
     description,
-    alternates: {
-      canonical: `/${username}/posts`,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      url: `/${username}/posts`,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      site: "@lyovson",
-      creator: "@lyovson",
-    },
-  };
+    canonicalPath: `/${username}/posts`,
+  });
 }

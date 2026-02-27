@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getActivityPath } from "@/utilities/activity-path";
+import { getLyovsonFeed } from "@/utilities/get-lyovson-feed";
 import { getSitemapData } from "@/utilities/get-sitemap-data";
 
 const POSTS_PER_PAGE = 25;
@@ -8,6 +9,7 @@ const NOTES_PER_PAGE = 25;
 const ACTIVITIES_PER_PAGE = 25;
 const PROJECT_POSTS_PER_PAGE = 25;
 const TOPIC_POSTS_PER_PAGE = 25;
+const LYOVSON_ITEMS_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
 
 function getIndexedPaginationPages(totalItems: number, pageSize: number) {
@@ -38,6 +40,168 @@ function getSlugFromRelation(
   }
 
   return null;
+}
+
+function addLyovsonPaginatedRoutes({
+  basePath,
+  lastModified,
+  pageSize,
+  priority,
+  routes,
+  siteUrl,
+  totalItems,
+  username,
+}: {
+  basePath: string;
+  lastModified: Date;
+  pageSize: number;
+  priority: number;
+  routes: MetadataRoute.Sitemap;
+  siteUrl: string;
+  totalItems: number;
+  username: string;
+}) {
+  for (const pageNumber of getIndexedPaginationPages(totalItems, pageSize)) {
+    routes.push({
+      url: `${siteUrl}/${username}${basePath}/page/${pageNumber}`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority,
+    });
+  }
+}
+
+async function getLyovsonRoutes({
+  lastModified,
+  siteUrl,
+  username,
+}: {
+  lastModified: Date;
+  siteUrl: string;
+  username: string;
+}): Promise<MetadataRoute.Sitemap> {
+  const routes: MetadataRoute.Sitemap = [
+    {
+      url: `${siteUrl}/${username}`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${siteUrl}/${username}/bio`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/${username}/portfolio`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: `${siteUrl}/${username}/contact`,
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${siteUrl}/${username}/posts`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+    {
+      url: `${siteUrl}/${username}/notes`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+    {
+      url: `${siteUrl}/${username}/activities`,
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.75,
+    },
+  ];
+
+  const [postsFeed, notesFeed, activitiesFeed] = await Promise.all([
+    getLyovsonFeed({
+      username,
+      filter: "posts",
+      page: 1,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+    getLyovsonFeed({
+      username,
+      filter: "notes",
+      page: 1,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+    getLyovsonFeed({
+      username,
+      filter: "activities",
+      page: 1,
+      limit: LYOVSON_ITEMS_PER_PAGE,
+    }),
+  ]);
+
+  const totalMixedItems =
+    (postsFeed?.totalItems || 0) +
+    (notesFeed?.totalItems || 0) +
+    (activitiesFeed?.totalItems || 0);
+
+  addLyovsonPaginatedRoutes({
+    routes,
+    siteUrl,
+    username,
+    basePath: "",
+    totalItems: totalMixedItems,
+    pageSize: LYOVSON_ITEMS_PER_PAGE,
+    lastModified,
+    priority: 0.65,
+  });
+
+  if (postsFeed) {
+    addLyovsonPaginatedRoutes({
+      routes,
+      siteUrl,
+      username,
+      basePath: "/posts",
+      totalItems: postsFeed.totalItems,
+      pageSize: LYOVSON_ITEMS_PER_PAGE,
+      lastModified,
+      priority: 0.55,
+    });
+  }
+
+  if (notesFeed) {
+    addLyovsonPaginatedRoutes({
+      routes,
+      siteUrl,
+      username,
+      basePath: "/notes",
+      totalItems: notesFeed.totalItems,
+      pageSize: LYOVSON_ITEMS_PER_PAGE,
+      lastModified,
+      priority: 0.55,
+    });
+  }
+
+  if (activitiesFeed) {
+    addLyovsonPaginatedRoutes({
+      routes,
+      siteUrl,
+      username,
+      basePath: "/activities",
+      totalItems: activitiesFeed.totalItems,
+      pageSize: LYOVSON_ITEMS_PER_PAGE,
+      lastModified,
+      priority: 0.55,
+    });
+  }
+
+  return routes;
 }
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Sitemap generation aggregates multiple collections and routes */
@@ -308,73 +472,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // Add author pages discovered from the CMS
-  for (const lyovson of lyovsons) {
-    if (!lyovson?.username) {
-      continue;
-    }
+  const lyovsonRouteGroups = await Promise.all(
+    lyovsons
+      .filter((lyovson) => Boolean(lyovson?.username))
+      .map((lyovson) => {
+        const username = lyovson.username;
+        const lastModified = lyovson.updatedAt
+          ? new Date(lyovson.updatedAt)
+          : now;
+        return getLyovsonRoutes({
+          siteUrl: SITE_URL,
+          username,
+          lastModified,
+        });
+      })
+  );
 
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/bio`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/portfolio`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/contact`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/posts`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "weekly",
-      priority: 0.75,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/notes`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "weekly",
-      priority: 0.75,
-    });
-
-    routes.push({
-      url: `${SITE_URL}/${lyovson.username}/activities`,
-      lastModified: lyovson.updatedAt
-        ? new Date(lyovson.updatedAt)
-        : new Date(),
-      changeFrequency: "weekly",
-      priority: 0.75,
-    });
+  for (const lyovsonRoutes of lyovsonRouteGroups) {
+    routes.push(...lyovsonRoutes);
   }
 
   return routes;
