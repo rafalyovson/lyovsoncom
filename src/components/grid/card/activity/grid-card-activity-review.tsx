@@ -5,16 +5,16 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import type { Lyovson } from "@/payload-types";
 
-type ActivityReview = {
+interface ActivityReview {
   lyovson: number | Lyovson;
   note?: string | null;
   rating?: number | null;
-};
+}
 
-type GridCardActivityReviewProps = {
-  review: ActivityReview;
+interface GridCardActivityReviewProps {
   className?: string;
-};
+  review: ActivityReview;
+}
 
 const RATING_MAX = 10;
 const STARS_PER_ROW = 5;

@@ -8,17 +8,17 @@ import {
 import { Globe, Linkedin } from "lucide-react";
 import type { ComponentType } from "react";
 
-type IconProps = {
-  size?: number;
-  color?: string;
+interface IconProps {
   className?: string;
-};
+  color?: string;
+  size?: number;
+}
 
-type SocialIconConfig = {
+interface SocialIconConfig {
   icon: ComponentType<IconProps>;
-  label: string;
   iconType: "simple" | "lucide";
-};
+  label: string;
+}
 
 export const SOCIAL_ICON_MAP: Record<string, SocialIconConfig> = {
   x: {

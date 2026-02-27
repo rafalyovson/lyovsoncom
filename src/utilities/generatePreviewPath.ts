@@ -4,11 +4,11 @@ const collectionPrefixMap: Partial<Record<CollectionSlug, string>> = {
   posts: "/posts",
 };
 
-type Props = {
+interface Props {
   collection: keyof typeof collectionPrefixMap;
-  slug: string;
   project?: unknown;
-};
+  slug: string;
+}
 
 export const generatePreviewPath = ({ collection, slug, project }: Props) => {
   if (collection === "posts") {

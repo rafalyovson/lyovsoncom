@@ -5,10 +5,10 @@ import type { Post } from "@/payload-types";
 import { getCachedDocument } from "@/utilities/getDocument";
 import { getCachedRedirects } from "@/utilities/getRedirects";
 
-type Props = {
+interface Props {
   disableNotFound?: boolean;
   url: string;
-};
+}
 
 /* This component helps us with SSR based dynamic redirects */
 export const PayloadRedirects: React.FC<Props> = async ({

@@ -45,21 +45,21 @@ const organizationData: OrganizationSchema = {
 /**
  * Parameters for generating an Article schema
  */
-type ArticleDataParams = {
-  title: string;
+interface ArticleDataParams {
+  authors?: Array<{ name: string; username: string }>;
   description?: string;
-  slug: string;
-  publishedAt?: string;
-  updatedAt?: string;
+  imageHeight?: number;
   imageUrl?: string;
   imageWidth?: number;
-  imageHeight?: number;
-  authors?: Array<{ name: string; username: string }>;
   keywords?: string[];
-  wordCount?: number;
   pathPrefix?: string; // e.g., '/posts', '/notes', '/activities' (defaults to '/posts')
+  publishedAt?: string;
+  slug: string;
+  title: string;
+  updatedAt?: string;
   url?: string; // Full URL override (takes precedence over pathPrefix)
-};
+  wordCount?: number;
+}
 
 /**
  * Generate Article schema for blog posts and articles
@@ -141,19 +141,19 @@ export function generateArticleSchema(data: ArticleDataParams): ArticleSchema {
 /**
  * Parameters for generating a Person schema
  */
-type PersonDataParams = {
-  name: string;
-  username: string;
-  bio?: string;
+interface PersonDataParams {
   avatarUrl?: string;
+  bio?: string;
+  expertise?: string[];
   jobTitle?: string;
+  name: string;
   socialLinks?: {
     twitter?: string;
     github?: string;
     linkedin?: string;
   };
-  expertise?: string[];
-};
+  username: string;
+}
 
 /**
  * Generate Person schema for author and profile pages
@@ -209,10 +209,10 @@ export function generatePersonSchema(data: PersonDataParams): PersonSchema {
 /**
  * Breadcrumb item for navigation paths
  */
-type BreadcrumbItem = {
+interface BreadcrumbItem {
   name: string;
   url?: string;
-};
+}
 
 /**
  * Generate BreadcrumbList schema for navigation
@@ -251,13 +251,13 @@ export function generateBreadcrumbSchema(
 /**
  * Parameters for generating a CollectionPage schema
  */
-type CollectionPageDataParams = {
-  name: string;
+interface CollectionPageDataParams {
   description?: string;
-  url: string;
   itemCount?: number;
   items?: Array<{ url: string }>;
-};
+  name: string;
+  url: string;
+}
 
 /**
  * Generate CollectionPage schema for listing pages

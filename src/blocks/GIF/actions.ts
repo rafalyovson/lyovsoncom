@@ -7,12 +7,12 @@
  * to keep API keys secure and enable proper caching
  */
 
-type TenorMediaFormat = {
-  url: string;
+interface TenorMediaFormat {
   dims: [number, number];
-};
+  url: string;
+}
 
-type TenorResult = {
+interface TenorResult {
   id: string;
   media_formats: {
     tinygif: TenorMediaFormat;
@@ -20,18 +20,18 @@ type TenorResult = {
     webm?: TenorMediaFormat;
     tinygif_transparent?: TenorMediaFormat;
   };
-};
+}
 
-export type GifVideoData = {
-  mp4Url: string;
-  webmUrl?: string;
-  posterUrl: string;
+export interface GifVideoData {
   aspectRatio: string;
-};
+  mp4Url: string;
+  posterUrl: string;
+  webmUrl?: string;
+}
 
-type TenorSearchResponse = {
+interface TenorSearchResponse {
   results: TenorResult[];
-};
+}
 
 /**
  * Search for GIFs on Tenor

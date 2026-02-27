@@ -1,12 +1,12 @@
 declare global {
   // biome-ignore lint/style/noNamespace: NodeJS ProcessEnv augmentation uses namespace merging.
   namespace NodeJS {
-    type ProcessEnv = {
-      PAYLOAD_SECRET: string;
+    interface ProcessEnv {
       DATABASE_URI: string;
       NEXT_PUBLIC_SERVER_URL: string;
+      PAYLOAD_SECRET: string;
       VERCEL_PROJECT_PRODUCTION_URL: string;
-    };
+    }
   }
 }
 

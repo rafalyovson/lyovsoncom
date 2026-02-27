@@ -1,17 +1,14 @@
 import Link from "next/link";
+import "./login-text.scss";
 
 export default function LoginText() {
   return (
-    <Link href="https://www.lyovson.com" target="_blank">
-      <p
-        style={{
-          textAlign: "center",
-          marginTop: "20px",
-          textDecoration: "underline",
-        }}
-      >
-        Return to Lyovson.com
-      </p>
+    <Link
+      className="login-return-link"
+      href="https://www.lyovson.com"
+      target="_blank"
+    >
+      Return to Lyovson.com
     </Link>
   );
 }

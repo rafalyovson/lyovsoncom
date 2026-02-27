@@ -5,19 +5,19 @@
 type SchemaContext = "https://schema.org";
 
 // Common properties shared across types
-type BaseSchema = {
+interface BaseSchema {
   "@context": SchemaContext;
   "@type": string;
-};
+}
 
 // ImageObject for media representations (when used as nested object)
-export type ImageObjectNested = {
+export interface ImageObjectNested {
   "@type": "ImageObject";
+  caption?: string;
+  height?: number;
   url: string;
   width?: number;
-  height?: number;
-  caption?: string;
-};
+}
 
 // ImageObject for standalone schema (with @context)
 export type ImageObject = BaseSchema & ImageObjectNested;
@@ -67,12 +67,12 @@ export type ArticleSchema = BaseSchema & {
 };
 
 // BreadcrumbList schema for navigation
-type BreadcrumbListItem = {
+interface BreadcrumbListItem {
   "@type": "ListItem";
-  position: number;
-  name: string;
   item?: string;
-};
+  name: string;
+  position: number;
+}
 
 export type BreadcrumbListSchema = BaseSchema & {
   "@type": "BreadcrumbList";
@@ -123,6 +123,6 @@ export type Schema =
   | WebSiteSchema;
 
 // Helper type for JSON-LD script tag
-export type JsonLdProps = {
+export interface JsonLdProps {
   data: Schema | Schema[];
-};
+}

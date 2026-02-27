@@ -8,7 +8,7 @@ import type {
 
 import { cn } from "@/lib/utils";
 
-type GridCardBaseProps<T extends ElementType> = {
+interface GridCardBaseProps<T extends ElementType> {
   as?: T;
   children: ReactNode;
   className?: string;
@@ -16,7 +16,7 @@ type GridCardBaseProps<T extends ElementType> = {
   role?: AriaRole;
   style?: CSSProperties;
   variant?: "default" | "content";
-};
+}
 
 type GridCardProps<T extends ElementType> = GridCardBaseProps<T> &
   Omit<ComponentPropsWithoutRef<T>, keyof GridCardBaseProps<T>>;

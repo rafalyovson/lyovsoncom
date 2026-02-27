@@ -20,12 +20,12 @@ import { Media } from "@/components/Media";
 import type { Activity, Reference } from "@/payload-types";
 import { getActivityPath } from "@/utilities/activity-path";
 
-export type GridCardActivityProps = {
+export interface GridCardActivityProps {
   activity: Activity;
   className?: string;
   loading?: "lazy" | "eager";
   priority?: boolean;
-};
+}
 
 const MAX_PARTICIPANT_STAGGER = 6;
 const UNKNOWN_REFERENCE_TITLE = "Unknown";
@@ -53,11 +53,11 @@ const referenceTypeIcons: Partial<Record<Reference["type"], LucideIcon>> = {
   match: Trophy,
 };
 
-type ParticipantLinkData = {
+interface ParticipantLinkData {
   id: number | string;
   name: string | null | undefined;
   username: string;
-};
+}
 
 function getActivityDate(
   activity: Activity

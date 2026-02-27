@@ -1,14 +1,14 @@
 import type { CollectionBeforeChangeHook } from "payload";
 
-type MarkEmbeddingStaleOptions = {
-  trackedFields: readonly string[];
+interface MarkEmbeddingStaleOptions {
   requirePublicVisibility?: boolean;
-};
+  trackedFields: readonly string[];
+}
 
-type EmbeddableDoc = {
+interface EmbeddableDoc {
   _status?: "draft" | "published" | null;
   visibility?: "public" | "private" | null;
-};
+}
 
 type MutableDoc = Record<string, unknown> & EmbeddableDoc;
 
@@ -22,6 +22,18 @@ function shouldSkipFromContext(context: unknown): boolean {
   );
 }
 
+function isAutoSaveOrDraft(req: { query?: Record<string, unknown> }): boolean {
+  return req.query?.autosave === "true" || req.query?.draft === "true";
+}
+
+function resolveField<K extends keyof EmbeddableDoc>(
+  data: MutableDoc,
+  original: MutableDoc | null,
+  field: K
+): EmbeddableDoc[K] {
+  return data[field] ?? original?.[field];
+}
+
 function hasTrackedFieldChanges(
   data: Record<string, unknown>,
   trackedFields: readonly string[]
@@ -29,43 +41,39 @@ function hasTrackedFieldChanges(
   return trackedFields.some((field) => field in data);
 }
 
+function isWriteOperation(operation: string): boolean {
+  return operation === "create" || operation === "update";
+}
+
+function toMutableDoc(doc: unknown): MutableDoc | null {
+  return doc && typeof doc === "object" ? (doc as MutableDoc) : null;
+}
+
 function createMarkEmbeddingStaleHook({
   requirePublicVisibility = false,
   trackedFields,
 }: MarkEmbeddingStaleOptions): CollectionBeforeChangeHook {
   return ({ context, data, operation, originalDoc, req }) => {
-    if (operation !== "create" && operation !== "update") {
+    if (!(isWriteOperation(operation) && data) || typeof data !== "object") {
       return data;
     }
 
-    if (!data || typeof data !== "object") {
-      return data;
-    }
-
-    if (shouldSkipFromContext(context)) {
-      return data;
-    }
-
-    if (req.query?.autosave === "true" || req.query?.draft === "true") {
+    if (shouldSkipFromContext(context) || isAutoSaveOrDraft(req)) {
       return data;
     }
 
     const mutableData = data as MutableDoc;
-    const original =
-      originalDoc && typeof originalDoc === "object"
-        ? (originalDoc as MutableDoc)
-        : null;
+    const original = toMutableDoc(originalDoc);
 
-    const nextStatus = mutableData._status ?? original?._status;
-    if (nextStatus !== "published") {
+    if (resolveField(mutableData, original, "_status") !== "published") {
       return data;
     }
 
-    if (requirePublicVisibility) {
-      const nextVisibility = mutableData.visibility ?? original?.visibility;
-      if (nextVisibility !== "public") {
-        return data;
-      }
+    if (
+      requirePublicVisibility &&
+      resolveField(mutableData, original, "visibility") !== "public"
+    ) {
+      return data;
     }
 
     const becamePublished = original?._status !== "published";

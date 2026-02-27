@@ -6,18 +6,18 @@ import {
   EMBEDDING_VECTOR_DIMENSIONS,
 } from "@/utilities/generate-embedding";
 
-type EmbeddingDoc = {
+interface EmbeddingDoc {
   embedding_dimensions?: number | null;
   embedding_model?: string | null;
   embedding_vector?: string | null;
-};
+}
 
-type CollectionEmbeddingStats = {
-  totalPublished: number;
-  withEmbeddings: number;
+interface CollectionEmbeddingStats {
   coveragePercentage: number;
   needingEmbeddings: number;
-};
+  totalPublished: number;
+  withEmbeddings: number;
+}
 
 const PERCENT_MULTIPLIER = 100;
 const PUBLIC_QUERY_EMBEDDINGS_ENABLED =
@@ -34,7 +34,6 @@ function hasEmbeddingVector(doc: EmbeddingDoc): boolean {
   return Boolean(doc.embedding_vector);
 }
 
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Status endpoint aggregates multiple collection metrics and recommendations */
 export async function GET(_request: NextRequest) {
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";

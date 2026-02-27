@@ -6,15 +6,15 @@ import { SOCIAL_ICON_MAP } from "@/utilities/social-icons";
 
 const MAX_SOCIAL_LINKS = 3;
 
-type Props = {
-  user?: Lyovson;
+interface Props {
   className?: string;
-};
+  user?: Lyovson;
+}
 
-type AvatarData = {
-  url: string;
+interface AvatarData {
   alt: string;
-};
+  url: string;
+}
 
 export const GridCardUser = ({ user, className }: Props) => {
   // Extract avatar data with type guard

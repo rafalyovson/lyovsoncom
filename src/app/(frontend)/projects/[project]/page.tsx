@@ -5,8 +5,8 @@ import type { Metadata } from "next/types";
 import { getPayload } from "payload";
 import { Suspense } from "react";
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { JsonLd } from "@/components/JsonLd";
 import { SkeletonGrid } from "@/components/grid/skeleton";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import type { Project } from "@/payload-types";
 import {
@@ -17,11 +17,11 @@ import { getProject } from "@/utilities/get-project";
 import { getProjectPosts } from "@/utilities/get-project-posts";
 import { getServerSideURL } from "@/utilities/getURL";
 
-type PageProps = {
+interface PageProps {
   params: Promise<{
     project: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 

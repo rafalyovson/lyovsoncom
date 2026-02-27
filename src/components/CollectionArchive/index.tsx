@@ -2,9 +2,9 @@ import type React from "react";
 import { GridCardPostFull } from "@/components/grid";
 import type { Post } from "@/payload-types";
 
-export type Props = {
+export interface Props {
   posts: Post[];
-};
+}
 
 export const CollectionArchive: React.FC<Props> = (props) => {
   const { posts } = props;

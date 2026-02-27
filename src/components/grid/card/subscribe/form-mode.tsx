@@ -3,12 +3,12 @@ import { GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 import { SubscribeForm } from "./subscribe-form";
 
-type FormModeProps = {
-  title: string;
-  description: string;
+interface FormModeProps {
   buttonText: string;
+  description: string;
   formAction: (formData: FormData) => void;
-};
+  title: string;
+}
 
 export const FormMode = ({
   title,

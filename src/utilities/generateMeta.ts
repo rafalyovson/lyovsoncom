@@ -3,12 +3,12 @@ import type { Post } from "@/payload-types";
 import { getServerSideURL } from "./getURL";
 import { mergeOpenGraph } from "./mergeOpenGraph";
 
-type LegacyMeta = {
+interface LegacyMeta {
   meta?: {
     image?: Post["featuredImage"] | null;
     description?: string | null;
   } | null;
-};
+}
 
 export const generateMeta = (args: { doc: Partial<Post> }): Metadata => {
   const { doc } = args;

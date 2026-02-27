@@ -3,13 +3,13 @@ import { GridCard, GridCardSection } from "@/components/grid";
 import { Media } from "@/components/Media";
 import type { Project } from "@/payload-types";
 
-export type GridCardProjectProps = {
-  project: Project;
+export interface GridCardProjectProps {
   className?: string;
-  loading?: "lazy" | "eager";
   fetchPriority?: "high" | "low" | "auto";
+  loading?: "lazy" | "eager";
   priority?: boolean;
-};
+  project: Project;
+}
 
 export const GridCardProject = ({
   project,

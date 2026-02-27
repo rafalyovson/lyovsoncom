@@ -16,11 +16,11 @@ const EMBEDDABLE_COLLECTIONS = ["activities", "notes", "posts"] as const;
 
 type EmbeddableCollection = (typeof EMBEDDABLE_COLLECTIONS)[number];
 
-type EmbeddableDoc = {
+interface EmbeddableDoc {
   _status?: "draft" | "published" | null;
-  visibility?: "public" | "private" | null;
   embedding_text_hash?: string | null;
-};
+  visibility?: "public" | "private" | null;
+}
 
 function isEmbeddableCollection(value: string): value is EmbeddableCollection {
   return EMBEDDABLE_COLLECTIONS.includes(value as EmbeddableCollection);

@@ -10,11 +10,11 @@
 /**
  * Base Lexical node with common properties
  */
-type LexicalBaseNode = {
+interface LexicalBaseNode {
   type: string;
   version: number;
   [key: string]: unknown;
-};
+}
 
 /**
  * Text node containing actual content
@@ -36,22 +36,22 @@ interface LexicalElementNode extends LexicalBaseNode {
 /**
  * Root node of the document
  */
-type LexicalRootNode = {
-  type: "root";
+interface LexicalRootNode {
   children: LexicalNode[];
   direction: "ltr" | "rtl" | null;
   format: "" | "left" | "start" | "center" | "right" | "end" | "justify";
   indent: number;
+  type: "root";
   version: number;
-};
+}
 
 /**
  * Complete Lexical document structure
  */
-export type LexicalDocument = {
+export interface LexicalDocument {
   root: LexicalRootNode;
   [key: string]: unknown;
-};
+}
 
 /**
  * Union type for all possible Lexical nodes

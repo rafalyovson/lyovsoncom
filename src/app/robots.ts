@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 
+/* biome-ignore lint/suspicious/useAwait: async required by "use cache" directive */
 export default async function robots(): Promise<MetadataRoute.Robots> {
   "use cache";
   cacheTag("robots");

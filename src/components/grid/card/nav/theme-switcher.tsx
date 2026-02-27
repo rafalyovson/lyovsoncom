@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils";
 
 import { GridCardNavItem } from "./grid-card-nav-item";
 
-type ThemeSwitcherProps = {
+interface ThemeSwitcherProps {
   className?: string;
-};
+}
 
 export const ThemeSwitcher = ({ className }: ThemeSwitcherProps) => {
   const [mounted, setMounted] = useState(false);

@@ -4,10 +4,10 @@ import { GridCardNavItem } from "@/components/grid/card/nav";
 import { cn } from "@/lib/utils";
 import type { SubscribeMode } from "./types";
 
-type InfoModeProps = {
+interface InfoModeProps {
   message: string;
   setMode: (mode: SubscribeMode) => void;
-};
+}
 
 export const InfoMode = ({ message, setMode }: InfoModeProps) => {
   return (

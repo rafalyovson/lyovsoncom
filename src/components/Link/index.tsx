@@ -12,7 +12,7 @@ type LinkReferenceValue =
       [key: string]: unknown;
     };
 
-type CMSLinkType = {
+interface CMSLinkType {
   appearance?: "inline" | ButtonProps["variant"];
   children?: React.ReactNode;
   className?: string;
@@ -25,7 +25,7 @@ type CMSLinkType = {
   size?: ButtonProps["size"] | null;
   type?: "custom" | "reference" | null;
   url?: string | null;
-};
+}
 
 export const CMSLink: React.FC<CMSLinkType> = (props) => {
   const {

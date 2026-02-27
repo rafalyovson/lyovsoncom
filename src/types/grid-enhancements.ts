@@ -25,28 +25,28 @@ export type CacheStrategy = "static" | "posts" | "grid-cards" | "user-session";
 export type Priority = "critical" | "high" | "normal" | "low" | "defer";
 
 // Enhanced GridCard props (backwards compatible)
-export type EnhancedGridCardProps = {
+export interface EnhancedGridCardProps {
+  cacheStrategy?: CacheStrategy;
   children: ReactNode;
   className?: string;
-
-  // NEW: Enhanced features
-  span?: GridSpan;
   content?: GridCardContent;
-  priority?: Priority;
-  cacheStrategy?: CacheStrategy;
-  optimistic?: boolean;
+  defer?: boolean;
 
   // NEW: Animation controls
   enableHover?: boolean;
   enableStartingStyle?: boolean;
+  optimistic?: boolean;
 
   // NEW: Performance hints
   preload?: boolean;
-  defer?: boolean;
-};
+  priority?: Priority;
+
+  // NEW: Enhanced features
+  span?: GridSpan;
+}
 
 // Enhanced GridCardSection props
-export type EnhancedGridCardSectionProps = {
+export interface EnhancedGridCardSectionProps {
   children: ReactNode;
   className?: string;
 
@@ -55,39 +55,35 @@ export type EnhancedGridCardSectionProps = {
 
   // Preserve existing
   onClick?: () => void;
-};
+}
 
 // Performance monitoring types
-export type GridPerformanceMetrics = {
-  renderTime: number;
+export interface GridPerformanceMetrics {
   cacheHitRate: number;
-  optimisticUpdates: number;
   containerQueryUpdates: number;
+  optimisticUpdates: number;
+  renderTime: number;
   totalCards: number;
   visibleCards: number;
-};
+}
 
 // Form action types for React 19 useActionState
-export type ActionState = {
-  success: boolean;
-  message: string;
+export interface ActionState {
   errors?: Record<string, string[]>;
-};
+  message: string;
+  success: boolean;
+}
 
 // Enhanced subscription form data
-export type SubscribeFormData = {
+export interface SubscribeFormData {
   email: string;
   firstName: string;
   lastName?: string;
   projectId?: number;
-};
+}
 
 // Grid layout configuration
-export type GridConfig = {
-  cardSize: number;
-  gap: number;
-  internalCols: number;
-  internalRows: number;
+export interface GridConfig {
   breakpoints: {
     g1: number;
     g2: number;
@@ -96,4 +92,8 @@ export type GridConfig = {
     g5: number;
     g6: number;
   };
-};
+  cardSize: number;
+  gap: number;
+  internalCols: number;
+  internalRows: number;
+}

@@ -10,21 +10,21 @@ import { SuccessMode } from "./success-mode";
 import type { SubscribeMode } from "./types";
 
 interface SubscribeActionResponse {
-  success: boolean;
-  message: string;
   errors?: Record<string, string>;
+  message: string;
+  success: boolean;
 }
 
-type GridCardSubscribeProps = {
-  title?: string;
-  description?: string;
+interface GridCardSubscribeProps {
   buttonText?: string;
   className?: string;
+  description?: string;
   handleSubmit: (
     prevState: SubscribeActionResponse,
     formData: FormData
   ) => Promise<SubscribeActionResponse>;
-};
+  title?: string;
+}
 
 export const GridCardSubscribe = ({
   title = "Subscribe to updates",

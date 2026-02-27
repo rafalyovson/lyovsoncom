@@ -23,18 +23,15 @@ function swLog(level, message, detail) {
   }
 
   if (level === "warn") {
-    /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
     console.warn(message, detail);
     return;
   }
 
   if (level === "error") {
-    /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
     console.error(message, detail);
     return;
   }
 
-  /* biome-ignore lint/suspicious/noConsole: Developer diagnostics are only emitted during local development */
   console.info(message, detail);
 }
 

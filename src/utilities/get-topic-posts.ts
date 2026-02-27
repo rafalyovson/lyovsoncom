@@ -4,16 +4,18 @@ import type { PaginatedDocs } from "payload";
 import { getPayload } from "payload";
 import type { Post } from "@/payload-types";
 
-export async function getTopicPosts(
+const DEFAULT_TOPIC_PAGE_SIZE = 25;
+
+export function getTopicPosts(
   slug: string
 ): Promise<PaginatedDocs<Post> | null> {
-  return getPaginatedTopicPosts(slug, 1, 25);
+  return getPaginatedTopicPosts(slug, 1, DEFAULT_TOPIC_PAGE_SIZE);
 }
 
 export async function getPaginatedTopicPosts(
   slug: string,
   pageNumber: number,
-  limit = 25
+  limit = DEFAULT_TOPIC_PAGE_SIZE
 ): Promise<PaginatedDocs<Post> | null> {
   "use cache";
   cacheTag("posts");

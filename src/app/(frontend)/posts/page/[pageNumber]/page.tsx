@@ -14,11 +14,11 @@ import { getServerSideURL } from "@/utilities/getURL";
 const POSTS_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
 
-type Args = {
+interface Args {
   params: Promise<{
     pageNumber: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 

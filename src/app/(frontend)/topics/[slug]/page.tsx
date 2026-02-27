@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 import { CollectionArchive } from "@/components/CollectionArchive";
-import { JsonLd } from "@/components/JsonLd";
 import { SkeletonGrid } from "@/components/grid/skeleton";
+import { JsonLd } from "@/components/JsonLd";
 import { Pagination } from "@/components/Pagination";
 import {
   generateBreadcrumbSchema,
@@ -15,11 +15,11 @@ import { getAllTopics, getTopic } from "@/utilities/get-topic";
 import { getTopicPosts } from "@/utilities/get-topic-posts";
 import { getServerSideURL } from "@/utilities/getURL";
 
-type PageProps = {
+interface PageProps {
   params: Promise<{
     slug: string;
   }>;
-};
+}
 
 export const dynamicParams = true;
 

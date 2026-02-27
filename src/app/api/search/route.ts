@@ -20,35 +20,35 @@ import {
 const MIN_SEARCH_LIMIT = 1;
 const MAX_SEARCH_LIMIT = 50;
 
-type SearchResult = {
+interface SearchResult {
   collection: string;
-  id: number;
-  title: string;
-  slug: string;
+  combined_score: number;
+  created_at: string;
   description: string | null;
   featured_image_id: number | null;
-  created_at: string;
-  updated_at: string;
-  semantic_rank: number | null;
   fts_rank: number | null;
   fuzzy_rank: number | null;
-  combined_score: number;
-};
-
-type HybridSearchRow = {
-  collection: string;
   id: number;
-  title: string;
+  semantic_rank: number | null;
   slug: string;
+  title: string;
+  updated_at: string;
+}
+
+interface HybridSearchRow {
+  collection: string;
+  combined_score: string; // PostgreSQL numeric type comes as string
+  created_at: Date;
   description: string | null;
   featured_image_id: number | null;
-  created_at: Date;
-  updated_at: Date;
-  semantic_rank: bigint | null;
   fts_rank: bigint | null;
   fuzzy_rank: bigint | null;
-  combined_score: string; // PostgreSQL numeric type comes as string
-};
+  id: number;
+  semantic_rank: bigint | null;
+  slug: string;
+  title: string;
+  updated_at: Date;
+}
 
 export async function GET(request: NextRequest) {
   try {

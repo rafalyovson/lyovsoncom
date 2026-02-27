@@ -11,16 +11,16 @@ import {
 
 export const dynamic = "force-dynamic";
 
-type RegenerateEmbeddingBody = {
+interface RegenerateEmbeddingBody {
   collection?: "posts" | "notes" | "activities";
-  id?: number | string;
   force?: boolean;
-};
+  id?: number | string;
+}
 
-type EmbeddingResult = {
-  success: boolean;
+interface EmbeddingResult {
   error?: string;
-};
+  success: boolean;
+}
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Endpoint handles validation + auth + multiple collection paths */
 export async function POST(request: NextRequest) {

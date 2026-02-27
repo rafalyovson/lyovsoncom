@@ -6,105 +6,105 @@ export type EmbeddingModel =
   | "text-embedding-3-small"
   | "text-embedding-3-large";
 
-export type EmbeddingData = {
-  vector: EmbeddingVector;
-  model: EmbeddingModel;
+export interface EmbeddingData {
   dimensions: number;
   generatedAt: string;
-  textHash: string;
-};
-
-export type EmbeddingGenerationResult = {
-  vector: EmbeddingVector;
   model: EmbeddingModel;
+  textHash: string;
+  vector: EmbeddingVector;
+}
+
+export interface EmbeddingGenerationResult {
   dimensions: number;
-};
+  model: EmbeddingModel;
+  vector: EmbeddingVector;
+}
 
-export type EmbeddingStats = {
-  totalPosts: number;
-  postsWithEmbeddings: number;
-  postsNeedingEmbeddings: number;
+export interface EmbeddingStats {
   coveragePercentage: number;
-};
+  postsNeedingEmbeddings: number;
+  postsWithEmbeddings: number;
+  totalPosts: number;
+}
 
-export type EmbeddingRegenerationResult = {
-  success: boolean;
+export interface EmbeddingRegenerationResult {
+  dimensions?: number;
+  error?: string;
+  model?: EmbeddingModel;
   postId: number;
+  success: boolean;
   title?: string;
-  model?: EmbeddingModel;
-  dimensions?: number;
   wordCount?: number;
-  error?: string;
-};
+}
 
-export type EmbeddingSystemHealth = {
-  healthy: boolean;
-  openaiConfigured: boolean;
-  model?: EmbeddingModel;
+export interface EmbeddingSystemHealth {
   dimensions?: number;
-  stats?: EmbeddingStats;
   error?: string;
+  healthy: boolean;
   lastChecked: string;
-};
+  model?: EmbeddingModel;
+  openaiConfigured: boolean;
+  stats?: EmbeddingStats;
+}
 
 // Database schema extensions for collections with embeddings
-export type WithEmbedding = {
-  embedding_vector: string | null; // pgvector format: "[1.0,2.0,3.0]"
-  embedding_model: EmbeddingModel | null;
+export interface WithEmbedding {
   embedding_dimensions: number | null;
   embedding_generated_at: string | null;
+  embedding_model: EmbeddingModel | null;
   embedding_text_hash: string | null;
-};
+  embedding_vector: string | null; // pgvector format: "[1.0,2.0,3.0]"
+}
 
 // Collection-specific text extractors
 export type TextExtractor<T = unknown> = (data: T) => string;
 
 // Similarity search types
-export type SimilaritySearchOptions = {
+export interface SimilaritySearchOptions {
+  includeContent?: boolean;
+  includeScore?: boolean;
   limit?: number;
   threshold?: number;
-  includeScore?: boolean;
-  includeContent?: boolean;
-};
+}
 
-export type SimilarityResult<T = unknown> = {
+export interface SimilarityResult<T = unknown> {
+  distance: number;
   item: T;
   similarity: number;
-  distance: number;
-};
+}
 
-export type SimilaritySearchResult<T = unknown> = {
+export interface SimilaritySearchResult<T = unknown> {
+  dimensions: number;
+  model: EmbeddingModel;
   query: string;
   results: SimilarityResult<T>[];
-  model: EmbeddingModel;
-  dimensions: number;
   searchTime: number;
-};
+}
 
 // API response types
-export type EmbeddingAPIResponse = {
-  id: number;
-  title: string;
-  slug: string;
-  url: string;
-  embedding: EmbeddingData | EmbeddingVector | null;
-  publishedAt: string;
-  updatedAt: string;
+export interface EmbeddingAPIResponse {
   content?: unknown;
-};
+  embedding: EmbeddingData | EmbeddingVector | null;
+  id: number;
+  publishedAt: string;
+  slug: string;
+  title: string;
+  updatedAt: string;
+  url: string;
+}
 
-export type QueryEmbeddingResponse = {
-  query: string;
-  embedding: EmbeddingVector;
+export interface QueryEmbeddingResponse {
   dimensions: number;
+  embedding: EmbeddingVector;
   model: EmbeddingModel;
+  query: string;
   timestamp: string;
-};
+}
 
 // Hook factory types
-export type EmbeddingHookOptions = {
-  extractText: TextExtractor;
+export interface EmbeddingHookOptions {
   collectionName: string;
-  skipDrafts?: boolean;
+  extractText: TextExtractor;
   skipAutosave?: boolean;
-};
+  skipDrafts?: boolean;
+}

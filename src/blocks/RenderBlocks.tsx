@@ -24,9 +24,9 @@ type RenderBlock =
   | XPostBlock
   | YouTubeBlock;
 
-type Props = {
+interface Props {
   blocks?: RenderBlock[] | null;
-};
+}
 
 function renderBlock(block: RenderBlock, key: string) {
   switch (block.blockType) {

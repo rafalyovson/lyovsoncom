@@ -27,17 +27,17 @@ const GRID_POSITIONS = [
   "row-start-3 row-end-4 col-start-3 col-end-4",
 ] as const;
 
-type SocialLink = {
-  name: string;
-  url: string;
+interface SocialLink {
   icon: React.ComponentType<{
     size?: number;
     color?: string;
     className?: string;
   }>;
-  useDefaultColor?: boolean;
   iconType: "simple" | "lucide";
-};
+  name: string;
+  url: string;
+  useDefaultColor?: boolean;
+}
 
 function getStaggerClass(index: number): string {
   return `glass-stagger-${Math.min(index + 1, MAX_STAGGER_INDEX)}`;

@@ -22,19 +22,19 @@ const EMBEDDABLE_COLLECTIONS = ["posts", "notes", "activities"] as const;
 
 type EmbeddableCollection = (typeof EMBEDDABLE_COLLECTIONS)[number];
 
-type SyncBody = {
+interface SyncBody {
   collections?: EmbeddableCollection[];
   force?: boolean;
   limitPerCollection?: number;
-};
+}
 
-type CollectionSummary = {
+interface CollectionSummary {
   failed: number;
   generated: number;
   processed: number;
   queued: number;
   skipped: number;
-};
+}
 
 function normalizeCollections(value: unknown): EmbeddableCollection[] {
   if (!Array.isArray(value)) {

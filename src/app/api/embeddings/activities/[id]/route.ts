@@ -20,11 +20,11 @@ type ActivityWithEmbedding = Activity & {
   embedding_text_hash?: string;
 };
 
-type Args = {
+interface Args {
   params: Promise<{
     id: string;
   }>;
-};
+}
 
 /* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This endpoint supports multiple output formats and optional regeneration paths */
 export async function GET(

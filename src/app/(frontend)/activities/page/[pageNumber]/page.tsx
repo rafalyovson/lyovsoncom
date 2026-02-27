@@ -15,11 +15,11 @@ import { getServerSideURL } from "@/utilities/getURL";
 const ACTIVITIES_PER_PAGE = 25;
 const MAX_INDEXED_PAGE = 3;
 
-type Args = {
+interface Args {
   params: Promise<{
     pageNumber: string;
   }>;
-};
+}
 
 export default async function Page({ params: paramsPromise }: Args) {
   "use cache";

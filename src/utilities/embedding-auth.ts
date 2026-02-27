@@ -1,10 +1,10 @@
 import type { NextRequest } from "next/server";
 import type { Payload } from "payload";
 
-type EmbeddingMutationAuthResult = {
+interface EmbeddingMutationAuthResult {
   authorized: boolean;
   reason?: string;
-};
+}
 
 export async function authorizeEmbeddingMutation(
   request: NextRequest,

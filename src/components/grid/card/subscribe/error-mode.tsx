@@ -4,10 +4,10 @@ import { GridCardNavItem } from "@/components/grid/card/nav";
 import { cn } from "@/lib/utils";
 import type { SubscribeMode } from "./types";
 
-type ErrorModeProps = {
+interface ErrorModeProps {
   message: string;
   setMode: (mode: SubscribeMode) => void;
-};
+}
 
 export const ErrorMode = ({ message, setMode }: ErrorModeProps) => {
   return (

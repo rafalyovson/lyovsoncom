@@ -1,9 +1,9 @@
-type ActivityPathInput = {
-  slug?: string | null;
+interface ActivityPathInput {
   finishedAt?: string | null;
-  startedAt?: string | null;
   publishedAt?: string | null;
-};
+  slug?: string | null;
+  startedAt?: string | null;
+}
 
 export const UNKNOWN_ACTIVITY_DATE_SLUG = "unknown";
 

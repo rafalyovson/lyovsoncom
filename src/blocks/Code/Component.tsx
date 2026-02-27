@@ -2,11 +2,11 @@ import type React from "react";
 
 import { Code } from "./Component.client";
 
-export type CodeBlockProps = {
+export interface CodeBlockProps {
+  blockType: "code";
   code: string;
   language?: string | null;
-  blockType: "code";
-};
+}
 
 type Props = CodeBlockProps & {
   className?: string;

@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type SubscribeFormProps = {
-  buttonText: string;
+interface SubscribeFormProps {
   action: (formData: FormData) => void;
-};
+  buttonText: string;
+}
 
 export function SubscribeForm({ buttonText, action }: SubscribeFormProps) {
   return (

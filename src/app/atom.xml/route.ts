@@ -9,7 +9,6 @@ import { extractLexicalText } from "@/utilities/extract-lexical-text";
 // With weekly publishing, feeds are regenerated only when content changes via revalidateTag()
 // This prevents Atom feed readers from waking the database on every poll
 
-/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Feed generation includes multiple formatting and fallback branches */
 export async function GET(_request: NextRequest) {
   const SITE_URL =
     process.env.NEXT_PUBLIC_SERVER_URL || "https://www.lyovson.com";

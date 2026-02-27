@@ -12,13 +12,15 @@ import {
 import type { Activity, Note, Post } from "@/payload-types";
 import { getServerSideURL } from "@/utilities/getURL";
 
-type Args = {
+interface Args {
   searchParams: Promise<{
     q: string;
   }>;
-};
+}
 
-type SearchAPIResponse = {
+interface SearchAPIResponse {
+  count: number;
+  query: string;
   results: Array<{
     collection: string;
     id: number;
@@ -33,9 +35,7 @@ type SearchAPIResponse = {
     fuzzy_rank: number | null;
     combined_score: number;
   }>;
-  query: string;
-  count: number;
-};
+}
 
 export default function SuspendedSearchPage({
   searchParams: searchParamsPromise,

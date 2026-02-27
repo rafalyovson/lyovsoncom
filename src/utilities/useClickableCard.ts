@@ -6,20 +6,20 @@ import { useCallback, useEffect, useRef } from "react";
 // Maximum time in ms between mousedown and mouseup to be considered a click
 const CLICK_DELAY_THRESHOLD_MS = 250;
 
-type UseClickableCardType<T extends HTMLElement> = {
+interface UseClickableCardType<T extends HTMLElement> {
   card: {
     ref: RefObject<T | null>;
   };
   link: {
     ref: RefObject<HTMLAnchorElement | null>;
   };
-};
+}
 
-type Props = {
+interface Props {
   external?: boolean;
   newTab?: boolean;
   scroll?: boolean;
-};
+}
 
 function useClickableCard<T extends HTMLElement>({
   external = false,

@@ -6,21 +6,21 @@ import type {
 } from "payload";
 import type { Post } from "@/payload-types";
 
-type AuthorLike = {
+interface AuthorLike {
   id?: number | string | null;
   username?: string | null;
-};
+}
 
 type PostWithPopulatedAuthors = Post & {
   populatedAuthors?: AuthorLike[] | null;
 };
 
-type AuthorRevalidationArgs = {
+interface AuthorRevalidationArgs {
   errorContext: string;
   post: Post;
   req: PayloadRequest;
   successMessage: string;
-};
+}
 
 function getPostSlug(post: Pick<Post, "slug">): string | null {
   return typeof post.slug === "string" && post.slug.length > 0

@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 
 import { GridCardSection } from "../section";
 
-type GridCardNavItemBaseProps = {
+interface GridCardNavItemBaseProps {
   children: ReactNode;
   className?: string;
-};
+}
 
 type GridCardNavItemLinkProps = GridCardNavItemBaseProps & {
   variant: "link";

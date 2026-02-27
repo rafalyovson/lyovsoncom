@@ -21,7 +21,7 @@ import { extractVideoUrls, searchGifs } from "./actions";
  */
 
 // Types
-type TenorResult = {
+interface TenorResult {
   id: string;
   media_formats: {
     tinygif: {
@@ -33,7 +33,7 @@ type TenorResult = {
       dims: [number, number];
     };
   };
-};
+}
 
 // Component
 export const GifPicker: React.FC = () => {

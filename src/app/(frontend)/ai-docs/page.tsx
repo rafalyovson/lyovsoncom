@@ -409,8 +409,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
                 </li>
                 <li>
                   • <strong>Collection-specific</strong> - Posts, Activities,
-                  Notes
-                  endpoints
+                  Notes endpoints
                 </li>
                 <li>
                   • <strong>1536-dimensional</strong> OpenAI
@@ -488,9 +487,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
             <div>
               <h3 className="mb-2 font-medium">🚀 Performance</h3>
               <ul className="list-inside list-disc space-y-1 text-sm">
-                <li>
-                  Use feeds for bulk content access whenever possible
-                </li>
+                <li>Use feeds for bulk content access whenever possible</li>
                 <li>Respect Cache-Control headers for optimal performance</li>
                 <li>
                   API access is subject to platform limits and abuse controls
@@ -590,8 +587,7 @@ GET ${SITE_URL}/api/embeddings/activities/456?regenerate=true
           <h2 className="mb-4 font-semibold text-xl">Contact & Support</h2>
           <p className="mb-4">
             Need custom access patterns, partnership support, or have questions
-            about
-            using our content?
+            about using our content?
           </p>
           <div className="space-y-2">
             <p>

@@ -7,13 +7,13 @@ import { type ReactNode, useMemo } from "react";
 import { GridCard, GridCardSection } from "@/components/grid";
 import { cn } from "@/lib/utils";
 
-type PaginationProps = {
+interface PaginationProps {
+  basePath?: string;
   className?: string;
+  firstPagePath?: string;
   page: number;
   totalPages: number;
-  basePath?: string;
-  firstPagePath?: string;
-};
+}
 
 const MAX_WINDOW_SIZE = 7;
 const WINDOW_RADIUS = Math.floor(MAX_WINDOW_SIZE / 2);
@@ -110,14 +110,14 @@ export const Pagination = ({
     windowCells.push(null);
   }
 
-  type GridCell = {
-    key: string;
-    label: number | null | ReactNode;
+  interface GridCell {
     ariaLabel?: string;
     disabled: boolean;
-    target: number;
     isCurrent: boolean;
-  };
+    key: string;
+    label: number | null | ReactNode;
+    target: number;
+  }
 
   const gridCells: GridCell[] = [
     {

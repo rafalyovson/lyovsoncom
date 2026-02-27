@@ -5,9 +5,9 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-type Props = {
+interface Props {
   className?: string;
-};
+}
 
 export const Logo = (props: Props) => {
   const { resolvedTheme } = useTheme();

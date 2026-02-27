@@ -180,7 +180,8 @@ export async function GET(_request: NextRequest) {
               endpoint: `${SITE_URL}/{username}`,
               description: "Public author profile and bio pages",
               fields: ["name", "username", "bio", "socialLinks"],
-              access: "public profile routes; underlying user collection is private",
+              access:
+                "public profile routes; underlying user collection is private",
             },
           ],
         },

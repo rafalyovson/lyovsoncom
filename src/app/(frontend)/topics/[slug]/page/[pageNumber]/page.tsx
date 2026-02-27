@@ -124,7 +124,8 @@ export async function generateMetadata({
 
   const topicName = topic.name || slug;
   const description =
-    topic.description || `Posts about ${topicName} - page ${sanitizedPageNumber}`;
+    topic.description ||
+    `Posts about ${topicName} - page ${sanitizedPageNumber}`;
   const title = `${topicName} - Page ${sanitizedPageNumber} | Lyóvson.com`;
 
   return {

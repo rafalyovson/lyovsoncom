@@ -2,9 +2,9 @@ import type React from "react";
 import { GridCardActivityFull } from "@/components/grid";
 import type { Activity } from "@/payload-types";
 
-export type Props = {
+export interface Props {
   activities: Activity[];
-};
+}
 
 export const ActivitiesArchive: React.FC<Props> = (props) => {
   const { activities } = props;

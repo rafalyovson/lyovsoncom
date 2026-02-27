@@ -25,19 +25,19 @@ const UNTITLED_LABEL = "untitled";
 
 type EmbeddableCollection = "activities" | "notes" | "posts";
 
-type EmbeddingDoc = {
-  id: number | string;
+interface EmbeddingDoc {
   _status?: "draft" | "published" | null;
-  title?: string | null;
   embedding_text_hash?: string | null;
+  id: number | string;
+  title?: string | null;
   [key: string]: unknown;
-};
+}
 
-type CurrentEmbedding = {
+interface CurrentEmbedding {
   generatedAt?: string | null;
   textHash?: string | null;
   vector?: number[] | null;
-};
+}
 
 function getDocFromResult(result: unknown): EmbeddingDoc | null {
   if (!result || typeof result !== "object") {
