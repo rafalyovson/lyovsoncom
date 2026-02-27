@@ -10,11 +10,11 @@ const DEFAULT_OG_IMAGE = {
 } as const;
 
 interface LyovsonMetadataOptions {
-  canonicalPath: `/${string}`;
+  canonicalPath: string;
   description: string;
-  nextPath?: `/${string}`;
+  nextPath?: string;
   openGraphType?: "website" | "profile";
-  prevPath?: `/${string}`;
+  prevPath?: string;
   profile?: {
     firstName?: string;
     lastName?: string;

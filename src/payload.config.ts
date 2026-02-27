@@ -47,12 +47,37 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Lyovsons.slug,
+    meta: {
+      titleSuffix: " — Lyovson.com",
+      icons: [
+        { rel: "icon", type: "image/x-icon", url: "/favicon.ico" },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "32x32",
+          url: "/favicon-32x32.png",
+        },
+        {
+          rel: "icon",
+          type: "image/png",
+          sizes: "16x16",
+          url: "/favicon-16x16.png",
+        },
+        {
+          rel: "apple-touch-icon",
+          type: "image/png",
+          url: "/apple-touch-icon.png",
+        },
+      ],
+    },
     components: {
       graphics: {
         Icon: "@/components/admin/icon",
         Logo: "@/components/admin/logo",
       },
       afterLogin: ["@/components/admin/login-text"],
+      afterNavLinks: ["@/components/admin/view-site-link"],
+      providers: ["@/components/admin/admin-font-provider#AdminFontProvider"],
     },
     livePreview: {
       breakpoints: [
